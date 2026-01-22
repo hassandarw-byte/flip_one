@@ -21,6 +21,7 @@ import Animated, {
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
+import Svg, { Path } from "react-native-svg";
 
 import { ThemedText } from "@/components/ThemedText";
 import { GameColors, Spacing, BorderRadius, SkinColors } from "@/constants/theme";
@@ -633,6 +634,7 @@ export default function GameScreen() {
   const currentTrack = currentTrackRef.current;
 
   return (
+    <>
     <Pressable style={styles.container} onPress={handleFlip} testID="game-area">
       <Animated.View style={[StyleSheet.absoluteFill, screenShakeStyle]}>
         <LinearGradient
@@ -801,38 +803,39 @@ export default function GameScreen() {
       ) : null}
 
       </Animated.View>
-
-      <View style={[styles.powerButtonsContainer, { bottom: insets.bottom + Spacing.md }]}>
-        <PowerButton 
-          type="freeze" 
-          icon="pause" 
-          available={availablePowers.includes("freeze")}
-          active={activePowerTypes.includes("freeze")}
-          onPress={() => activatePower("freeze")}
-        />
-        <PowerButton 
-          type="slow" 
-          icon="clock" 
-          available={availablePowers.includes("slow")}
-          active={activePowerTypes.includes("slow")}
-          onPress={() => activatePower("slow")}
-        />
-        <PowerButton 
-          type="shield" 
-          icon="shield" 
-          available={availablePowers.includes("shield")}
-          active={activePowerTypes.includes("shield")}
-          onPress={() => activatePower("shield")}
-        />
-        <PowerButton 
-          type="double" 
-          icon="zap" 
-          available={availablePowers.includes("double")}
-          active={activePowerTypes.includes("double")}
-          onPress={() => activatePower("double")}
-        />
-      </View>
     </Pressable>
+
+    <View style={[styles.powerButtonsContainer, { bottom: insets.bottom + Spacing.md }]}>
+      <PowerButton 
+        type="freeze" 
+        icon="pause" 
+        available={availablePowers.includes("freeze")}
+        active={activePowerTypes.includes("freeze")}
+        onPress={() => activatePower("freeze")}
+      />
+      <PowerButton 
+        type="slow" 
+        icon="clock" 
+        available={availablePowers.includes("slow")}
+        active={activePowerTypes.includes("slow")}
+        onPress={() => activatePower("slow")}
+      />
+      <PowerButton 
+        type="shield" 
+        icon="shield" 
+        available={availablePowers.includes("shield")}
+        active={activePowerTypes.includes("shield")}
+        onPress={() => activatePower("shield")}
+      />
+      <PowerButton 
+        type="double" 
+        icon="zap" 
+        available={availablePowers.includes("double")}
+        active={activePowerTypes.includes("double")}
+        onPress={() => activatePower("double")}
+      />
+    </View>
+    </>
   );
 }
 
@@ -947,46 +950,74 @@ const powerStyles = StyleSheet.create({
 
 function ObstacleShape({ obstacle }: { obstacle: Obstacle }) {
   const { type, color, width: w, height: h } = obstacle;
+  const size = Math.min(w, h) * 0.85;
+  const strokeWidth = 2;
 
   switch (type) {
     case "spade":
       return (
         <View style={[suitStyles.container, { width: w, height: h }]}>
-          <View style={[suitStyles.spadeTop, { backgroundColor: color }]} />
-          <View style={[suitStyles.spadeBottom, { backgroundColor: color }]} />
-          <View style={[suitStyles.spadeStem, { backgroundColor: color }]} />
+          <Svg width={size} height={size} viewBox="0 0 100 100">
+            <Path
+              d="M50 5 C50 5 20 35 20 55 C20 70 30 75 40 72 C35 82 30 90 30 95 L70 95 C70 90 65 82 60 72 C70 75 80 70 80 55 C80 35 50 5 50 5 Z"
+              fill={color}
+              stroke="#FFFFFF"
+              strokeWidth={strokeWidth}
+            />
+          </Svg>
         </View>
       );
     case "diamond":
       return (
         <View style={[suitStyles.container, { width: w, height: h }]}>
-          <View style={[suitStyles.diamond, { backgroundColor: color }]} />
+          <Svg width={size} height={size} viewBox="0 0 100 100">
+            <Path
+              d="M50 5 L90 50 L50 95 L10 50 Z"
+              fill={color}
+              stroke="#FFFFFF"
+              strokeWidth={strokeWidth}
+            />
+          </Svg>
         </View>
       );
     case "heart":
       return (
         <View style={[suitStyles.container, { width: w, height: h }]}>
-          <View style={[suitStyles.heartTop]}>
-            <View style={[suitStyles.heartCircle, { backgroundColor: color }]} />
-            <View style={[suitStyles.heartCircle, { backgroundColor: color }]} />
-          </View>
-          <View style={[suitStyles.heartPoint, { backgroundColor: color }]} />
+          <Svg width={size} height={size} viewBox="0 0 100 100">
+            <Path
+              d="M50 88 C50 88 10 55 10 35 C10 15 30 10 50 30 C70 10 90 15 90 35 C90 55 50 88 50 88 Z"
+              fill={color}
+              stroke="#FFFFFF"
+              strokeWidth={strokeWidth}
+            />
+          </Svg>
         </View>
       );
     case "club":
       return (
         <View style={[suitStyles.container, { width: w, height: h }]}>
-          <View style={[suitStyles.clubTop, { backgroundColor: color }]} />
-          <View style={[suitStyles.clubRow]}>
-            <View style={[suitStyles.clubCircle, { backgroundColor: color }]} />
-            <View style={[suitStyles.clubCircle, { backgroundColor: color }]} />
-          </View>
-          <View style={[suitStyles.clubStem, { backgroundColor: color }]} />
+          <Svg width={size} height={size} viewBox="0 0 100 100">
+            <Path
+              d="M50 10 C35 10 25 20 25 33 C25 43 32 50 42 52 C35 55 30 62 30 95 L70 95 C70 62 65 55 58 52 C68 50 75 43 75 33 C75 20 65 10 50 10 Z M25 55 C12 55 5 65 5 75 C5 88 18 92 30 88 C28 82 27 70 28 58 C25 56 23 55 25 55 Z M75 55 C77 55 75 56 72 58 C73 70 72 82 70 88 C82 92 95 88 95 75 C95 65 88 55 75 55 Z"
+              fill={color}
+              stroke="#FFFFFF"
+              strokeWidth={strokeWidth}
+            />
+          </Svg>
         </View>
       );
     default:
       return (
-        <View style={[suitStyles.diamond, { backgroundColor: color, width: w * 0.6, height: h * 0.6 }]} />
+        <View style={[suitStyles.container, { width: w, height: h }]}>
+          <Svg width={size} height={size} viewBox="0 0 100 100">
+            <Path
+              d="M50 5 L90 50 L50 95 L10 50 Z"
+              fill={color}
+              stroke="#FFFFFF"
+              strokeWidth={strokeWidth}
+            />
+          </Svg>
+        </View>
       );
   }
 }
@@ -995,99 +1026,6 @@ const suitStyles = StyleSheet.create({
   container: {
     justifyContent: "center",
     alignItems: "center",
-    position: "relative",
-  },
-  spadeTop: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    position: "absolute",
-    top: 2,
-    borderWidth: 2,
-    borderColor: "#FFFFFF",
-  },
-  spadeBottom: {
-    width: 20,
-    height: 20,
-    transform: [{ rotate: "45deg" }],
-    position: "absolute",
-    top: 8,
-    borderRadius: 3,
-    borderWidth: 2,
-    borderColor: "#FFFFFF",
-  },
-  spadeStem: {
-    width: 6,
-    height: 12,
-    position: "absolute",
-    bottom: 0,
-    borderBottomLeftRadius: 4,
-    borderBottomRightRadius: 4,
-    borderWidth: 2,
-    borderColor: "#FFFFFF",
-  },
-  diamond: {
-    width: 24,
-    height: 24,
-    transform: [{ rotate: "45deg" }],
-    borderRadius: 4,
-    borderWidth: 2,
-    borderColor: "#FFFFFF",
-  },
-  heartTop: {
-    flexDirection: "row",
-    position: "absolute",
-    top: 4,
-  },
-  heartCircle: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    marginHorizontal: -2,
-    borderWidth: 2,
-    borderColor: "#FFFFFF",
-  },
-  heartPoint: {
-    width: 18,
-    height: 18,
-    transform: [{ rotate: "45deg" }],
-    position: "absolute",
-    top: 10,
-    borderRadius: 3,
-    borderWidth: 2,
-    borderColor: "#FFFFFF",
-  },
-  clubTop: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    position: "absolute",
-    top: 2,
-    borderWidth: 2,
-    borderColor: "#FFFFFF",
-  },
-  clubRow: {
-    flexDirection: "row",
-    position: "absolute",
-    top: 10,
-  },
-  clubCircle: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    marginHorizontal: -1,
-    borderWidth: 2,
-    borderColor: "#FFFFFF",
-  },
-  clubStem: {
-    width: 6,
-    height: 12,
-    position: "absolute",
-    bottom: 0,
-    borderBottomLeftRadius: 4,
-    borderBottomRightRadius: 4,
-    borderWidth: 2,
-    borderColor: "#FFFFFF",
   },
 });
 
