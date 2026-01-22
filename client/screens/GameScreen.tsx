@@ -41,6 +41,7 @@ const TRACK_HEIGHT = 80;
 const GAME_SPEED_BASE = 3;
 const SPAWN_INTERVAL = 2000;
 const DIFFICULTY_INCREASE_INTERVAL = 5;
+const LEVEL_INCREASE_INTERVAL = 10;
 const MIN_OBSTACLE_GAP = 150;
 
 interface Obstacle {
@@ -60,6 +61,7 @@ export default function GameScreen() {
   
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [score, setScore] = useState(0);
+  const [level, setLevel] = useState(1);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [obstacles, setObstacles] = useState<Obstacle[]>([]);
@@ -267,6 +269,9 @@ export default function GameScreen() {
         if (newScore % DIFFICULTY_INCREASE_INTERVAL === 0) {
           gameSpeedRef.current = Math.min(gameSpeedRef.current + 0.3, 10);
         }
+        if (newScore % LEVEL_INCREASE_INTERVAL === 0) {
+          setLevel((prevLevel) => prevLevel + 1);
+        }
         scoreScale.value = withSpring(1.3, { damping: 8 }, () => {
           scoreScale.value = withSpring(1, { damping: 12 });
         });
@@ -283,6 +288,7 @@ export default function GameScreen() {
       setIsGameOver(false);
       isGameOverRef.current = false;
       setScore(0);
+      setLevel(1);
       setObstacles([]);
       currentTrackRef.current = "bottom";
       gameSpeedRef.current = GAME_SPEED_BASE;
@@ -362,6 +368,14 @@ export default function GameScreen() {
       </View>
 
       <View style={[styles.scoreContainer, { top: insets.top + Spacing.lg }]}>
+        <View style={styles.levelBadge}>
+          <LinearGradient
+            colors={[GameColors.primary, GameColors.primaryGlow]}
+            style={styles.levelGradient}
+          >
+            <ThemedText style={styles.levelText}>LVL {level}</ThemedText>
+          </LinearGradient>
+        </View>
         <Animated.View style={[styles.scoreBadge, scoreAnimatedStyle]}>
           <LinearGradient
             colors={[GameColors.gold, GameColors.goldGlow]}
@@ -619,6 +633,26 @@ const styles = StyleSheet.create({
     right: Spacing.xl,
     alignItems: "flex-end",
     zIndex: 10,
+  },
+  levelBadge: {
+    marginBottom: Spacing.sm,
+    borderRadius: BorderRadius.md,
+    overflow: "hidden",
+    shadowColor: GameColors.primary,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+  },
+  levelGradient: {
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.md,
+  },
+  levelText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#FFFFFF",
+    textAlign: "center",
   },
   scoreBadge: {
     borderRadius: BorderRadius.lg,
