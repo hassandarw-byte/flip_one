@@ -4,7 +4,6 @@ import {
   StyleSheet,
   Pressable,
   Dimensions,
-  Platform,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
@@ -12,14 +11,13 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
   withSpring,
-  runOnJS,
   Easing,
 } from "react-native-reanimated";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 
 import { ThemedText } from "@/components/ThemedText";
-import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
+import { GameColors, Spacing } from "@/constants/theme";
 import {
   getGameState,
   saveBestScore,
@@ -36,10 +34,10 @@ const { width, height } = Dimensions.get("window");
 
 const PLAYER_SIZE = 30;
 const TRACK_HEIGHT = 80;
-const OBSTACLE_WIDTH = 30;
-const GAME_SPEED_BASE = 4;
-const SPAWN_INTERVAL = 1500;
+const GAME_SPEED_BASE = 3;
+const SPAWN_INTERVAL = 2000;
 const DIFFICULTY_INCREASE_INTERVAL = 5;
+const MIN_OBSTACLE_GAP = 150;
 
 interface Obstacle {
   id: number;
@@ -53,26 +51,32 @@ interface Obstacle {
 export default function GameScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const route = useRoute();
   
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [score, setScore] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
-  const [currentTrack, setCurrentTrack] = useState<"top" | "bottom">("bottom");
   const [obstacles, setObstacles] = useState<Obstacle[]>([]);
-  const [gameSpeed, setGameSpeed] = useState(GAME_SPEED_BASE);
-  const [flipCount, setFlipCount] = useState(0);
+  
+  const currentTrackRef = useRef<"top" | "bottom">("bottom");
+  const gameSpeedRef = useRef(GAME_SPEED_BASE);
+  const flipCountRef = useRef(0);
+  const isGameOverRef = useRef(false);
+  const obstacleIdRef = useRef(0);
+  const lastObstacleXRef = useRef(width);
   
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
   const obstacleSpawnRef = useRef<NodeJS.Timeout | null>(null);
   const scoreIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const obstacleIdRef = useRef(0);
+  
   const playerX = width * 0.2;
 
   const worldRotation = useSharedValue(0);
   const playerBounce = useSharedValue(0);
   const scoreScale = useSharedValue(1);
+
+  const trackTopY = height / 2 - TRACK_HEIGHT - 30;
+  const trackBottomY = height / 2 + 30;
 
   useEffect(() => {
     loadGameState();
@@ -81,88 +85,67 @@ export default function GameScreen() {
     };
   }, []);
 
-  useEffect(() => {
-    if (!isPlaying || isGameOver) return;
-    startGame();
-    return () => cleanupGame();
-  }, [isPlaying, isGameOver]);
-
   const loadGameState = async () => {
     const state = await getGameState();
     setGameState(state);
   };
 
-  const startGame = () => {
-    gameLoopRef.current = setInterval(updateGame, 16);
-    obstacleSpawnRef.current = setInterval(spawnObstacle, SPAWN_INTERVAL);
-    scoreIntervalRef.current = setInterval(() => {
-      setScore((prev) => {
-        const newScore = prev + 1;
-        if (newScore % DIFFICULTY_INCREASE_INTERVAL === 0) {
-          setGameSpeed((s) => Math.min(s + 0.5, 12));
-        }
-        scoreScale.value = withSpring(1.2, { damping: 10 }, () => {
-          scoreScale.value = withSpring(1, { damping: 15 });
-        });
-        return newScore;
-      });
-    }, 500);
-  };
+  const cleanupGame = useCallback(() => {
+    if (gameLoopRef.current) {
+      clearInterval(gameLoopRef.current);
+      gameLoopRef.current = null;
+    }
+    if (obstacleSpawnRef.current) {
+      clearInterval(obstacleSpawnRef.current);
+      obstacleSpawnRef.current = null;
+    }
+    if (scoreIntervalRef.current) {
+      clearInterval(scoreIntervalRef.current);
+      scoreIntervalRef.current = null;
+    }
+  }, []);
 
-  const cleanupGame = () => {
-    if (gameLoopRef.current) clearInterval(gameLoopRef.current);
-    if (obstacleSpawnRef.current) clearInterval(obstacleSpawnRef.current);
-    if (scoreIntervalRef.current) clearInterval(scoreIntervalRef.current);
-  };
+  const spawnObstacle = useCallback(() => {
+    if (isGameOverRef.current) return;
 
-  const spawnObstacle = () => {
+    const currentObstacles = obstacles;
+    const rightmostX = currentObstacles.reduce((max, obs) => Math.max(max, obs.x), 0);
+    
+    if (rightmostX > width - MIN_OBSTACLE_GAP) return;
+
     const track = Math.random() > 0.5 ? "top" : "bottom";
-    const type = Math.random() > 0.5 ? "spike" : "block";
+    const type = Math.random() > 0.6 ? "spike" : "block";
     
     const newObstacle: Obstacle = {
       id: obstacleIdRef.current++,
-      x: width + OBSTACLE_WIDTH,
+      x: width + 50,
       track,
       type,
-      width: type === "spike" ? 20 : 40,
-      height: type === "spike" ? 30 : 25,
+      width: type === "spike" ? 25 : 35,
+      height: type === "spike" ? 25 : 20,
     };
 
     setObstacles((prev) => [...prev, newObstacle]);
-  };
+  }, [obstacles]);
 
-  const updateGame = () => {
-    setObstacles((prev) => {
-      const updated = prev
-        .map((obs) => ({ ...obs, x: obs.x - gameSpeed }))
-        .filter((obs) => obs.x > -OBSTACLE_WIDTH);
-
-      for (const obs of updated) {
-        if (checkCollision(obs)) {
-          handleGameOver();
-          return [];
-        }
-      }
-
-      return updated;
-    });
-  };
-
-  const checkCollision = (obstacle: Obstacle): boolean => {
+  const checkCollision = useCallback((obstacle: Obstacle): boolean => {
     const playerLeft = playerX - PLAYER_SIZE / 2;
     const playerRight = playerX + PLAYER_SIZE / 2;
     const obstacleLeft = obstacle.x - obstacle.width / 2;
     const obstacleRight = obstacle.x + obstacle.width / 2;
 
     const horizontalCollision =
-      playerRight > obstacleLeft && playerLeft < obstacleRight;
+      playerRight > obstacleLeft + 5 && playerLeft < obstacleRight - 5;
 
     if (!horizontalCollision) return false;
 
-    return obstacle.track === currentTrack;
-  };
+    return obstacle.track === currentTrackRef.current;
+  }, [playerX]);
 
-  const handleGameOver = async () => {
+  const handleGameOver = useCallback(async () => {
+    if (isGameOverRef.current) return;
+    
+    isGameOverRef.current = true;
     setIsGameOver(true);
     setIsPlaying(false);
     cleanupGame();
@@ -172,47 +155,122 @@ export default function GameScreen() {
     }
 
     await incrementTotalGames();
-    await incrementTotalFlips(flipCount);
+    await incrementTotalFlips(flipCountRef.current);
+    
+    const currentScore = score;
     
     if (gameState) {
       await updateMissionProgress("play_5", (gameState.totalGames || 0) + 1);
-      await updateMissionProgress("flip_50", (gameState.totalFlips || 0) + flipCount);
+      await updateMissionProgress("flip_50", (gameState.totalFlips || 0) + flipCountRef.current);
       
-      if (score >= 20) {
-        await updateMissionProgress("score_20", score);
+      if (currentScore >= 20) {
+        await updateMissionProgress("score_20", currentScore);
       }
 
-      if (score > gameState.bestScore) {
-        await saveBestScore(score);
+      if (currentScore > gameState.bestScore) {
+        await saveBestScore(currentScore);
       }
 
-      const pointsEarned = Math.floor(score / 2);
+      const pointsEarned = Math.floor(currentScore / 2);
       await savePoints(gameState.points + pointsEarned);
     }
 
     navigation.replace("GameOver", {
-      score,
+      score: currentScore,
       bestScore: gameState?.bestScore || 0,
-      isNewBest: score > (gameState?.bestScore || 0),
+      isNewBest: currentScore > (gameState?.bestScore || 0),
     });
-  };
+  }, [gameState, score, navigation, cleanupGame]);
+
+  const startGame = useCallback(() => {
+    gameLoopRef.current = setInterval(() => {
+      if (isGameOverRef.current) return;
+
+      setObstacles((prev) => {
+        const updated = prev
+          .map((obs) => ({ ...obs, x: obs.x - gameSpeedRef.current }))
+          .filter((obs) => obs.x > -50);
+
+        for (const obs of updated) {
+          const playerLeft = playerX - PLAYER_SIZE / 2;
+          const playerRight = playerX + PLAYER_SIZE / 2;
+          const obstacleLeft = obs.x - obs.width / 2;
+          const obstacleRight = obs.x + obs.width / 2;
+
+          const horizontalCollision =
+            playerRight > obstacleLeft + 5 && playerLeft < obstacleRight - 5;
+
+          if (horizontalCollision && obs.track === currentTrackRef.current) {
+            handleGameOver();
+            return [];
+          }
+        }
+
+        return updated;
+      });
+    }, 16);
+
+    obstacleSpawnRef.current = setInterval(() => {
+      if (isGameOverRef.current) return;
+      
+      const track: "top" | "bottom" = Math.random() > 0.5 ? "top" : "bottom";
+      const type = Math.random() > 0.6 ? "spike" : "block";
+      
+      const newObstacle: Obstacle = {
+        id: obstacleIdRef.current++,
+        x: width + 50,
+        track,
+        type,
+        width: type === "spike" ? 25 : 35,
+        height: type === "spike" ? 25 : 20,
+      };
+
+      setObstacles((prev) => {
+        const rightmostX = prev.reduce((max, obs) => Math.max(max, obs.x), 0);
+        if (rightmostX > width - MIN_OBSTACLE_GAP) return prev;
+        return [...prev, newObstacle];
+      });
+    }, SPAWN_INTERVAL);
+
+    scoreIntervalRef.current = setInterval(() => {
+      if (isGameOverRef.current) return;
+      
+      setScore((prev) => {
+        const newScore = prev + 1;
+        if (newScore % DIFFICULTY_INCREASE_INTERVAL === 0) {
+          gameSpeedRef.current = Math.min(gameSpeedRef.current + 0.3, 10);
+        }
+        scoreScale.value = withSpring(1.2, { damping: 10 }, () => {
+          scoreScale.value = withSpring(1, { damping: 15 });
+        });
+        return newScore;
+      });
+    }, 600);
+  }, [playerX, handleGameOver, scoreScale]);
 
   const handleFlip = useCallback(() => {
-    if (!isPlaying || isGameOver) {
+    if (isGameOverRef.current) return;
+
+    if (!isPlaying) {
       setIsPlaying(true);
       setIsGameOver(false);
+      isGameOverRef.current = false;
       setScore(0);
       setObstacles([]);
-      setGameSpeed(GAME_SPEED_BASE);
-      setFlipCount(0);
-      setCurrentTrack("bottom");
+      currentTrackRef.current = "bottom";
+      gameSpeedRef.current = GAME_SPEED_BASE;
+      flipCountRef.current = 0;
       worldRotation.value = 0;
+      
+      setTimeout(() => {
+        startGame();
+      }, 100);
       return;
     }
 
-    const newTrack = currentTrack === "bottom" ? "top" : "bottom";
-    setCurrentTrack(newTrack);
-    setFlipCount((prev) => prev + 1);
+    const newTrack = currentTrackRef.current === "bottom" ? "top" : "bottom";
+    currentTrackRef.current = newTrack;
+    flipCountRef.current += 1;
 
     if (gameState?.hapticsEnabled) {
       triggerFlipHaptic(true);
@@ -220,13 +278,13 @@ export default function GameScreen() {
 
     worldRotation.value = withTiming(
       newTrack === "top" ? 180 : 0,
-      { duration: 200, easing: Easing.out(Easing.cubic) }
+      { duration: 150, easing: Easing.out(Easing.cubic) }
     );
 
-    playerBounce.value = withSpring(-10, { damping: 5 }, () => {
-      playerBounce.value = withSpring(0, { damping: 10 });
+    playerBounce.value = withSpring(-8, { damping: 8 }, () => {
+      playerBounce.value = withSpring(0, { damping: 12 });
     });
-  }, [isPlaying, isGameOver, currentTrack, gameState]);
+  }, [isPlaying, gameState, worldRotation, playerBounce, startGame]);
 
   const worldAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ rotate: `${worldRotation.value}deg` }],
@@ -240,8 +298,7 @@ export default function GameScreen() {
     transform: [{ scale: scoreScale.value }],
   }));
 
-  const trackTopY = height / 2 - TRACK_HEIGHT - 20;
-  const trackBottomY = height / 2 + 20;
+  const currentTrack = currentTrackRef.current;
 
   return (
     <Pressable style={styles.container} onPress={handleFlip} testID="game-area">
@@ -273,17 +330,17 @@ export default function GameScreen() {
       </View>
 
       <Animated.View style={[styles.gameWorld, worldAnimatedStyle]}>
-        <View style={[styles.track, styles.trackTop, { top: trackTopY }]}>
+        <View style={[styles.track, { top: trackTopY }]}>
           <View style={[styles.trackLine, { backgroundColor: GameColors.trackTop }]} />
           <View style={styles.spikesContainer}>
-            {Array.from({ length: 20 }).map((_, i) => (
+            {Array.from({ length: 25 }).map((_, i) => (
               <View key={i} style={[styles.trackSpike, { borderBottomColor: GameColors.trackTop }]} />
             ))}
           </View>
         </View>
 
-        <View style={[styles.track, styles.trackBottom, { top: trackBottomY }]}>
-          <View style={[styles.trackLine, { backgroundColor: GameColors.trackBottom }]} />
+        <View style={[styles.track, { top: trackBottomY }]}>
+          <View style={[styles.trackLineBottom, { backgroundColor: GameColors.trackBottom }]} />
         </View>
 
         {obstacles.map((obs) => (
@@ -296,10 +353,18 @@ export default function GameScreen() {
                 left: obs.x - obs.width / 2,
                 top:
                   obs.track === "top"
-                    ? trackTopY + TRACK_HEIGHT - obs.height
-                    : trackBottomY,
+                    ? trackTopY + TRACK_HEIGHT - obs.height - 4
+                    : trackBottomY + 4,
                 width: obs.width,
                 height: obs.height,
+                backgroundColor: obs.type === "block" ? GameColors.obstacle : "transparent",
+              },
+              obs.type === "spike" && {
+                borderLeftWidth: obs.width / 2,
+                borderRightWidth: obs.width / 2,
+                borderBottomWidth: obs.height,
+                borderBottomColor: GameColors.obstacle,
+                transform: obs.track === "top" ? [{ rotate: "180deg" }] : [],
               },
             ]}
           />
@@ -313,8 +378,8 @@ export default function GameScreen() {
               left: playerX - PLAYER_SIZE / 2,
               top:
                 currentTrack === "bottom"
-                  ? trackBottomY - PLAYER_SIZE
-                  : trackTopY + TRACK_HEIGHT,
+                  ? trackBottomY - PLAYER_SIZE + 4
+                  : trackTopY + TRACK_HEIGHT - 4,
             },
           ]}
         />
@@ -324,7 +389,7 @@ export default function GameScreen() {
         <View style={styles.tapToStartContainer}>
           <ThemedText style={styles.tapToStartText}>TAP TO START</ThemedText>
           <ThemedText style={styles.instructionText}>
-            Tap to flip gravity
+            Tap to flip gravity and avoid obstacles
           </ThemedText>
         </View>
       ) : null}
@@ -377,11 +442,16 @@ const styles = StyleSheet.create({
     right: 0,
     height: TRACK_HEIGHT,
   },
-  trackTop: {},
-  trackBottom: {},
   trackLine: {
     position: "absolute",
     bottom: 0,
+    left: 0,
+    right: 0,
+    height: 4,
+  },
+  trackLineBottom: {
+    position: "absolute",
+    top: 0,
     left: 0,
     right: 0,
     height: 4,
@@ -396,12 +466,12 @@ const styles = StyleSheet.create({
   trackSpike: {
     width: 0,
     height: 0,
-    borderLeftWidth: 8,
-    borderRightWidth: 8,
-    borderBottomWidth: 12,
+    borderLeftWidth: 6,
+    borderRightWidth: 6,
+    borderBottomWidth: 10,
     borderLeftColor: "transparent",
     borderRightColor: "transparent",
-    marginHorizontal: 4,
+    marginHorizontal: 2,
   },
   player: {
     position: "absolute",
@@ -416,22 +486,14 @@ const styles = StyleSheet.create({
   },
   obstacle: {
     position: "absolute",
+    borderRadius: 2,
   },
   spikeObstacle: {
-    width: 0,
-    height: 0,
     backgroundColor: "transparent",
-    borderLeftWidth: 10,
-    borderRightWidth: 10,
-    borderBottomWidth: 30,
     borderLeftColor: "transparent",
     borderRightColor: "transparent",
-    borderBottomColor: GameColors.obstacle,
   },
-  blockObstacle: {
-    backgroundColor: GameColors.obstacle,
-    borderRadius: 4,
-  },
+  blockObstacle: {},
   tapToStartContainer: {
     position: "absolute",
     top: 0,
@@ -440,7 +502,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0,0,0,0.6)",
   },
   tapToStartText: {
     fontSize: 32,
@@ -455,5 +517,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: GameColors.textSecondary,
     marginTop: Spacing.lg,
+    textAlign: "center",
+    paddingHorizontal: Spacing.xl,
   },
 });
