@@ -206,8 +206,8 @@ const getMockProducts = (): Product[] => [
     productId: PRODUCT_IDS.REMOVE_ADS,
     title: "Remove Ads",
     description: "Remove all ads permanently",
-    price: "$2.99",
-    priceAmount: 2.99,
+    price: "$0.99",
+    priceAmount: 0.99,
     currency: "USD",
   },
   {
