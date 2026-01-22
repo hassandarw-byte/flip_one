@@ -105,3 +105,10 @@ The app runs on Expo and can be tested via:
 - Removed "Restore Purchases" from Settings
 - Removed "Thunder God" character from premium skins
 - Daily power usage tracking resets each day
+- Removed "Tap To Start" screen - game starts automatically
+- Home screen logo now has rounded corners matching splash screen (borderRadius: 36)
+- Night Mode applied to all screens (Splash, Home, Game) via NightModeContext
+- Points badge now visible in game screen HUD
+- Horizontal score layout in game: Level | Score | Best | Points
+- Bottom decorations in game: animated colored dots and "F L I P O N E" word pattern
+- AdModal component for simulated ads (powers and extra life)

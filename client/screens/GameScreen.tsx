@@ -62,10 +62,10 @@ export default function GameScreen() {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [obstacles, setObstacles] = useState<Obstacle[]>([]);
-  const [gameStarted, setGameStarted] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   
   const currentTrackRef = useRef<"top" | "bottom">("bottom");
   const gameSpeedRef = useRef(GAME_SPEED_BASE);
@@ -92,19 +92,23 @@ export default function GameScreen() {
     loadGameState();
     startSparkleAnimation();
     
-    // Start game immediately
+    // Small delay then start game automatically
     const timer = setTimeout(() => {
-      if (!gameStarted) {
-        setGameStarted(true);
-        startGame();
-      }
-    }, 300);
+      setIsReady(true);
+    }, 500);
     
     return () => {
       clearTimeout(timer);
       cleanupGame();
     };
   }, []);
+  
+  useEffect(() => {
+    if (isReady && !isPlaying && !isGameOver) {
+      setIsPlaying(true);
+      startGame();
+    }
+  }, [isReady]);
 
   const loadGameState = async () => {
     const state = await getGameState();
@@ -294,22 +298,7 @@ export default function GameScreen() {
   const handleFlip = useCallback(() => {
     if (isGameOverRef.current) return;
 
-    if (!gameStarted) {
-      setGameStarted(true);
-      setIsPlaying(true);
-      setIsGameOver(false);
-      isGameOverRef.current = false;
-      setScore(0);
-      setLevel(1);
-      setObstacles([]);
-      currentTrackRef.current = "bottom";
-      gameSpeedRef.current = GAME_SPEED_BASE;
-      flipCountRef.current = 0;
-      worldRotation.value = 0;
-      
-      setTimeout(() => {
-        startGame();
-      }, 100);
+    if (!isPlaying) {
       return;
     }
 
