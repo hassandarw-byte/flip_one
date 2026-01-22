@@ -5,6 +5,7 @@ import {
   Modal,
   Pressable,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
@@ -18,6 +19,7 @@ import Animated, {
 
 import { ThemedText } from "@/components/ThemedText";
 import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
+import { showRewardedAd, loadRewardedAd } from "@/lib/ads";
 
 const { width } = Dimensions.get("window");
 
@@ -29,44 +31,84 @@ interface AdModalProps {
 }
 
 const AD_DURATION = 3;
+const IS_DEVELOPMENT_BUILD = false;
 
 export default function AdModal({ visible, onClose, onComplete, rewardName }: AdModalProps) {
   const [countdown, setCountdown] = useState(AD_DURATION);
   const [canClose, setCanClose] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [adFailed, setAdFailed] = useState(false);
   
   const progressWidth = useSharedValue(0);
   const pulseOpacity = useSharedValue(0.3);
   
   useEffect(() => {
     if (visible) {
-      setCountdown(AD_DURATION);
-      setCanClose(false);
-      progressWidth.value = 0;
-      
-      progressWidth.value = withTiming(1, { duration: AD_DURATION * 1000 });
-      pulseOpacity.value = withRepeat(
-        withSequence(
-          withTiming(0.6, { duration: 500 }),
-          withTiming(0.3, { duration: 500 })
-        ),
-        -1,
-        true
-      );
-      
-      const timer = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            setCanClose(true);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      
-      return () => clearInterval(timer);
+      if (IS_DEVELOPMENT_BUILD) {
+        showRealAd();
+      } else {
+        showSimulatedAd();
+      }
     }
   }, [visible]);
+
+  const showRealAd = async () => {
+    setIsLoading(true);
+    setAdFailed(false);
+    
+    try {
+      const loaded = await loadRewardedAd();
+      if (!loaded) {
+        setAdFailed(true);
+        setIsLoading(false);
+        return;
+      }
+
+      const rewarded = await showRewardedAd();
+      setIsLoading(false);
+      
+      if (rewarded) {
+        onComplete();
+        onClose();
+      } else {
+        setAdFailed(true);
+      }
+    } catch (error) {
+      console.log("Ad error:", error);
+      setIsLoading(false);
+      setAdFailed(true);
+    }
+  };
+
+  const showSimulatedAd = () => {
+    setCountdown(AD_DURATION);
+    setCanClose(false);
+    setAdFailed(false);
+    progressWidth.value = 0;
+    
+    progressWidth.value = withTiming(1, { duration: AD_DURATION * 1000 });
+    pulseOpacity.value = withRepeat(
+      withSequence(
+        withTiming(0.6, { duration: 500 }),
+        withTiming(0.3, { duration: 500 })
+      ),
+      -1,
+      true
+    );
+    
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setCanClose(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    
+    return () => clearInterval(timer);
+  };
   
   const progressStyle = useAnimatedStyle(() => ({
     width: `${progressWidth.value * 100}%`,
@@ -80,6 +122,66 @@ export default function AdModal({ visible, onClose, onComplete, rewardName }: Ad
     onComplete();
     onClose();
   };
+
+  const handleRetry = () => {
+    if (IS_DEVELOPMENT_BUILD) {
+      showRealAd();
+    } else {
+      showSimulatedAd();
+    }
+  };
+
+  if (IS_DEVELOPMENT_BUILD && isLoading) {
+    return (
+      <Modal visible={visible} transparent animationType="fade">
+        <View style={styles.overlay}>
+          <LinearGradient
+            colors={[GameColors.backgroundGradientStart, GameColors.backgroundGradientEnd]}
+            style={styles.container}
+          >
+            <View style={styles.content}>
+              <ActivityIndicator size="large" color={GameColors.gold} />
+              <ThemedText style={styles.title}>Loading Ad...</ThemedText>
+              <ThemedText style={styles.rewardText}>Please wait</ThemedText>
+            </View>
+          </LinearGradient>
+        </View>
+      </Modal>
+    );
+  }
+
+  if (adFailed) {
+    return (
+      <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+        <View style={styles.overlay}>
+          <LinearGradient
+            colors={[GameColors.backgroundGradientStart, GameColors.backgroundGradientEnd]}
+            style={styles.container}
+          >
+            <View style={styles.content}>
+              <Feather name="alert-circle" size={80} color={GameColors.spike} />
+              <ThemedText style={styles.title}>Ad Not Available</ThemedText>
+              <ThemedText style={styles.rewardText}>Please try again later</ThemedText>
+              
+              <Pressable style={styles.claimButton} onPress={handleRetry}>
+                <LinearGradient
+                  colors={[GameColors.primary, GameColors.primaryGlow]}
+                  style={styles.claimButtonGradient}
+                >
+                  <Feather name="refresh-cw" size={24} color="#FFFFFF" />
+                  <ThemedText style={styles.claimButtonText}>Try Again</ThemedText>
+                </LinearGradient>
+              </Pressable>
+              
+              <Pressable onPress={onClose}>
+                <ThemedText style={styles.closeText}>Close</ThemedText>
+              </Pressable>
+            </View>
+          </LinearGradient>
+        </View>
+      </Modal>
+    );
+  }
   
   return (
     <Modal
@@ -137,9 +239,11 @@ export default function AdModal({ visible, onClose, onComplete, rewardName }: Ad
               </Pressable>
             )}
             
-            <ThemedText style={styles.disclaimerText}>
-              This is a simulated ad. Real ads require AdMob integration.
-            </ThemedText>
+            {!IS_DEVELOPMENT_BUILD && (
+              <ThemedText style={styles.disclaimerText}>
+                Simulated ad. Real ads work in production build.
+              </ThemedText>
+            )}
           </View>
         </LinearGradient>
       </View>
@@ -229,5 +333,10 @@ const styles = StyleSheet.create({
     color: GameColors.textMuted,
     textAlign: "center",
     fontStyle: "italic",
+  },
+  closeText: {
+    fontSize: 14,
+    color: GameColors.textSecondary,
+    marginTop: Spacing.md,
   },
 });
