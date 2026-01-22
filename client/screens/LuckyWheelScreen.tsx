@@ -29,11 +29,11 @@ const { width, height } = Dimensions.get("window");
 
 const WHEEL_SEGMENTS = [
   { label: "25", color: "#FF6B6B", type: "points" },
-  { label: "قوة", color: "#4ECDC4", type: "power" },
+  { label: "PWR", color: "#4ECDC4", type: "power" },
   { label: "50", color: "#FFE66D", type: "points" },
-  { label: "قوة", color: "#95E1D3", type: "power" },
+  { label: "PWR", color: "#95E1D3", type: "power" },
   { label: "75", color: "#F38181", type: "points" },
-  { label: "قوة", color: "#AA96DA", type: "power" },
+  { label: "PWR", color: "#AA96DA", type: "power" },
   { label: "100", color: "#FCBAD3", type: "points" },
   { label: "150", color: "#FFD700", type: "points" },
 ];
@@ -106,8 +106,8 @@ export default function LuckyWheelScreen() {
 
   const getRewardText = () => {
     if (!reward) return "";
-    if (reward.type === "points") return `+${reward.reward} نقطة!`;
-    if (reward.type === "power") return "قوة مجانية!";
+    if (reward.type === "points") return `+${reward.reward} Points!`;
+    if (reward.type === "power") return "Free Power!";
     return `+${reward.reward}`;
   };
 
@@ -119,7 +119,7 @@ export default function LuckyWheelScreen() {
         <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
           <Feather name="arrow-left" size={24} color="#FFFFFF" />
         </Pressable>
-        <ThemedText style={styles.title}>عجلة الحظ</ThemedText>
+        <ThemedText style={styles.title}>Lucky Wheel</ThemedText>
         <View style={styles.pointsBadge}>
           <Feather name="star" size={16} color={GameColors.gold} />
           <ThemedText style={styles.pointsText}>{points}</ThemedText>
@@ -193,7 +193,7 @@ export default function LuckyWheelScreen() {
           style={styles.spinButtonGradient}
         >
           <ThemedText style={styles.spinButtonText}>
-            {isSpinning ? "جاري اللف..." : canSpin ? "لف العجلة!" : "عد غداً!"}
+            {isSpinning ? "Spinning..." : canSpin ? "SPIN!" : "Come Back Tomorrow!"}
           </ThemedText>
         </LinearGradient>
       </Pressable>

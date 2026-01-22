@@ -272,13 +272,13 @@ export default function HomeScreen() {
         <View style={styles.secondaryMenuRow}>
           <MenuButton
             icon="gift"
-            label="عجلة الحظ"
+            label="Wheel"
             onPress={() => navigation.navigate("LuckyWheel")}
             colors={["#FF9F43", "#F39C12"]}
           />
           <MenuButton
             icon="star"
-            label="الإنجازات"
+            label="Awards"
             onPress={() => navigation.navigate("Achievements")}
             colors={["#9B59B6", "#8E44AD"]}
           />

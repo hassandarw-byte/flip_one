@@ -51,7 +51,7 @@ export default function AchievementsScreen() {
         <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
           <Feather name="arrow-left" size={24} color="#FFFFFF" />
         </Pressable>
-        <ThemedText style={styles.title}>الإنجازات</ThemedText>
+        <ThemedText style={styles.title}>Achievements</ThemedText>
         <View style={styles.pointsBadge}>
           <Feather name="star" size={16} color={GameColors.gold} />
           <ThemedText style={styles.pointsText}>{points}</ThemedText>
@@ -61,11 +61,11 @@ export default function AchievementsScreen() {
       <View style={styles.statsRow}>
         <View style={styles.statBadge}>
           <ThemedText style={styles.statNumber}>{unlockedCount}/{achievements.length}</ThemedText>
-          <ThemedText style={styles.statLabel}>مفتوح</ThemedText>
+          <ThemedText style={styles.statLabel}>Unlocked</ThemedText>
         </View>
         <View style={styles.statBadge}>
           <ThemedText style={styles.statNumber}>{totalRewards}</ThemedText>
-          <ThemedText style={styles.statLabel}>نقاط مكتسبة</ThemedText>
+          <ThemedText style={styles.statLabel}>Points Earned</ThemedText>
         </View>
       </View>
 

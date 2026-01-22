@@ -71,16 +71,16 @@ const DEFAULT_SKIN = "default";
 
 function generateDefaultAchievements(): Achievement[] {
   return [
-    { id: "first_game", title: "البداية", description: "العب أول لعبة", icon: "play", reward: 25, unlocked: false },
-    { id: "score_50", title: "مبتدئ", description: "سجل 50 نقطة في لعبة واحدة", icon: "star", reward: 100, unlocked: false },
-    { id: "score_100", title: "محترف", description: "سجل 100 نقطة في لعبة واحدة", icon: "award", reward: 250, unlocked: false },
-    { id: "games_10", title: "مدمن", description: "العب 10 ألعاب", icon: "refresh-cw", reward: 75, unlocked: false },
-    { id: "games_50", title: "مهووس", description: "العب 50 لعبة", icon: "zap", reward: 200, unlocked: false },
-    { id: "flips_100", title: "القلاب", description: "اقلب 100 مرة", icon: "rotate-cw", reward: 50, unlocked: false },
-    { id: "flips_500", title: "أسطورة القلب", description: "اقلب 500 مرة", icon: "heart", reward: 150, unlocked: false },
-    { id: "streak_3", title: "متابع", description: "العب 3 أيام متتالية", icon: "calendar", reward: 100, unlocked: false },
-    { id: "streak_7", title: "مخلص", description: "العب 7 أيام متتالية", icon: "gift", reward: 300, unlocked: false },
-    { id: "combo_5", title: "كومبو ماستر", description: "حقق كومبو x5", icon: "trending-up", reward: 75, unlocked: false },
+    { id: "first_game", title: "First Steps", description: "Play your first game", icon: "play", reward: 25, unlocked: false },
+    { id: "score_50", title: "Beginner", description: "Score 50 points in one game", icon: "star", reward: 100, unlocked: false },
+    { id: "score_100", title: "Pro Player", description: "Score 100 points in one game", icon: "award", reward: 250, unlocked: false },
+    { id: "games_10", title: "Hooked", description: "Play 10 games", icon: "refresh-cw", reward: 75, unlocked: false },
+    { id: "games_50", title: "Addicted", description: "Play 50 games", icon: "zap", reward: 200, unlocked: false },
+    { id: "flips_100", title: "Flipper", description: "Flip 100 times", icon: "rotate-cw", reward: 50, unlocked: false },
+    { id: "flips_500", title: "Flip Legend", description: "Flip 500 times", icon: "heart", reward: 150, unlocked: false },
+    { id: "streak_3", title: "Regular", description: "Play 3 days in a row", icon: "calendar", reward: 100, unlocked: false },
+    { id: "streak_7", title: "Devoted", description: "Play 7 days in a row", icon: "gift", reward: 300, unlocked: false },
+    { id: "combo_5", title: "Combo Master", description: "Achieve a x5 combo", icon: "trending-up", reward: 75, unlocked: false },
   ];
 }
 
