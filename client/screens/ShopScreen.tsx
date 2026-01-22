@@ -23,6 +23,7 @@ import Animated, {
 import * as Haptics from "expo-haptics";
 
 import { ThemedText } from "@/components/ThemedText";
+import AdModal from "@/components/AdModal";
 import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import {
   getGameState,
@@ -119,6 +120,8 @@ export default function ShopScreen() {
   const { backgroundGradient } = useNightMode();
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [activeTab, setActiveTab] = useState<"skins" | "premium" | "powers">("skins");
+  const [adModalVisible, setAdModalVisible] = useState(false);
+  const [selectedPower, setSelectedPower] = useState<PowerItem | null>(null);
 
   useEffect(() => {
     loadGameState();
@@ -171,7 +174,7 @@ export default function ShopScreen() {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   };
 
-  const handleWatchAd = async (power: PowerItem) => {
+  const handleWatchAd = (power: PowerItem) => {
     if (!gameState) return;
     
     if (gameState.powersUsedToday.includes(power.id)) {
@@ -179,16 +182,22 @@ export default function ShopScreen() {
       return;
     }
 
-    const success = await usePower(power.id);
+    setSelectedPower(power);
+    setAdModalVisible(true);
+  };
+
+  const handleAdComplete = async () => {
+    if (!gameState || !selectedPower) return;
+
+    const success = await usePower(selectedPower.id);
     if (success) {
       setGameState({
         ...gameState,
-        powersUsedToday: [...gameState.powersUsedToday, power.id],
+        powersUsedToday: [...gameState.powersUsedToday, selectedPower.id],
       });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } else {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
+    setSelectedPower(null);
   };
 
   const renderSkinItem = ({ item, index }: { item: SkinItem; index: number }) => {
@@ -316,6 +325,13 @@ export default function ShopScreen() {
           ))}
         </ScrollView>
       )}
+
+      <AdModal
+        visible={adModalVisible}
+        onClose={() => setAdModalVisible(false)}
+        onComplete={handleAdComplete}
+        rewardName={selectedPower?.name || "Power"}
+      />
     </LinearGradient>
   );
 }

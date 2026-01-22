@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -21,6 +21,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 
 import { ThemedText } from "@/components/ThemedText";
+import AdModal from "@/components/AdModal";
 import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import { triggerSuccessHaptic } from "@/lib/sounds";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
@@ -34,6 +35,8 @@ export default function GameOverScreen() {
   const route = useRoute<RouteProp<RootStackParamList, "GameOver">>();
   
   const { score, bestScore, isNewBest } = route.params;
+  
+  const [adModalVisible, setAdModalVisible] = useState(false);
   
   const scoreScale = useSharedValue(0);
   const newBestScale = useSharedValue(0);
@@ -98,6 +101,10 @@ export default function GameOverScreen() {
   };
 
   const handleWatchAd = () => {
+    setAdModalVisible(true);
+  };
+
+  const handleAdComplete = () => {
     navigation.replace("Game");
   };
 
@@ -196,6 +203,13 @@ export default function GameOverScreen() {
           </View>
         </LinearGradient>
       </Animated.View>
+
+      <AdModal
+        visible={adModalVisible}
+        onClose={() => setAdModalVisible(false)}
+        onComplete={handleAdComplete}
+        rewardName="Extra Life"
+      />
     </View>
   );
 }
