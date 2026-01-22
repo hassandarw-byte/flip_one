@@ -45,6 +45,7 @@ export interface GameState {
   totalFlips: number;
   totalGames: number;
   powersUsedToday: string[];
+  lastPowerDate: string;
 }
 
 const DEFAULT_SKINS = ["default"];
@@ -151,6 +152,7 @@ export async function getGameState(): Promise<GameState> {
       totalFlips: totalFlips ? parseInt(totalFlips, 10) : 0,
       totalGames: totalGames ? parseInt(totalGames, 10) : 0,
       powersUsedToday: usedPowers,
+      lastPowerDate: lastPowerDate || "",
     };
   } catch (error) {
     console.error("Error loading game state:", error);
@@ -168,6 +170,7 @@ export async function getGameState(): Promise<GameState> {
       totalFlips: 0,
       totalGames: 0,
       powersUsedToday: [],
+      lastPowerDate: "",
     };
   }
 }

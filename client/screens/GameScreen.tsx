@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Pressable,
   Dimensions,
+  TouchableOpacity,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -15,9 +16,11 @@ import Animated, {
   withRepeat,
   withSequence,
   Easing,
+  runOnJS,
 } from "react-native-reanimated";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
+import { Feather } from "@expo/vector-icons";
 
 import { ThemedText } from "@/components/ThemedText";
 import { GameColors, Spacing, BorderRadius, SkinColors } from "@/constants/theme";
@@ -33,6 +36,18 @@ import {
 import { triggerFlipHaptic, triggerGameOverHaptic } from "@/lib/sounds";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useNightMode } from "@/contexts/NightModeContext";
+
+const POWER_COLORS = {
+  freeze: { primary: "#00D4FF", secondary: "#0099CC", glow: "#00D4FF" },
+  slow: { primary: "#FFB800", secondary: "#FF8C00", glow: "#FFB800" },
+  shield: { primary: "#9B59B6", secondary: "#8E44AD", glow: "#9B59B6" },
+  double: { primary: "#2ECC71", secondary: "#27AE60", glow: "#2ECC71" },
+};
+
+interface ActivePower {
+  type: "freeze" | "slow" | "shield" | "double";
+  expiresAt: number;
+}
 
 const { width, height } = Dimensions.get("window");
 
@@ -77,8 +92,14 @@ export default function GameScreen() {
   const [obstacles, setObstacles] = useState<Obstacle[]>([]);
   const [isReady, setIsReady] = useState(false);
   const [floatingParticles, setFloatingParticles] = useState<FloatingParticle[]>([]);
+  const [availablePowers, setAvailablePowers] = useState<string[]>([]);
+  const [activePowers, setActivePowers] = useState<ActivePower[]>([]);
+  const [hasShield, setHasShield] = useState(false);
+  const [doublePointsActive, setDoublePointsActive] = useState(false);
   
   const currentTrackRef = useRef<"top" | "bottom">("bottom");
+  const freezeActiveRef = useRef(false);
+  const originalSpeedRef = useRef(GAME_SPEED_BASE);
   const gameSpeedRef = useRef(GAME_SPEED_BASE);
   const flipCountRef = useRef(0);
   const isGameOverRef = useRef(false);
@@ -124,6 +145,18 @@ export default function GameScreen() {
   const loadGameState = async () => {
     const state = await getGameState();
     setGameState(state);
+    
+    const today = new Date().toISOString().split("T")[0];
+    const allPowers = ["freeze", "slow", "shield", "double"];
+    const usedToday = state.powersUsedToday || [];
+    const lastDate = state.lastPowerDate;
+    
+    if (lastDate !== today) {
+      setAvailablePowers(allPowers);
+    } else {
+      const available = allPowers.filter(p => !usedToday.includes(p));
+      setAvailablePowers(available);
+    }
   };
 
   const getPlayerColors = (): [string, string, string] => {
@@ -141,6 +174,53 @@ export default function GameScreen() {
     
     return SkinColors.default;
   };
+
+  const activatePower = useCallback((powerType: "freeze" | "slow" | "shield" | "double") => {
+    if (!availablePowers.includes(powerType) || !isPlaying) return;
+    
+    setAvailablePowers(prev => prev.filter(p => p !== powerType));
+    
+    if (gameState?.hapticsEnabled) {
+      triggerFlipHaptic(true);
+    }
+    
+    const now = Date.now();
+    
+    switch (powerType) {
+      case "freeze":
+        freezeActiveRef.current = true;
+        setActivePowers(prev => [...prev, { type: "freeze", expiresAt: now + 3000 }]);
+        setTimeout(() => {
+          freezeActiveRef.current = false;
+          setActivePowers(prev => prev.filter(p => p.type !== "freeze"));
+        }, 3000);
+        break;
+        
+      case "slow":
+        originalSpeedRef.current = gameSpeedRef.current;
+        gameSpeedRef.current = gameSpeedRef.current * 0.5;
+        setActivePowers(prev => [...prev, { type: "slow", expiresAt: now + 5000 }]);
+        setTimeout(() => {
+          gameSpeedRef.current = originalSpeedRef.current;
+          setActivePowers(prev => prev.filter(p => p.type !== "slow"));
+        }, 5000);
+        break;
+        
+      case "shield":
+        setHasShield(true);
+        setActivePowers(prev => [...prev, { type: "shield", expiresAt: now + 60000 }]);
+        break;
+        
+      case "double":
+        setDoublePointsActive(true);
+        setActivePowers(prev => [...prev, { type: "double", expiresAt: now + 30000 }]);
+        setTimeout(() => {
+          setDoublePointsActive(false);
+          setActivePowers(prev => prev.filter(p => p.type !== "double"));
+        }, 30000);
+        break;
+    }
+  }, [availablePowers, isPlaying, gameState?.hapticsEnabled]);
 
   const startSparkleAnimation = () => {
     sparkleOpacity.value = withRepeat(
@@ -245,6 +325,10 @@ export default function GameScreen() {
       );
 
       setObstacles((prev) => {
+        if (freezeActiveRef.current) {
+          return prev;
+        }
+        
         const updated = prev
           .map((obs) => ({ ...obs, x: obs.x - gameSpeedRef.current }))
           .filter((obs) => obs.x > -50);
@@ -263,6 +347,11 @@ export default function GameScreen() {
             playerRight > obstacleLeft + 5 && playerLeft < obstacleRight - 5;
 
           if (horizontalCollision && obs.track === currentTrackRef.current) {
+            if (hasShield) {
+              setHasShield(false);
+              setActivePowers(p => p.filter(pw => pw.type !== "shield"));
+              return updated.filter(o => o.id !== obs.id);
+            }
             handleGameOver();
             return [];
           }
@@ -311,11 +400,11 @@ export default function GameScreen() {
       if (isGameOverRef.current) return;
       
       setScore((prev) => {
-        const newScore = prev + 1;
+        const increment = doublePointsActive ? 2 : 1;
+        const newScore = prev + increment;
         if (newScore % LEVEL_INCREASE_INTERVAL === 0) {
           setLevel((prevLevel) => {
             const newLevel = prevLevel + 1;
-            // Increase speed every 5 levels
             if (newLevel % 5 === 0) {
               gameSpeedRef.current = Math.min(gameSpeedRef.current + 0.5, 12);
             }
@@ -516,49 +605,148 @@ export default function GameScreen() {
         </Animated.View>
       </Animated.View>
 
-      <View style={[styles.bottomDecorations, { bottom: insets.bottom + Spacing.xl }]}>
-        <View style={styles.decorationRow}>
-          {Array.from({ length: 8 }).map((_, i) => (
-            <Animated.View
-              key={`deco-${i}`}
-              style={[
-                styles.decorationItem,
-                sparkleStyle,
-                {
-                  backgroundColor: [
-                    GameColors.candy1,
-                    GameColors.candy2,
-                    GameColors.candy3,
-                    GameColors.candy4,
-                    GameColors.candy5,
-                    GameColors.primary,
-                    GameColors.secondary,
-                    GameColors.gold,
-                  ][i % 8],
-                },
-              ]}
-            />
-          ))}
-        </View>
-        <View style={styles.wordPatternRow}>
-          <ThemedText style={styles.wordPattern}>F</ThemedText>
-          <View style={styles.wordDot} />
-          <ThemedText style={styles.wordPattern}>L</ThemedText>
-          <View style={styles.wordDot} />
-          <ThemedText style={styles.wordPattern}>I</ThemedText>
-          <View style={styles.wordDot} />
-          <ThemedText style={styles.wordPattern}>P</ThemedText>
-          <View style={styles.wordSpacer} />
-          <ThemedText style={styles.wordPattern}>O</ThemedText>
-          <View style={styles.wordDot} />
-          <ThemedText style={styles.wordPattern}>N</ThemedText>
-          <View style={styles.wordDot} />
-          <ThemedText style={styles.wordPattern}>E</ThemedText>
-        </View>
+      <View style={[styles.powerButtonsContainer, { bottom: insets.bottom + Spacing.md }]}>
+        <PowerButton 
+          type="freeze" 
+          icon="pause" 
+          available={availablePowers.includes("freeze")}
+          active={activePowers.some(p => p.type === "freeze")}
+          onPress={() => activatePower("freeze")}
+        />
+        <PowerButton 
+          type="slow" 
+          icon="clock" 
+          available={availablePowers.includes("slow")}
+          active={activePowers.some(p => p.type === "slow")}
+          onPress={() => activatePower("slow")}
+        />
+        <PowerButton 
+          type="shield" 
+          icon="shield" 
+          available={availablePowers.includes("shield")}
+          active={hasShield}
+          onPress={() => activatePower("shield")}
+        />
+        <PowerButton 
+          type="double" 
+          icon="zap" 
+          available={availablePowers.includes("double")}
+          active={doublePointsActive}
+          onPress={() => activatePower("double")}
+        />
       </View>
     </Pressable>
   );
 }
+
+interface PowerButtonProps {
+  type: "freeze" | "slow" | "shield" | "double";
+  icon: keyof typeof Feather.glyphMap;
+  available: boolean;
+  active: boolean;
+  onPress: () => void;
+}
+
+function PowerButton({ type, icon, available, active, onPress }: PowerButtonProps) {
+  const colors = POWER_COLORS[type];
+  const glowOpacity = useSharedValue(0.3);
+  
+  useEffect(() => {
+    if (active) {
+      glowOpacity.value = withRepeat(
+        withSequence(
+          withTiming(1, { duration: 500 }),
+          withTiming(0.3, { duration: 500 })
+        ),
+        -1,
+        true
+      );
+    } else {
+      glowOpacity.value = 0.3;
+    }
+  }, [active]);
+  
+  const glowStyle = useAnimatedStyle(() => ({
+    opacity: glowOpacity.value,
+  }));
+  
+  const isDisabled = !available || active;
+  
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      disabled={isDisabled}
+      activeOpacity={0.8}
+      style={[
+        powerStyles.button,
+        isDisabled && powerStyles.buttonDisabled,
+      ]}
+    >
+      {available && !active ? (
+        <Animated.View style={[powerStyles.glow, glowStyle, { backgroundColor: colors.glow }]} />
+      ) : null}
+      <LinearGradient
+        colors={available ? [colors.primary, colors.secondary] : ["#444", "#333"]}
+        style={powerStyles.gradient}
+      >
+        <Feather 
+          name={icon} 
+          size={20} 
+          color={available ? "#FFFFFF" : "#666"} 
+        />
+      </LinearGradient>
+      {active ? (
+        <View style={[powerStyles.activeBadge, { backgroundColor: colors.primary }]}>
+          <ThemedText style={powerStyles.activeBadgeText}>ON</ThemedText>
+        </View>
+      ) : null}
+    </TouchableOpacity>
+  );
+}
+
+const powerStyles = StyleSheet.create({
+  button: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+  },
+  glow: {
+    position: "absolute",
+    top: -6,
+    left: -6,
+    right: -6,
+    bottom: -6,
+    borderRadius: 34,
+  },
+  gradient: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "rgba(255,255,255,0.3)",
+  },
+  activeBadge: {
+    position: "absolute",
+    top: -4,
+    right: -4,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 8,
+  },
+  activeBadgeText: {
+    fontSize: 8,
+    fontWeight: "800",
+    color: "#FFFFFF",
+  },
+});
 
 function ObstacleShape({ obstacle }: { obstacle: Obstacle }) {
   const { type, colors, width: w, height: h } = obstacle;
@@ -928,5 +1116,16 @@ const styles = StyleSheet.create({
   },
   wordSpacer: {
     width: Spacing.lg,
+  },
+  powerButtonsContainer: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: Spacing.lg,
+    zIndex: 20,
+    paddingHorizontal: Spacing.lg,
   },
 });
