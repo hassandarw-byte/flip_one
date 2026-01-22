@@ -5,6 +5,8 @@ import {
   Image,
   Pressable,
   Dimensions,
+  Share,
+  Platform,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
@@ -127,6 +129,21 @@ export default function HomeScreen() {
 
   const handlePressOut = () => {
     playButtonScale.value = withSpring(1, { damping: 10, stiffness: 200 });
+  };
+
+  const handleShare = async () => {
+    try {
+      const message = Platform.OS === 'ios' 
+        ? "Check out Flip One - the addictive gravity-flipping game! Flip the world. Stay alive."
+        : "Check out Flip One - the addictive gravity-flipping game! Flip the world. Stay alive. Download now!";
+      
+      await Share.share({
+        message,
+        title: "Flip One",
+      });
+    } catch (error) {
+      console.log("Share error:", error);
+    }
   };
 
   return (
@@ -253,7 +270,7 @@ export default function HomeScreen() {
 
         <Pressable
           style={styles.shareButton}
-          onPress={() => {}}
+          onPress={handleShare}
           testID="button-share"
         >
           <LinearGradient
@@ -343,6 +360,7 @@ const styles = StyleSheet.create({
     height: 140,
     borderRadius: 36,
     overflow: "hidden",
+    backgroundColor: GameColors.background,
     shadowColor: GameColors.primary,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
@@ -352,6 +370,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 140,
     height: 140,
+    borderRadius: 36,
   },
   titleContainer: {
     alignItems: "center",

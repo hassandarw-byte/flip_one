@@ -281,14 +281,18 @@ export default function GameScreen() {
       
       setScore((prev) => {
         const newScore = prev + 1;
-        if (newScore % DIFFICULTY_INCREASE_INTERVAL === 0) {
-          gameSpeedRef.current = Math.min(gameSpeedRef.current + 0.3, 10);
-        }
         if (newScore % LEVEL_INCREASE_INTERVAL === 0) {
-          setLevel((prevLevel) => prevLevel + 1);
+          setLevel((prevLevel) => {
+            const newLevel = prevLevel + 1;
+            // Increase speed every 5 levels
+            if (newLevel % 5 === 0) {
+              gameSpeedRef.current = Math.min(gameSpeedRef.current + 0.5, 12);
+            }
+            return newLevel;
+          });
         }
-        scoreScale.value = withSpring(1.3, { damping: 8 }, () => {
-          scoreScale.value = withSpring(1, { damping: 12 });
+        scoreScale.value = withSpring(1.08, { damping: 12 }, () => {
+          scoreScale.value = withSpring(1, { damping: 15 });
         });
         return newScore;
       });
