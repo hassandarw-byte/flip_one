@@ -79,8 +79,12 @@ The app runs on Expo and can be tested via:
 ## Recent Changes
 
 - Initial MVP implementation with all core screens
-- Dark theme with neon accents
+- Candy Crush style design with purple gradients and sparkle effects
 - Gravity flip game mechanic
 - Local storage for scores and settings
-- Daily missions system
-- Shop with purchasable skins
+- Daily missions system with "Daily Missions" header
+- Shop with three sections: Skins, Premium characters, Special Powers
+- Night Mode as toggle setting (not purchase)
+- HHD Apps branding in Settings
+- Beautiful obstacle designs: diamond, gem, crystal, star, heart shapes
+- 1.5 second grace period at game start for better playability

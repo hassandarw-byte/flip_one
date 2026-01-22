@@ -49,7 +49,7 @@ interface Obstacle {
   type: "diamond" | "gem" | "crystal" | "star" | "heart";
   width: number;
   height: number;
-  colors: string[];
+  colors: [string, string];
 }
 
 export default function GameScreen() {
@@ -209,7 +209,7 @@ export default function GameScreen() {
     setTimeout(() => {
       if (isGameOverRef.current) return;
       
-      const obstacleTypes: Array<{ type: Obstacle["type"]; colors: string[] }> = [
+      const obstacleTypes: Array<{ type: Obstacle["type"]; colors: [string, string] }> = [
         { type: "diamond", colors: [GameColors.candy1, GameColors.spikeGlow] },
         { type: "gem", colors: [GameColors.candy4, GameColors.primaryGlow] },
         { type: "crystal", colors: [GameColors.candy2, GameColors.platformGlow] },
