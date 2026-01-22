@@ -89,6 +89,9 @@ The app runs on Expo and can be tested via:
 
 ## Recent Changes
 
+- AdMob integration ready for production (client/lib/ads.ts)
+- In-App Purchases integration ready for production (client/lib/purchases.ts)
+- Setup guide for Android in SETUP_ANDROID.md
 - Real PostgreSQL leaderboard with device ID tracking and username editing
 - Floating distraction particles during gameplay (8 animated particles)
 - Enhanced track lines with glow effects and shadows (8px thick)
