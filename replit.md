@@ -89,6 +89,11 @@ The app runs on Expo and can be tested via:
 
 ## Recent Changes
 
+- Real PostgreSQL leaderboard with device ID tracking and username editing
+- Floating distraction particles during gameplay (8 animated particles)
+- Enhanced track lines with glow effects and shadows (8px thick)
+- Player glow reduced from 8px to 4px for subtler effect
+- Tajawal font family added for better Arabic text support
 - Initial MVP implementation with all core screens
 - Candy Crush style design with purple gradients and sparkle effects
 - Gravity flip game mechanic
