@@ -24,6 +24,7 @@ import {
   getGameState,
   saveSoundEnabled,
   saveHapticsEnabled,
+  saveNightModeEnabled,
   GameState,
 } from "@/lib/storage";
 
@@ -54,6 +55,11 @@ export default function SettingsScreen() {
     if (value) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
+  };
+
+  const handleNightModeToggle = async (value: boolean) => {
+    await saveNightModeEnabled(value);
+    setGameState((prev) => (prev ? { ...prev, nightMode: value } : null));
   };
 
   return (
@@ -108,22 +114,32 @@ export default function SettingsScreen() {
                 testID="switch-haptics"
               />
             </SettingRow>
+
+            <SettingRow
+              icon="moon"
+              title="Night Mode"
+              description="Darker theme for night gaming"
+              colors={[GameColors.candy4, GameColors.primaryGlow]}
+            >
+              <Switch
+                value={gameState?.nightMode ?? false}
+                onValueChange={handleNightModeToggle}
+                trackColor={{
+                  false: GameColors.surface,
+                  true: GameColors.candy4 + "60",
+                }}
+                thumbColor={
+                  gameState?.nightMode ? GameColors.candy4 : GameColors.textMuted
+                }
+                testID="switch-night-mode"
+              />
+            </SettingRow>
           </View>
         </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(100).springify()}>
           <View style={styles.section}>
             <ThemedText style={styles.sectionTitle}>Premium</ThemedText>
-
-            <PurchaseRow
-              icon="moon"
-              title="Night Mode"
-              description="Darker theme for night gaming"
-              price="$0.99"
-              isPurchased={gameState?.nightMode}
-              colors={[GameColors.candy4, GameColors.primaryGlow]}
-              onPress={() => {}}
-            />
 
             <PurchaseRow
               icon="slash"
@@ -164,6 +180,7 @@ export default function SettingsScreen() {
               />
               <ThemedText style={styles.appName}>Flip One</ThemedText>
               <ThemedText style={styles.appVersion}>Version 1.0.0</ThemedText>
+              <ThemedText style={styles.developerText}>HHD Apps</ThemedText>
             </LinearGradient>
           </View>
         </Animated.View>
@@ -414,5 +431,11 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: GameColors.textMuted,
     marginTop: Spacing.xs,
+  },
+  developerText: {
+    fontSize: 12,
+    color: GameColors.textSecondary,
+    marginTop: Spacing.sm,
+    fontWeight: "600",
   },
 });
