@@ -63,10 +63,10 @@ interface Obstacle {
   id: number;
   x: number;
   track: "top" | "bottom";
-  type: "diamond" | "gem" | "crystal" | "star" | "heart";
+  type: "spade" | "diamond" | "heart" | "club";
   width: number;
   height: number;
-  colors: [string, string];
+  color: string;
 }
 
 interface FloatingParticle {
@@ -94,12 +94,13 @@ export default function GameScreen() {
   const [floatingParticles, setFloatingParticles] = useState<FloatingParticle[]>([]);
   const [availablePowers, setAvailablePowers] = useState<string[]>([]);
   const [activePowers, setActivePowers] = useState<ActivePower[]>([]);
-  const [hasShield, setHasShield] = useState(false);
-  const [doublePointsActive, setDoublePointsActive] = useState(false);
+  const [activePowerTypes, setActivePowerTypes] = useState<string[]>([]);
   
   const currentTrackRef = useRef<"top" | "bottom">("bottom");
   const freezeActiveRef = useRef(false);
   const originalSpeedRef = useRef(GAME_SPEED_BASE);
+  const hasShieldRef = useRef(false);
+  const doublePointsRef = useRef(false);
   const gameSpeedRef = useRef(GAME_SPEED_BASE);
   const flipCountRef = useRef(0);
   const isGameOverRef = useRef(false);
@@ -186,6 +187,8 @@ export default function GameScreen() {
     
     const now = Date.now();
     
+    setActivePowerTypes(prev => [...prev, powerType]);
+    
     switch (powerType) {
       case "freeze":
         freezeActiveRef.current = true;
@@ -193,6 +196,7 @@ export default function GameScreen() {
         setTimeout(() => {
           freezeActiveRef.current = false;
           setActivePowers(prev => prev.filter(p => p.type !== "freeze"));
+          setActivePowerTypes(prev => prev.filter(p => p !== "freeze"));
         }, 3000);
         break;
         
@@ -203,20 +207,22 @@ export default function GameScreen() {
         setTimeout(() => {
           gameSpeedRef.current = originalSpeedRef.current;
           setActivePowers(prev => prev.filter(p => p.type !== "slow"));
+          setActivePowerTypes(prev => prev.filter(p => p !== "slow"));
         }, 5000);
         break;
         
       case "shield":
-        setHasShield(true);
+        hasShieldRef.current = true;
         setActivePowers(prev => [...prev, { type: "shield", expiresAt: now + 60000 }]);
         break;
         
       case "double":
-        setDoublePointsActive(true);
+        doublePointsRef.current = true;
         setActivePowers(prev => [...prev, { type: "double", expiresAt: now + 30000 }]);
         setTimeout(() => {
-          setDoublePointsActive(false);
+          doublePointsRef.current = false;
           setActivePowers(prev => prev.filter(p => p.type !== "double"));
+          setActivePowerTypes(prev => prev.filter(p => p !== "double"));
         }, 30000);
         break;
     }
@@ -301,15 +307,20 @@ export default function GameScreen() {
     const gameStartTime = Date.now();
     const GRACE_PERIOD = 1500;
     
-    // Initialize floating distraction particles
-    const initialParticles: FloatingParticle[] = Array.from({ length: 8 }).map((_, i) => ({
+    // Initialize floating distraction particles - more particles with vibrant colors
+    const distractionColors = [
+      "#FF6B6B", "#4ECDC4", "#FFE66D", "#95E1D3", "#F38181",
+      "#AA96DA", "#FCBAD3", "#A8D8EA", "#FF9F43", "#00D2D3",
+      "#5F27CD", "#10AC84", "#EE5A24", "#EA2027", "#FFC312",
+    ];
+    const initialParticles: FloatingParticle[] = Array.from({ length: 20 }).map((_, i) => ({
       id: i,
       x: Math.random() * width,
       y: trackTopY + TRACK_HEIGHT + Math.random() * (trackBottomY - trackTopY - TRACK_HEIGHT - 40) + 20,
-      size: Math.random() * 12 + 6,
-      speed: Math.random() * 1.5 + 0.5,
-      color: [GameColors.candy1, GameColors.candy2, GameColors.candy3, GameColors.candy4, GameColors.candy5][Math.floor(Math.random() * 5)],
-      opacity: Math.random() * 0.4 + 0.2,
+      size: Math.random() * 16 + 8,
+      speed: Math.random() * 2 + 0.5,
+      color: distractionColors[Math.floor(Math.random() * distractionColors.length)],
+      opacity: Math.random() * 0.5 + 0.3,
     }));
     setFloatingParticles(initialParticles);
     
@@ -347,9 +358,10 @@ export default function GameScreen() {
             playerRight > obstacleLeft + 5 && playerLeft < obstacleRight - 5;
 
           if (horizontalCollision && obs.track === currentTrackRef.current) {
-            if (hasShield) {
-              setHasShield(false);
+            if (hasShieldRef.current) {
+              hasShieldRef.current = false;
               setActivePowers(p => p.filter(pw => pw.type !== "shield"));
+              setActivePowerTypes(p => p.filter(pt => pt !== "shield"));
               return updated.filter(o => o.id !== obs.id);
             }
             handleGameOver();
@@ -364,28 +376,27 @@ export default function GameScreen() {
     setTimeout(() => {
       if (isGameOverRef.current) return;
       
-      const obstacleTypes: Array<{ type: Obstacle["type"]; colors: [string, string] }> = [
-        { type: "diamond", colors: [GameColors.candy1, GameColors.spikeGlow] },
-        { type: "gem", colors: [GameColors.candy4, GameColors.primaryGlow] },
-        { type: "crystal", colors: [GameColors.candy2, GameColors.platformGlow] },
-        { type: "star", colors: [GameColors.candy5, GameColors.secondaryGlow] },
-        { type: "heart", colors: [GameColors.candy1, "#FF9999"] },
+      const cardSuits: Array<{ type: Obstacle["type"]; color: string }> = [
+        { type: "spade", color: "#1A1A2E" },
+        { type: "diamond", color: "#E63946" },
+        { type: "heart", color: "#E63946" },
+        { type: "club", color: "#1A1A2E" },
       ];
       
       obstacleSpawnRef.current = setInterval(() => {
         if (isGameOverRef.current) return;
         
         const track: "top" | "bottom" = Math.random() > 0.5 ? "top" : "bottom";
-        const obsConfig = obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)];
+        const suitConfig = cardSuits[Math.floor(Math.random() * cardSuits.length)];
         
         const newObstacle: Obstacle = {
           id: obstacleIdRef.current++,
           x: width + 50,
           track,
-          type: obsConfig.type,
-          colors: obsConfig.colors,
-          width: 32,
-          height: 32,
+          type: suitConfig.type,
+          color: suitConfig.color,
+          width: 36,
+          height: 36,
         };
 
         setObstacles((prev) => {
@@ -400,7 +411,7 @@ export default function GameScreen() {
       if (isGameOverRef.current) return;
       
       setScore((prev) => {
-        const increment = doublePointsActive ? 2 : 1;
+        const increment = doublePointsRef.current ? 2 : 1;
         const newScore = prev + increment;
         if (newScore % LEVEL_INCREASE_INTERVAL === 0) {
           setLevel((prevLevel) => {
@@ -610,28 +621,28 @@ export default function GameScreen() {
           type="freeze" 
           icon="pause" 
           available={availablePowers.includes("freeze")}
-          active={activePowers.some(p => p.type === "freeze")}
+          active={activePowerTypes.includes("freeze")}
           onPress={() => activatePower("freeze")}
         />
         <PowerButton 
           type="slow" 
           icon="clock" 
           available={availablePowers.includes("slow")}
-          active={activePowers.some(p => p.type === "slow")}
+          active={activePowerTypes.includes("slow")}
           onPress={() => activatePower("slow")}
         />
         <PowerButton 
           type="shield" 
           icon="shield" 
           available={availablePowers.includes("shield")}
-          active={hasShield}
+          active={activePowerTypes.includes("shield")}
           onPress={() => activatePower("shield")}
         />
         <PowerButton 
           type="double" 
           icon="zap" 
           available={availablePowers.includes("double")}
-          active={doublePointsActive}
+          active={activePowerTypes.includes("double")}
           onPress={() => activatePower("double")}
         />
       </View>
@@ -749,148 +760,132 @@ const powerStyles = StyleSheet.create({
 });
 
 function ObstacleShape({ obstacle }: { obstacle: Obstacle }) {
-  const { type, colors, width: w, height: h } = obstacle;
+  const { type, color, width: w, height: h } = obstacle;
 
   switch (type) {
+    case "spade":
+      return (
+        <View style={[suitStyles.container, { width: w, height: h }]}>
+          <View style={[suitStyles.spadeTop, { backgroundColor: color }]} />
+          <View style={[suitStyles.spadeBottom, { backgroundColor: color }]} />
+          <View style={[suitStyles.spadeStem, { backgroundColor: color }]} />
+        </View>
+      );
     case "diamond":
       return (
-        <View style={[obstacleStyles.diamond, { width: w, height: h }]}>
-          <LinearGradient
-            colors={colors}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={[obstacleStyles.diamondInner, { width: w * 0.7, height: h * 0.7 }]}
-          />
+        <View style={[suitStyles.container, { width: w, height: h }]}>
+          <View style={[suitStyles.diamond, { backgroundColor: color }]} />
         </View>
-      );
-    case "gem":
-      return (
-        <LinearGradient
-          colors={colors}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={[obstacleStyles.gem, { width: w, height: h }]}
-        >
-          <View style={obstacleStyles.gemHighlight} />
-        </LinearGradient>
-      );
-    case "crystal":
-      return (
-        <View style={obstacleStyles.crystalContainer}>
-          <LinearGradient
-            colors={colors}
-            style={[obstacleStyles.crystal, { width: w * 0.4, height: h }]}
-          />
-          <LinearGradient
-            colors={[colors[1], colors[0]]}
-            style={[obstacleStyles.crystal, { width: w * 0.4, height: h * 0.7, marginLeft: -8 }]}
-          />
-        </View>
-      );
-    case "star":
-      return (
-        <LinearGradient
-          colors={colors}
-          style={[obstacleStyles.star, { width: w, height: h }]}
-        >
-          <View style={obstacleStyles.starCenter} />
-        </LinearGradient>
       );
     case "heart":
       return (
-        <View style={[obstacleStyles.heartContainer, { width: w, height: h }]}>
-          <LinearGradient
-            colors={colors}
-            style={[obstacleStyles.heartLeft, { width: w * 0.55, height: h * 0.55 }]}
-          />
-          <LinearGradient
-            colors={colors}
-            style={[obstacleStyles.heartRight, { width: w * 0.55, height: h * 0.55 }]}
-          />
-          <LinearGradient
-            colors={colors}
-            style={[obstacleStyles.heartBottom, { width: w * 0.7, height: h * 0.7 }]}
-          />
+        <View style={[suitStyles.container, { width: w, height: h }]}>
+          <View style={[suitStyles.heartTop]}>
+            <View style={[suitStyles.heartCircle, { backgroundColor: color }]} />
+            <View style={[suitStyles.heartCircle, { backgroundColor: color }]} />
+          </View>
+          <View style={[suitStyles.heartPoint, { backgroundColor: color }]} />
+        </View>
+      );
+    case "club":
+      return (
+        <View style={[suitStyles.container, { width: w, height: h }]}>
+          <View style={[suitStyles.clubTop, { backgroundColor: color }]} />
+          <View style={[suitStyles.clubRow]}>
+            <View style={[suitStyles.clubCircle, { backgroundColor: color }]} />
+            <View style={[suitStyles.clubCircle, { backgroundColor: color }]} />
+          </View>
+          <View style={[suitStyles.clubStem, { backgroundColor: color }]} />
         </View>
       );
     default:
       return (
-        <LinearGradient
-          colors={colors}
-          style={[obstacleStyles.gem, { width: w, height: h }]}
-        />
+        <View style={[suitStyles.diamond, { backgroundColor: color, width: w * 0.6, height: h * 0.6 }]} />
       );
   }
 }
 
-const obstacleStyles = StyleSheet.create({
-  diamond: {
-    transform: [{ rotate: "45deg" }],
+const suitStyles = StyleSheet.create({
+  container: {
     justifyContent: "center",
     alignItems: "center",
-  },
-  diamondInner: {
-    borderRadius: 4,
-  },
-  gem: {
-    borderRadius: 8,
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
-    overflow: "hidden",
-  },
-  gemHighlight: {
-    width: "40%",
-    height: "40%",
-    backgroundColor: "rgba(255,255,255,0.4)",
-    borderRadius: 20,
-    margin: 4,
-  },
-  crystalContainer: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-  },
-  crystal: {
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
-    borderBottomLeftRadius: 2,
-    borderBottomRightRadius: 2,
-  },
-  star: {
-    borderRadius: 6,
-    transform: [{ rotate: "15deg" }],
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  starCenter: {
-    width: "50%",
-    height: "50%",
-    backgroundColor: "rgba(255,255,255,0.5)",
-    borderRadius: 20,
-  },
-  heartContainer: {
     position: "relative",
-    justifyContent: "center",
-    alignItems: "center",
   },
-  heartLeft: {
+  spadeTop: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
     position: "absolute",
-    top: 0,
-    left: 0,
-    borderRadius: 50,
+    top: 2,
   },
-  heartRight: {
+  spadeBottom: {
+    width: 20,
+    height: 20,
+    transform: [{ rotate: "45deg" }],
     position: "absolute",
-    top: 0,
-    right: 0,
-    borderRadius: 50,
+    top: 8,
+    borderRadius: 3,
   },
-  heartBottom: {
+  spadeStem: {
+    width: 6,
+    height: 12,
     position: "absolute",
     bottom: 0,
+    borderBottomLeftRadius: 4,
+    borderBottomRightRadius: 4,
+  },
+  diamond: {
+    width: 22,
+    height: 22,
     transform: [{ rotate: "45deg" }],
     borderRadius: 4,
   },
-});
+  heartTop: {
+    flexDirection: "row",
+    position: "absolute",
+    top: 4,
+  },
+  heartCircle: {
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    marginHorizontal: -2,
+  },
+  heartPoint: {
+    width: 18,
+    height: 18,
+    transform: [{ rotate: "45deg" }],
+    position: "absolute",
+    top: 10,
+    borderRadius: 3,
+  },
+  clubTop: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    position: "absolute",
+    top: 2,
+  },
+  clubRow: {
+    flexDirection: "row",
+    position: "absolute",
+    top: 10,
+  },
+  clubCircle: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginHorizontal: -1,
+  },
+  clubStem: {
+    width: 6,
+    height: 12,
+    position: "absolute",
+    bottom: 0,
+    borderBottomLeftRadius: 4,
+    borderBottomRightRadius: 4,
+  },
+  });
 
 const styles = StyleSheet.create({
   container: {
