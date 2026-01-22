@@ -55,6 +55,23 @@ export const NightModeColors = {
   surfaceLight: "#2A2A35",
 };
 
+export const SkinColors: Record<string, [string, string, string]> = {
+  default: [GameColors.playerHighlight, GameColors.player, GameColors.playerGlow],
+  purple: ["#C4A6FF", GameColors.candy4, GameColors.primaryGlow],
+  teal: ["#7EEEE6", GameColors.candy2, GameColors.platformGlow],
+  pink: ["#FFD1F5", GameColors.candy5, GameColors.secondaryGlow],
+  red: ["#FFA6A6", GameColors.candy1, GameColors.spikeGlow],
+  green: ["#8CF07F", GameColors.candy6, GameColors.successGlow],
+  gold: ["#FFF4C4", "#FFD700", "#B8860B"],
+  dark_knight: ["#3D3D5C", "#1a1a2e", "#16213e"],
+  web_hero: ["#FF7A85", "#e63946", "#1d3557"],
+  green_giant: ["#5CAB85", "#2d6a4f", "#40916c"],
+  iron_armor: ["#FF6B6B", "#c1121f", "#ffd60a"],
+  ice_queen: ["#C4F5FF", "#90e0ef", "#48cae4"],
+  kawaii_cat: ["#FFE4E9", "#ffb6c1", "#ff69b4"],
+  captain_star: ["#4D7CC3", "#002855", "#bf0a30"],
+};
+
 export const CharacterThemes: Record<string, { primary: string; secondary: string; accent: string; gradientStart: string; gradientEnd: string }> = {
   dark_knight: {
     primary: "#1a1a2e",

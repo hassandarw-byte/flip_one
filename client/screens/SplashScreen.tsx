@@ -210,11 +210,13 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
       
       <Animated.View style={[styles.logoContainer, logoAnimatedStyle]}>
         <View style={styles.logoShadow} />
-        <Image
-          source={require("../../assets/images/icon.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+        <View style={styles.logoWrapper}>
+          <Image
+            source={require("../../assets/images/icon.png")}
+            style={styles.logo}
+            resizeMode="cover"
+          />
+        </View>
       </Animated.View>
 
       <Animated.View style={[styles.titleContainer, titleAnimatedStyle]}>
@@ -260,19 +262,30 @@ const styles = StyleSheet.create({
   },
   logoShadow: {
     position: "absolute",
-    width: 160,
-    height: 160,
-    borderRadius: 80,
+    width: 180,
+    height: 180,
+    borderRadius: 40,
     backgroundColor: GameColors.primary,
     shadowColor: GameColors.primary,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
-    shadowRadius: 40,
-    opacity: 0.3,
+    shadowRadius: 50,
+    opacity: 0.4,
+  },
+  logoWrapper: {
+    width: 160,
+    height: 160,
+    borderRadius: 36,
+    overflow: "hidden",
+    shadowColor: GameColors.gold,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
+    elevation: 20,
   },
   logo: {
-    width: 180,
-    height: 180,
+    width: 160,
+    height: 160,
   },
   glowContainer: {
     position: "absolute",

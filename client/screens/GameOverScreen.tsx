@@ -205,7 +205,7 @@ interface GameButtonProps {
   label: string;
   subtitle?: string;
   onPress: () => void;
-  colors: string[];
+  colors: readonly [string, string, ...string[]];
   isPrimary?: boolean;
 }
 

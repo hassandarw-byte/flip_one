@@ -20,7 +20,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 
 import { ThemedText } from "@/components/ThemedText";
-import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
+import { GameColors, Spacing, BorderRadius, SkinColors } from "@/constants/theme";
 import {
   getGameState,
   saveBestScore,
@@ -94,6 +94,22 @@ export default function GameScreen() {
   const loadGameState = async () => {
     const state = await getGameState();
     setGameState(state);
+  };
+
+  const getPlayerColors = (): [string, string, string] => {
+    if (!gameState) return SkinColors.default;
+    
+    // Premium skin takes priority
+    if (gameState.equippedPremiumSkin && SkinColors[gameState.equippedPremiumSkin]) {
+      return SkinColors[gameState.equippedPremiumSkin];
+    }
+    
+    // Regular skin
+    if (gameState.equippedSkin && SkinColors[gameState.equippedSkin]) {
+      return SkinColors[gameState.equippedSkin];
+    }
+    
+    return SkinColors.default;
   };
 
   const startSparkleAnimation = () => {
@@ -411,7 +427,7 @@ export default function GameScreen() {
         >
           <Animated.View style={[styles.playerGlow, playerGlowStyle]} />
           <LinearGradient
-            colors={[GameColors.playerHighlight, GameColors.player, GameColors.playerGlow]}
+            colors={getPlayerColors()}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.player}
