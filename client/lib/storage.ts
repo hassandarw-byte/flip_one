@@ -19,6 +19,10 @@ const KEYS = {
   LAST_POWER_DATE: "flip_one_last_power_date",
   DEVICE_ID: "flip_one_device_id",
   USERNAME: "flip_one_username",
+  DAILY_STREAK: "flip_one_daily_streak",
+  LAST_PLAY_DATE: "flip_one_last_play_date",
+  LAST_WHEEL_SPIN_DATE: "flip_one_last_wheel_spin_date",
+  ACHIEVEMENTS: "flip_one_achievements",
 };
 
 export interface DailyMission {
@@ -29,6 +33,16 @@ export interface DailyMission {
   reward: number;
   completed: boolean;
   claimed: boolean;
+}
+
+export interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  reward: number;
+  unlocked: boolean;
+  unlockedAt?: string;
 }
 
 export interface GameState {
@@ -46,10 +60,29 @@ export interface GameState {
   totalGames: number;
   powersUsedToday: string[];
   lastPowerDate: string;
+  dailyStreak: number;
+  lastPlayDate: string;
+  lastWheelSpinDate: string;
+  achievements: Achievement[];
 }
 
 const DEFAULT_SKINS = ["default"];
 const DEFAULT_SKIN = "default";
+
+function generateDefaultAchievements(): Achievement[] {
+  return [
+    { id: "first_game", title: "البداية", description: "العب أول لعبة", icon: "play", reward: 25, unlocked: false },
+    { id: "score_50", title: "مبتدئ", description: "سجل 50 نقطة في لعبة واحدة", icon: "star", reward: 100, unlocked: false },
+    { id: "score_100", title: "محترف", description: "سجل 100 نقطة في لعبة واحدة", icon: "award", reward: 250, unlocked: false },
+    { id: "games_10", title: "مدمن", description: "العب 10 ألعاب", icon: "refresh-cw", reward: 75, unlocked: false },
+    { id: "games_50", title: "مهووس", description: "العب 50 لعبة", icon: "zap", reward: 200, unlocked: false },
+    { id: "flips_100", title: "القلاب", description: "اقلب 100 مرة", icon: "rotate-cw", reward: 50, unlocked: false },
+    { id: "flips_500", title: "أسطورة القلب", description: "اقلب 500 مرة", icon: "heart", reward: 150, unlocked: false },
+    { id: "streak_3", title: "متابع", description: "العب 3 أيام متتالية", icon: "calendar", reward: 100, unlocked: false },
+    { id: "streak_7", title: "مخلص", description: "العب 7 أيام متتالية", icon: "gift", reward: 300, unlocked: false },
+    { id: "combo_5", title: "كومبو ماستر", description: "حقق كومبو x5", icon: "trending-up", reward: 75, unlocked: false },
+  ];
+}
 
 function generateDailyMissions(): DailyMission[] {
   return [
@@ -101,6 +134,10 @@ export async function getGameState(): Promise<GameState> {
       totalGames,
       powersUsedToday,
       lastPowerDate,
+      dailyStreak,
+      lastPlayDate,
+      lastWheelSpinDate,
+      achievements,
     ] = await Promise.all([
       AsyncStorage.getItem(KEYS.BEST_SCORE),
       AsyncStorage.getItem(KEYS.POINTS),
@@ -117,6 +154,10 @@ export async function getGameState(): Promise<GameState> {
       AsyncStorage.getItem(KEYS.TOTAL_GAMES),
       AsyncStorage.getItem(KEYS.POWERS_USED_TODAY),
       AsyncStorage.getItem(KEYS.LAST_POWER_DATE),
+      AsyncStorage.getItem(KEYS.DAILY_STREAK),
+      AsyncStorage.getItem(KEYS.LAST_PLAY_DATE),
+      AsyncStorage.getItem(KEYS.LAST_WHEEL_SPIN_DATE),
+      AsyncStorage.getItem(KEYS.ACHIEVEMENTS),
     ]);
 
     const today = new Date().toDateString();
@@ -138,6 +179,10 @@ export async function getGameState(): Promise<GameState> {
       await AsyncStorage.setItem(KEYS.LAST_POWER_DATE, today);
     }
 
+    let currentAchievements: Achievement[] = achievements 
+      ? JSON.parse(achievements) 
+      : generateDefaultAchievements();
+
     return {
       bestScore: bestScore ? parseInt(bestScore, 10) : 0,
       points: points ? parseInt(points, 10) : 0,
@@ -153,6 +198,10 @@ export async function getGameState(): Promise<GameState> {
       totalGames: totalGames ? parseInt(totalGames, 10) : 0,
       powersUsedToday: usedPowers,
       lastPowerDate: lastPowerDate || "",
+      dailyStreak: dailyStreak ? parseInt(dailyStreak, 10) : 0,
+      lastPlayDate: lastPlayDate || "",
+      lastWheelSpinDate: lastWheelSpinDate || "",
+      achievements: currentAchievements,
     };
   } catch (error) {
     console.error("Error loading game state:", error);
@@ -171,6 +220,10 @@ export async function getGameState(): Promise<GameState> {
       totalGames: 0,
       powersUsedToday: [],
       lastPowerDate: "",
+      dailyStreak: 0,
+      lastPlayDate: "",
+      lastWheelSpinDate: "",
+      achievements: generateDefaultAchievements(),
     };
   }
 }
@@ -391,4 +444,169 @@ export async function setUsername(username: string): Promise<void> {
   } catch (error) {
     console.error("Error setting username:", error);
   }
+}
+
+export async function updateDailyStreak(): Promise<{ streak: number; bonusPoints: number }> {
+  try {
+    const today = new Date().toDateString();
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    
+    const lastPlayDate = await AsyncStorage.getItem(KEYS.LAST_PLAY_DATE);
+    let currentStreak = parseInt(await AsyncStorage.getItem(KEYS.DAILY_STREAK) || "0", 10);
+    let bonusPoints = 0;
+    
+    if (lastPlayDate === today) {
+      return { streak: currentStreak, bonusPoints: 0 };
+    }
+    
+    if (lastPlayDate === yesterday) {
+      currentStreak += 1;
+      bonusPoints = Math.min(currentStreak * 10, 100);
+    } else if (lastPlayDate !== today) {
+      currentStreak = 1;
+      bonusPoints = 10;
+    }
+    
+    await AsyncStorage.setItem(KEYS.DAILY_STREAK, currentStreak.toString());
+    await AsyncStorage.setItem(KEYS.LAST_PLAY_DATE, today);
+    
+    if (bonusPoints > 0) {
+      const points = parseInt(await AsyncStorage.getItem(KEYS.POINTS) || "0", 10);
+      await AsyncStorage.setItem(KEYS.POINTS, (points + bonusPoints).toString());
+    }
+    
+    return { streak: currentStreak, bonusPoints };
+  } catch (error) {
+    console.error("Error updating daily streak:", error);
+    return { streak: 0, bonusPoints: 0 };
+  }
+}
+
+export async function canSpinWheel(): Promise<boolean> {
+  try {
+    const today = new Date().toDateString();
+    const lastSpinDate = await AsyncStorage.getItem(KEYS.LAST_WHEEL_SPIN_DATE);
+    return lastSpinDate !== today;
+  } catch (error) {
+    return false;
+  }
+}
+
+export async function spinWheel(): Promise<{ reward: number; type: "points" | "power" | "skin" }> {
+  try {
+    const today = new Date().toDateString();
+    await AsyncStorage.setItem(KEYS.LAST_WHEEL_SPIN_DATE, today);
+    
+    const random = Math.random();
+    let reward: number;
+    let type: "points" | "power" | "skin";
+    
+    if (random < 0.4) {
+      reward = [25, 50, 75, 100][Math.floor(Math.random() * 4)];
+      type = "points";
+      const points = parseInt(await AsyncStorage.getItem(KEYS.POINTS) || "0", 10);
+      await AsyncStorage.setItem(KEYS.POINTS, (points + reward).toString());
+    } else if (random < 0.8) {
+      reward = 1;
+      type = "power";
+    } else {
+      reward = 150;
+      type = "points";
+      const points = parseInt(await AsyncStorage.getItem(KEYS.POINTS) || "0", 10);
+      await AsyncStorage.setItem(KEYS.POINTS, (points + reward).toString());
+    }
+    
+    return { reward, type };
+  } catch (error) {
+    console.error("Error spinning wheel:", error);
+    return { reward: 25, type: "points" };
+  }
+}
+
+export async function unlockAchievement(achievementId: string): Promise<{ unlocked: boolean; reward: number }> {
+  try {
+    const achievementsData = await AsyncStorage.getItem(KEYS.ACHIEVEMENTS);
+    let achievements: Achievement[] = achievementsData 
+      ? JSON.parse(achievementsData) 
+      : generateDefaultAchievements();
+    
+    const achievement = achievements.find(a => a.id === achievementId);
+    
+    if (!achievement || achievement.unlocked) {
+      return { unlocked: false, reward: 0 };
+    }
+    
+    achievement.unlocked = true;
+    achievement.unlockedAt = new Date().toISOString();
+    
+    await AsyncStorage.setItem(KEYS.ACHIEVEMENTS, JSON.stringify(achievements));
+    
+    const points = parseInt(await AsyncStorage.getItem(KEYS.POINTS) || "0", 10);
+    await AsyncStorage.setItem(KEYS.POINTS, (points + achievement.reward).toString());
+    
+    return { unlocked: true, reward: achievement.reward };
+  } catch (error) {
+    console.error("Error unlocking achievement:", error);
+    return { unlocked: false, reward: 0 };
+  }
+}
+
+export async function checkAndUnlockAchievements(gameState: GameState, score: number, combo: number): Promise<string[]> {
+  const unlockedIds: string[] = [];
+  
+  try {
+    if (gameState.totalGames === 0) {
+      const result = await unlockAchievement("first_game");
+      if (result.unlocked) unlockedIds.push("first_game");
+    }
+    
+    if (score >= 50) {
+      const result = await unlockAchievement("score_50");
+      if (result.unlocked) unlockedIds.push("score_50");
+    }
+    
+    if (score >= 100) {
+      const result = await unlockAchievement("score_100");
+      if (result.unlocked) unlockedIds.push("score_100");
+    }
+    
+    if (gameState.totalGames >= 10) {
+      const result = await unlockAchievement("games_10");
+      if (result.unlocked) unlockedIds.push("games_10");
+    }
+    
+    if (gameState.totalGames >= 50) {
+      const result = await unlockAchievement("games_50");
+      if (result.unlocked) unlockedIds.push("games_50");
+    }
+    
+    if (gameState.totalFlips >= 100) {
+      const result = await unlockAchievement("flips_100");
+      if (result.unlocked) unlockedIds.push("flips_100");
+    }
+    
+    if (gameState.totalFlips >= 500) {
+      const result = await unlockAchievement("flips_500");
+      if (result.unlocked) unlockedIds.push("flips_500");
+    }
+    
+    if (gameState.dailyStreak >= 3) {
+      const result = await unlockAchievement("streak_3");
+      if (result.unlocked) unlockedIds.push("streak_3");
+    }
+    
+    if (gameState.dailyStreak >= 7) {
+      const result = await unlockAchievement("streak_7");
+      if (result.unlocked) unlockedIds.push("streak_7");
+    }
+    
+    if (combo >= 5) {
+      const result = await unlockAchievement("combo_5");
+      if (result.unlocked) unlockedIds.push("combo_5");
+    }
+  } catch (error) {
+    console.error("Error checking achievements:", error);
+  }
+  
+  return unlockedIds;
 }

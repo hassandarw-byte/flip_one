@@ -268,6 +268,21 @@ export default function HomeScreen() {
             colors={[GameColors.candy5, GameColors.secondaryGlow]}
           />
         </View>
+        
+        <View style={styles.secondaryMenuRow}>
+          <MenuButton
+            icon="gift"
+            label="عجلة الحظ"
+            onPress={() => navigation.navigate("LuckyWheel")}
+            colors={["#FF9F43", "#F39C12"]}
+          />
+          <MenuButton
+            icon="star"
+            label="الإنجازات"
+            onPress={() => navigation.navigate("Achievements")}
+            colors={["#9B59B6", "#8E44AD"]}
+          />
+        </View>
 
         <Pressable
           style={styles.shareButton}
@@ -494,6 +509,12 @@ const styles = StyleSheet.create({
   menuRow: {
     flexDirection: "row",
     justifyContent: "space-between",
+    marginBottom: Spacing.xl,
+  },
+  secondaryMenuRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: Spacing.xl,
     marginBottom: Spacing.xl,
   },
   menuButton: {

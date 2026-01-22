@@ -14,6 +14,8 @@ import ShopScreen from "@/screens/ShopScreen";
 import MissionsScreen from "@/screens/MissionsScreen";
 import LeaderboardScreen from "@/screens/LeaderboardScreen";
 import SettingsScreen from "@/screens/SettingsScreen";
+import LuckyWheelScreen from "@/screens/LuckyWheelScreen";
+import AchievementsScreen from "@/screens/AchievementsScreen";
 
 SplashScreenExpo.preventAutoHideAsync();
 
@@ -30,6 +32,8 @@ export type RootStackParamList = {
   Missions: undefined;
   Leaderboard: undefined;
   Settings: undefined;
+  LuckyWheel: undefined;
+  Achievements: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -125,6 +129,16 @@ export default function RootStackNavigator() {
           headerTitle: "Settings",
           headerTransparent: true,
         }}
+      />
+      <Stack.Screen
+        name="LuckyWheel"
+        component={LuckyWheelScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Achievements"
+        component={AchievementsScreen}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );
