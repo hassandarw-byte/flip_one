@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   View,
   StyleSheet,
@@ -16,6 +16,7 @@ import Animated, {
   withRepeat,
   withTiming,
   SlideInDown,
+  Easing,
 } from "react-native-reanimated";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
@@ -26,9 +27,74 @@ import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import { triggerSuccessHaptic } from "@/lib/sounds";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
+
+const CONFETTI_COLORS = [
+  GameColors.candy1, GameColors.candy2, GameColors.candy3, 
+  GameColors.candy4, GameColors.candy5, GameColors.gold,
+  "#FF6B6B", "#4ECDC4", "#FFE66D", "#95E1D3"
+];
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+function ConfettiPiece({ delay, startX }: { delay: number; startX: number }) {
+  const translateY = useSharedValue(-50);
+  const translateX = useSharedValue(startX);
+  const rotate = useSharedValue(0);
+  const opacity = useSharedValue(1);
+  
+  const color = useMemo(() => CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)], []);
+  const size = useMemo(() => Math.random() * 8 + 6, []);
+  const horizontalSwing = useMemo(() => (Math.random() - 0.5) * 100, []);
+
+  useEffect(() => {
+    translateY.value = withDelay(
+      delay,
+      withTiming(height + 50, { duration: 3000, easing: Easing.linear })
+    );
+    translateX.value = withDelay(
+      delay,
+      withSequence(
+        withTiming(startX + horizontalSwing, { duration: 1500, easing: Easing.inOut(Easing.ease) }),
+        withTiming(startX - horizontalSwing, { duration: 1500, easing: Easing.inOut(Easing.ease) })
+      )
+    );
+    rotate.value = withDelay(
+      delay,
+      withRepeat(withTiming(360, { duration: 1000, easing: Easing.linear }), -1, false)
+    );
+    opacity.value = withDelay(
+      delay + 2000,
+      withTiming(0, { duration: 1000 })
+    );
+  }, []);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateY: translateY.value },
+      { translateX: translateX.value },
+      { rotate: `${rotate.value}deg` },
+    ],
+    opacity: opacity.value,
+  }));
+
+  return (
+    <Animated.View
+      style={[
+        {
+          position: "absolute",
+          width: size,
+          height: size * 1.5,
+          backgroundColor: color,
+          borderRadius: 2,
+          top: 0,
+          left: startX,
+        },
+        animatedStyle,
+      ]}
+    />
+  );
+}
 
 export default function GameOverScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -108,12 +174,28 @@ export default function GameOverScreen() {
     navigation.replace("Game");
   };
 
+  const confettiPieces = useMemo(() => 
+    isNewBest ? Array.from({ length: 30 }).map((_, i) => ({
+      id: i,
+      delay: Math.random() * 1000,
+      startX: Math.random() * width,
+    })) : [],
+  [isNewBest]);
+
   return (
     <View style={styles.container}>
       <LinearGradient
         colors={["rgba(26, 10, 46, 0.95)", "rgba(45, 27, 78, 0.98)"]}
         style={StyleSheet.absoluteFill}
       />
+
+      {isNewBest ? (
+        <View style={styles.confettiContainer}>
+          {confettiPieces.map((piece) => (
+            <ConfettiPiece key={piece.id} delay={piece.delay} startX={piece.startX} />
+          ))}
+        </View>
+      ) : null}
 
       <View style={styles.sparklesContainer}>
         {Array.from({ length: 20 }).map((_, i) => (
@@ -277,6 +359,13 @@ const styles = StyleSheet.create({
     backgroundColor: GameColors.background,
     justifyContent: "center",
     alignItems: "center",
+  },
+  confettiContainer: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    zIndex: 10,
+    overflow: "hidden",
   },
   sparklesContainer: {
     position: "absolute",
