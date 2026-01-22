@@ -89,11 +89,25 @@ The app runs on Expo and can be tested via:
 
 ## Recent Changes
 
+### Latest (Advanced Visual Effects & Systems)
+- **Card Suit Obstacles**: Replaced shapes with card suits (♠♦♥♣) with authentic colors (black/red) and 2px white borders
+- **Star Explosion Effects**: 12 colorful particles burst when passing obstacles
+- **Screen Shake Effect**: Realistic camera shake on collision using withSequence
+- **Dynamic Background Gradients**: 6 gradient presets that change every 10 levels
+- **Combo System**: Visual feedback and point multipliers for quick obstacle passes (2+ within 2 seconds)
+- **Daily Streak System**: Track consecutive play days with 10-100 bonus points
+- **Lucky Wheel Screen**: Daily free spin with 40% points, 40% power, 20% jackpot chances
+- **Achievements Screen**: 10 unlockable achievements (first game, score milestones, streaks, combos)
+- **Enhanced Haptic Feedback**: Power-up specific haptics (freeze, slowmo, shield, double points)
+- **Combo Haptics**: Intensity scales with combo count (light→medium→heavy)
+- **Explosion Haptics**: Triple-pulse haptic pattern for star explosions
+- **20 Floating Particles**: Vibrant gradient-colored distraction particles during gameplay
+
+### Previous Updates
 - AdMob integration ready for production (client/lib/ads.ts)
 - In-App Purchases integration ready for production (client/lib/purchases.ts)
 - Setup guide for Android in SETUP_ANDROID.md
 - Real PostgreSQL leaderboard with device ID tracking and username editing
-- Floating distraction particles during gameplay (8 animated particles)
 - Enhanced track lines with glow effects and shadows (8px thick)
 - Player glow reduced from 8px to 4px for subtler effect
 - Tajawal font family added for better Arabic text support
@@ -105,25 +119,12 @@ The app runs on Expo and can be tested via:
 - Shop with three sections: Skins, Premium characters (7), Special Powers (4)
 - Night Mode as toggle setting (not purchase)
 - HHD Apps branding in Settings
-- Beautiful obstacle designs: diamond, gem, crystal, star, heart shapes
-- 1.5 second grace period at game start for better playability
 - Premium splash screen with pulsing rings, rotating glow, and "Tap to Flip" subtitle
-- Premium character selection with theme colors (Dark Knight, Web Hero, Green Giant, Iron Armor, Ice Queen, Kawaii Cat, Captain Star)
-- Special powers with once-per-day usage limit (Freeze Time, Slow Motion, Shield, Double Points)
-- Removed "Restore Purchases" from Settings
-- Removed "Thunder God" character from premium skins
-- Daily power usage tracking resets each day
-- Removed "Tap To Start" screen - game starts automatically
-- Home screen logo now has rounded corners matching splash screen (borderRadius: 36)
-- Night Mode applied to all screens (Splash, Home, Game) via NightModeContext
-- Points badge now visible in game screen HUD
-- Horizontal score layout in game: Level | Score | Best | Points
-- Bottom decorations in game: animated colored dots and "F L I P O N E" word pattern
+- Premium character selection with theme colors
+- Special powers with once-per-day usage limit
 - AdModal component for simulated ads (powers and extra life)
-- Score animation gentler (scale 1.08 with damping 12/15)
 - Speed increases every 5 levels (not points) - more gradual difficulty curve
 - Share with Friends button working with React Native Share API
-- Tajawal font family added for better Arabic text support
 
 ## Game Progression
 
