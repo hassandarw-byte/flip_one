@@ -4,16 +4,16 @@ const IS_DEVELOPMENT_BUILD = false;
 
 const AD_UNIT_IDS = {
   REWARDED: Platform.select({
-    android: "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX",
-    default: "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX",
+    android: "ca-app-pub-4988944368021582/3254576966",
+    default: "ca-app-pub-4988944368021582/3254576966",
   }),
   INTERSTITIAL: Platform.select({
-    android: "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX",
-    default: "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX",
+    android: "ca-app-pub-4988944368021582/2200693201",
+    default: "ca-app-pub-4988944368021582/2200693201",
   }),
   BANNER: Platform.select({
-    android: "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX",
-    default: "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX",
+    android: "ca-app-pub-4988944368021582/9664250251",
+    default: "ca-app-pub-4988944368021582/9664250251",
   }),
 };
 
