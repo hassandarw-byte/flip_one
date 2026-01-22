@@ -802,12 +802,12 @@ const styles = StyleSheet.create({
   },
   playerGlow: {
     position: "absolute",
-    top: -8,
-    left: -8,
-    right: -8,
-    bottom: -8,
+    top: -4,
+    left: -4,
+    right: -4,
+    bottom: -4,
     backgroundColor: GameColors.player,
-    borderRadius: 12,
+    borderRadius: 8,
   },
   player: {
     width: PLAYER_SIZE,
