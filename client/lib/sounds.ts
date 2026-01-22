@@ -1,13 +1,43 @@
 import * as Haptics from "expo-haptics";
 
+export async function playTapSound(soundEnabled: boolean): Promise<void> {
+  if (!soundEnabled) return;
+  
+  try {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  } catch (error) {
+    // Haptics not available
+  }
+}
+
 export async function playFlipSound(soundEnabled: boolean): Promise<void> {
-  // Sound implementation would go here with actual audio files
-  // For MVP, we rely on haptic feedback
+  if (!soundEnabled) return;
+  
+  try {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+  } catch (error) {
+    // Haptics not available
+  }
 }
 
 export async function playGameOverSound(soundEnabled: boolean): Promise<void> {
-  // Sound implementation would go here with actual audio files
-  // For MVP, we rely on haptic feedback
+  if (!soundEnabled) return;
+  
+  try {
+    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+  } catch (error) {
+    // Haptics not available
+  }
+}
+
+export async function playNearMissSound(soundEnabled: boolean): Promise<void> {
+  if (!soundEnabled) return;
+  
+  try {
+    await Haptics.selectionAsync();
+  } catch (error) {
+    // Haptics not available
+  }
 }
 
 export async function triggerFlipHaptic(hapticsEnabled: boolean): Promise<void> {
@@ -15,6 +45,16 @@ export async function triggerFlipHaptic(hapticsEnabled: boolean): Promise<void> 
   
   try {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+  } catch (error) {
+    // Haptics may not be available
+  }
+}
+
+export async function triggerTapHaptic(hapticsEnabled: boolean): Promise<void> {
+  if (!hapticsEnabled) return;
+  
+  try {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   } catch (error) {
     // Haptics may not be available
   }
@@ -92,6 +132,18 @@ export async function triggerExplosionHaptic(hapticsEnabled: boolean): Promise<v
   }
 }
 
+export async function triggerDeathFreezeHaptic(hapticsEnabled: boolean): Promise<void> {
+  if (!hapticsEnabled) return;
+  
+  try {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    await new Promise(resolve => setTimeout(resolve, 50));
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+  } catch (error) {
+    // Haptics may not be available
+  }
+}
+
 export async function cleanupSounds(): Promise<void> {
-  // Cleanup audio resources if any
+  // No cleanup needed for haptics
 }

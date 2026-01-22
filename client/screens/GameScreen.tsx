@@ -34,9 +34,31 @@ import {
   updateMissionProgress,
   GameState,
 } from "@/lib/storage";
-import { triggerFlipHaptic, triggerGameOverHaptic, triggerPowerUpHaptic, triggerComboHaptic, triggerExplosionHaptic } from "@/lib/sounds";
+import { 
+  triggerFlipHaptic, 
+  triggerGameOverHaptic, 
+  triggerPowerUpHaptic, 
+  triggerComboHaptic, 
+  triggerExplosionHaptic,
+  triggerDeathFreezeHaptic,
+  playTapSound,
+  playFlipSound,
+  playGameOverSound,
+  playNearMissSound,
+} from "@/lib/sounds";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useNightMode } from "@/contexts/NightModeContext";
+
+interface FlipParticle {
+  id: number;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  size: number;
+  color: string;
+  opacity: number;
+}
 
 const POWER_COLORS = {
   freeze: { primary: "#00D4FF", secondary: "#0099CC", glow: "#00D4FF" },
@@ -112,6 +134,9 @@ export default function GameScreen() {
   const [combo, setCombo] = useState(0);
   const [showCombo, setShowCombo] = useState(false);
   const [backgroundLevel, setBackgroundLevel] = useState(0);
+  const [flipParticles, setFlipParticles] = useState<FlipParticle[]>([]);
+  const [deathFlashOpacity, setDeathFlashOpacity] = useState(0);
+  const [showNearMissFrame, setShowNearMissFrame] = useState(false);
   
   const currentTrackRef = useRef<"top" | "bottom">("bottom");
   const freezeActiveRef = useRef(false);
@@ -138,9 +163,12 @@ export default function GameScreen() {
   const screenShakeY = useSharedValue(0);
   const comboScale = useSharedValue(0);
   const comboOpacity = useSharedValue(0);
+  const motionBlur = useSharedValue(0);
+  const deathFreezeOpacity = useSharedValue(0);
   
   const comboTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastObstaclePassTime = useRef(0);
+  const isDyingRef = useRef(false);
   
   const BACKGROUND_GRADIENTS: [string, string][] = [
     ["#1A0A2E", "#2D1B4E"],
@@ -208,6 +236,25 @@ export default function GameScreen() {
     
     return SkinColors.default;
   };
+
+  const createFlipParticles = useCallback(() => {
+    const colors = ["#FFD700", "#FF6B6B", "#4ECDC4", "#FF9FF3", "#54E346"];
+    const particles: FlipParticle[] = Array.from({ length: 8 }).map((_, i) => ({
+      id: Date.now() + i,
+      x: playerX + (Math.random() - 0.5) * 20,
+      y: currentTrackRef.current === "top" ? trackTopY + TRACK_HEIGHT / 2 : trackBottomY + TRACK_HEIGHT / 2,
+      vx: (Math.random() - 0.5) * 6,
+      vy: (Math.random() - 0.5) * 6,
+      size: Math.random() * 6 + 3,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      opacity: 1,
+    }));
+    setFlipParticles(prev => [...prev, ...particles]);
+    
+    setTimeout(() => {
+      setFlipParticles(prev => prev.filter(p => !particles.find(np => np.id === p.id)));
+    }, 400);
+  }, [playerX, trackTopY, trackBottomY]);
 
   const createExplosion = useCallback((x: number, y: number) => {
     const colors = ["#FFD700", "#FF6B6B", "#4ECDC4", "#FF9FF3", "#54E346", "#A66CFF"];
@@ -383,45 +430,66 @@ export default function GameScreen() {
   }, []);
 
   const handleGameOver = useCallback(async () => {
-    if (isGameOverRef.current) return;
+    if (isGameOverRef.current || isDyingRef.current) return;
     
-    isGameOverRef.current = true;
-    setIsGameOver(true);
-    setIsPlaying(false);
+    isDyingRef.current = true;
+    
     cleanupGame();
     
-    triggerScreenShake();
-
+    if (gameState?.soundEnabled) {
+      playGameOverSound(true);
+    }
     if (gameState?.hapticsEnabled) {
-      triggerGameOverHaptic(true);
+      triggerDeathFreezeHaptic(true);
     }
-
-    await incrementTotalGames();
-    await incrementTotalFlips(flipCountRef.current);
     
-    const currentScore = score;
+    setShowNearMissFrame(true);
+    setDeathFlashOpacity(0.6);
     
-    if (gameState) {
-      await updateMissionProgress("play_5", (gameState.totalGames || 0) + 1);
-      await updateMissionProgress("flip_50", (gameState.totalFlips || 0) + flipCountRef.current);
+    setTimeout(() => {
+      setDeathFlashOpacity(0);
+    }, 80);
+    
+    setTimeout(async () => {
+      setShowNearMissFrame(false);
       
-      if (currentScore >= 20) {
-        await updateMissionProgress("score_20", currentScore);
+      isGameOverRef.current = true;
+      setIsGameOver(true);
+      setIsPlaying(false);
+      
+      triggerScreenShake();
+
+      if (gameState?.hapticsEnabled) {
+        triggerGameOverHaptic(true);
       }
 
-      if (currentScore > gameState.bestScore) {
-        await saveBestScore(currentScore);
+      await incrementTotalGames();
+      await incrementTotalFlips(flipCountRef.current);
+      
+      const currentScore = score;
+      
+      if (gameState) {
+        await updateMissionProgress("play_5", (gameState.totalGames || 0) + 1);
+        await updateMissionProgress("flip_50", (gameState.totalFlips || 0) + flipCountRef.current);
+        
+        if (currentScore >= 20) {
+          await updateMissionProgress("score_20", currentScore);
+        }
+
+        if (currentScore > gameState.bestScore) {
+          await saveBestScore(currentScore);
+        }
+
+        const pointsEarned = Math.floor(currentScore / 2);
+        await savePoints(gameState.points + pointsEarned);
       }
 
-      const pointsEarned = Math.floor(currentScore / 2);
-      await savePoints(gameState.points + pointsEarned);
-    }
-
-    navigation.replace("GameOver", {
-      score: currentScore,
-      bestScore: gameState?.bestScore || 0,
-      isNewBest: currentScore > (gameState?.bestScore || 0),
-    });
+      navigation.replace("GameOver", {
+        score: currentScore,
+        bestScore: gameState?.bestScore || 0,
+        isNewBest: currentScore > (gameState?.bestScore || 0),
+      });
+    }, 200);
   }, [gameState, score, navigation, cleanupGame]);
 
   const startGame = useCallback(() => {
@@ -528,20 +596,29 @@ export default function GameScreen() {
         const track: "top" | "bottom" = Math.random() > 0.5 ? "top" : "bottom";
         const suitConfig = cardSuits[Math.floor(Math.random() * cardSuits.length)];
         
-        const newObstacle: Obstacle = {
-          id: obstacleIdRef.current++,
-          x: width + 50,
-          track,
-          type: suitConfig.type,
-          color: suitConfig.color,
-          width: 36,
-          height: 36,
-        };
+        setScore(currentScore => {
+          const obstacleHeight = currentScore >= 20 ? 44 : 36;
+          const obstacleWidth = currentScore >= 20 ? 44 : 36;
+          
+          const minGap = currentScore >= 40 ? 100 : MIN_OBSTACLE_GAP;
+          
+          const newObstacle: Obstacle = {
+            id: obstacleIdRef.current++,
+            x: width + 50,
+            track,
+            type: suitConfig.type,
+            color: suitConfig.color,
+            width: obstacleWidth,
+            height: obstacleHeight,
+          };
 
-        setObstacles((prev) => {
-          const rightmostX = prev.reduce((max, obs) => Math.max(max, obs.x), 0);
-          if (rightmostX > width - MIN_OBSTACLE_GAP) return prev;
-          return [...prev, newObstacle];
+          setObstacles((prev) => {
+            const rightmostX = prev.reduce((max, obs) => Math.max(max, obs.x), 0);
+            if (rightmostX > width - minGap) return prev;
+            return [...prev, newObstacle];
+          });
+          
+          return currentScore;
         });
       }, SPAWN_INTERVAL);
     }, GRACE_PERIOD);
@@ -575,7 +652,7 @@ export default function GameScreen() {
   }, [playerX, handleGameOver, scoreScale]);
 
   const handleFlip = useCallback(() => {
-    if (isGameOverRef.current) return;
+    if (isGameOverRef.current || isDyingRef.current) return;
 
     if (!isPlaying) {
       return;
@@ -585,19 +662,26 @@ export default function GameScreen() {
     currentTrackRef.current = newTrack;
     flipCountRef.current += 1;
 
+    if (gameState?.soundEnabled) {
+      playFlipSound(true);
+    }
     if (gameState?.hapticsEnabled) {
       triggerFlipHaptic(true);
     }
+    
+    createFlipParticles();
 
+    const flipSpeed = score >= 70 ? 100 : 150;
+    
     worldRotation.value = withTiming(
       newTrack === "top" ? 180 : 0,
-      { duration: 150, easing: Easing.out(Easing.cubic) }
+      { duration: flipSpeed, easing: Easing.out(Easing.cubic) }
     );
 
     playerBounce.value = withSpring(-10, { damping: 8 }, () => {
       playerBounce.value = withSpring(0, { damping: 12 });
     });
-  }, [isPlaying, gameState, worldRotation, playerBounce, startGame]);
+  }, [isPlaying, gameState, worldRotation, playerBounce, startGame, createFlipParticles, score]);
 
   const worldAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ rotate: `${worldRotation.value}deg` }],
@@ -630,6 +714,18 @@ export default function GameScreen() {
   const sparkleStyle = useAnimatedStyle(() => ({
     opacity: sparkleOpacity.value,
   }));
+
+  const motionBlurStyle = useAnimatedStyle(() => ({
+    opacity: motionBlur.value,
+  }));
+
+  useEffect(() => {
+    if (gameSpeedRef.current >= 8) {
+      motionBlur.value = withTiming(0.15, { duration: 300 });
+    } else {
+      motionBlur.value = withTiming(0, { duration: 300 });
+    }
+  }, [level]);
 
   const currentTrack = currentTrackRef.current;
 
@@ -835,6 +931,41 @@ export default function GameScreen() {
         onPress={() => activatePower("double")}
       />
     </View>
+    
+    {flipParticles.map((particle) => (
+      <View
+        key={particle.id}
+        style={[
+          styles.flipParticle,
+          {
+            left: particle.x,
+            top: particle.y,
+            width: particle.size,
+            height: particle.size,
+            backgroundColor: particle.color,
+            opacity: particle.opacity,
+          },
+        ]}
+      />
+    ))}
+    
+    <Animated.View 
+      style={[
+        styles.motionBlurOverlay,
+        motionBlurStyle,
+      ]} 
+      pointerEvents="none"
+    />
+    
+    {deathFlashOpacity > 0 ? (
+      <View 
+        style={[
+          styles.deathFlashOverlay,
+          { opacity: deathFlashOpacity },
+        ]} 
+        pointerEvents="none"
+      />
+    ) : null}
     </View>
   );
 }
@@ -1294,5 +1425,28 @@ const styles = StyleSheet.create({
     textShadowColor: "rgba(0,0,0,0.5)",
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 4,
+  },
+  flipParticle: {
+    position: "absolute",
+    borderRadius: 50,
+    zIndex: 20,
+  },
+  motionBlurOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    zIndex: 5,
+  },
+  deathFlashOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "#FF0000",
+    zIndex: 30,
   },
 });
