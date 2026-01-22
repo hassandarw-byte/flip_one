@@ -312,9 +312,33 @@ interface MenuButtonProps {
 
 function MenuButton({ icon, label, onPress, colors, badge }: MenuButtonProps) {
   const scale = useSharedValue(1);
+  const glowOpacity = useSharedValue(0.3);
+  const shimmerPosition = useSharedValue(-100);
+
+  useEffect(() => {
+    glowOpacity.value = withRepeat(
+      withSequence(
+        withTiming(0.6, { duration: 1500, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0.3, { duration: 1500, easing: Easing.inOut(Easing.ease) })
+      ),
+      -1,
+      true
+    );
+    shimmerPosition.value = withRepeat(
+      withDelay(Math.random() * 3000,
+        withTiming(100, { duration: 1500, easing: Easing.inOut(Easing.ease) })
+      ),
+      -1,
+      false
+    );
+  }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
+  }));
+
+  const glowStyle = useAnimatedStyle(() => ({
+    opacity: glowOpacity.value,
   }));
 
   return (
@@ -329,19 +353,22 @@ function MenuButton({ icon, label, onPress, colors, badge }: MenuButtonProps) {
       }}
       testID={`button-${label.toLowerCase()}`}
     >
-      <LinearGradient
-        colors={colors}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.menuButtonIcon}
-      >
-        <Feather name={icon} size={24} color="#FFFFFF" />
-        {badge && badge > 0 ? (
-          <View style={styles.badge}>
-            <ThemedText style={styles.badgeText}>{badge}</ThemedText>
-          </View>
-        ) : null}
-      </LinearGradient>
+      <View style={styles.menuButtonWrapper}>
+        <Animated.View style={[styles.menuButtonGlow, glowStyle, { backgroundColor: colors[0] }]} />
+        <LinearGradient
+          colors={colors}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.menuButtonIcon}
+        >
+          <Feather name={icon} size={24} color="#FFFFFF" />
+          {badge && badge > 0 ? (
+            <View style={styles.badge}>
+              <ThemedText style={styles.badgeText}>{badge}</ThemedText>
+            </View>
+          ) : null}
+        </LinearGradient>
+      </View>
       <ThemedText style={styles.menuButtonLabel}>{label}</ThemedText>
     </AnimatedPressable>
   );
@@ -520,6 +547,20 @@ const styles = StyleSheet.create({
   menuButton: {
     alignItems: "center",
     width: (width - Spacing.xl * 2 - Spacing.lg * 3) / 4,
+  },
+  menuButtonWrapper: {
+    position: "relative",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  menuButtonGlow: {
+    position: "absolute",
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 15,
   },
   menuButtonIcon: {
     width: 60,

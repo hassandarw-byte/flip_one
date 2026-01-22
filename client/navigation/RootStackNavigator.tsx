@@ -104,6 +104,7 @@ export default function RootStackNavigator() {
         options={{
           headerTitle: "Shop",
           headerTransparent: true,
+          animation: "slide_from_right",
         }}
       />
       <Stack.Screen
@@ -112,6 +113,7 @@ export default function RootStackNavigator() {
         options={{
           headerTitle: "Daily Missions",
           headerTransparent: true,
+          animation: "slide_from_right",
         }}
       />
       <Stack.Screen
@@ -120,6 +122,7 @@ export default function RootStackNavigator() {
         options={{
           headerTitle: "Leaderboard",
           headerTransparent: true,
+          animation: "slide_from_right",
         }}
       />
       <Stack.Screen
@@ -128,17 +131,24 @@ export default function RootStackNavigator() {
         options={{
           headerTitle: "Settings",
           headerTransparent: true,
+          animation: "slide_from_right",
         }}
       />
       <Stack.Screen
         name="LuckyWheel"
         component={LuckyWheelScreen}
-        options={{ headerShown: false }}
+        options={{ 
+          headerShown: false,
+          animation: "fade_from_bottom",
+        }}
       />
       <Stack.Screen
         name="Achievements"
         component={AchievementsScreen}
-        options={{ headerShown: false }}
+        options={{ 
+          headerShown: false,
+          animation: "fade_from_bottom",
+        }}
       />
     </Stack.Navigator>
   );

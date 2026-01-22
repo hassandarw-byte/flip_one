@@ -12,6 +12,8 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
   withSpring,
+  withRepeat,
+  withSequence,
   Easing,
 } from "react-native-reanimated";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -26,6 +28,8 @@ import { useNightMode } from "@/contexts/NightModeContext";
 import { triggerFlipHaptic } from "@/lib/sounds";
 
 const { width, height } = Dimensions.get("window");
+
+const SPARKLE_COLORS = [GameColors.candy1, GameColors.candy2, GameColors.candy3, GameColors.candy4, GameColors.gold];
 
 const WHEEL_SEGMENTS = [
   { label: "25", color: "#FF6B6B", type: "points" },
@@ -51,10 +55,32 @@ export default function LuckyWheelScreen() {
   const wheelRotation = useSharedValue(0);
   const rewardScale = useSharedValue(0);
   const rewardOpacity = useSharedValue(0);
+  const sparkleOpacity = useSharedValue(0.3);
+  const wheelGlow = useSharedValue(0.4);
 
   useEffect(() => {
     loadData();
+    startAnimations();
   }, []);
+
+  const startAnimations = () => {
+    sparkleOpacity.value = withRepeat(
+      withSequence(
+        withTiming(0.8, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0.3, { duration: 2000, easing: Easing.inOut(Easing.ease) })
+      ),
+      -1,
+      true
+    );
+    wheelGlow.value = withRepeat(
+      withSequence(
+        withTiming(0.7, { duration: 1500, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0.4, { duration: 1500, easing: Easing.inOut(Easing.ease) })
+      ),
+      -1,
+      true
+    );
+  };
 
   const loadData = async () => {
     const canSpinToday = await canSpinWheel();
@@ -104,6 +130,14 @@ export default function LuckyWheelScreen() {
     opacity: rewardOpacity.value,
   }));
 
+  const sparkleStyle = useAnimatedStyle(() => ({
+    opacity: sparkleOpacity.value,
+  }));
+
+  const wheelGlowStyle = useAnimatedStyle(() => ({
+    opacity: wheelGlow.value,
+  }));
+
   const getRewardText = () => {
     if (!reward) return "";
     if (reward.type === "points") return `+${reward.reward} Points!`;
@@ -114,6 +148,25 @@ export default function LuckyWheelScreen() {
   return (
     <View style={styles.container}>
       <LinearGradient colors={backgroundGradient} style={StyleSheet.absoluteFill} />
+      
+      <View style={styles.sparklesContainer}>
+        {Array.from({ length: 25 }).map((_, i) => (
+          <Animated.View
+            key={i}
+            style={[
+              styles.sparkle,
+              sparkleStyle,
+              {
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                width: Math.random() * 4 + 2,
+                height: Math.random() * 4 + 2,
+                backgroundColor: SPARKLE_COLORS[Math.floor(Math.random() * SPARKLE_COLORS.length)],
+              },
+            ]}
+          />
+        ))}
+      </View>
       
       <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
         <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
@@ -127,6 +180,7 @@ export default function LuckyWheelScreen() {
       </View>
 
       <View style={styles.wheelContainer}>
+        <Animated.View style={[styles.wheelGlow, wheelGlowStyle]} />
         <Animated.View style={[styles.wheel, wheelAnimatedStyle]}>
           {WHEEL_SEGMENTS.map((segment, index) => {
             const angle = (index * 360) / WHEEL_SEGMENTS.length;
@@ -205,6 +259,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  sparklesContainer: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    zIndex: 0,
+  },
+  sparkle: {
+    position: "absolute",
+    borderRadius: 10,
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -243,6 +307,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  wheelGlow: {
+    position: "absolute",
+    width: 320,
+    height: 320,
+    borderRadius: 160,
+    backgroundColor: GameColors.gold,
+    shadowColor: GameColors.gold,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius: 50,
   },
   wheel: {
     width: 280,

@@ -634,8 +634,8 @@ export default function GameScreen() {
   const currentTrack = currentTrackRef.current;
 
   return (
-    <>
-    <Pressable style={styles.container} onPress={handleFlip} testID="game-area">
+    <View style={styles.container}>
+    <Pressable style={StyleSheet.absoluteFill} onPress={handleFlip} testID="game-area">
       <Animated.View style={[StyleSheet.absoluteFill, screenShakeStyle]}>
         <LinearGradient
           colors={BACKGROUND_GRADIENTS[backgroundLevel]}
@@ -835,7 +835,7 @@ export default function GameScreen() {
         onPress={() => activatePower("double")}
       />
     </View>
-    </>
+    </View>
   );
 }
 

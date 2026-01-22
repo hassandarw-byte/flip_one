@@ -11,6 +11,10 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
+  withRepeat,
+  withSequence,
+  withTiming,
+  Easing,
 } from "react-native-reanimated";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
@@ -22,6 +26,8 @@ import { getGameState, Achievement } from "@/lib/storage";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useNightMode } from "@/contexts/NightModeContext";
 
+const SPARKLE_COLORS = [GameColors.candy1, GameColors.candy2, GameColors.candy3, GameColors.gold];
+
 export default function AchievementsScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -29,10 +35,23 @@ export default function AchievementsScreen() {
   
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [points, setPoints] = useState(0);
+  const sparkleOpacity = useSharedValue(0.3);
 
   useEffect(() => {
     loadData();
+    startAnimations();
   }, []);
+
+  const startAnimations = () => {
+    sparkleOpacity.value = withRepeat(
+      withSequence(
+        withTiming(0.8, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0.3, { duration: 2000, easing: Easing.inOut(Easing.ease) })
+      ),
+      -1,
+      true
+    );
+  };
 
   const loadData = async () => {
     const state = await getGameState();
@@ -40,12 +59,35 @@ export default function AchievementsScreen() {
     setPoints(state.points);
   };
 
+  const sparkleStyle = useAnimatedStyle(() => ({
+    opacity: sparkleOpacity.value,
+  }));
+
   const unlockedCount = achievements.filter(a => a.unlocked).length;
   const totalRewards = achievements.filter(a => a.unlocked).reduce((sum, a) => sum + a.reward, 0);
 
   return (
     <View style={styles.container}>
       <LinearGradient colors={backgroundGradient} style={StyleSheet.absoluteFill} />
+      
+      <View style={styles.sparklesContainer}>
+        {Array.from({ length: 20 }).map((_, i) => (
+          <Animated.View
+            key={i}
+            style={[
+              styles.sparkle,
+              sparkleStyle,
+              {
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                width: Math.random() * 4 + 2,
+                height: Math.random() * 4 + 2,
+                backgroundColor: SPARKLE_COLORS[Math.floor(Math.random() * SPARKLE_COLORS.length)],
+              },
+            ]}
+          />
+        ))}
+      </View>
       
       <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
         <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
@@ -140,6 +182,16 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  sparklesContainer: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    zIndex: 0,
+  },
+  sparkle: {
+    position: "absolute",
+    borderRadius: 10,
   },
   header: {
     flexDirection: "row",
