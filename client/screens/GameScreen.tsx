@@ -62,9 +62,10 @@ export default function GameScreen() {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const [isGameOver, setIsGameOver] = useState(false);
   const [obstacles, setObstacles] = useState<Obstacle[]>([]);
+  const [gameStarted, setGameStarted] = useState(false);
   
   const currentTrackRef = useRef<"top" | "bottom">("bottom");
   const gameSpeedRef = useRef(GAME_SPEED_BASE);
@@ -90,7 +91,17 @@ export default function GameScreen() {
   useEffect(() => {
     loadGameState();
     startSparkleAnimation();
+    
+    // Start game immediately
+    const timer = setTimeout(() => {
+      if (!gameStarted) {
+        setGameStarted(true);
+        startGame();
+      }
+    }, 300);
+    
     return () => {
+      clearTimeout(timer);
       cleanupGame();
     };
   }, []);
@@ -283,7 +294,8 @@ export default function GameScreen() {
   const handleFlip = useCallback(() => {
     if (isGameOverRef.current) return;
 
-    if (!isPlaying) {
+    if (!gameStarted) {
+      setGameStarted(true);
       setIsPlaying(true);
       setIsGameOver(false);
       isGameOverRef.current = false;
@@ -376,6 +388,7 @@ export default function GameScreen() {
             <ThemedText style={styles.levelText}>LVL {level}</ThemedText>
           </LinearGradient>
         </View>
+        
         <Animated.View style={[styles.scoreBadge, scoreAnimatedStyle]}>
           <LinearGradient
             colors={[GameColors.gold, GameColors.goldGlow]}
@@ -384,9 +397,19 @@ export default function GameScreen() {
             <ThemedText style={styles.scoreText}>{score}</ThemedText>
           </LinearGradient>
         </Animated.View>
+        
         <View style={styles.bestScoreBadge}>
           <ThemedText style={styles.bestScoreLabel}>BEST</ThemedText>
           <ThemedText style={styles.bestScoreText}>{gameState?.bestScore || 0}</ThemedText>
+        </View>
+        
+        <View style={styles.pointsBadge}>
+          <LinearGradient
+            colors={[GameColors.success, GameColors.successGlow]}
+            style={styles.pointsGradient}
+          >
+            <ThemedText style={styles.pointsText}>{gameState?.points || 0}</ThemedText>
+          </LinearGradient>
         </View>
       </View>
 
@@ -451,20 +474,46 @@ export default function GameScreen() {
         </Animated.View>
       </Animated.View>
 
-      {!isPlaying ? (
-        <View style={styles.tapToStartContainer}>
-          <LinearGradient
-            colors={["rgba(26, 10, 46, 0.9)", "rgba(45, 27, 78, 0.9)"]}
-            style={StyleSheet.absoluteFill}
-          />
-          <View style={styles.tapToStartContent}>
-            <ThemedText style={styles.tapToStartText}>TAP TO START</ThemedText>
-            <ThemedText style={styles.instructionText}>
-              Tap to flip gravity and avoid obstacles
-            </ThemedText>
-          </View>
+      <View style={[styles.bottomDecorations, { bottom: insets.bottom + Spacing.xl }]}>
+        <View style={styles.decorationRow}>
+          {Array.from({ length: 8 }).map((_, i) => (
+            <Animated.View
+              key={`deco-${i}`}
+              style={[
+                styles.decorationItem,
+                sparkleStyle,
+                {
+                  backgroundColor: [
+                    GameColors.candy1,
+                    GameColors.candy2,
+                    GameColors.candy3,
+                    GameColors.candy4,
+                    GameColors.candy5,
+                    GameColors.primary,
+                    GameColors.secondary,
+                    GameColors.gold,
+                  ][i % 8],
+                },
+              ]}
+            />
+          ))}
         </View>
-      ) : null}
+        <View style={styles.wordPatternRow}>
+          <ThemedText style={styles.wordPattern}>F</ThemedText>
+          <View style={styles.wordDot} />
+          <ThemedText style={styles.wordPattern}>L</ThemedText>
+          <View style={styles.wordDot} />
+          <ThemedText style={styles.wordPattern}>I</ThemedText>
+          <View style={styles.wordDot} />
+          <ThemedText style={styles.wordPattern}>P</ThemedText>
+          <View style={styles.wordSpacer} />
+          <ThemedText style={styles.wordPattern}>O</ThemedText>
+          <View style={styles.wordDot} />
+          <ThemedText style={styles.wordPattern}>N</ThemedText>
+          <View style={styles.wordDot} />
+          <ThemedText style={styles.wordPattern}>E</ThemedText>
+        </View>
+      </View>
     </Pressable>
   );
 }
@@ -630,12 +679,14 @@ const styles = StyleSheet.create({
   },
   scoreContainer: {
     position: "absolute",
-    right: Spacing.xl,
-    alignItems: "flex-end",
+    left: Spacing.lg,
+    right: Spacing.lg,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     zIndex: 10,
   },
   levelBadge: {
-    marginBottom: Spacing.sm,
     borderRadius: BorderRadius.md,
     overflow: "hidden",
     shadowColor: GameColors.primary,
@@ -644,12 +695,12 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
   },
   levelGradient: {
-    paddingHorizontal: Spacing.lg,
+    paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.md,
   },
   levelText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "700",
     color: "#FFFFFF",
     textAlign: "center",
@@ -663,27 +714,24 @@ const styles = StyleSheet.create({
     shadowRadius: 15,
   },
   scoreGradient: {
-    paddingHorizontal: Spacing.xl,
+    paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.lg,
   },
   scoreText: {
-    fontSize: 42,
+    fontSize: 32,
     fontWeight: "900",
     color: GameColors.background,
   },
   bestScoreBadge: {
-    flexDirection: "row",
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.1)",
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.full,
-    marginTop: Spacing.sm,
-    gap: Spacing.xs,
+    borderRadius: BorderRadius.md,
   },
   bestScoreLabel: {
-    fontSize: 10,
+    fontSize: 8,
     color: GameColors.textMuted,
     fontWeight: "600",
   },
@@ -691,6 +739,25 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: GameColors.textPrimary,
     fontWeight: "700",
+  },
+  pointsBadge: {
+    borderRadius: BorderRadius.md,
+    overflow: "hidden",
+    shadowColor: GameColors.success,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+  },
+  pointsGradient: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.md,
+  },
+  pointsText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#FFFFFF",
+    textAlign: "center",
   },
   gameWorld: {
     flex: 1,
@@ -766,32 +833,41 @@ const styles = StyleSheet.create({
   blockObstacle: {
     borderRadius: 6,
   },
-  tapToStartContainer: {
+  bottomDecorations: {
     position: "absolute",
-    top: 0,
     left: 0,
     right: 0,
-    bottom: 0,
-    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 5,
+  },
+  decorationRow: {
+    flexDirection: "row",
+    gap: Spacing.md,
+    marginBottom: Spacing.sm,
+  },
+  decorationItem: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+  },
+  wordPatternRow: {
+    flexDirection: "row",
     alignItems: "center",
   },
-  tapToStartContent: {
-    alignItems: "center",
+  wordPattern: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: "rgba(255,255,255,0.15)",
+    letterSpacing: 2,
   },
-  tapToStartText: {
-    fontSize: 36,
-    fontWeight: "900",
-    color: GameColors.primary,
-    letterSpacing: 4,
-    textShadowColor: GameColors.primary,
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 25,
+  wordDot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    marginHorizontal: Spacing.xs,
   },
-  instructionText: {
-    fontSize: 16,
-    color: GameColors.textSecondary,
-    marginTop: Spacing.lg,
-    textAlign: "center",
-    paddingHorizontal: Spacing.xl,
+  wordSpacer: {
+    width: Spacing.lg,
   },
 });

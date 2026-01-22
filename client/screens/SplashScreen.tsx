@@ -14,6 +14,7 @@ import Animated, {
   interpolate,
 } from "react-native-reanimated";
 import { GameColors, Spacing } from "@/constants/theme";
+import { useNightMode } from "@/contexts/NightModeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -30,6 +31,8 @@ interface Sparkle {
 }
 
 export default function SplashScreen({ onComplete }: SplashScreenProps) {
+  const { backgroundGradient } = useNightMode();
+  
   const logoOpacity = useSharedValue(0);
   const logoScale = useSharedValue(0.5);
   const logoRotate = useSharedValue(-10);
@@ -172,7 +175,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
 
   return (
     <LinearGradient
-      colors={[GameColors.backgroundGradientStart, GameColors.backgroundGradientEnd, GameColors.background]}
+      colors={backgroundGradient}
       style={styles.container}
     >
       <View style={styles.sparklesContainer}>

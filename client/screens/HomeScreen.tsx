@@ -26,6 +26,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import { getGameState, GameState } from "@/lib/storage";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
+import { useNightMode } from "@/contexts/NightModeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -35,6 +36,7 @@ const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { backgroundGradient } = useNightMode();
   const [gameState, setGameState] = useState<GameState | null>(null);
 
   const playButtonScale = useSharedValue(1);
@@ -129,7 +131,7 @@ export default function HomeScreen() {
 
   return (
     <LinearGradient
-      colors={[GameColors.backgroundGradientStart, GameColors.backgroundGradientEnd, GameColors.background]}
+      colors={backgroundGradient}
       style={[styles.container, { paddingTop: insets.top + Spacing.xl }]}
     >
       <View style={styles.sparklesContainer}>
@@ -153,11 +155,13 @@ export default function HomeScreen() {
 
       <Animated.View style={[styles.logoSection, logoAnimatedStyle]}>
         <View style={styles.logoGlow}>
-          <Image
-            source={require("../../assets/images/icon.png")}
-            style={styles.logo}
-            resizeMode="contain"
-          />
+          <View style={styles.logoWrapper}>
+            <Image
+              source={require("../../assets/images/icon.png")}
+              style={styles.logo}
+              resizeMode="cover"
+            />
+          </View>
         </View>
 
         <View style={styles.titleContainer}>
@@ -331,8 +335,19 @@ const styles = StyleSheet.create({
   logoGlow: {
     shadowColor: GameColors.primary,
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
+    shadowOpacity: 0.8,
+    shadowRadius: 40,
+  },
+  logoWrapper: {
+    width: 140,
+    height: 140,
+    borderRadius: 36,
+    overflow: "hidden",
+    shadowColor: GameColors.primary,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
     shadowRadius: 30,
+    elevation: 20,
   },
   logo: {
     width: 140,
