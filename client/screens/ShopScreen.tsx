@@ -5,6 +5,7 @@ import {
   FlatList,
   Pressable,
   Dimensions,
+  ScrollView,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -14,6 +15,9 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
+  withRepeat,
+  withSequence,
+  withTiming,
   FadeInDown,
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
@@ -39,6 +43,16 @@ interface SkinItem {
   colors: string[];
   price: number;
   isPremium?: boolean;
+  icon?: string;
+}
+
+interface PowerItem {
+  id: string;
+  name: string;
+  description: string;
+  icon: keyof typeof Feather.glyphMap;
+  colors: string[];
+  type: "ad" | "premium";
 }
 
 const SKINS: SkinItem[] = [
@@ -49,14 +63,59 @@ const SKINS: SkinItem[] = [
   { id: "red", name: "Cherry Red", colors: [GameColors.candy1, GameColors.spikeGlow], price: 200 },
   { id: "green", name: "Lime Fresh", colors: [GameColors.candy6, GameColors.successGlow], price: 250 },
   { id: "gold", name: "Premium Gold", colors: ["#FFD700", "#B8860B"], price: 400 },
-  { id: "rainbow", name: "Rainbow", colors: ["#FF6B6B", "#4ECDC4", "#FFD93D"], price: 0, isPremium: true },
+];
+
+const PREMIUM_SKINS: SkinItem[] = [
+  { id: "dark_knight", name: "Dark Knight", colors: ["#1a1a2e", "#16213e"], price: 0, isPremium: true, icon: "shield" },
+  { id: "web_hero", name: "Web Hero", colors: ["#e63946", "#1d3557"], price: 0, isPremium: true, icon: "target" },
+  { id: "green_giant", name: "Green Giant", colors: ["#2d6a4f", "#40916c"], price: 0, isPremium: true, icon: "zap" },
+  { id: "iron_armor", name: "Iron Armor", colors: ["#c1121f", "#ffd60a"], price: 0, isPremium: true, icon: "cpu" },
+  { id: "ice_queen", name: "Ice Queen", colors: ["#90e0ef", "#48cae4"], price: 0, isPremium: true, icon: "star" },
+  { id: "kawaii_cat", name: "Kawaii Cat", colors: ["#ffb6c1", "#ff69b4"], price: 0, isPremium: true, icon: "heart" },
+  { id: "thunder_god", name: "Thunder God", colors: ["#7b2cbf", "#e0aaff"], price: 0, isPremium: true, icon: "cloud-lightning" },
+  { id: "captain_star", name: "Captain Star", colors: ["#002855", "#bf0a30"], price: 0, isPremium: true, icon: "award" },
+];
+
+const SPECIAL_POWERS: PowerItem[] = [
+  { 
+    id: "pause_time", 
+    name: "Freeze Time", 
+    description: "Pause obstacles for 3 seconds",
+    icon: "pause-circle",
+    colors: [GameColors.candy2, GameColors.platformGlow],
+    type: "ad"
+  },
+  { 
+    id: "slow_motion", 
+    name: "Slow Motion", 
+    description: "Slow down speed by 50%",
+    icon: "clock",
+    colors: [GameColors.candy4, GameColors.primaryGlow],
+    type: "ad"
+  },
+  { 
+    id: "shield", 
+    name: "Shield", 
+    description: "Survive one collision",
+    icon: "shield",
+    colors: [GameColors.candy1, GameColors.spikeGlow],
+    type: "ad"
+  },
+  { 
+    id: "double_points", 
+    name: "Double Points", 
+    description: "2x points for 30 seconds",
+    icon: "trending-up",
+    colors: [GameColors.gold, GameColors.goldGlow],
+    type: "ad"
+  },
 ];
 
 export default function ShopScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const [gameState, setGameState] = useState<GameState | null>(null);
-  const [activeTab, setActiveTab] = useState<"skins" | "premium">("skins");
+  const [activeTab, setActiveTab] = useState<"skins" | "premium" | "powers">("skins");
 
   useEffect(() => {
     loadGameState();
@@ -100,6 +159,10 @@ export default function ShopScreen() {
     }
   };
 
+  const handleWatchAd = async (power: PowerItem) => {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  };
+
   const renderSkinItem = ({ item, index }: { item: SkinItem; index: number }) => {
     const isOwned = gameState?.ownedSkins.includes(item.id);
     const isEquipped = gameState?.equippedSkin === item.id;
@@ -118,9 +181,13 @@ export default function ShopScreen() {
     );
   };
 
-  const filteredSkins = SKINS.filter((s) =>
-    activeTab === "premium" ? s.isPremium : !s.isPremium
-  );
+  const renderPremiumItem = ({ item, index }: { item: SkinItem; index: number }) => {
+    return (
+      <Animated.View entering={FadeInDown.delay(index * 50).springify()}>
+        <PremiumSkinCard skin={item} />
+      </Animated.View>
+    );
+  };
 
   return (
     <LinearGradient
@@ -150,28 +217,68 @@ export default function ShopScreen() {
           isActive={activeTab === "premium"}
           onPress={() => setActiveTab("premium")}
         />
+        <TabButton
+          label="Powers"
+          isActive={activeTab === "powers"}
+          onPress={() => setActiveTab("powers")}
+        />
       </View>
 
-      <FlatList
-        data={filteredSkins}
-        renderItem={renderSkinItem}
-        keyExtractor={(item) => item.id}
-        numColumns={2}
-        columnWrapperStyle={styles.row}
-        contentContainerStyle={[
-          styles.listContent,
-          { paddingBottom: insets.bottom + Spacing.xl },
-        ]}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Feather name="package" size={48} color={GameColors.textMuted} />
-            <ThemedText style={styles.emptyText}>
-              No items available
+      {activeTab === "skins" ? (
+        <FlatList
+          data={SKINS}
+          renderItem={renderSkinItem}
+          keyExtractor={(item) => item.id}
+          numColumns={2}
+          columnWrapperStyle={styles.row}
+          contentContainerStyle={[
+            styles.listContent,
+            { paddingBottom: insets.bottom + Spacing.xl },
+          ]}
+          showsVerticalScrollIndicator={false}
+        />
+      ) : activeTab === "premium" ? (
+        <FlatList
+          data={PREMIUM_SKINS}
+          renderItem={renderPremiumItem}
+          keyExtractor={(item) => item.id}
+          numColumns={2}
+          columnWrapperStyle={styles.row}
+          contentContainerStyle={[
+            styles.listContent,
+            { paddingBottom: insets.bottom + Spacing.xl },
+          ]}
+          showsVerticalScrollIndicator={false}
+          ListHeaderComponent={
+            <View style={styles.premiumHeader}>
+              <ThemedText style={styles.premiumTitle}>Character Skins</ThemedText>
+              <ThemedText style={styles.premiumSubtitle}>
+                Unlock exclusive character designs
+              </ThemedText>
+            </View>
+          }
+        />
+      ) : (
+        <ScrollView
+          contentContainerStyle={[
+            styles.powersContent,
+            { paddingBottom: insets.bottom + Spacing.xl },
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.premiumHeader}>
+            <ThemedText style={styles.premiumTitle}>Special Powers</ThemedText>
+            <ThemedText style={styles.premiumSubtitle}>
+              Watch ads to unlock game-changing abilities
             </ThemedText>
           </View>
-        }
-      />
+          {SPECIAL_POWERS.map((power, index) => (
+            <Animated.View key={power.id} entering={FadeInDown.delay(index * 80).springify()}>
+              <PowerCard power={power} onWatchAd={() => handleWatchAd(power)} />
+            </Animated.View>
+          ))}
+        </ScrollView>
+      )}
     </LinearGradient>
   );
 }
@@ -262,20 +369,150 @@ function SkinCard({
             </ThemedText>
           </View>
         ) : (
-          <View style={[styles.priceTag, !canAfford && !skin.isPremium && styles.priceTagDisabled]}>
-            {skin.isPremium ? (
-              <>
-                <Feather name="dollar-sign" size={12} color={GameColors.gold} />
-                <ThemedText style={styles.priceText}>0.99</ThemedText>
-              </>
-            ) : (
-              <>
-                <Feather name="star" size={12} color={GameColors.gold} />
-                <ThemedText style={styles.priceText}>{skin.price}</ThemedText>
-              </>
-            )}
+          <View style={[styles.priceTag, !canAfford && styles.priceTagDisabled]}>
+            <Feather name="star" size={12} color={GameColors.gold} />
+            <ThemedText style={styles.priceText}>{skin.price}</ThemedText>
           </View>
         )}
+      </LinearGradient>
+    </AnimatedPressable>
+  );
+}
+
+interface PremiumSkinCardProps {
+  skin: SkinItem;
+}
+
+function PremiumSkinCard({ skin }: PremiumSkinCardProps) {
+  const scale = useSharedValue(1);
+  const glow = useSharedValue(0.5);
+
+  useEffect(() => {
+    glow.value = withRepeat(
+      withSequence(
+        withTiming(1, { duration: 1000 }),
+        withTiming(0.5, { duration: 1000 })
+      ),
+      -1,
+      true
+    );
+  }, []);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const glowStyle = useAnimatedStyle(() => ({
+    opacity: glow.value,
+  }));
+
+  return (
+    <AnimatedPressable
+      style={[styles.skinCard, animatedStyle]}
+      onPressIn={() => {
+        scale.value = withSpring(0.95, { damping: 15 });
+      }}
+      onPressOut={() => {
+        scale.value = withSpring(1, { damping: 10 });
+      }}
+      testID={`premium-skin-${skin.id}`}
+    >
+      <LinearGradient
+        colors={[GameColors.surfaceLight, GameColors.surface]}
+        style={styles.skinCardGradient}
+      >
+        <View style={styles.skinPreviewContainer}>
+          <Animated.View style={[styles.premiumGlow, glowStyle]}>
+            <LinearGradient
+              colors={[...skin.colors, "transparent"]}
+              style={styles.premiumGlowGradient}
+            />
+          </Animated.View>
+          <LinearGradient
+            colors={skin.colors}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.skinPreview}
+          >
+            {skin.icon ? (
+              <Feather name={skin.icon as any} size={24} color="#FFFFFF" />
+            ) : null}
+          </LinearGradient>
+        </View>
+
+        <ThemedText style={styles.skinName}>{skin.name}</ThemedText>
+
+        <LinearGradient
+          colors={[GameColors.gold, GameColors.goldGlow]}
+          style={styles.premiumPriceTag}
+        >
+          <Feather name="play" size={12} color={GameColors.background} />
+          <ThemedText style={styles.premiumPriceText}>Watch Ad</ThemedText>
+        </LinearGradient>
+      </LinearGradient>
+    </AnimatedPressable>
+  );
+}
+
+interface PowerCardProps {
+  power: PowerItem;
+  onWatchAd: () => void;
+}
+
+function PowerCard({ power, onWatchAd }: PowerCardProps) {
+  const scale = useSharedValue(1);
+  const glow = useSharedValue(0.5);
+
+  useEffect(() => {
+    glow.value = withRepeat(
+      withSequence(
+        withTiming(1, { duration: 1200 }),
+        withTiming(0.5, { duration: 1200 })
+      ),
+      -1,
+      true
+    );
+  }, []);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  return (
+    <AnimatedPressable
+      style={[styles.powerCard, animatedStyle]}
+      onPress={onWatchAd}
+      onPressIn={() => {
+        scale.value = withSpring(0.98, { damping: 15 });
+      }}
+      onPressOut={() => {
+        scale.value = withSpring(1, { damping: 10 });
+      }}
+      testID={`power-${power.id}`}
+    >
+      <LinearGradient
+        colors={[GameColors.surfaceLight, GameColors.surface]}
+        style={styles.powerCardGradient}
+      >
+        <LinearGradient
+          colors={power.colors}
+          style={styles.powerIcon}
+        >
+          <Feather name={power.icon} size={24} color="#FFFFFF" />
+        </LinearGradient>
+        
+        <View style={styles.powerInfo}>
+          <ThemedText style={styles.powerName}>{power.name}</ThemedText>
+          <ThemedText style={styles.powerDescription}>{power.description}</ThemedText>
+        </View>
+
+        <LinearGradient
+          colors={[GameColors.success, GameColors.successGlow]}
+          style={styles.watchAdButton}
+        >
+          <Feather name="play" size={14} color="#FFFFFF" />
+          <ThemedText style={styles.watchAdText}>Watch</ThemedText>
+        </LinearGradient>
       </LinearGradient>
     </AnimatedPressable>
   );
@@ -324,19 +561,36 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   tabText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "600",
     color: GameColors.textSecondary,
     textAlign: "center",
     paddingVertical: Spacing.md,
   },
   tabTextActive: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "700",
     color: "#FFFFFF",
   },
   listContent: {
     paddingHorizontal: Spacing.xl,
+  },
+  powersContent: {
+    paddingHorizontal: Spacing.xl,
+  },
+  premiumHeader: {
+    marginBottom: Spacing.xl,
+    alignItems: "center",
+  },
+  premiumTitle: {
+    fontSize: 20,
+    fontWeight: "800",
+    color: GameColors.textPrimary,
+  },
+  premiumSubtitle: {
+    fontSize: 14,
+    color: GameColors.textMuted,
+    marginTop: Spacing.xs,
   },
   row: {
     justifyContent: "space-between",
@@ -364,10 +618,21 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  premiumGlow: {
+    position: "absolute",
+    top: -8,
+    left: -8,
+    right: -8,
+    bottom: -8,
+    borderRadius: 18,
+    overflow: "hidden",
+  },
+  premiumGlowGradient: {
+    flex: 1,
+    borderRadius: 18,
   },
   equippedBadge: {
     position: "absolute",
@@ -387,6 +652,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: GameColors.textPrimary,
     marginBottom: Spacing.sm,
+    textAlign: "center",
   },
   ownedBadge: {
     backgroundColor: GameColors.success + "25",
@@ -420,15 +686,64 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: GameColors.gold,
   },
-  emptyContainer: {
-    flex: 1,
+  premiumPriceTag: {
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    paddingTop: Spacing["5xl"],
+    gap: Spacing.xs,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.full,
   },
-  emptyText: {
+  premiumPriceText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: GameColors.background,
+  },
+  powerCard: {
+    marginBottom: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+  },
+  powerCardGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
+    borderRadius: BorderRadius.lg,
+  },
+  powerIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: BorderRadius.md,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: Spacing.lg,
+  },
+  powerInfo: {
+    flex: 1,
+  },
+  powerName: {
     fontSize: 16,
+    fontWeight: "700",
+    color: GameColors.textPrimary,
+  },
+  powerDescription: {
+    fontSize: 12,
     color: GameColors.textMuted,
-    marginTop: Spacing.lg,
+    marginTop: 2,
+  },
+  watchAdButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
+  },
+  watchAdText: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#FFFFFF",
   },
 });

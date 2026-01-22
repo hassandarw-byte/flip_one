@@ -46,9 +46,10 @@ interface Obstacle {
   id: number;
   x: number;
   track: "top" | "bottom";
-  type: "spike" | "block";
+  type: "diamond" | "gem" | "crystal" | "star" | "heart";
   width: number;
   height: number;
+  colors: string[];
 }
 
 export default function GameScreen() {
@@ -208,19 +209,28 @@ export default function GameScreen() {
     setTimeout(() => {
       if (isGameOverRef.current) return;
       
+      const obstacleTypes: Array<{ type: Obstacle["type"]; colors: string[] }> = [
+        { type: "diamond", colors: [GameColors.candy1, GameColors.spikeGlow] },
+        { type: "gem", colors: [GameColors.candy4, GameColors.primaryGlow] },
+        { type: "crystal", colors: [GameColors.candy2, GameColors.platformGlow] },
+        { type: "star", colors: [GameColors.candy5, GameColors.secondaryGlow] },
+        { type: "heart", colors: [GameColors.candy1, "#FF9999"] },
+      ];
+      
       obstacleSpawnRef.current = setInterval(() => {
         if (isGameOverRef.current) return;
         
         const track: "top" | "bottom" = Math.random() > 0.5 ? "top" : "bottom";
-        const type = Math.random() > 0.6 ? "spike" : "block";
+        const obsConfig = obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)];
         
         const newObstacle: Obstacle = {
           id: obstacleIdRef.current++,
           x: width + 50,
           track,
-          type,
-          width: type === "spike" ? 28 : 38,
-          height: type === "spike" ? 28 : 22,
+          type: obsConfig.type,
+          colors: obsConfig.colors,
+          width: 32,
+          height: 32,
         };
 
         setObstacles((prev) => {
@@ -382,25 +392,7 @@ export default function GameScreen() {
               },
             ]}
           >
-            {obs.type === "spike" ? (
-              <View
-                style={[
-                  styles.spikeObstacle,
-                  {
-                    borderLeftWidth: obs.width / 2,
-                    borderRightWidth: obs.width / 2,
-                    borderBottomWidth: obs.height,
-                    borderBottomColor: GameColors.spike,
-                    transform: obs.track === "top" ? [{ rotate: "180deg" }] : [],
-                  },
-                ]}
-              />
-            ) : (
-              <LinearGradient
-                colors={[GameColors.platform, GameColors.platformGlow]}
-                style={[styles.blockObstacle, { width: obs.width, height: obs.height }]}
-              />
-            )}
+            <ObstacleShape obstacle={obs} />
           </View>
         ))}
 
@@ -444,6 +436,150 @@ export default function GameScreen() {
     </Pressable>
   );
 }
+
+function ObstacleShape({ obstacle }: { obstacle: Obstacle }) {
+  const { type, colors, width: w, height: h } = obstacle;
+
+  switch (type) {
+    case "diamond":
+      return (
+        <View style={[obstacleStyles.diamond, { width: w, height: h }]}>
+          <LinearGradient
+            colors={colors}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={[obstacleStyles.diamondInner, { width: w * 0.7, height: h * 0.7 }]}
+          />
+        </View>
+      );
+    case "gem":
+      return (
+        <LinearGradient
+          colors={colors}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={[obstacleStyles.gem, { width: w, height: h }]}
+        >
+          <View style={obstacleStyles.gemHighlight} />
+        </LinearGradient>
+      );
+    case "crystal":
+      return (
+        <View style={obstacleStyles.crystalContainer}>
+          <LinearGradient
+            colors={colors}
+            style={[obstacleStyles.crystal, { width: w * 0.4, height: h }]}
+          />
+          <LinearGradient
+            colors={[colors[1], colors[0]]}
+            style={[obstacleStyles.crystal, { width: w * 0.4, height: h * 0.7, marginLeft: -8 }]}
+          />
+        </View>
+      );
+    case "star":
+      return (
+        <LinearGradient
+          colors={colors}
+          style={[obstacleStyles.star, { width: w, height: h }]}
+        >
+          <View style={obstacleStyles.starCenter} />
+        </LinearGradient>
+      );
+    case "heart":
+      return (
+        <View style={[obstacleStyles.heartContainer, { width: w, height: h }]}>
+          <LinearGradient
+            colors={colors}
+            style={[obstacleStyles.heartLeft, { width: w * 0.55, height: h * 0.55 }]}
+          />
+          <LinearGradient
+            colors={colors}
+            style={[obstacleStyles.heartRight, { width: w * 0.55, height: h * 0.55 }]}
+          />
+          <LinearGradient
+            colors={colors}
+            style={[obstacleStyles.heartBottom, { width: w * 0.7, height: h * 0.7 }]}
+          />
+        </View>
+      );
+    default:
+      return (
+        <LinearGradient
+          colors={colors}
+          style={[obstacleStyles.gem, { width: w, height: h }]}
+        />
+      );
+  }
+}
+
+const obstacleStyles = StyleSheet.create({
+  diamond: {
+    transform: [{ rotate: "45deg" }],
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  diamondInner: {
+    borderRadius: 4,
+  },
+  gem: {
+    borderRadius: 8,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    overflow: "hidden",
+  },
+  gemHighlight: {
+    width: "40%",
+    height: "40%",
+    backgroundColor: "rgba(255,255,255,0.4)",
+    borderRadius: 20,
+    margin: 4,
+  },
+  crystalContainer: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+  },
+  crystal: {
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    borderBottomLeftRadius: 2,
+    borderBottomRightRadius: 2,
+  },
+  star: {
+    borderRadius: 6,
+    transform: [{ rotate: "15deg" }],
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  starCenter: {
+    width: "50%",
+    height: "50%",
+    backgroundColor: "rgba(255,255,255,0.5)",
+    borderRadius: 20,
+  },
+  heartContainer: {
+    position: "relative",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  heartLeft: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    borderRadius: 50,
+  },
+  heartRight: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    borderRadius: 50,
+  },
+  heartBottom: {
+    position: "absolute",
+    bottom: 0,
+    transform: [{ rotate: "45deg" }],
+    borderRadius: 4,
+  },
+});
 
 const styles = StyleSheet.create({
   container: {
