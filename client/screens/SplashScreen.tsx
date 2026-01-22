@@ -219,7 +219,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
 
       <Animated.View style={[styles.titleContainer, titleAnimatedStyle]}>
         <Animated.Text style={styles.titleText}>FLIP ONE</Animated.Text>
-        <Animated.Text style={styles.subtitleText}>Tap to Flip</Animated.Text>
+        <Animated.Text style={styles.subtitleText}>Flip the world. Stay alive.</Animated.Text>
       </Animated.View>
     </LinearGradient>
   );
