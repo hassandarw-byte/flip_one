@@ -33,7 +33,7 @@ import {
   updateMissionProgress,
   GameState,
 } from "@/lib/storage";
-import { triggerFlipHaptic, triggerGameOverHaptic } from "@/lib/sounds";
+import { triggerFlipHaptic, triggerGameOverHaptic, triggerPowerUpHaptic, triggerComboHaptic, triggerExplosionHaptic } from "@/lib/sounds";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useNightMode } from "@/contexts/NightModeContext";
 
@@ -223,10 +223,14 @@ export default function GameScreen() {
     }));
     setExplosionParticles(prev => [...prev, ...particles]);
     
+    if (gameState?.hapticsEnabled) {
+      triggerExplosionHaptic(true);
+    }
+    
     setTimeout(() => {
       setExplosionParticles(prev => prev.filter(p => !particles.find(np => np.id === p.id)));
     }, 500);
-  }, []);
+  }, [gameState?.hapticsEnabled]);
 
   const triggerScreenShake = useCallback(() => {
     screenShakeX.value = withSequence(
@@ -250,7 +254,13 @@ export default function GameScreen() {
     const timeSinceLastPass = now - lastObstaclePassTime.current;
     
     if (timeSinceLastPass < 2000) {
-      setCombo(prev => prev + 1);
+      setCombo(prev => {
+        const newCombo = prev + 1;
+        if (gameState?.hapticsEnabled && newCombo >= 2) {
+          triggerComboHaptic(true, newCombo);
+        }
+        return newCombo;
+      });
       setShowCombo(true);
       comboScale.value = withSequence(
         withSpring(1.3, { damping: 8 }),
@@ -284,7 +294,13 @@ export default function GameScreen() {
     setAvailablePowers(prev => prev.filter(p => p !== powerType));
     
     if (gameState?.hapticsEnabled) {
-      triggerFlipHaptic(true);
+      const hapticMap: Record<string, 'freeze' | 'slowmo' | 'shield' | 'doublePoints'> = {
+        freeze: 'freeze',
+        slow: 'slowmo',
+        shield: 'shield',
+        double: 'doublePoints',
+      };
+      triggerPowerUpHaptic(true, hapticMap[powerType]);
     }
     
     const now = Date.now();
