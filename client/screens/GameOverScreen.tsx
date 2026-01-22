@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   View,
   StyleSheet,
   Pressable,
   Dimensions,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import Animated, {
   useSharedValue,
@@ -13,8 +12,6 @@ import Animated, {
   withSpring,
   withDelay,
   withSequence,
-  withTiming,
-  FadeIn,
   SlideInDown,
 } from "react-native-reanimated";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -30,7 +27,6 @@ const { width } = Dimensions.get("window");
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export default function GameOverScreen() {
-  const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const route = useRoute<RouteProp<RootStackParamList, "GameOver">>();
   
@@ -75,8 +71,6 @@ export default function GameOverScreen() {
   };
 
   const handleWatchAd = () => {
-    // In a real app, this would show an ad
-    // For MVP, we just retry
     navigation.replace("Game");
   };
 
@@ -91,7 +85,7 @@ export default function GameOverScreen() {
               {
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
-                opacity: Math.random() * 0.5 + 0.2,
+                opacity: Math.random() * 0.4 + 0.1,
                 width: Math.random() * 2 + 1,
                 height: Math.random() * 2 + 1,
               },
@@ -141,7 +135,7 @@ export default function GameOverScreen() {
               icon="rotate-ccw"
               label="Retry"
               onPress={handleRetry}
-              color={GameColors.gold}
+              color={GameColors.player}
             />
             <GameButton
               icon="home"
@@ -232,7 +226,7 @@ function GameButton({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.85)",
+    backgroundColor: "rgba(11, 15, 26, 0.9)",
     justifyContent: "center",
     alignItems: "center",
   },

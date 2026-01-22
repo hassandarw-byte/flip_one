@@ -63,7 +63,6 @@ export default function GameScreen() {
   const flipCountRef = useRef(0);
   const isGameOverRef = useRef(false);
   const obstacleIdRef = useRef(0);
-  const lastObstacleXRef = useRef(width);
   
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
   const obstacleSpawnRef = useRef<NodeJS.Timeout | null>(null);
@@ -104,43 +103,6 @@ export default function GameScreen() {
       scoreIntervalRef.current = null;
     }
   }, []);
-
-  const spawnObstacle = useCallback(() => {
-    if (isGameOverRef.current) return;
-
-    const currentObstacles = obstacles;
-    const rightmostX = currentObstacles.reduce((max, obs) => Math.max(max, obs.x), 0);
-    
-    if (rightmostX > width - MIN_OBSTACLE_GAP) return;
-
-    const track = Math.random() > 0.5 ? "top" : "bottom";
-    const type = Math.random() > 0.6 ? "spike" : "block";
-    
-    const newObstacle: Obstacle = {
-      id: obstacleIdRef.current++,
-      x: width + 50,
-      track,
-      type,
-      width: type === "spike" ? 25 : 35,
-      height: type === "spike" ? 25 : 20,
-    };
-
-    setObstacles((prev) => [...prev, newObstacle]);
-  }, [obstacles]);
-
-  const checkCollision = useCallback((obstacle: Obstacle): boolean => {
-    const playerLeft = playerX - PLAYER_SIZE / 2;
-    const playerRight = playerX + PLAYER_SIZE / 2;
-    const obstacleLeft = obstacle.x - obstacle.width / 2;
-    const obstacleRight = obstacle.x + obstacle.width / 2;
-
-    const horizontalCollision =
-      playerRight > obstacleLeft + 5 && playerLeft < obstacleRight - 5;
-
-    if (!horizontalCollision) return false;
-
-    return obstacle.track === currentTrackRef.current;
-  }, [playerX]);
 
   const handleGameOver = useCallback(async () => {
     if (isGameOverRef.current) return;
@@ -303,7 +265,7 @@ export default function GameScreen() {
   return (
     <Pressable style={styles.container} onPress={handleFlip} testID="game-area">
       <View style={styles.starsContainer}>
-        {Array.from({ length: 40 }).map((_, i) => (
+        {Array.from({ length: 50 }).map((_, i) => (
           <View
             key={i}
             style={[
@@ -311,7 +273,7 @@ export default function GameScreen() {
               {
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
-                opacity: Math.random() * 0.5 + 0.1,
+                opacity: Math.random() * 0.4 + 0.1,
                 width: Math.random() * 2 + 1,
                 height: Math.random() * 2 + 1,
               },
@@ -331,16 +293,16 @@ export default function GameScreen() {
 
       <Animated.View style={[styles.gameWorld, worldAnimatedStyle]}>
         <View style={[styles.track, { top: trackTopY }]}>
-          <View style={[styles.trackLine, { backgroundColor: GameColors.trackTop }]} />
+          <View style={[styles.trackLine, { backgroundColor: GameColors.spike }]} />
           <View style={styles.spikesContainer}>
             {Array.from({ length: 25 }).map((_, i) => (
-              <View key={i} style={[styles.trackSpike, { borderBottomColor: GameColors.trackTop }]} />
+              <View key={i} style={[styles.trackSpike, { borderBottomColor: GameColors.spike }]} />
             ))}
           </View>
         </View>
 
         <View style={[styles.track, { top: trackBottomY }]}>
-          <View style={[styles.trackLineBottom, { backgroundColor: GameColors.trackBottom }]} />
+          <View style={[styles.trackLineBottom, { backgroundColor: GameColors.platform }]} />
         </View>
 
         {obstacles.map((obs) => (
@@ -348,23 +310,23 @@ export default function GameScreen() {
             key={obs.id}
             style={[
               styles.obstacle,
-              obs.type === "spike" ? styles.spikeObstacle : styles.blockObstacle,
               {
                 left: obs.x - obs.width / 2,
                 top:
                   obs.track === "top"
                     ? trackTopY + TRACK_HEIGHT - obs.height - 4
                     : trackBottomY + 4,
-                width: obs.width,
-                height: obs.height,
-                backgroundColor: obs.type === "block" ? GameColors.obstacle : "transparent",
-              },
-              obs.type === "spike" && {
-                borderLeftWidth: obs.width / 2,
-                borderRightWidth: obs.width / 2,
-                borderBottomWidth: obs.height,
-                borderBottomColor: GameColors.obstacle,
-                transform: obs.track === "top" ? [{ rotate: "180deg" }] : [],
+                width: obs.type === "spike" ? 0 : obs.width,
+                height: obs.type === "spike" ? 0 : obs.height,
+                backgroundColor: obs.type === "block" ? GameColors.platform : "transparent",
+                borderRadius: obs.type === "block" ? 4 : 0,
+                borderLeftWidth: obs.type === "spike" ? obs.width / 2 : 0,
+                borderRightWidth: obs.type === "spike" ? obs.width / 2 : 0,
+                borderBottomWidth: obs.type === "spike" ? obs.height : 0,
+                borderLeftColor: "transparent",
+                borderRightColor: "transparent",
+                borderBottomColor: obs.type === "spike" ? GameColors.spike : "transparent",
+                transform: obs.type === "spike" && obs.track === "top" ? [{ rotate: "180deg" }] : [],
               },
             ]}
           />
@@ -382,7 +344,9 @@ export default function GameScreen() {
                   : trackTopY + TRACK_HEIGHT - 4,
             },
           ]}
-        />
+        >
+          <View style={styles.playerGlow} />
+        </Animated.View>
       </Animated.View>
 
       {!isPlaying ? (
@@ -425,7 +389,7 @@ const styles = StyleSheet.create({
     color: GameColors.textPrimary,
     textShadowColor: GameColors.primary,
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 10,
+    textShadowRadius: 15,
   },
   bestScoreText: {
     fontSize: 14,
@@ -479,21 +443,20 @@ const styles = StyleSheet.create({
     height: PLAYER_SIZE,
     backgroundColor: GameColors.player,
     borderRadius: 4,
-    shadowColor: GameColors.player,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 10,
+  },
+  playerGlow: {
+    position: "absolute",
+    top: -6,
+    left: -6,
+    right: -6,
+    bottom: -6,
+    backgroundColor: GameColors.player,
+    borderRadius: 8,
+    opacity: 0.3,
   },
   obstacle: {
     position: "absolute",
-    borderRadius: 2,
   },
-  spikeObstacle: {
-    backgroundColor: "transparent",
-    borderLeftColor: "transparent",
-    borderRightColor: "transparent",
-  },
-  blockObstacle: {},
   tapToStartContainer: {
     position: "absolute",
     top: 0,
@@ -502,7 +465,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.6)",
+    backgroundColor: "rgba(11, 15, 26, 0.7)",
   },
   tapToStartText: {
     fontSize: 32,

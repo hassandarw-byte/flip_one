@@ -1,48 +1,56 @@
 import { Platform } from "react-native";
 
 export const GameColors = {
-  background: "#000000",
-  surface: "#1A1A1A",
-  surfaceLight: "#2A2A2A",
-  primary: "#00E5FF",
-  secondary: "#6200EA",
-  success: "#00FF41",
-  danger: "#FF006E",
-  warning: "#FFD600",
-  gold: "#FFB800",
+  background: "#0B0F1A",
+  surface: "#151B2E",
+  surfaceLight: "#1E2640",
+  
+  player: "#FF8A00",
+  playerGlow: "#FF8A00",
+  
+  spike: "#FF3B3B",
+  platform: "#4CC9F0",
+  
+  flipEffectStart: "#3A86FF",
+  flipEffectEnd: "#8338EC",
+  
+  primary: "#4CC9F0",
+  secondary: "#8338EC",
+  success: "#2EC4B6",
+  danger: "#FF3B3B",
+  warning: "#FFC93C",
+  gold: "#FFC93C",
+  
   textPrimary: "#FFFFFF",
-  textSecondary: "#CCCCCC",
-  textMuted: "#888888",
-  trackTop: "#FF006E",
-  trackBottom: "#00FF41",
-  obstacle: "#FF4444",
-  player: "#FF6B00",
-  playerGradientStart: "#FF6B00",
-  playerGradientEnd: "#FFD600",
+  textSecondary: "#E5E7EB",
+  textMuted: "#9CA3AF",
+  
+  trackTop: "#FF3B3B",
+  trackBottom: "#4CC9F0",
 };
 
 export const Colors = {
   light: {
     text: "#FFFFFF",
-    buttonText: "#000000",
+    buttonText: "#0B0F1A",
     tabIconDefault: "#687076",
     tabIconSelected: GameColors.primary,
     link: GameColors.primary,
     backgroundRoot: GameColors.background,
     backgroundDefault: GameColors.surface,
     backgroundSecondary: GameColors.surfaceLight,
-    backgroundTertiary: "#353739",
+    backgroundTertiary: "#2A3350",
   },
   dark: {
     text: "#FFFFFF",
-    buttonText: "#000000",
+    buttonText: "#0B0F1A",
     tabIconDefault: "#9BA1A6",
     tabIconSelected: GameColors.primary,
     link: GameColors.primary,
     backgroundRoot: GameColors.background,
     backgroundDefault: GameColors.surface,
     backgroundSecondary: GameColors.surfaceLight,
-    backgroundTertiary: "#404244",
+    backgroundTertiary: "#2A3350",
   },
 };
 

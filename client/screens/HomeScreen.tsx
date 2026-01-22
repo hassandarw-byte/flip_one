@@ -14,7 +14,6 @@ import Animated, {
   withSpring,
   withDelay,
   withTiming,
-  FadeIn,
 } from "react-native-reanimated";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
@@ -82,7 +81,7 @@ export default function HomeScreen() {
   return (
     <View style={[styles.container, { paddingTop: insets.top + Spacing.xl }]}>
       <View style={styles.starsContainer}>
-        {Array.from({ length: 30 }).map((_, i) => (
+        {Array.from({ length: 40 }).map((_, i) => (
           <View
             key={i}
             style={[
@@ -90,7 +89,7 @@ export default function HomeScreen() {
               {
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
-                opacity: Math.random() * 0.6 + 0.2,
+                opacity: Math.random() * 0.5 + 0.2,
                 width: Math.random() * 3 + 1,
                 height: Math.random() * 3 + 1,
               },
@@ -283,14 +282,14 @@ const styles = StyleSheet.create({
   playButton: {
     width: width * 0.6,
     height: 70,
-    backgroundColor: GameColors.primary,
+    backgroundColor: GameColors.player,
     borderRadius: BorderRadius.xl,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: GameColors.primary,
+    shadowColor: GameColors.player,
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 20,
+    shadowOpacity: 0.6,
+    shadowRadius: 25,
     elevation: 10,
   },
   playButtonText: {

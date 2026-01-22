@@ -29,8 +29,8 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
     glowOpacity.value = withDelay(
       400,
       withSequence(
-        withTiming(0.6, { duration: 600 }),
-        withTiming(0.3, { duration: 600 })
+        withTiming(0.5, { duration: 600 }),
+        withTiming(0.25, { duration: 600 })
       )
     );
 
@@ -68,7 +68,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
       </Animated.View>
 
       <View style={styles.starsContainer}>
-        {Array.from({ length: 20 }).map((_, i) => (
+        {Array.from({ length: 30 }).map((_, i) => (
           <View
             key={i}
             style={[
@@ -76,9 +76,9 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
               {
                 left: Math.random() * width,
                 top: Math.random() * height,
-                opacity: Math.random() * 0.5 + 0.2,
-                width: Math.random() * 3 + 1,
-                height: Math.random() * 3 + 1,
+                opacity: Math.random() * 0.4 + 0.1,
+                width: Math.random() * 2 + 1,
+                height: Math.random() * 2 + 1,
               },
             ]}
           />
@@ -114,8 +114,8 @@ const styles = StyleSheet.create({
     width: 300,
     height: 300,
     borderRadius: 150,
-    backgroundColor: GameColors.primary,
-    shadowColor: GameColors.primary,
+    backgroundColor: GameColors.player,
+    shadowColor: GameColors.player,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 100,

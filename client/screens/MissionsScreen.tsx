@@ -101,7 +101,7 @@ export default function MissionsScreen() {
       />
 
       {allClaimed ? (
-        <View style={styles.allDoneContainer}>
+        <View style={[styles.allDoneContainer, { paddingBottom: insets.bottom + Spacing.lg }]}>
           <Feather name="check-circle" size={48} color={GameColors.success} />
           <ThemedText style={styles.allDoneText}>
             All missions completed!

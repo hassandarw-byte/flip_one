@@ -9,7 +9,6 @@ import {
   Modal,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { GameColors, Spacing, BorderRadius, Fonts } from "@/constants/theme";
 
@@ -73,7 +72,7 @@ export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
           style={({ pressed }) => [
             styles.button,
             {
-              backgroundColor: GameColors.primary,
+              backgroundColor: GameColors.player,
               opacity: pressed ? 0.9 : 1,
               transform: [{ scale: pressed ? 0.98 : 1 }],
             },
@@ -185,10 +184,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing["2xl"],
     minWidth: 200,
     justifyContent: "center",
-    shadowColor: GameColors.primary,
+    shadowColor: GameColors.player,
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
+    shadowOpacity: 0.5,
+    shadowRadius: 15,
     elevation: 3,
   },
   buttonText: {
@@ -199,7 +198,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.8)",
+    backgroundColor: "rgba(11, 15, 26, 0.9)",
     justifyContent: "flex-end",
   },
   modalContainer: {

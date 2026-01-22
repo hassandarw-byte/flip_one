@@ -47,7 +47,6 @@ export default function LeaderboardScreen() {
     const state = await getGameState();
     setGameState(state);
 
-    // Insert current user into leaderboard based on their score
     const entries = [...MOCK_LEADERBOARD];
     const userScore = state.bestScore;
 
@@ -59,7 +58,6 @@ export default function LeaderboardScreen() {
         isCurrentUser: true,
       };
 
-      // Find position for user
       let inserted = false;
       for (let i = 0; i < entries.length; i++) {
         if (userScore > entries[i].score) {
@@ -73,7 +71,6 @@ export default function LeaderboardScreen() {
         entries.push(userEntry);
       }
 
-      // Recalculate ranks
       entries.forEach((entry, index) => {
         entry.rank = index + 1;
       });

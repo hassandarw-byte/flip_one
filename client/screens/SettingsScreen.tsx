@@ -323,7 +323,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   priceButton: {
-    backgroundColor: GameColors.gold,
+    backgroundColor: GameColors.player,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.md,
@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
   appName: {
     fontSize: 24,
     fontWeight: "700",
-    color: GameColors.primary,
+    color: GameColors.player,
   },
   appVersion: {
     fontSize: 14,

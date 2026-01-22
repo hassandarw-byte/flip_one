@@ -36,7 +36,6 @@ interface SkinItem {
   id: string;
   name: string;
   color: string;
-  gradientEnd?: string;
   price: number;
   isPremium?: boolean;
 }
@@ -46,23 +45,10 @@ const SKINS: SkinItem[] = [
   { id: "cyan", name: "Neon Cyan", color: GameColors.primary, price: 100 },
   { id: "purple", name: "Royal Purple", color: GameColors.secondary, price: 150 },
   { id: "green", name: "Toxic Green", color: GameColors.success, price: 150 },
-  { id: "pink", name: "Hot Pink", color: GameColors.danger, price: 200 },
+  { id: "pink", name: "Hot Pink", color: "#FF4D8D", price: 200 },
   { id: "gold", name: "Golden", color: GameColors.gold, price: 300 },
-  {
-    id: "gradient",
-    name: "Gradient",
-    color: GameColors.primary,
-    gradientEnd: GameColors.secondary,
-    price: 500,
-  },
-  {
-    id: "rainbow",
-    name: "Rainbow",
-    color: "#FF0000",
-    gradientEnd: "#0000FF",
-    price: 0,
-    isPremium: true,
-  },
+  { id: "blue", name: "Electric Blue", color: "#3A86FF", price: 400 },
+  { id: "rainbow", name: "Rainbow", color: "#FF0000", price: 0, isPremium: true },
 ];
 
 export default function ShopScreen() {
@@ -84,12 +70,10 @@ export default function ShopScreen() {
     if (!gameState) return;
 
     if (skin.isPremium) {
-      // In a real app, this would open in-app purchase
       return;
     }
 
     if (gameState.ownedSkins.includes(skin.id)) {
-      // Already owned, equip it
       await saveEquippedSkin(skin.id);
       setGameState({ ...gameState, equippedSkin: skin.id });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -246,13 +230,7 @@ function SkinCard({
       }}
       testID={`skin-${skin.id}`}
     >
-      <View
-        style={[
-          styles.skinPreview,
-          { backgroundColor: skin.color },
-          skin.gradientEnd && styles.skinPreviewGradient,
-        ]}
-      >
+      <View style={[styles.skinPreview, { backgroundColor: skin.color }]}>
         {isEquipped ? (
           <View style={styles.equippedBadge}>
             <Feather name="check" size={16} color={GameColors.textPrimary} />
@@ -369,9 +347,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
-  },
-  skinPreviewGradient: {
-    // In a real app, this would use LinearGradient
   },
   equippedBadge: {
     position: "absolute",
