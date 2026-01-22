@@ -24,9 +24,9 @@ import {
   getGameState,
   saveSoundEnabled,
   saveHapticsEnabled,
-  saveNightModeEnabled,
   GameState,
 } from "@/lib/storage";
+import { useNightMode } from "@/contexts/NightModeContext";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -34,6 +34,7 @@ export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const [gameState, setGameState] = useState<GameState | null>(null);
+  const { isNightMode, toggleNightMode, backgroundGradient } = useNightMode();
 
   useEffect(() => {
     loadGameState();
@@ -58,13 +59,13 @@ export default function SettingsScreen() {
   };
 
   const handleNightModeToggle = async (value: boolean) => {
-    await saveNightModeEnabled(value);
+    await toggleNightMode(value);
     setGameState((prev) => (prev ? { ...prev, nightMode: value } : null));
   };
 
   return (
     <LinearGradient
-      colors={[GameColors.backgroundGradientStart, GameColors.backgroundGradientEnd]}
+      colors={backgroundGradient}
       style={[styles.container, { paddingTop: headerHeight + Spacing.lg }]}
     >
       <ScrollView
@@ -122,14 +123,14 @@ export default function SettingsScreen() {
               colors={[GameColors.candy4, GameColors.primaryGlow]}
             >
               <Switch
-                value={gameState?.nightMode ?? false}
+                value={isNightMode}
                 onValueChange={handleNightModeToggle}
                 trackColor={{
                   false: GameColors.surface,
                   true: GameColors.candy4 + "60",
                 }}
                 thumbColor={
-                  gameState?.nightMode ? GameColors.candy4 : GameColors.textMuted
+                  isNightMode ? GameColors.candy4 : GameColors.textMuted
                 }
                 testID="switch-night-mode"
               />
@@ -180,7 +181,7 @@ interface SettingRowProps {
   icon: keyof typeof Feather.glyphMap;
   title: string;
   description: string;
-  colors: string[];
+  colors: readonly [string, string, ...string[]];
   children: React.ReactNode;
 }
 
@@ -211,7 +212,7 @@ interface PurchaseRowProps {
   description: string;
   price: string;
   isPurchased?: boolean;
-  colors: string[];
+  colors: readonly [string, string, ...string[]];
   onPress: () => void;
 }
 
@@ -277,7 +278,7 @@ function PurchaseRow({
 interface SettingButtonProps {
   icon: keyof typeof Feather.glyphMap;
   title: string;
-  colors: string[];
+  colors: readonly [string, string, ...string[]];
   onPress: () => void;
 }
 

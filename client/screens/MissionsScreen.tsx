@@ -25,12 +25,14 @@ import {
   DailyMission,
   GameState,
 } from "@/lib/storage";
+import { useNightMode } from "@/contexts/NightModeContext";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export default function MissionsScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
+  const { backgroundGradient } = useNightMode();
   const [gameState, setGameState] = useState<GameState | null>(null);
 
   useEffect(() => {
@@ -66,7 +68,7 @@ export default function MissionsScreen() {
 
   return (
     <LinearGradient
-      colors={[GameColors.backgroundGradientStart, GameColors.backgroundGradientEnd]}
+      colors={backgroundGradient}
       style={[styles.container, { paddingTop: headerHeight + Spacing.lg }]}
     >
       <View style={styles.header}>

@@ -33,6 +33,7 @@ import {
   usePower,
   GameState,
 } from "@/lib/storage";
+import { useNightMode } from "@/contexts/NightModeContext";
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = (width - Spacing.xl * 2 - Spacing.md) / 2;
@@ -42,7 +43,7 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 interface SkinItem {
   id: string;
   name: string;
-  colors: string[];
+  colors: readonly [string, string, ...string[]];
   price: number;
   isPremium?: boolean;
   icon?: string;
@@ -53,7 +54,7 @@ interface PowerItem {
   name: string;
   description: string;
   icon: keyof typeof Feather.glyphMap;
-  colors: string[];
+  colors: readonly [string, string, ...string[]];
   type: "ad" | "premium";
 }
 
@@ -115,6 +116,7 @@ const SPECIAL_POWERS: PowerItem[] = [
 export default function ShopScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
+  const { backgroundGradient } = useNightMode();
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [activeTab, setActiveTab] = useState<"skins" | "premium" | "powers">("skins");
 
@@ -222,7 +224,7 @@ export default function ShopScreen() {
 
   return (
     <LinearGradient
-      colors={[GameColors.backgroundGradientStart, GameColors.backgroundGradientEnd]}
+      colors={backgroundGradient}
       style={[styles.container, { paddingTop: headerHeight + Spacing.lg }]}
     >
       <View style={styles.header}>

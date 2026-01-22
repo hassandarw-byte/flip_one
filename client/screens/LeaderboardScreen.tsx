@@ -13,6 +13,7 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 import { ThemedText } from "@/components/ThemedText";
 import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import { getGameState, GameState } from "@/lib/storage";
+import { useNightMode } from "@/contexts/NightModeContext";
 
 interface LeaderboardEntry {
   rank: number;
@@ -37,6 +38,7 @@ const MOCK_LEADERBOARD: LeaderboardEntry[] = [
 export default function LeaderboardScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
+  const { backgroundGradient } = useNightMode();
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
 
@@ -96,7 +98,7 @@ export default function LeaderboardScreen() {
 
   return (
     <LinearGradient
-      colors={[GameColors.backgroundGradientStart, GameColors.backgroundGradientEnd]}
+      colors={backgroundGradient}
       style={[styles.container, { paddingTop: headerHeight + Spacing.lg }]}
     >
       {userRank ? (
@@ -169,16 +171,16 @@ interface LeaderboardRowProps {
 }
 
 function LeaderboardRow({ entry }: LeaderboardRowProps) {
-  const getRankColors = (): string[] => {
+  const getRankColors = (): readonly [string, string] => {
     switch (entry.rank) {
       case 1:
-        return ["#FFD700", "#B8860B"];
+        return ["#FFD700", "#B8860B"] as const;
       case 2:
-        return ["#C0C0C0", "#A0A0A0"];
+        return ["#C0C0C0", "#A0A0A0"] as const;
       case 3:
-        return ["#CD7F32", "#8B4513"];
+        return ["#CD7F32", "#8B4513"] as const;
       default:
-        return [GameColors.surface, GameColors.surfaceLight];
+        return [GameColors.surface, GameColors.surfaceLight] as const;
     }
   };
 

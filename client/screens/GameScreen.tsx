@@ -32,6 +32,7 @@ import {
 } from "@/lib/storage";
 import { triggerFlipHaptic, triggerGameOverHaptic } from "@/lib/sounds";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
+import { useNightMode } from "@/contexts/NightModeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -55,6 +56,7 @@ interface Obstacle {
 export default function GameScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { backgroundGradient } = useNightMode();
   
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [score, setScore] = useState(0);
@@ -336,7 +338,7 @@ export default function GameScreen() {
   return (
     <Pressable style={styles.container} onPress={handleFlip} testID="game-area">
       <LinearGradient
-        colors={[GameColors.backgroundGradientStart, GameColors.backgroundGradientEnd]}
+        colors={backgroundGradient}
         style={StyleSheet.absoluteFill}
       />
 

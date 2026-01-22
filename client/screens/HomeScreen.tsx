@@ -269,7 +269,7 @@ interface MenuButtonProps {
   icon: keyof typeof Feather.glyphMap;
   label: string;
   onPress: () => void;
-  colors: string[];
+  colors: readonly [string, string, ...string[]];
   badge?: number;
 }
 
