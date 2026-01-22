@@ -115,6 +115,7 @@ The app runs on Expo and can be tested via:
 - Score animation gentler (scale 1.08 with damping 12/15)
 - Speed increases every 5 levels (not points) - more gradual difficulty curve
 - Share with Friends button working with React Native Share API
+- Tajawal font family added for better Arabic text support
 
 ## Game Progression
 
