@@ -89,8 +89,17 @@ The app runs on Expo and can be tested via:
 
 ## Recent Changes
 
-### Latest (Advanced Visual Effects & Systems)
-- **Card Suit Obstacles**: Replaced shapes with card suits (♠♦♥♣) with authentic colors (black/red) and 2px white borders
+### Latest (Luxury Visual Enhancements)
+- **Sparkle Particle Effects**: 20-30 animated sparkle particles on HomeScreen, LuckyWheelScreen, AchievementsScreen, GameOverScreen
+- **Button Glow Effects**: Animated glow halos on menu buttons with pulsing opacity (0.3-0.8)
+- **Button Shimmer Animation**: Horizontal shimmer sweep across buttons using withRepeat
+- **Confetti Celebration**: 30 animated confetti pieces falling on GameOverScreen when achieving new high score
+- **Screen Transitions**: Custom animations - slide_from_right for menu screens, fade_from_bottom for Lucky Wheel/Achievements
+- **Powers Fix**: Fixed power buttons positioning issue by using container View instead of Fragment
+- **English Language**: All game text converted from Arabic to English
+
+### Previous (Advanced Visual Effects & Systems)
+- **Card Suit Obstacles**: Replaced shapes with card suits with authentic colors (black/red) and 2px white borders
 - **Star Explosion Effects**: 12 colorful particles burst when passing obstacles
 - **Screen Shake Effect**: Realistic camera shake on collision using withSequence
 - **Dynamic Background Gradients**: 6 gradient presets that change every 10 levels
