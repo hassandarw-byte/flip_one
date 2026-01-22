@@ -9,6 +9,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { Feather } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -35,20 +36,20 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 interface SkinItem {
   id: string;
   name: string;
-  color: string;
+  colors: string[];
   price: number;
   isPremium?: boolean;
 }
 
 const SKINS: SkinItem[] = [
-  { id: "default", name: "Classic", color: GameColors.player, price: 0 },
-  { id: "cyan", name: "Neon Cyan", color: GameColors.primary, price: 100 },
-  { id: "purple", name: "Royal Purple", color: GameColors.secondary, price: 150 },
-  { id: "green", name: "Toxic Green", color: GameColors.success, price: 150 },
-  { id: "pink", name: "Hot Pink", color: "#FF4D8D", price: 200 },
-  { id: "gold", name: "Golden", color: GameColors.gold, price: 300 },
-  { id: "blue", name: "Electric Blue", color: "#3A86FF", price: 400 },
-  { id: "rainbow", name: "Rainbow", color: "#FF0000", price: 0, isPremium: true },
+  { id: "default", name: "Golden", colors: [GameColors.player, GameColors.playerGlow], price: 0 },
+  { id: "purple", name: "Royal Purple", colors: [GameColors.candy4, GameColors.primaryGlow], price: 100 },
+  { id: "teal", name: "Ocean Teal", colors: [GameColors.candy2, GameColors.platformGlow], price: 150 },
+  { id: "pink", name: "Cotton Candy", colors: [GameColors.candy5, GameColors.secondaryGlow], price: 150 },
+  { id: "red", name: "Cherry Red", colors: [GameColors.candy1, GameColors.spikeGlow], price: 200 },
+  { id: "green", name: "Lime Fresh", colors: [GameColors.candy6, GameColors.successGlow], price: 250 },
+  { id: "gold", name: "Premium Gold", colors: ["#FFD700", "#B8860B"], price: 400 },
+  { id: "rainbow", name: "Rainbow", colors: ["#FF6B6B", "#4ECDC4", "#FFD93D"], price: 0, isPremium: true },
 ];
 
 export default function ShopScreen() {
@@ -69,9 +70,7 @@ export default function ShopScreen() {
   const handlePurchase = async (skin: SkinItem) => {
     if (!gameState) return;
 
-    if (skin.isPremium) {
-      return;
-    }
+    if (skin.isPremium) return;
 
     if (gameState.ownedSkins.includes(skin.id)) {
       await saveEquippedSkin(skin.id);
@@ -124,19 +123,20 @@ export default function ShopScreen() {
   );
 
   return (
-    <View
-      style={[
-        styles.container,
-        { paddingTop: headerHeight + Spacing.lg },
-      ]}
+    <LinearGradient
+      colors={[GameColors.backgroundGradientStart, GameColors.backgroundGradientEnd]}
+      style={[styles.container, { paddingTop: headerHeight + Spacing.lg }]}
     >
       <View style={styles.header}>
-        <View style={styles.pointsContainer}>
-          <Feather name="star" size={20} color={GameColors.gold} />
+        <LinearGradient
+          colors={[GameColors.gold, GameColors.goldGlow]}
+          style={styles.pointsContainer}
+        >
+          <Feather name="star" size={18} color={GameColors.background} />
           <ThemedText style={styles.pointsText}>
             {gameState?.points || 0}
           </ThemedText>
-        </View>
+        </LinearGradient>
       </View>
 
       <View style={styles.tabs}>
@@ -172,7 +172,7 @@ export default function ShopScreen() {
           </View>
         }
       />
-    </View>
+    </LinearGradient>
   );
 }
 
@@ -188,11 +188,16 @@ function TabButton({ label, isActive, onPress }: TabButtonProps) {
       style={[styles.tab, isActive && styles.tabActive]}
       onPress={onPress}
     >
-      <ThemedText
-        style={[styles.tabText, isActive && styles.tabTextActive]}
-      >
-        {label}
-      </ThemedText>
+      {isActive ? (
+        <LinearGradient
+          colors={[GameColors.primary, GameColors.primaryGlow]}
+          style={styles.tabGradient}
+        >
+          <ThemedText style={styles.tabTextActive}>{label}</ThemedText>
+        </LinearGradient>
+      ) : (
+        <ThemedText style={styles.tabText}>{label}</ThemedText>
+      )}
     </Pressable>
   );
 }
@@ -226,46 +231,52 @@ function SkinCard({
         scale.value = withSpring(0.95, { damping: 15 });
       }}
       onPressOut={() => {
-        scale.value = withSpring(1, { damping: 15 });
+        scale.value = withSpring(1, { damping: 10 });
       }}
       testID={`skin-${skin.id}`}
     >
-      <View style={[styles.skinPreview, { backgroundColor: skin.color }]}>
-        {isEquipped ? (
-          <View style={styles.equippedBadge}>
-            <Feather name="check" size={16} color={GameColors.textPrimary} />
+      <LinearGradient
+        colors={[GameColors.surfaceLight, GameColors.surface]}
+        style={styles.skinCardGradient}
+      >
+        <View style={styles.skinPreviewContainer}>
+          <LinearGradient
+            colors={skin.colors}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.skinPreview}
+          />
+          {isEquipped ? (
+            <View style={styles.equippedBadge}>
+              <Feather name="check" size={14} color="#FFFFFF" />
+            </View>
+          ) : null}
+        </View>
+
+        <ThemedText style={styles.skinName}>{skin.name}</ThemedText>
+
+        {isOwned ? (
+          <View style={styles.ownedBadge}>
+            <ThemedText style={styles.ownedText}>
+              {isEquipped ? "Equipped" : "Owned"}
+            </ThemedText>
           </View>
-        ) : null}
-      </View>
-
-      <ThemedText style={styles.skinName}>{skin.name}</ThemedText>
-
-      {isOwned ? (
-        <View style={styles.ownedBadge}>
-          <ThemedText style={styles.ownedText}>
-            {isEquipped ? "Equipped" : "Owned"}
-          </ThemedText>
-        </View>
-      ) : (
-        <View
-          style={[
-            styles.priceTag,
-            !canAfford && !skin.isPremium && styles.priceTagDisabled,
-          ]}
-        >
-          {skin.isPremium ? (
-            <>
-              <Feather name="dollar-sign" size={14} color={GameColors.gold} />
-              <ThemedText style={styles.priceText}>0.99</ThemedText>
-            </>
-          ) : (
-            <>
-              <Feather name="star" size={14} color={GameColors.gold} />
-              <ThemedText style={styles.priceText}>{skin.price}</ThemedText>
-            </>
-          )}
-        </View>
-      )}
+        ) : (
+          <View style={[styles.priceTag, !canAfford && !skin.isPremium && styles.priceTagDisabled]}>
+            {skin.isPremium ? (
+              <>
+                <Feather name="dollar-sign" size={12} color={GameColors.gold} />
+                <ThemedText style={styles.priceText}>0.99</ThemedText>
+              </>
+            ) : (
+              <>
+                <Feather name="star" size={12} color={GameColors.gold} />
+                <ThemedText style={styles.priceText}>{skin.price}</ThemedText>
+              </>
+            )}
+          </View>
+        )}
+      </LinearGradient>
     </AnimatedPressable>
   );
 }
@@ -273,7 +284,6 @@ function SkinCard({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: GameColors.background,
   },
   header: {
     flexDirection: "row",
@@ -284,7 +294,6 @@ const styles = StyleSheet.create({
   pointsContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: GameColors.surface,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.full,
@@ -292,8 +301,8 @@ const styles = StyleSheet.create({
   },
   pointsText: {
     fontSize: 18,
-    fontWeight: "700",
-    color: GameColors.gold,
+    fontWeight: "800",
+    color: GameColors.background,
   },
   tabs: {
     flexDirection: "row",
@@ -303,21 +312,28 @@ const styles = StyleSheet.create({
   },
   tab: {
     flex: 1,
-    paddingVertical: Spacing.md,
-    alignItems: "center",
     borderRadius: BorderRadius.lg,
+    overflow: "hidden",
     backgroundColor: GameColors.surface,
   },
   tabActive: {
-    backgroundColor: GameColors.primary,
+    backgroundColor: "transparent",
+  },
+  tabGradient: {
+    paddingVertical: Spacing.md,
+    alignItems: "center",
   },
   tabText: {
     fontSize: 16,
     fontWeight: "600",
     color: GameColors.textSecondary,
+    textAlign: "center",
+    paddingVertical: Spacing.md,
   },
   tabTextActive: {
-    color: GameColors.background,
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#FFFFFF",
   },
   listContent: {
     paddingHorizontal: Spacing.xl,
@@ -328,21 +344,26 @@ const styles = StyleSheet.create({
   },
   skinCard: {
     width: CARD_WIDTH,
-    backgroundColor: GameColors.surface,
     borderRadius: BorderRadius.lg,
-    padding: Spacing.lg,
-    alignItems: "center",
+    overflow: "hidden",
     borderWidth: 2,
     borderColor: "transparent",
   },
   skinCardEquipped: {
     borderColor: GameColors.primary,
   },
-  skinPreview: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
+  skinCardGradient: {
+    padding: Spacing.lg,
+    alignItems: "center",
+  },
+  skinPreviewContainer: {
+    position: "relative",
     marginBottom: Spacing.md,
+  },
+  skinPreview: {
+    width: 56,
+    height: 56,
+    borderRadius: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -350,14 +371,16 @@ const styles = StyleSheet.create({
   },
   equippedBadge: {
     position: "absolute",
-    top: -8,
-    right: -8,
+    top: -6,
+    right: -6,
     backgroundColor: GameColors.success,
     borderRadius: 12,
-    width: 24,
-    height: 24,
+    width: 22,
+    height: 22,
     justifyContent: "center",
     alignItems: "center",
+    borderWidth: 2,
+    borderColor: GameColors.surface,
   },
   skinName: {
     fontSize: 14,
@@ -366,15 +389,17 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   ownedBadge: {
-    backgroundColor: GameColors.success + "20",
+    backgroundColor: GameColors.success + "25",
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.full,
+    borderWidth: 1,
+    borderColor: GameColors.success + "40",
   },
   ownedText: {
-    fontSize: 12,
+    fontSize: 11,
     color: GameColors.success,
-    fontWeight: "600",
+    fontWeight: "700",
   },
   priceTag: {
     flexDirection: "row",
@@ -384,12 +409,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.full,
+    borderWidth: 1,
+    borderColor: GameColors.gold + "40",
   },
   priceTagDisabled: {
     opacity: 0.5,
   },
   priceText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "700",
     color: GameColors.gold,
   },

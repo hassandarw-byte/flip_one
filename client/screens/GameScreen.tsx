@@ -6,18 +6,21 @@ import {
   Dimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
   withSpring,
+  withRepeat,
+  withSequence,
   Easing,
 } from "react-native-reanimated";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 
 import { ThemedText } from "@/components/ThemedText";
-import { GameColors, Spacing } from "@/constants/theme";
+import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import {
   getGameState,
   saveBestScore,
@@ -32,7 +35,7 @@ import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 const { width, height } = Dimensions.get("window");
 
-const PLAYER_SIZE = 30;
+const PLAYER_SIZE = 32;
 const TRACK_HEIGHT = 80;
 const GAME_SPEED_BASE = 3;
 const SPAWN_INTERVAL = 2000;
@@ -72,13 +75,16 @@ export default function GameScreen() {
 
   const worldRotation = useSharedValue(0);
   const playerBounce = useSharedValue(0);
+  const playerGlow = useSharedValue(0.5);
   const scoreScale = useSharedValue(1);
+  const sparkleOpacity = useSharedValue(0.4);
 
   const trackTopY = height / 2 - TRACK_HEIGHT - 30;
   const trackBottomY = height / 2 + 30;
 
   useEffect(() => {
     loadGameState();
+    startSparkleAnimation();
     return () => {
       cleanupGame();
     };
@@ -87,6 +93,26 @@ export default function GameScreen() {
   const loadGameState = async () => {
     const state = await getGameState();
     setGameState(state);
+  };
+
+  const startSparkleAnimation = () => {
+    sparkleOpacity.value = withRepeat(
+      withSequence(
+        withTiming(0.8, { duration: 1500 }),
+        withTiming(0.3, { duration: 1500 })
+      ),
+      -1,
+      true
+    );
+    
+    playerGlow.value = withRepeat(
+      withSequence(
+        withTiming(1, { duration: 800 }),
+        withTiming(0.5, { duration: 800 })
+      ),
+      -1,
+      true
+    );
   };
 
   const cleanupGame = useCallback(() => {
@@ -145,6 +171,9 @@ export default function GameScreen() {
   }, [gameState, score, navigation, cleanupGame]);
 
   const startGame = useCallback(() => {
+    const gameStartTime = Date.now();
+    const GRACE_PERIOD = 1500;
+    
     gameLoopRef.current = setInterval(() => {
       if (isGameOverRef.current) return;
 
@@ -152,6 +181,10 @@ export default function GameScreen() {
         const updated = prev
           .map((obs) => ({ ...obs, x: obs.x - gameSpeedRef.current }))
           .filter((obs) => obs.x > -50);
+
+        if (Date.now() - gameStartTime < GRACE_PERIOD) {
+          return updated;
+        }
 
         for (const obs of updated) {
           const playerLeft = playerX - PLAYER_SIZE / 2;
@@ -172,27 +205,31 @@ export default function GameScreen() {
       });
     }, 16);
 
-    obstacleSpawnRef.current = setInterval(() => {
+    setTimeout(() => {
       if (isGameOverRef.current) return;
       
-      const track: "top" | "bottom" = Math.random() > 0.5 ? "top" : "bottom";
-      const type = Math.random() > 0.6 ? "spike" : "block";
-      
-      const newObstacle: Obstacle = {
-        id: obstacleIdRef.current++,
-        x: width + 50,
-        track,
-        type,
-        width: type === "spike" ? 25 : 35,
-        height: type === "spike" ? 25 : 20,
-      };
+      obstacleSpawnRef.current = setInterval(() => {
+        if (isGameOverRef.current) return;
+        
+        const track: "top" | "bottom" = Math.random() > 0.5 ? "top" : "bottom";
+        const type = Math.random() > 0.6 ? "spike" : "block";
+        
+        const newObstacle: Obstacle = {
+          id: obstacleIdRef.current++,
+          x: width + 50,
+          track,
+          type,
+          width: type === "spike" ? 28 : 38,
+          height: type === "spike" ? 28 : 22,
+        };
 
-      setObstacles((prev) => {
-        const rightmostX = prev.reduce((max, obs) => Math.max(max, obs.x), 0);
-        if (rightmostX > width - MIN_OBSTACLE_GAP) return prev;
-        return [...prev, newObstacle];
-      });
-    }, SPAWN_INTERVAL);
+        setObstacles((prev) => {
+          const rightmostX = prev.reduce((max, obs) => Math.max(max, obs.x), 0);
+          if (rightmostX > width - MIN_OBSTACLE_GAP) return prev;
+          return [...prev, newObstacle];
+        });
+      }, SPAWN_INTERVAL);
+    }, GRACE_PERIOD);
 
     scoreIntervalRef.current = setInterval(() => {
       if (isGameOverRef.current) return;
@@ -202,8 +239,8 @@ export default function GameScreen() {
         if (newScore % DIFFICULTY_INCREASE_INTERVAL === 0) {
           gameSpeedRef.current = Math.min(gameSpeedRef.current + 0.3, 10);
         }
-        scoreScale.value = withSpring(1.2, { damping: 10 }, () => {
-          scoreScale.value = withSpring(1, { damping: 15 });
+        scoreScale.value = withSpring(1.3, { damping: 8 }, () => {
+          scoreScale.value = withSpring(1, { damping: 12 });
         });
         return newScore;
       });
@@ -243,7 +280,7 @@ export default function GameScreen() {
       { duration: 150, easing: Easing.out(Easing.cubic) }
     );
 
-    playerBounce.value = withSpring(-8, { damping: 8 }, () => {
+    playerBounce.value = withSpring(-10, { damping: 8 }, () => {
       playerBounce.value = withSpring(0, { damping: 12 });
     });
   }, [isPlaying, gameState, worldRotation, playerBounce, startGame]);
@@ -256,26 +293,40 @@ export default function GameScreen() {
     transform: [{ translateY: playerBounce.value }],
   }));
 
+  const playerGlowStyle = useAnimatedStyle(() => ({
+    opacity: playerGlow.value,
+  }));
+
   const scoreAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scoreScale.value }],
+  }));
+
+  const sparkleStyle = useAnimatedStyle(() => ({
+    opacity: sparkleOpacity.value,
   }));
 
   const currentTrack = currentTrackRef.current;
 
   return (
     <Pressable style={styles.container} onPress={handleFlip} testID="game-area">
-      <View style={styles.starsContainer}>
-        {Array.from({ length: 50 }).map((_, i) => (
-          <View
+      <LinearGradient
+        colors={[GameColors.backgroundGradientStart, GameColors.backgroundGradientEnd]}
+        style={StyleSheet.absoluteFill}
+      />
+
+      <View style={styles.sparklesContainer}>
+        {Array.from({ length: 25 }).map((_, i) => (
+          <Animated.View
             key={i}
             style={[
-              styles.star,
+              styles.sparkle,
+              sparkleStyle,
               {
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
-                opacity: Math.random() * 0.4 + 0.1,
-                width: Math.random() * 2 + 1,
-                height: Math.random() * 2 + 1,
+                width: Math.random() * 3 + 1,
+                height: Math.random() * 3 + 1,
+                backgroundColor: [GameColors.candy1, GameColors.candy2, GameColors.candy3, GameColors.candy4][Math.floor(Math.random() * 4)],
               },
             ]}
           />
@@ -283,17 +334,26 @@ export default function GameScreen() {
       </View>
 
       <View style={[styles.scoreContainer, { top: insets.top + Spacing.lg }]}>
-        <Animated.View style={scoreAnimatedStyle}>
-          <ThemedText style={styles.scoreText}>{score}</ThemedText>
+        <Animated.View style={[styles.scoreBadge, scoreAnimatedStyle]}>
+          <LinearGradient
+            colors={[GameColors.gold, GameColors.goldGlow]}
+            style={styles.scoreGradient}
+          >
+            <ThemedText style={styles.scoreText}>{score}</ThemedText>
+          </LinearGradient>
         </Animated.View>
-        <ThemedText style={styles.bestScoreText}>
-          BEST: {gameState?.bestScore || 0}
-        </ThemedText>
+        <View style={styles.bestScoreBadge}>
+          <ThemedText style={styles.bestScoreLabel}>BEST</ThemedText>
+          <ThemedText style={styles.bestScoreText}>{gameState?.bestScore || 0}</ThemedText>
+        </View>
       </View>
 
       <Animated.View style={[styles.gameWorld, worldAnimatedStyle]}>
         <View style={[styles.track, { top: trackTopY }]}>
-          <View style={[styles.trackLine, { backgroundColor: GameColors.spike }]} />
+          <LinearGradient
+            colors={[GameColors.spike, GameColors.spikeGlow]}
+            style={styles.trackLineTop}
+          />
           <View style={styles.spikesContainer}>
             {Array.from({ length: 25 }).map((_, i) => (
               <View key={i} style={[styles.trackSpike, { borderBottomColor: GameColors.spike }]} />
@@ -302,7 +362,10 @@ export default function GameScreen() {
         </View>
 
         <View style={[styles.track, { top: trackBottomY }]}>
-          <View style={[styles.trackLineBottom, { backgroundColor: GameColors.platform }]} />
+          <LinearGradient
+            colors={[GameColors.platform, GameColors.platformGlow]}
+            style={styles.trackLineBottom}
+          />
         </View>
 
         {obstacles.map((obs) => (
@@ -316,25 +379,34 @@ export default function GameScreen() {
                   obs.track === "top"
                     ? trackTopY + TRACK_HEIGHT - obs.height - 4
                     : trackBottomY + 4,
-                width: obs.type === "spike" ? 0 : obs.width,
-                height: obs.type === "spike" ? 0 : obs.height,
-                backgroundColor: obs.type === "block" ? GameColors.platform : "transparent",
-                borderRadius: obs.type === "block" ? 4 : 0,
-                borderLeftWidth: obs.type === "spike" ? obs.width / 2 : 0,
-                borderRightWidth: obs.type === "spike" ? obs.width / 2 : 0,
-                borderBottomWidth: obs.type === "spike" ? obs.height : 0,
-                borderLeftColor: "transparent",
-                borderRightColor: "transparent",
-                borderBottomColor: obs.type === "spike" ? GameColors.spike : "transparent",
-                transform: obs.type === "spike" && obs.track === "top" ? [{ rotate: "180deg" }] : [],
               },
             ]}
-          />
+          >
+            {obs.type === "spike" ? (
+              <View
+                style={[
+                  styles.spikeObstacle,
+                  {
+                    borderLeftWidth: obs.width / 2,
+                    borderRightWidth: obs.width / 2,
+                    borderBottomWidth: obs.height,
+                    borderBottomColor: GameColors.spike,
+                    transform: obs.track === "top" ? [{ rotate: "180deg" }] : [],
+                  },
+                ]}
+              />
+            ) : (
+              <LinearGradient
+                colors={[GameColors.platform, GameColors.platformGlow]}
+                style={[styles.blockObstacle, { width: obs.width, height: obs.height }]}
+              />
+            )}
+          </View>
         ))}
 
         <Animated.View
           style={[
-            styles.player,
+            styles.playerContainer,
             playerAnimatedStyle,
             {
               left: playerX - PLAYER_SIZE / 2,
@@ -345,16 +417,28 @@ export default function GameScreen() {
             },
           ]}
         >
-          <View style={styles.playerGlow} />
+          <Animated.View style={[styles.playerGlow, playerGlowStyle]} />
+          <LinearGradient
+            colors={[GameColors.playerHighlight, GameColors.player, GameColors.playerGlow]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.player}
+          />
         </Animated.View>
       </Animated.View>
 
       {!isPlaying ? (
         <View style={styles.tapToStartContainer}>
-          <ThemedText style={styles.tapToStartText}>TAP TO START</ThemedText>
-          <ThemedText style={styles.instructionText}>
-            Tap to flip gravity and avoid obstacles
-          </ThemedText>
+          <LinearGradient
+            colors={["rgba(26, 10, 46, 0.9)", "rgba(45, 27, 78, 0.9)"]}
+            style={StyleSheet.absoluteFill}
+          />
+          <View style={styles.tapToStartContent}>
+            <ThemedText style={styles.tapToStartText}>TAP TO START</ThemedText>
+            <ThemedText style={styles.instructionText}>
+              Tap to flip gravity and avoid obstacles
+            </ThemedText>
+          </View>
         </View>
       ) : null}
     </Pressable>
@@ -366,15 +450,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: GameColors.background,
   },
-  starsContainer: {
+  sparklesContainer: {
     position: "absolute",
     width: "100%",
     height: "100%",
     zIndex: 0,
   },
-  star: {
+  sparkle: {
     position: "absolute",
-    backgroundColor: "#FFFFFF",
     borderRadius: 10,
   },
   scoreContainer: {
@@ -383,18 +466,43 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
     zIndex: 10,
   },
+  scoreBadge: {
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+    shadowColor: GameColors.gold,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 15,
+  },
+  scoreGradient: {
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.lg,
+  },
   scoreText: {
-    fontSize: 48,
-    fontWeight: "800",
-    color: GameColors.textPrimary,
-    textShadowColor: GameColors.primary,
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 15,
+    fontSize: 42,
+    fontWeight: "900",
+    color: GameColors.background,
+  },
+  bestScoreBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255,255,255,0.1)",
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.full,
+    marginTop: Spacing.sm,
+    gap: Spacing.xs,
+  },
+  bestScoreLabel: {
+    fontSize: 10,
+    color: GameColors.textMuted,
+    fontWeight: "600",
   },
   bestScoreText: {
     fontSize: 14,
-    color: GameColors.textMuted,
-    letterSpacing: 2,
+    color: GameColors.textPrimary,
+    fontWeight: "700",
   },
   gameWorld: {
     flex: 1,
@@ -406,23 +514,25 @@ const styles = StyleSheet.create({
     right: 0,
     height: TRACK_HEIGHT,
   },
-  trackLine: {
+  trackLineTop: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    height: 4,
+    height: 5,
+    borderRadius: 2,
   },
   trackLineBottom: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    height: 4,
+    height: 5,
+    borderRadius: 2,
   },
   spikesContainer: {
     position: "absolute",
-    bottom: 4,
+    bottom: 5,
     left: 0,
     right: 0,
     flexDirection: "row",
@@ -430,32 +540,43 @@ const styles = StyleSheet.create({
   trackSpike: {
     width: 0,
     height: 0,
-    borderLeftWidth: 6,
-    borderRightWidth: 6,
-    borderBottomWidth: 10,
+    borderLeftWidth: 7,
+    borderRightWidth: 7,
+    borderBottomWidth: 12,
     borderLeftColor: "transparent",
     borderRightColor: "transparent",
-    marginHorizontal: 2,
+    marginHorizontal: 1,
   },
-  player: {
+  playerContainer: {
     position: "absolute",
     width: PLAYER_SIZE,
     height: PLAYER_SIZE,
-    backgroundColor: GameColors.player,
-    borderRadius: 4,
   },
   playerGlow: {
     position: "absolute",
-    top: -6,
-    left: -6,
-    right: -6,
-    bottom: -6,
+    top: -8,
+    left: -8,
+    right: -8,
+    bottom: -8,
     backgroundColor: GameColors.player,
-    borderRadius: 8,
-    opacity: 0.3,
+    borderRadius: 12,
+  },
+  player: {
+    width: PLAYER_SIZE,
+    height: PLAYER_SIZE,
+    borderRadius: 6,
   },
   obstacle: {
     position: "absolute",
+  },
+  spikeObstacle: {
+    width: 0,
+    height: 0,
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+  },
+  blockObstacle: {
+    borderRadius: 6,
   },
   tapToStartContainer: {
     position: "absolute",
@@ -465,16 +586,18 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(11, 15, 26, 0.7)",
+  },
+  tapToStartContent: {
+    alignItems: "center",
   },
   tapToStartText: {
-    fontSize: 32,
-    fontWeight: "800",
+    fontSize: 36,
+    fontWeight: "900",
     color: GameColors.primary,
     letterSpacing: 4,
     textShadowColor: GameColors.primary,
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 20,
+    textShadowRadius: 25,
   },
   instructionText: {
     fontSize: 16,

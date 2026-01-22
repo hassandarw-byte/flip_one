@@ -8,6 +8,7 @@ import {
   Text,
   Modal,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
 import { GameColors, Spacing, BorderRadius, Fonts } from "@/constants/theme";
@@ -38,26 +39,34 @@ export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={[GameColors.backgroundGradientStart, GameColors.backgroundGradientEnd]}
+      style={styles.container}
+    >
       {__DEV__ ? (
         <Pressable
           onPress={() => setIsModalVisible(true)}
           style={({ pressed }) => [
             styles.topButton,
-            {
-              backgroundColor: GameColors.surface,
-              opacity: pressed ? 0.8 : 1,
-            },
+            { opacity: pressed ? 0.8 : 1 },
           ]}
         >
-          <Feather name="alert-circle" size={20} color={GameColors.danger} />
+          <LinearGradient
+            colors={[GameColors.danger, GameColors.dangerGlow]}
+            style={styles.topButtonGradient}
+          >
+            <Feather name="alert-circle" size={20} color="#FFFFFF" />
+          </LinearGradient>
         </Pressable>
       ) : null}
 
       <View style={styles.content}>
-        <View style={styles.iconContainer}>
-          <Feather name="rotate-ccw" size={48} color={GameColors.primary} />
-        </View>
+        <LinearGradient
+          colors={[GameColors.primary, GameColors.primaryGlow]}
+          style={styles.iconContainer}
+        >
+          <Feather name="rotate-ccw" size={48} color="#FFFFFF" />
+        </LinearGradient>
 
         <ThemedText type="h1" style={styles.title}>
           Oops! Flip One crashed
@@ -71,15 +80,16 @@ export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
           onPress={handleRestart}
           style={({ pressed }) => [
             styles.button,
-            {
-              backgroundColor: GameColors.player,
-              opacity: pressed ? 0.9 : 1,
-              transform: [{ scale: pressed ? 0.98 : 1 }],
-            },
+            { transform: [{ scale: pressed ? 0.98 : 1 }] },
           ]}
         >
-          <Feather name="refresh-cw" size={20} color={GameColors.background} />
-          <Text style={styles.buttonText}>Flip Back In</Text>
+          <LinearGradient
+            colors={[GameColors.player, GameColors.playerGlow]}
+            style={styles.buttonGradient}
+          >
+            <Feather name="refresh-cw" size={20} color={GameColors.background} />
+            <Text style={styles.buttonText}>Flip Back In</Text>
+          </LinearGradient>
         </Pressable>
       </View>
 
@@ -91,7 +101,10 @@ export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
           onRequestClose={() => setIsModalVisible(false)}
         >
           <View style={styles.modalOverlay}>
-            <View style={styles.modalContainer}>
+            <LinearGradient
+              colors={[GameColors.surfaceLight, GameColors.surface]}
+              style={styles.modalContainer}
+            >
               <View style={styles.modalHeader}>
                 <ThemedText type="h2" style={styles.modalTitle}>
                   Error Details
@@ -118,11 +131,11 @@ export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
                   </Text>
                 </View>
               </ScrollView>
-            </View>
+            </LinearGradient>
           </View>
         </Modal>
       ) : null}
-    </View>
+    </LinearGradient>
   );
 }
 
@@ -134,7 +147,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: Spacing["2xl"],
-    backgroundColor: GameColors.background,
   },
   content: {
     alignItems: "center",
@@ -147,7 +159,6 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: GameColors.primary + "20",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: Spacing.lg,
@@ -167,28 +178,33 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: Spacing["2xl"] + Spacing.lg,
     right: Spacing.lg,
+    zIndex: 10,
+  },
+  topButtonGradient: {
     width: 44,
     height: 44,
     borderRadius: BorderRadius.md,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    zIndex: 10,
   },
   button: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.sm,
-    paddingVertical: Spacing.lg,
     borderRadius: BorderRadius.lg,
-    paddingHorizontal: Spacing["2xl"],
-    minWidth: 200,
-    justifyContent: "center",
+    overflow: "hidden",
     shadowColor: GameColors.player,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
     shadowRadius: 15,
-    elevation: 3,
+    elevation: 10,
+  },
+  buttonGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    paddingVertical: Spacing.lg,
+    paddingHorizontal: Spacing["2xl"],
+    minWidth: 200,
+    justifyContent: "center",
   },
   buttonText: {
     fontWeight: "700",
@@ -198,7 +214,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(11, 15, 26, 0.9)",
+    backgroundColor: "rgba(26, 10, 46, 0.9)",
     justifyContent: "flex-end",
   },
   modalContainer: {
@@ -206,7 +222,6 @@ const styles = StyleSheet.create({
     height: "90%",
     borderTopLeftRadius: BorderRadius.lg,
     borderTopRightRadius: BorderRadius.lg,
-    backgroundColor: GameColors.surface,
   },
   modalHeader: {
     flexDirection: "row",
@@ -216,7 +231,7 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.lg,
     paddingBottom: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: GameColors.surfaceLight,
+    borderBottomColor: "rgba(255,255,255,0.1)",
   },
   modalTitle: {
     fontWeight: "600",

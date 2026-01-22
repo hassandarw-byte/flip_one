@@ -8,6 +8,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { Feather } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -64,20 +65,25 @@ export default function MissionsScreen() {
   const allClaimed = gameState?.dailyMissions.every((m) => m.claimed);
 
   return (
-    <View
-      style={[
-        styles.container,
-        { paddingTop: headerHeight + Spacing.lg },
-      ]}
+    <LinearGradient
+      colors={[GameColors.backgroundGradientStart, GameColors.backgroundGradientEnd]}
+      style={[styles.container, { paddingTop: headerHeight + Spacing.lg }]}
     >
       <View style={styles.header}>
         <View style={styles.titleRow}>
-          <Feather name="calendar" size={24} color={GameColors.primary} />
-          <ThemedText style={styles.title}>Daily Missions</ThemedText>
+          <LinearGradient
+            colors={[GameColors.success, GameColors.successGlow]}
+            style={styles.titleIcon}
+          >
+            <Feather name="calendar" size={20} color="#FFFFFF" />
+          </LinearGradient>
+          <View>
+            <ThemedText style={styles.title}>Daily Missions</ThemedText>
+            <ThemedText style={styles.subtitle}>
+              Complete missions to earn points
+            </ThemedText>
+          </View>
         </View>
-        <ThemedText style={styles.subtitle}>
-          Complete missions to earn points
-        </ThemedText>
       </View>
 
       <FlatList
@@ -91,7 +97,12 @@ export default function MissionsScreen() {
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Feather name="check-circle" size={64} color={GameColors.success} />
+            <LinearGradient
+              colors={[GameColors.success, GameColors.successGlow]}
+              style={styles.emptyIcon}
+            >
+              <Feather name="check-circle" size={48} color="#FFFFFF" />
+            </LinearGradient>
             <ThemedText style={styles.emptyTitle}>All Done!</ThemedText>
             <ThemedText style={styles.emptyText}>
               Come back tomorrow for new missions
@@ -101,14 +112,17 @@ export default function MissionsScreen() {
       />
 
       {allClaimed ? (
-        <View style={[styles.allDoneContainer, { paddingBottom: insets.bottom + Spacing.lg }]}>
-          <Feather name="check-circle" size={48} color={GameColors.success} />
+        <LinearGradient
+          colors={[GameColors.surface, GameColors.surfaceLight]}
+          style={[styles.allDoneContainer, { paddingBottom: insets.bottom + Spacing.lg }]}
+        >
+          <Feather name="check-circle" size={32} color={GameColors.success} />
           <ThemedText style={styles.allDoneText}>
             All missions completed!
           </ThemedText>
-        </View>
+        </LinearGradient>
       ) : null}
-    </View>
+    </LinearGradient>
   );
 }
 
@@ -127,53 +141,64 @@ function MissionCard({ mission, onClaim }: MissionCardProps) {
 
   return (
     <Animated.View style={[styles.missionCard, animatedStyle]}>
-      <View style={styles.missionContent}>
-        <View style={styles.missionInfo}>
-          <ThemedText style={styles.missionDescription}>
-            {mission.description}
-          </ThemedText>
-          <View style={styles.progressContainer}>
-            <View style={styles.progressBar}>
-              <View
-                style={[
-                  styles.progressFill,
-                  { width: `${Math.min(progress * 100, 100)}%` },
-                ]}
-              />
-            </View>
-            <ThemedText style={styles.progressText}>
-              {mission.progress}/{mission.target}
+      <LinearGradient
+        colors={[GameColors.surfaceLight, GameColors.surface]}
+        style={styles.missionCardGradient}
+      >
+        <View style={styles.missionContent}>
+          <View style={styles.missionInfo}>
+            <ThemedText style={styles.missionDescription}>
+              {mission.description}
             </ThemedText>
-          </View>
-        </View>
-
-        <View style={styles.rewardSection}>
-          <View style={styles.rewardBadge}>
-            <Feather name="star" size={14} color={GameColors.gold} />
-            <ThemedText style={styles.rewardText}>{mission.reward}</ThemedText>
-          </View>
-
-          {mission.completed && !mission.claimed ? (
-            <AnimatedPressable
-              style={styles.claimButton}
-              onPress={onClaim}
-              onPressIn={() => {
-                scale.value = withSpring(0.98, { damping: 15 });
-              }}
-              onPressOut={() => {
-                scale.value = withSpring(1, { damping: 15 });
-              }}
-              testID={`button-claim-${mission.id}`}
-            >
-              <ThemedText style={styles.claimButtonText}>Claim</ThemedText>
-            </AnimatedPressable>
-          ) : mission.claimed ? (
-            <View style={styles.claimedBadge}>
-              <Feather name="check" size={16} color={GameColors.success} />
+            <View style={styles.progressContainer}>
+              <View style={styles.progressBar}>
+                <LinearGradient
+                  colors={[GameColors.primary, GameColors.primaryGlow]}
+                  style={[styles.progressFill, { width: `${Math.min(progress * 100, 100)}%` }]}
+                />
+              </View>
+              <ThemedText style={styles.progressText}>
+                {mission.progress}/{mission.target}
+              </ThemedText>
             </View>
-          ) : null}
+          </View>
+
+          <View style={styles.rewardSection}>
+            <LinearGradient
+              colors={[GameColors.gold + "30", GameColors.gold + "15"]}
+              style={styles.rewardBadge}
+            >
+              <Feather name="star" size={14} color={GameColors.gold} />
+              <ThemedText style={styles.rewardText}>{mission.reward}</ThemedText>
+            </LinearGradient>
+
+            {mission.completed && !mission.claimed ? (
+              <AnimatedPressable
+                style={styles.claimButton}
+                onPress={onClaim}
+                onPressIn={() => {
+                  scale.value = withSpring(0.98, { damping: 15 });
+                }}
+                onPressOut={() => {
+                  scale.value = withSpring(1, { damping: 10 });
+                }}
+                testID={`button-claim-${mission.id}`}
+              >
+                <LinearGradient
+                  colors={[GameColors.success, GameColors.successGlow]}
+                  style={styles.claimButtonGradient}
+                >
+                  <ThemedText style={styles.claimButtonText}>Claim</ThemedText>
+                </LinearGradient>
+              </AnimatedPressable>
+            ) : mission.claimed ? (
+              <View style={styles.claimedBadge}>
+                <Feather name="check" size={16} color={GameColors.success} />
+              </View>
+            ) : null}
+          </View>
         </View>
-      </View>
+      </LinearGradient>
     </Animated.View>
   );
 }
@@ -181,7 +206,6 @@ function MissionCard({ mission, onClaim }: MissionCardProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: GameColors.background,
   },
   header: {
     paddingHorizontal: Spacing.xl,
@@ -191,7 +215,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.md,
-    marginBottom: Spacing.sm,
+  },
+  titleIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: BorderRadius.md,
+    justifyContent: "center",
+    alignItems: "center",
   },
   title: {
     fontSize: 24,
@@ -199,17 +229,22 @@ const styles = StyleSheet.create({
     color: GameColors.textPrimary,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: 13,
     color: GameColors.textMuted,
+    marginTop: 2,
   },
   listContent: {
     paddingHorizontal: Spacing.xl,
   },
   missionCard: {
-    backgroundColor: GameColors.surface,
     borderRadius: BorderRadius.lg,
-    padding: Spacing.lg,
+    overflow: "hidden",
     marginBottom: Spacing.md,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
+  },
+  missionCardGradient: {
+    padding: Spacing.lg,
   },
   missionContent: {
     flexDirection: "row",
@@ -221,7 +256,7 @@ const styles = StyleSheet.create({
     marginRight: Spacing.lg,
   },
   missionDescription: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "600",
     color: GameColors.textPrimary,
     marginBottom: Spacing.md,
@@ -234,19 +269,19 @@ const styles = StyleSheet.create({
   progressBar: {
     flex: 1,
     height: 8,
-    backgroundColor: GameColors.background,
+    backgroundColor: "rgba(255,255,255,0.1)",
     borderRadius: 4,
     overflow: "hidden",
   },
   progressFill: {
     height: "100%",
-    backgroundColor: GameColors.primary,
     borderRadius: 4,
   },
   progressText: {
     fontSize: 12,
     color: GameColors.textMuted,
     minWidth: 40,
+    fontWeight: "600",
   },
   rewardSection: {
     alignItems: "center",
@@ -256,10 +291,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.xs,
-    backgroundColor: GameColors.gold + "20",
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.full,
+    borderWidth: 1,
+    borderColor: GameColors.gold + "40",
   },
   rewardText: {
     fontSize: 14,
@@ -267,28 +303,39 @@ const styles = StyleSheet.create({
     color: GameColors.gold,
   },
   claimButton: {
-    backgroundColor: GameColors.success,
+    borderRadius: BorderRadius.md,
+    overflow: "hidden",
+  },
+  claimButtonGradient: {
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.md,
   },
   claimButtonText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "700",
-    color: GameColors.background,
+    color: "#FFFFFF",
   },
   claimedBadge: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: GameColors.success + "20",
+    backgroundColor: GameColors.success + "25",
     justifyContent: "center",
     alignItems: "center",
+    borderWidth: 1,
+    borderColor: GameColors.success + "40",
   },
   emptyContainer: {
     alignItems: "center",
     justifyContent: "center",
     paddingTop: Spacing["5xl"],
+  },
+  emptyIcon: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    justifyContent: "center",
+    alignItems: "center",
   },
   emptyTitle: {
     fontSize: 24,
@@ -307,11 +354,12 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: Spacing.xl,
-    backgroundColor: GameColors.surface,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255,255,255,0.1)",
   },
   allDoneText: {
     fontSize: 16,

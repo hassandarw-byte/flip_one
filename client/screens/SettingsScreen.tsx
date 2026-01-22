@@ -9,6 +9,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { Feather } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -56,105 +57,118 @@ export default function SettingsScreen() {
   };
 
   return (
-    <ScrollView
-      style={[
-        styles.container,
-        { paddingTop: headerHeight + Spacing.lg },
-      ]}
-      contentContainerStyle={{ paddingBottom: insets.bottom + Spacing.xl }}
-      showsVerticalScrollIndicator={false}
+    <LinearGradient
+      colors={[GameColors.backgroundGradientStart, GameColors.backgroundGradientEnd]}
+      style={[styles.container, { paddingTop: headerHeight + Spacing.lg }]}
     >
-      <Animated.View entering={FadeInDown.delay(0).springify()}>
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Gameplay</ThemedText>
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: insets.bottom + Spacing.xl }}
+        showsVerticalScrollIndicator={false}
+      >
+        <Animated.View entering={FadeInDown.delay(0).springify()}>
+          <View style={styles.section}>
+            <ThemedText style={styles.sectionTitle}>Gameplay</ThemedText>
 
-          <SettingRow
-            icon="volume-2"
-            title="Sound Effects"
-            description="Play sounds during gameplay"
-          >
-            <Switch
-              value={gameState?.soundEnabled ?? true}
-              onValueChange={handleSoundToggle}
-              trackColor={{
-                false: GameColors.surface,
-                true: GameColors.primary + "80",
-              }}
-              thumbColor={
-                gameState?.soundEnabled ? GameColors.primary : GameColors.textMuted
-              }
-              testID="switch-sound"
-            />
-          </SettingRow>
+            <SettingRow
+              icon="volume-2"
+              title="Sound Effects"
+              description="Play sounds during gameplay"
+              colors={[GameColors.primary, GameColors.primaryGlow]}
+            >
+              <Switch
+                value={gameState?.soundEnabled ?? true}
+                onValueChange={handleSoundToggle}
+                trackColor={{
+                  false: GameColors.surface,
+                  true: GameColors.primary + "60",
+                }}
+                thumbColor={
+                  gameState?.soundEnabled ? GameColors.primary : GameColors.textMuted
+                }
+                testID="switch-sound"
+              />
+            </SettingRow>
 
-          <SettingRow
-            icon="smartphone"
-            title="Haptic Feedback"
-            description="Vibrate on flips and actions"
-          >
-            <Switch
-              value={gameState?.hapticsEnabled ?? true}
-              onValueChange={handleHapticsToggle}
-              trackColor={{
-                false: GameColors.surface,
-                true: GameColors.primary + "80",
-              }}
-              thumbColor={
-                gameState?.hapticsEnabled ? GameColors.primary : GameColors.textMuted
-              }
-              testID="switch-haptics"
-            />
-          </SettingRow>
-        </View>
-      </Animated.View>
-
-      <Animated.View entering={FadeInDown.delay(100).springify()}>
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Premium</ThemedText>
-
-          <PurchaseRow
-            icon="moon"
-            title="Night Mode"
-            description="Darker theme for night gaming"
-            price="$0.99"
-            isPurchased={gameState?.nightMode}
-            onPress={() => {}}
-          />
-
-          <PurchaseRow
-            icon="slash"
-            title="Remove Ads"
-            description="No more interruptions"
-            price="$0.99"
-            isPurchased={gameState?.adsRemoved}
-            onPress={() => {}}
-          />
-        </View>
-      </Animated.View>
-
-      <Animated.View entering={FadeInDown.delay(200).springify()}>
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Account</ThemedText>
-
-          <SettingButton
-            icon="refresh-cw"
-            title="Restore Purchases"
-            onPress={() => {}}
-          />
-        </View>
-      </Animated.View>
-
-      <Animated.View entering={FadeInDown.delay(300).springify()}>
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>About</ThemedText>
-
-          <View style={styles.aboutCard}>
-            <ThemedText style={styles.appName}>Flip One</ThemedText>
-            <ThemedText style={styles.appVersion}>Version 1.0.0</ThemedText>
+            <SettingRow
+              icon="smartphone"
+              title="Haptic Feedback"
+              description="Vibrate on flips and actions"
+              colors={[GameColors.secondary, GameColors.secondaryGlow]}
+            >
+              <Switch
+                value={gameState?.hapticsEnabled ?? true}
+                onValueChange={handleHapticsToggle}
+                trackColor={{
+                  false: GameColors.surface,
+                  true: GameColors.secondary + "60",
+                }}
+                thumbColor={
+                  gameState?.hapticsEnabled ? GameColors.secondary : GameColors.textMuted
+                }
+                testID="switch-haptics"
+              />
+            </SettingRow>
           </View>
-        </View>
-      </Animated.View>
-    </ScrollView>
+        </Animated.View>
+
+        <Animated.View entering={FadeInDown.delay(100).springify()}>
+          <View style={styles.section}>
+            <ThemedText style={styles.sectionTitle}>Premium</ThemedText>
+
+            <PurchaseRow
+              icon="moon"
+              title="Night Mode"
+              description="Darker theme for night gaming"
+              price="$0.99"
+              isPurchased={gameState?.nightMode}
+              colors={[GameColors.candy4, GameColors.primaryGlow]}
+              onPress={() => {}}
+            />
+
+            <PurchaseRow
+              icon="slash"
+              title="Remove Ads"
+              description="No more interruptions"
+              price="$0.99"
+              isPurchased={gameState?.adsRemoved}
+              colors={[GameColors.candy5, GameColors.secondaryGlow]}
+              onPress={() => {}}
+            />
+          </View>
+        </Animated.View>
+
+        <Animated.View entering={FadeInDown.delay(200).springify()}>
+          <View style={styles.section}>
+            <ThemedText style={styles.sectionTitle}>Account</ThemedText>
+
+            <SettingButton
+              icon="refresh-cw"
+              title="Restore Purchases"
+              colors={[GameColors.success, GameColors.successGlow]}
+              onPress={() => {}}
+            />
+          </View>
+        </Animated.View>
+
+        <Animated.View entering={FadeInDown.delay(300).springify()}>
+          <View style={styles.section}>
+            <ThemedText style={styles.sectionTitle}>About</ThemedText>
+
+            <LinearGradient
+              colors={[GameColors.surfaceLight, GameColors.surface]}
+              style={styles.aboutCard}
+            >
+              <LinearGradient
+                colors={[GameColors.player, GameColors.playerGlow]}
+                style={styles.aboutLogo}
+              />
+              <ThemedText style={styles.appName}>Flip One</ThemedText>
+              <ThemedText style={styles.appVersion}>Version 1.0.0</ThemedText>
+            </LinearGradient>
+          </View>
+        </Animated.View>
+      </ScrollView>
+    </LinearGradient>
   );
 }
 
@@ -162,21 +176,28 @@ interface SettingRowProps {
   icon: keyof typeof Feather.glyphMap;
   title: string;
   description: string;
+  colors: string[];
   children: React.ReactNode;
 }
 
-function SettingRow({ icon, title, description, children }: SettingRowProps) {
+function SettingRow({ icon, title, description, colors, children }: SettingRowProps) {
   return (
-    <View style={styles.settingRow}>
-      <View style={styles.settingIcon}>
-        <Feather name={icon} size={20} color={GameColors.primary} />
-      </View>
+    <LinearGradient
+      colors={[GameColors.surfaceLight, GameColors.surface]}
+      style={styles.settingRow}
+    >
+      <LinearGradient
+        colors={colors}
+        style={styles.settingIcon}
+      >
+        <Feather name={icon} size={18} color="#FFFFFF" />
+      </LinearGradient>
       <View style={styles.settingInfo}>
         <ThemedText style={styles.settingTitle}>{title}</ThemedText>
         <ThemedText style={styles.settingDescription}>{description}</ThemedText>
       </View>
       {children}
-    </View>
+    </LinearGradient>
   );
 }
 
@@ -186,6 +207,7 @@ interface PurchaseRowProps {
   description: string;
   price: string;
   isPurchased?: boolean;
+  colors: string[];
   onPress: () => void;
 }
 
@@ -195,6 +217,7 @@ function PurchaseRow({
   description,
   price,
   isPurchased,
+  colors,
   onPress,
 }: PurchaseRowProps) {
   const scale = useSharedValue(1);
@@ -205,7 +228,7 @@ function PurchaseRow({
 
   return (
     <AnimatedPressable
-      style={[styles.settingRow, animatedStyle]}
+      style={animatedStyle}
       onPress={isPurchased ? undefined : onPress}
       onPressIn={() => {
         if (!isPurchased) {
@@ -213,25 +236,36 @@ function PurchaseRow({
         }
       }}
       onPressOut={() => {
-        scale.value = withSpring(1, { damping: 15 });
+        scale.value = withSpring(1, { damping: 10 });
       }}
     >
-      <View style={[styles.settingIcon, { backgroundColor: GameColors.gold + "20" }]}>
-        <Feather name={icon} size={20} color={GameColors.gold} />
-      </View>
-      <View style={styles.settingInfo}>
-        <ThemedText style={styles.settingTitle}>{title}</ThemedText>
-        <ThemedText style={styles.settingDescription}>{description}</ThemedText>
-      </View>
-      {isPurchased ? (
-        <View style={styles.purchasedBadge}>
-          <Feather name="check" size={16} color={GameColors.success} />
+      <LinearGradient
+        colors={[GameColors.surfaceLight, GameColors.surface]}
+        style={styles.settingRow}
+      >
+        <LinearGradient
+          colors={colors}
+          style={styles.settingIcon}
+        >
+          <Feather name={icon} size={18} color="#FFFFFF" />
+        </LinearGradient>
+        <View style={styles.settingInfo}>
+          <ThemedText style={styles.settingTitle}>{title}</ThemedText>
+          <ThemedText style={styles.settingDescription}>{description}</ThemedText>
         </View>
-      ) : (
-        <View style={styles.priceButton}>
-          <ThemedText style={styles.priceText}>{price}</ThemedText>
-        </View>
-      )}
+        {isPurchased ? (
+          <View style={styles.purchasedBadge}>
+            <Feather name="check" size={16} color={GameColors.success} />
+          </View>
+        ) : (
+          <LinearGradient
+            colors={[GameColors.player, GameColors.playerGlow]}
+            style={styles.priceButton}
+          >
+            <ThemedText style={styles.priceText}>{price}</ThemedText>
+          </LinearGradient>
+        )}
+      </LinearGradient>
     </AnimatedPressable>
   );
 }
@@ -239,10 +273,11 @@ function PurchaseRow({
 interface SettingButtonProps {
   icon: keyof typeof Feather.glyphMap;
   title: string;
+  colors: string[];
   onPress: () => void;
 }
 
-function SettingButton({ icon, title, onPress }: SettingButtonProps) {
+function SettingButton({ icon, title, colors, onPress }: SettingButtonProps) {
   const scale = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -251,18 +286,28 @@ function SettingButton({ icon, title, onPress }: SettingButtonProps) {
 
   return (
     <AnimatedPressable
-      style={[styles.settingButton, animatedStyle]}
+      style={animatedStyle}
       onPress={onPress}
       onPressIn={() => {
         scale.value = withSpring(0.98, { damping: 15 });
       }}
       onPressOut={() => {
-        scale.value = withSpring(1, { damping: 15 });
+        scale.value = withSpring(1, { damping: 10 });
       }}
     >
-      <Feather name={icon} size={20} color={GameColors.primary} />
-      <ThemedText style={styles.settingButtonText}>{title}</ThemedText>
-      <Feather name="chevron-right" size={20} color={GameColors.textMuted} />
+      <LinearGradient
+        colors={[GameColors.surfaceLight, GameColors.surface]}
+        style={styles.settingButton}
+      >
+        <LinearGradient
+          colors={colors}
+          style={styles.settingIcon}
+        >
+          <Feather name={icon} size={18} color="#FFFFFF" />
+        </LinearGradient>
+        <ThemedText style={styles.settingButtonText}>{title}</ThemedText>
+        <Feather name="chevron-right" size={20} color={GameColors.textMuted} />
+      </LinearGradient>
     </AnimatedPressable>
   );
 }
@@ -270,15 +315,14 @@ function SettingButton({ icon, title, onPress }: SettingButtonProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: GameColors.background,
   },
   section: {
     marginBottom: Spacing.xl,
     paddingHorizontal: Spacing.xl,
   },
   sectionTitle: {
-    fontSize: 14,
-    fontWeight: "600",
+    fontSize: 13,
+    fontWeight: "700",
     color: GameColors.textMuted,
     textTransform: "uppercase",
     letterSpacing: 1,
@@ -287,16 +331,16 @@ const styles = StyleSheet.create({
   settingRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: GameColors.surface,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     marginBottom: Spacing.sm,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
   },
   settingIcon: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.md,
-    backgroundColor: GameColors.primary + "20",
     justifyContent: "center",
     alignItems: "center",
     marginRight: Spacing.md,
@@ -305,7 +349,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   settingTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "600",
     color: GameColors.textPrimary,
   },
@@ -315,15 +359,16 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   purchasedBadge: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: GameColors.success + "20",
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: GameColors.success + "25",
     justifyContent: "center",
     alignItems: "center",
+    borderWidth: 1,
+    borderColor: GameColors.success + "40",
   },
   priceButton: {
-    backgroundColor: GameColors.player,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.md,
@@ -336,29 +381,37 @@ const styles = StyleSheet.create({
   settingButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: GameColors.surface,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
-    gap: Spacing.md,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
   },
   settingButtonText: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 15,
+    fontWeight: "500",
     color: GameColors.textPrimary,
   },
   aboutCard: {
-    backgroundColor: GameColors.surface,
     borderRadius: BorderRadius.lg,
     padding: Spacing.xl,
     alignItems: "center",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
+  },
+  aboutLogo: {
+    width: 60,
+    height: 60,
+    borderRadius: 15,
+    marginBottom: Spacing.md,
   },
   appName: {
-    fontSize: 24,
-    fontWeight: "700",
+    fontSize: 22,
+    fontWeight: "800",
     color: GameColors.player,
   },
   appVersion: {
-    fontSize: 14,
+    fontSize: 13,
     color: GameColors.textMuted,
     marginTop: Spacing.xs,
   },

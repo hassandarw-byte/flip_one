@@ -8,12 +8,16 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
   withDelay,
   withTiming,
+  withRepeat,
+  withSequence,
+  Easing,
 } from "react-native-reanimated";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
@@ -23,9 +27,10 @@ import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import { getGameState, GameState } from "@/lib/storage";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
@@ -33,13 +38,17 @@ export default function HomeScreen() {
   const [gameState, setGameState] = useState<GameState | null>(null);
 
   const playButtonScale = useSharedValue(1);
+  const playButtonGlow = useSharedValue(0.6);
   const logoOpacity = useSharedValue(0);
-  const logoTranslateY = useSharedValue(-20);
+  const logoTranslateY = useSharedValue(-30);
+  const logoRotate = useSharedValue(0);
   const buttonsOpacity = useSharedValue(0);
+  const sparkleOpacity = useSharedValue(0.3);
 
   useEffect(() => {
     loadGameState();
     animateEntrance();
+    startContinuousAnimations();
   }, []);
 
   const loadGameState = async () => {
@@ -48,14 +57,46 @@ export default function HomeScreen() {
   };
 
   const animateEntrance = () => {
-    logoOpacity.value = withDelay(100, withTiming(1, { duration: 600 }));
-    logoTranslateY.value = withDelay(100, withSpring(0, { damping: 15 }));
-    buttonsOpacity.value = withDelay(400, withTiming(1, { duration: 500 }));
+    logoOpacity.value = withDelay(100, withTiming(1, { duration: 800 }));
+    logoTranslateY.value = withDelay(100, withSpring(0, { damping: 12, stiffness: 100 }));
+    buttonsOpacity.value = withDelay(500, withTiming(1, { duration: 600 }));
+  };
+
+  const startContinuousAnimations = () => {
+    playButtonGlow.value = withRepeat(
+      withSequence(
+        withTiming(1, { duration: 1500, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0.6, { duration: 1500, easing: Easing.inOut(Easing.ease) })
+      ),
+      -1,
+      true
+    );
+    
+    sparkleOpacity.value = withRepeat(
+      withSequence(
+        withTiming(0.8, { duration: 2000 }),
+        withTiming(0.3, { duration: 2000 })
+      ),
+      -1,
+      true
+    );
+
+    logoRotate.value = withRepeat(
+      withSequence(
+        withTiming(3, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
+        withTiming(-3, { duration: 2000, easing: Easing.inOut(Easing.ease) })
+      ),
+      -1,
+      true
+    );
   };
 
   const logoAnimatedStyle = useAnimatedStyle(() => ({
     opacity: logoOpacity.value,
-    transform: [{ translateY: logoTranslateY.value }],
+    transform: [
+      { translateY: logoTranslateY.value },
+      { rotate: `${logoRotate.value}deg` },
+    ],
   }));
 
   const buttonsAnimatedStyle = useAnimatedStyle(() => ({
@@ -66,32 +107,44 @@ export default function HomeScreen() {
     transform: [{ scale: playButtonScale.value }],
   }));
 
+  const playButtonGlowStyle = useAnimatedStyle(() => ({
+    opacity: playButtonGlow.value,
+  }));
+
+  const sparkleStyle = useAnimatedStyle(() => ({
+    opacity: sparkleOpacity.value,
+  }));
+
   const handlePlayPress = () => {
     navigation.navigate("Game");
   };
 
   const handlePressIn = () => {
-    playButtonScale.value = withSpring(0.95, { damping: 15 });
+    playButtonScale.value = withSpring(0.92, { damping: 15 });
   };
 
   const handlePressOut = () => {
-    playButtonScale.value = withSpring(1, { damping: 15 });
+    playButtonScale.value = withSpring(1, { damping: 10, stiffness: 200 });
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + Spacing.xl }]}>
-      <View style={styles.starsContainer}>
-        {Array.from({ length: 40 }).map((_, i) => (
-          <View
+    <LinearGradient
+      colors={[GameColors.backgroundGradientStart, GameColors.backgroundGradientEnd, GameColors.background]}
+      style={[styles.container, { paddingTop: insets.top + Spacing.xl }]}
+    >
+      <View style={styles.sparklesContainer}>
+        {Array.from({ length: 30 }).map((_, i) => (
+          <Animated.View
             key={i}
             style={[
-              styles.star,
+              styles.sparkle,
+              sparkleStyle,
               {
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
-                opacity: Math.random() * 0.5 + 0.2,
-                width: Math.random() * 3 + 1,
-                height: Math.random() * 3 + 1,
+                width: Math.random() * 4 + 2,
+                height: Math.random() * 4 + 2,
+                backgroundColor: [GameColors.candy1, GameColors.candy2, GameColors.candy3, GameColors.candy4, GameColors.candy5][Math.floor(Math.random() * 5)],
               },
             ]}
           />
@@ -99,37 +152,64 @@ export default function HomeScreen() {
       </View>
 
       <Animated.View style={[styles.logoSection, logoAnimatedStyle]}>
-        <Image
-          source={require("../../assets/images/icon.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+        <View style={styles.logoGlow}>
+          <Image
+            source={require("../../assets/images/icon.png")}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        </View>
+
+        <View style={styles.titleContainer}>
+          <ThemedText style={styles.titleText}>FLIP ONE</ThemedText>
+          <View style={styles.titleUnderline} />
+        </View>
         
-        <View style={styles.statsRow}>
+        <LinearGradient
+          colors={[GameColors.surfaceGlass, "rgba(255,255,255,0.05)"]}
+          style={styles.statsRow}
+        >
           <View style={styles.statItem}>
+            <View style={styles.statIconContainer}>
+              <Feather name="award" size={18} color={GameColors.gold} />
+            </View>
             <ThemedText style={styles.statLabel}>BEST</ThemedText>
             <ThemedText style={styles.statValue}>{gameState?.bestScore || 0}</ThemedText>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
+            <View style={[styles.statIconContainer, { backgroundColor: GameColors.primary + "30" }]}>
+              <Feather name="star" size={18} color={GameColors.gold} />
+            </View>
             <ThemedText style={styles.statLabel}>POINTS</ThemedText>
             <ThemedText style={[styles.statValue, { color: GameColors.gold }]}>
               {gameState?.points || 0}
             </ThemedText>
           </View>
-        </View>
+        </LinearGradient>
       </Animated.View>
 
       <Animated.View style={[styles.centerSection, buttonsAnimatedStyle]}>
-        <AnimatedPressable
-          style={[styles.playButton, playButtonAnimatedStyle]}
-          onPress={handlePlayPress}
-          onPressIn={handlePressIn}
-          onPressOut={handlePressOut}
-          testID="button-play"
-        >
-          <ThemedText style={styles.playButtonText}>PLAY</ThemedText>
-        </AnimatedPressable>
+        <View style={styles.playButtonContainer}>
+          <Animated.View style={[styles.playButtonGlow, playButtonGlowStyle]} />
+          <AnimatedPressable
+            style={[styles.playButton, playButtonAnimatedStyle]}
+            onPress={handlePlayPress}
+            onPressIn={handlePressIn}
+            onPressOut={handlePressOut}
+            testID="button-play"
+          >
+            <LinearGradient
+              colors={[GameColors.candy3, GameColors.player, "#E6B800"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.playButtonGradient}
+            >
+              <Feather name="play" size={32} color={GameColors.background} style={styles.playIcon} />
+              <ThemedText style={styles.playButtonText}>PLAY</ThemedText>
+            </LinearGradient>
+          </AnimatedPressable>
+        </View>
       </Animated.View>
 
       <Animated.View
@@ -144,26 +224,26 @@ export default function HomeScreen() {
             icon="shopping-bag"
             label="Shop"
             onPress={() => navigation.navigate("Shop")}
-            color={GameColors.secondary}
+            colors={[GameColors.candy4, GameColors.primaryGlow]}
           />
           <MenuButton
             icon="target"
             label="Missions"
             onPress={() => navigation.navigate("Missions")}
-            color={GameColors.success}
+            colors={[GameColors.candy6, GameColors.successGlow]}
             badge={gameState?.dailyMissions.filter((m) => m.completed && !m.claimed).length}
           />
           <MenuButton
             icon="award"
             label="Ranks"
             onPress={() => navigation.navigate("Leaderboard")}
-            color={GameColors.gold}
+            colors={[GameColors.gold, GameColors.goldGlow]}
           />
           <MenuButton
             icon="settings"
             label="Settings"
             onPress={() => navigation.navigate("Settings")}
-            color={GameColors.textSecondary}
+            colors={[GameColors.candy5, GameColors.secondaryGlow]}
           />
         </View>
 
@@ -172,11 +252,16 @@ export default function HomeScreen() {
           onPress={() => {}}
           testID="button-share"
         >
-          <Feather name="share-2" size={20} color={GameColors.primary} />
-          <ThemedText style={styles.shareButtonText}>Share Game</ThemedText>
+          <LinearGradient
+            colors={["rgba(255,255,255,0.1)", "rgba(255,255,255,0.05)"]}
+            style={styles.shareButtonGradient}
+          >
+            <Feather name="share-2" size={18} color={GameColors.textSecondary} />
+            <ThemedText style={styles.shareButtonText}>Share with Friends</ThemedText>
+          </LinearGradient>
         </Pressable>
       </Animated.View>
-    </View>
+    </LinearGradient>
   );
 }
 
@@ -184,11 +269,11 @@ interface MenuButtonProps {
   icon: keyof typeof Feather.glyphMap;
   label: string;
   onPress: () => void;
-  color: string;
+  colors: string[];
   badge?: number;
 }
 
-function MenuButton({ icon, label, onPress, color, badge }: MenuButtonProps) {
+function MenuButton({ icon, label, onPress, colors, badge }: MenuButtonProps) {
   const scale = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -203,18 +288,23 @@ function MenuButton({ icon, label, onPress, color, badge }: MenuButtonProps) {
         scale.value = withSpring(0.9, { damping: 15 });
       }}
       onPressOut={() => {
-        scale.value = withSpring(1, { damping: 15 });
+        scale.value = withSpring(1, { damping: 10 });
       }}
       testID={`button-${label.toLowerCase()}`}
     >
-      <View style={[styles.menuButtonIcon, { backgroundColor: color + "20" }]}>
-        <Feather name={icon} size={24} color={color} />
+      <LinearGradient
+        colors={colors}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.menuButtonIcon}
+      >
+        <Feather name={icon} size={24} color="#FFFFFF" />
         {badge && badge > 0 ? (
           <View style={styles.badge}>
             <ThemedText style={styles.badgeText}>{badge}</ThemedText>
           </View>
         ) : null}
-      </View>
+      </LinearGradient>
       <ThemedText style={styles.menuButtonLabel}>{label}</ThemedText>
     </AnimatedPressable>
   );
@@ -223,26 +313,50 @@ function MenuButton({ icon, label, onPress, color, badge }: MenuButtonProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: GameColors.background,
   },
-  starsContainer: {
+  sparklesContainer: {
     position: "absolute",
     width: "100%",
     height: "100%",
     zIndex: 0,
   },
-  star: {
+  sparkle: {
     position: "absolute",
-    backgroundColor: "#FFFFFF",
     borderRadius: 10,
   },
   logoSection: {
     alignItems: "center",
-    paddingTop: Spacing["3xl"],
+    paddingTop: Spacing["2xl"],
+  },
+  logoGlow: {
+    shadowColor: GameColors.primary,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 30,
   },
   logo: {
-    width: 180,
-    height: 180,
+    width: 140,
+    height: 140,
+  },
+  titleContainer: {
+    alignItems: "center",
+    marginTop: Spacing.lg,
+  },
+  titleText: {
+    fontSize: 36,
+    fontWeight: "900",
+    color: GameColors.textPrimary,
+    letterSpacing: 6,
+    textShadowColor: GameColors.primary,
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 20,
+  },
+  titleUnderline: {
+    width: 100,
+    height: 4,
+    backgroundColor: GameColors.primary,
+    borderRadius: 2,
+    marginTop: Spacing.sm,
   },
   statsRow: {
     flexDirection: "row",
@@ -250,51 +364,84 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xl,
     paddingHorizontal: Spacing["3xl"],
     paddingVertical: Spacing.lg,
-    backgroundColor: GameColors.surface,
     borderRadius: BorderRadius.xl,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
   },
   statItem: {
     alignItems: "center",
-    paddingHorizontal: Spacing["2xl"],
+    paddingHorizontal: Spacing.xl,
+  },
+  statIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: GameColors.gold + "20",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: Spacing.xs,
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: 11,
     color: GameColors.textMuted,
     letterSpacing: 1,
+    marginTop: Spacing.xs,
   },
   statValue: {
-    fontSize: 28,
-    fontWeight: "700",
+    fontSize: 24,
+    fontWeight: "800",
     color: GameColors.textPrimary,
-    marginTop: Spacing.xs,
   },
   statDivider: {
     width: 1,
-    height: 40,
-    backgroundColor: GameColors.textMuted,
-    opacity: 0.3,
+    height: 50,
+    backgroundColor: "rgba(255,255,255,0.2)",
   },
   centerSection: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  playButton: {
-    width: width * 0.6,
-    height: 70,
+  playButtonContainer: {
+    position: "relative",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  playButtonGlow: {
+    position: "absolute",
+    width: width * 0.7,
+    height: 100,
     backgroundColor: GameColors.player,
     borderRadius: BorderRadius.xl,
-    justifyContent: "center",
-    alignItems: "center",
     shadowColor: GameColors.player,
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.6,
-    shadowRadius: 25,
-    elevation: 10,
+    shadowOpacity: 1,
+    shadowRadius: 40,
+  },
+  playButton: {
+    width: width * 0.65,
+    height: 80,
+    borderRadius: BorderRadius.xl,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 15,
+    elevation: 15,
+  },
+  playButtonGradient: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: Spacing.md,
+  },
+  playIcon: {
+    marginRight: Spacing.xs,
   },
   playButtonText: {
     fontSize: 28,
-    fontWeight: "800",
+    fontWeight: "900",
     color: GameColors.background,
     letterSpacing: 4,
   },
@@ -311,35 +458,47 @@ const styles = StyleSheet.create({
     width: (width - Spacing.xl * 2 - Spacing.lg * 3) / 4,
   },
   menuButtonIcon: {
-    width: 56,
-    height: 56,
+    width: 60,
+    height: 60,
     borderRadius: BorderRadius.lg,
     justifyContent: "center",
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
   menuButtonLabel: {
     fontSize: 12,
     color: GameColors.textSecondary,
     marginTop: Spacing.sm,
+    fontWeight: "600",
   },
   badge: {
     position: "absolute",
-    top: -4,
-    right: -4,
+    top: -6,
+    right: -6,
     backgroundColor: GameColors.danger,
-    borderRadius: 10,
-    minWidth: 18,
-    height: 18,
+    borderRadius: 12,
+    minWidth: 22,
+    height: 22,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 4,
+    paddingHorizontal: 6,
+    borderWidth: 2,
+    borderColor: GameColors.background,
   },
   badgeText: {
-    fontSize: 10,
-    fontWeight: "700",
+    fontSize: 11,
+    fontWeight: "800",
     color: GameColors.textPrimary,
   },
   shareButton: {
+    overflow: "hidden",
+    borderRadius: BorderRadius.lg,
+  },
+  shareButtonGradient: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -348,6 +507,7 @@ const styles = StyleSheet.create({
   },
   shareButtonText: {
     fontSize: 14,
-    color: GameColors.primary,
+    color: GameColors.textSecondary,
+    fontWeight: "500",
   },
 });
