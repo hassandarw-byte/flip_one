@@ -29,6 +29,8 @@ import {
   savePoints,
   saveOwnedSkins,
   saveEquippedSkin,
+  saveEquippedPremiumSkin,
+  usePower,
   GameState,
 } from "@/lib/storage";
 
@@ -72,7 +74,6 @@ const PREMIUM_SKINS: SkinItem[] = [
   { id: "iron_armor", name: "Iron Armor", colors: ["#c1121f", "#ffd60a"], price: 0, isPremium: true, icon: "cpu" },
   { id: "ice_queen", name: "Ice Queen", colors: ["#90e0ef", "#48cae4"], price: 0, isPremium: true, icon: "star" },
   { id: "kawaii_cat", name: "Kawaii Cat", colors: ["#ffb6c1", "#ff69b4"], price: 0, isPremium: true, icon: "heart" },
-  { id: "thunder_god", name: "Thunder God", colors: ["#7b2cbf", "#e0aaff"], price: 0, isPremium: true, icon: "cloud-lightning" },
   { id: "captain_star", name: "Captain Star", colors: ["#002855", "#bf0a30"], price: 0, isPremium: true, icon: "award" },
 ];
 
@@ -159,8 +160,33 @@ export default function ShopScreen() {
     }
   };
 
-  const handleWatchAd = async (power: PowerItem) => {
+  const handlePremiumSkinSelect = async (skin: SkinItem) => {
+    if (!gameState) return;
+
+    const newPremiumSkin = gameState.equippedPremiumSkin === skin.id ? null : skin.id;
+    await saveEquippedPremiumSkin(newPremiumSkin);
+    setGameState({ ...gameState, equippedPremiumSkin: newPremiumSkin });
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  };
+
+  const handleWatchAd = async (power: PowerItem) => {
+    if (!gameState) return;
+    
+    if (gameState.powersUsedToday.includes(power.id)) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      return;
+    }
+
+    const success = await usePower(power.id);
+    if (success) {
+      setGameState({
+        ...gameState,
+        powersUsedToday: [...gameState.powersUsedToday, power.id],
+      });
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } else {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    }
   };
 
   const renderSkinItem = ({ item, index }: { item: SkinItem; index: number }) => {
@@ -182,9 +208,14 @@ export default function ShopScreen() {
   };
 
   const renderPremiumItem = ({ item, index }: { item: SkinItem; index: number }) => {
+    const isEquipped = gameState?.equippedPremiumSkin === item.id;
     return (
       <Animated.View entering={FadeInDown.delay(index * 50).springify()}>
-        <PremiumSkinCard skin={item} />
+        <PremiumSkinCard 
+          skin={item} 
+          isEquipped={isEquipped || false}
+          onPress={() => handlePremiumSkinSelect(item)}
+        />
       </Animated.View>
     );
   };
@@ -274,7 +305,11 @@ export default function ShopScreen() {
           </View>
           {SPECIAL_POWERS.map((power, index) => (
             <Animated.View key={power.id} entering={FadeInDown.delay(index * 80).springify()}>
-              <PowerCard power={power} onWatchAd={() => handleWatchAd(power)} />
+              <PowerCard 
+                power={power} 
+                usedToday={gameState?.powersUsedToday.includes(power.id) || false}
+                onWatchAd={() => handleWatchAd(power)} 
+              />
             </Animated.View>
           ))}
         </ScrollView>
@@ -381,9 +416,11 @@ function SkinCard({
 
 interface PremiumSkinCardProps {
   skin: SkinItem;
+  isEquipped: boolean;
+  onPress: () => void;
 }
 
-function PremiumSkinCard({ skin }: PremiumSkinCardProps) {
+function PremiumSkinCard({ skin, isEquipped, onPress }: PremiumSkinCardProps) {
   const scale = useSharedValue(1);
   const glow = useSharedValue(0.5);
 
@@ -408,7 +445,8 @@ function PremiumSkinCard({ skin }: PremiumSkinCardProps) {
 
   return (
     <AnimatedPressable
-      style={[styles.skinCard, animatedStyle]}
+      style={[styles.skinCard, isEquipped && styles.skinCardEquipped, animatedStyle]}
+      onPress={onPress}
       onPressIn={() => {
         scale.value = withSpring(0.95, { damping: 15 });
       }}
@@ -438,17 +476,28 @@ function PremiumSkinCard({ skin }: PremiumSkinCardProps) {
               <Feather name={skin.icon as any} size={24} color="#FFFFFF" />
             ) : null}
           </LinearGradient>
+          {isEquipped ? (
+            <View style={styles.equippedBadge}>
+              <Feather name="check" size={14} color="#FFFFFF" />
+            </View>
+          ) : null}
         </View>
 
         <ThemedText style={styles.skinName}>{skin.name}</ThemedText>
 
-        <LinearGradient
-          colors={[GameColors.gold, GameColors.goldGlow]}
-          style={styles.premiumPriceTag}
-        >
-          <Feather name="play" size={12} color={GameColors.background} />
-          <ThemedText style={styles.premiumPriceText}>Watch Ad</ThemedText>
-        </LinearGradient>
+        {isEquipped ? (
+          <View style={styles.ownedBadge}>
+            <ThemedText style={styles.ownedText}>Equipped</ThemedText>
+          </View>
+        ) : (
+          <LinearGradient
+            colors={[GameColors.gold, GameColors.goldGlow]}
+            style={styles.premiumPriceTag}
+          >
+            <Feather name="play" size={12} color={GameColors.background} />
+            <ThemedText style={styles.premiumPriceText}>Select</ThemedText>
+          </LinearGradient>
+        )}
       </LinearGradient>
     </AnimatedPressable>
   );
@@ -456,10 +505,11 @@ function PremiumSkinCard({ skin }: PremiumSkinCardProps) {
 
 interface PowerCardProps {
   power: PowerItem;
+  usedToday: boolean;
   onWatchAd: () => void;
 }
 
-function PowerCard({ power, onWatchAd }: PowerCardProps) {
+function PowerCard({ power, usedToday, onWatchAd }: PowerCardProps) {
   const scale = useSharedValue(1);
   const glow = useSharedValue(0.5);
 
@@ -480,8 +530,9 @@ function PowerCard({ power, onWatchAd }: PowerCardProps) {
 
   return (
     <AnimatedPressable
-      style={[styles.powerCard, animatedStyle]}
+      style={[styles.powerCard, animatedStyle, usedToday && styles.powerCardUsed]}
       onPress={onWatchAd}
+      disabled={usedToday}
       onPressIn={() => {
         scale.value = withSpring(0.98, { damping: 15 });
       }}
@@ -495,7 +546,7 @@ function PowerCard({ power, onWatchAd }: PowerCardProps) {
         style={styles.powerCardGradient}
       >
         <LinearGradient
-          colors={power.colors}
+          colors={usedToday ? [GameColors.textMuted, GameColors.textMuted] : power.colors}
           style={styles.powerIcon}
         >
           <Feather name={power.icon} size={24} color="#FFFFFF" />
@@ -506,13 +557,20 @@ function PowerCard({ power, onWatchAd }: PowerCardProps) {
           <ThemedText style={styles.powerDescription}>{power.description}</ThemedText>
         </View>
 
-        <LinearGradient
-          colors={[GameColors.success, GameColors.successGlow]}
-          style={styles.watchAdButton}
-        >
-          <Feather name="play" size={14} color="#FFFFFF" />
-          <ThemedText style={styles.watchAdText}>Watch</ThemedText>
-        </LinearGradient>
+        {usedToday ? (
+          <View style={styles.usedTodayBadge}>
+            <Feather name="check-circle" size={14} color={GameColors.textMuted} />
+            <ThemedText style={styles.usedTodayText}>Used</ThemedText>
+          </View>
+        ) : (
+          <LinearGradient
+            colors={[GameColors.success, GameColors.successGlow]}
+            style={styles.watchAdButton}
+          >
+            <Feather name="play" size={14} color="#FFFFFF" />
+            <ThemedText style={styles.watchAdText}>Watch</ThemedText>
+          </LinearGradient>
+        )}
       </LinearGradient>
     </AnimatedPressable>
   );
@@ -745,5 +803,22 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "700",
     color: "#FFFFFF",
+  },
+  powerCardUsed: {
+    opacity: 0.6,
+  },
+  usedTodayBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+    backgroundColor: GameColors.textMuted + "25",
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
+  },
+  usedTodayText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: GameColors.textMuted,
   },
 });

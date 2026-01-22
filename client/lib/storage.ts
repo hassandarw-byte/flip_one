@@ -6,6 +6,7 @@ const KEYS = {
   POINTS: "flip_one_points",
   OWNED_SKINS: "flip_one_owned_skins",
   EQUIPPED_SKIN: "flip_one_equipped_skin",
+  EQUIPPED_PREMIUM_SKIN: "flip_one_equipped_premium_skin",
   SOUND_ENABLED: "flip_one_sound_enabled",
   HAPTICS_ENABLED: "flip_one_haptics_enabled",
   DAILY_MISSIONS: "flip_one_daily_missions",
@@ -14,6 +15,8 @@ const KEYS = {
   NIGHT_MODE: "flip_one_night_mode",
   TOTAL_FLIPS: "flip_one_total_flips",
   TOTAL_GAMES: "flip_one_total_games",
+  POWERS_USED_TODAY: "flip_one_powers_used_today",
+  LAST_POWER_DATE: "flip_one_last_power_date",
 };
 
 export interface DailyMission {
@@ -31,6 +34,7 @@ export interface GameState {
   points: number;
   ownedSkins: string[];
   equippedSkin: string;
+  equippedPremiumSkin: string | null;
   soundEnabled: boolean;
   hapticsEnabled: boolean;
   dailyMissions: DailyMission[];
@@ -38,6 +42,7 @@ export interface GameState {
   nightMode: boolean;
   totalFlips: number;
   totalGames: number;
+  powersUsedToday: string[];
 }
 
 const DEFAULT_SKINS = ["default"];
@@ -82,6 +87,7 @@ export async function getGameState(): Promise<GameState> {
       points,
       ownedSkins,
       equippedSkin,
+      equippedPremiumSkin,
       soundEnabled,
       hapticsEnabled,
       dailyMissions,
@@ -90,11 +96,14 @@ export async function getGameState(): Promise<GameState> {
       nightMode,
       totalFlips,
       totalGames,
+      powersUsedToday,
+      lastPowerDate,
     ] = await Promise.all([
       AsyncStorage.getItem(KEYS.BEST_SCORE),
       AsyncStorage.getItem(KEYS.POINTS),
       AsyncStorage.getItem(KEYS.OWNED_SKINS),
       AsyncStorage.getItem(KEYS.EQUIPPED_SKIN),
+      AsyncStorage.getItem(KEYS.EQUIPPED_PREMIUM_SKIN),
       AsyncStorage.getItem(KEYS.SOUND_ENABLED),
       AsyncStorage.getItem(KEYS.HAPTICS_ENABLED),
       AsyncStorage.getItem(KEYS.DAILY_MISSIONS),
@@ -103,6 +112,8 @@ export async function getGameState(): Promise<GameState> {
       AsyncStorage.getItem(KEYS.NIGHT_MODE),
       AsyncStorage.getItem(KEYS.TOTAL_FLIPS),
       AsyncStorage.getItem(KEYS.TOTAL_GAMES),
+      AsyncStorage.getItem(KEYS.POWERS_USED_TODAY),
+      AsyncStorage.getItem(KEYS.LAST_POWER_DATE),
     ]);
 
     const today = new Date().toDateString();
@@ -116,11 +127,20 @@ export async function getGameState(): Promise<GameState> {
       missions = dailyMissions ? JSON.parse(dailyMissions) : generateDailyMissions();
     }
 
+    let usedPowers: string[] = [];
+    if (lastPowerDate === today && powersUsedToday) {
+      usedPowers = JSON.parse(powersUsedToday);
+    } else if (lastPowerDate !== today) {
+      await AsyncStorage.setItem(KEYS.POWERS_USED_TODAY, JSON.stringify([]));
+      await AsyncStorage.setItem(KEYS.LAST_POWER_DATE, today);
+    }
+
     return {
       bestScore: bestScore ? parseInt(bestScore, 10) : 0,
       points: points ? parseInt(points, 10) : 0,
       ownedSkins: ownedSkins ? JSON.parse(ownedSkins) : DEFAULT_SKINS,
       equippedSkin: equippedSkin || DEFAULT_SKIN,
+      equippedPremiumSkin: equippedPremiumSkin || null,
       soundEnabled: soundEnabled !== "false",
       hapticsEnabled: hapticsEnabled !== "false",
       dailyMissions: missions,
@@ -128,6 +148,7 @@ export async function getGameState(): Promise<GameState> {
       nightMode: nightMode === "true",
       totalFlips: totalFlips ? parseInt(totalFlips, 10) : 0,
       totalGames: totalGames ? parseInt(totalGames, 10) : 0,
+      powersUsedToday: usedPowers,
     };
   } catch (error) {
     console.error("Error loading game state:", error);
@@ -136,6 +157,7 @@ export async function getGameState(): Promise<GameState> {
       points: 0,
       ownedSkins: DEFAULT_SKINS,
       equippedSkin: DEFAULT_SKIN,
+      equippedPremiumSkin: null,
       soundEnabled: true,
       hapticsEnabled: true,
       dailyMissions: generateDailyMissions(),
@@ -143,6 +165,7 @@ export async function getGameState(): Promise<GameState> {
       nightMode: false,
       totalFlips: 0,
       totalGames: 0,
+      powersUsedToday: [],
     };
   }
 }
@@ -200,6 +223,43 @@ export async function saveEquippedSkin(skin: string): Promise<void> {
     await AsyncStorage.setItem(KEYS.EQUIPPED_SKIN, skin);
   } catch (error) {
     console.error("Error saving equipped skin:", error);
+  }
+}
+
+export async function saveEquippedPremiumSkin(skin: string | null): Promise<void> {
+  try {
+    if (skin === null) {
+      await AsyncStorage.removeItem(KEYS.EQUIPPED_PREMIUM_SKIN);
+    } else {
+      await AsyncStorage.setItem(KEYS.EQUIPPED_PREMIUM_SKIN, skin);
+    }
+  } catch (error) {
+    console.error("Error saving equipped premium skin:", error);
+  }
+}
+
+export async function usePower(powerId: string): Promise<boolean> {
+  try {
+    const today = new Date().toDateString();
+    const lastDate = await AsyncStorage.getItem(KEYS.LAST_POWER_DATE);
+    let usedPowers: string[] = [];
+
+    if (lastDate === today) {
+      const powersStr = await AsyncStorage.getItem(KEYS.POWERS_USED_TODAY);
+      usedPowers = powersStr ? JSON.parse(powersStr) : [];
+    }
+
+    if (usedPowers.includes(powerId)) {
+      return false;
+    }
+
+    usedPowers.push(powerId);
+    await AsyncStorage.setItem(KEYS.POWERS_USED_TODAY, JSON.stringify(usedPowers));
+    await AsyncStorage.setItem(KEYS.LAST_POWER_DATE, today);
+    return true;
+  } catch (error) {
+    console.error("Error using power:", error);
+    return false;
   }
 }
 

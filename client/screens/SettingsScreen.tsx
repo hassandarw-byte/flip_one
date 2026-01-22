@@ -155,19 +155,6 @@ export default function SettingsScreen() {
 
         <Animated.View entering={FadeInDown.delay(200).springify()}>
           <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Account</ThemedText>
-
-            <SettingButton
-              icon="refresh-cw"
-              title="Restore Purchases"
-              colors={[GameColors.success, GameColors.successGlow]}
-              onPress={() => {}}
-            />
-          </View>
-        </Animated.View>
-
-        <Animated.View entering={FadeInDown.delay(300).springify()}>
-          <View style={styles.section}>
             <ThemedText style={styles.sectionTitle}>About</ThemedText>
 
             <LinearGradient

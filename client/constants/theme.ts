@@ -47,6 +47,66 @@ export const GameColors = {
   sparkle: "#FFFFFF",
 };
 
+export const NightModeColors = {
+  background: "#0A0A0F",
+  backgroundGradientStart: "#0A0A0F",
+  backgroundGradientEnd: "#1A1A25",
+  surface: "#1A1A25",
+  surfaceLight: "#2A2A35",
+};
+
+export const CharacterThemes: Record<string, { primary: string; secondary: string; accent: string; gradientStart: string; gradientEnd: string }> = {
+  dark_knight: {
+    primary: "#1a1a2e",
+    secondary: "#16213e",
+    accent: "#e94560",
+    gradientStart: "#0f0f1a",
+    gradientEnd: "#1a1a2e",
+  },
+  web_hero: {
+    primary: "#e63946",
+    secondary: "#1d3557",
+    accent: "#457b9d",
+    gradientStart: "#1d3557",
+    gradientEnd: "#2a4a6d",
+  },
+  green_giant: {
+    primary: "#2d6a4f",
+    secondary: "#40916c",
+    accent: "#95d5b2",
+    gradientStart: "#1b4332",
+    gradientEnd: "#2d6a4f",
+  },
+  iron_armor: {
+    primary: "#c1121f",
+    secondary: "#ffd60a",
+    accent: "#780000",
+    gradientStart: "#3d0000",
+    gradientEnd: "#780000",
+  },
+  ice_queen: {
+    primary: "#90e0ef",
+    secondary: "#48cae4",
+    accent: "#caf0f8",
+    gradientStart: "#0077b6",
+    gradientEnd: "#023e8a",
+  },
+  kawaii_cat: {
+    primary: "#ffb6c1",
+    secondary: "#ff69b4",
+    accent: "#ffc0cb",
+    gradientStart: "#ff85a2",
+    gradientEnd: "#ffa6c1",
+  },
+  captain_star: {
+    primary: "#002855",
+    secondary: "#bf0a30",
+    accent: "#f0f0f0",
+    gradientStart: "#001a38",
+    gradientEnd: "#002855",
+  },
+};
+
 export const Colors = {
   light: {
     text: "#FFFFFF",

@@ -52,15 +52,26 @@ client/
     └── SettingsScreen.tsx     # Game settings
 ```
 
-## Design System
+## Design System (Candy Crush Style)
 
-- **Background**: Pure Black (#000000)
-- **Primary**: Electric Cyan (#00E5FF)
-- **Secondary**: Deep Purple (#6200EA)
-- **Success**: Neon Green (#00FF41)
-- **Danger**: Hot Pink (#FF006E)
-- **Gold**: (#FFB800)
-- **Font**: Tajawal (supports Arabic & Latin)
+- **Background Gradient**: Purple (#1A0A2E to #2D1B4E)
+- **Player**: Golden (#FFD93D)
+- **Spike/Danger**: Coral (#FF6B6B)
+- **Platform**: Teal (#4ECDC4)
+- **Primary**: Purple (#A66CFF)
+- **Secondary**: Pink (#FF9FF3)
+- **Success**: Green (#54E346)
+- **Gold**: (#FFD700)
+
+### Character Themes
+Each premium character has a unique color scheme:
+- Dark Knight: Dark purple/gray
+- Web Hero: Red/blue
+- Green Giant: Forest green
+- Iron Armor: Red/gold
+- Ice Queen: Cyan/blue
+- Kawaii Cat: Pink
+- Captain Star: Navy/red
 
 ## Technical Details
 
@@ -83,8 +94,14 @@ The app runs on Expo and can be tested via:
 - Gravity flip game mechanic
 - Local storage for scores and settings
 - Daily missions system with "Daily Missions" header
-- Shop with three sections: Skins, Premium characters, Special Powers
+- Shop with three sections: Skins, Premium characters (7), Special Powers (4)
 - Night Mode as toggle setting (not purchase)
 - HHD Apps branding in Settings
 - Beautiful obstacle designs: diamond, gem, crystal, star, heart shapes
 - 1.5 second grace period at game start for better playability
+- Premium splash screen with pulsing rings, rotating glow, and "Tap to Flip" subtitle
+- Premium character selection with theme colors (Dark Knight, Web Hero, Green Giant, Iron Armor, Ice Queen, Kawaii Cat, Captain Star)
+- Special powers with once-per-day usage limit (Freeze Time, Slow Motion, Shield, Double Points)
+- Removed "Restore Purchases" from Settings
+- Removed "Thunder God" character from premium skins
+- Daily power usage tracking resets each day
