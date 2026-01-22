@@ -17,6 +17,8 @@ const KEYS = {
   TOTAL_GAMES: "flip_one_total_games",
   POWERS_USED_TODAY: "flip_one_powers_used_today",
   LAST_POWER_DATE: "flip_one_last_power_date",
+  DEVICE_ID: "flip_one_device_id",
+  USERNAME: "flip_one_username",
 };
 
 export interface DailyMission {
@@ -353,5 +355,37 @@ export async function claimMissionReward(missionId: string): Promise<number> {
   } catch (error) {
     console.error("Error claiming mission reward:", error);
     return 0;
+  }
+}
+
+export async function getDeviceId(): Promise<string> {
+  try {
+    let deviceId = await AsyncStorage.getItem(KEYS.DEVICE_ID);
+    if (!deviceId) {
+      deviceId = `device_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      await AsyncStorage.setItem(KEYS.DEVICE_ID, deviceId);
+    }
+    return deviceId;
+  } catch (error) {
+    console.error("Error getting device ID:", error);
+    return `device_${Date.now()}`;
+  }
+}
+
+export async function getUsername(): Promise<string> {
+  try {
+    const username = await AsyncStorage.getItem(KEYS.USERNAME);
+    return username || "Player";
+  } catch (error) {
+    console.error("Error getting username:", error);
+    return "Player";
+  }
+}
+
+export async function setUsername(username: string): Promise<void> {
+  try {
+    await AsyncStorage.setItem(KEYS.USERNAME, username);
+  } catch (error) {
+    console.error("Error setting username:", error);
   }
 }

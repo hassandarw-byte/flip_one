@@ -54,6 +54,16 @@ interface Obstacle {
   colors: [string, string];
 }
 
+interface FloatingParticle {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
+  speed: number;
+  color: string;
+  opacity: number;
+}
+
 export default function GameScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -66,6 +76,7 @@ export default function GameScreen() {
   const [isGameOver, setIsGameOver] = useState(false);
   const [obstacles, setObstacles] = useState<Obstacle[]>([]);
   const [isReady, setIsReady] = useState(false);
+  const [floatingParticles, setFloatingParticles] = useState<FloatingParticle[]>([]);
   
   const currentTrackRef = useRef<"top" | "bottom">("bottom");
   const gameSpeedRef = useRef(GAME_SPEED_BASE);
@@ -210,8 +221,28 @@ export default function GameScreen() {
     const gameStartTime = Date.now();
     const GRACE_PERIOD = 1500;
     
+    // Initialize floating distraction particles
+    const initialParticles: FloatingParticle[] = Array.from({ length: 8 }).map((_, i) => ({
+      id: i,
+      x: Math.random() * width,
+      y: trackTopY + TRACK_HEIGHT + Math.random() * (trackBottomY - trackTopY - TRACK_HEIGHT - 40) + 20,
+      size: Math.random() * 12 + 6,
+      speed: Math.random() * 1.5 + 0.5,
+      color: [GameColors.candy1, GameColors.candy2, GameColors.candy3, GameColors.candy4, GameColors.candy5][Math.floor(Math.random() * 5)],
+      opacity: Math.random() * 0.4 + 0.2,
+    }));
+    setFloatingParticles(initialParticles);
+    
     gameLoopRef.current = setInterval(() => {
       if (isGameOverRef.current) return;
+
+      // Update floating particles
+      setFloatingParticles((prev) =>
+        prev.map((particle) => ({
+          ...particle,
+          x: particle.x - particle.speed > -20 ? particle.x - particle.speed : width + 20,
+        }))
+      );
 
       setObstacles((prev) => {
         const updated = prev
@@ -425,6 +456,24 @@ export default function GameScreen() {
             style={styles.trackLineBottom}
           />
         </View>
+
+        {floatingParticles.map((particle) => (
+          <View
+            key={`particle-${particle.id}`}
+            style={[
+              styles.floatingParticle,
+              {
+                left: particle.x,
+                top: particle.y,
+                width: particle.size,
+                height: particle.size,
+                backgroundColor: particle.color,
+                opacity: particle.opacity,
+                borderRadius: particle.size / 2,
+              },
+            ]}
+          />
+        ))}
 
         {obstacles.map((obs) => (
           <View
@@ -826,6 +875,13 @@ const styles = StyleSheet.create({
   },
   obstacle: {
     position: "absolute",
+  },
+  floatingParticle: {
+    position: "absolute",
+    shadowColor: "#FFFFFF",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
   },
   spikeObstacle: {
     width: 0,

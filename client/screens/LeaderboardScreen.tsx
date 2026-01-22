@@ -3,6 +3,9 @@ import {
   View,
   StyleSheet,
   FlatList,
+  TextInput,
+  Pressable,
+  ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -12,28 +15,17 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 
 import { ThemedText } from "@/components/ThemedText";
 import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
-import { getGameState, GameState } from "@/lib/storage";
+import { getGameState, GameState, getDeviceId, getUsername, setUsername } from "@/lib/storage";
 import { useNightMode } from "@/contexts/NightModeContext";
+import { getApiUrl } from "@/lib/query-client";
 
 interface LeaderboardEntry {
   rank: number;
   username: string;
   score: number;
   isCurrentUser?: boolean;
+  deviceId?: string;
 }
-
-const MOCK_LEADERBOARD: LeaderboardEntry[] = [
-  { rank: 1, username: "ProGamer99", score: 156 },
-  { rank: 2, username: "FlipMaster", score: 142 },
-  { rank: 3, username: "GravityKing", score: 128 },
-  { rank: 4, username: "SpeedRunner", score: 115 },
-  { rank: 5, username: "NoobSlayer", score: 98 },
-  { rank: 6, username: "ArcadeHero", score: 87 },
-  { rank: 7, username: "GameWizard", score: 76 },
-  { rank: 8, username: "PixelNinja", score: 65 },
-  { rank: 9, username: "RetroGamer", score: 54 },
-  { rank: 10, username: "CasualPro", score: 43 },
-];
 
 export default function LeaderboardScreen() {
   const insets = useSafeAreaInsets();
@@ -41,45 +33,83 @@ export default function LeaderboardScreen() {
   const { backgroundGradient } = useNightMode();
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentDeviceId, setCurrentDeviceId] = useState<string>("");
+  const [username, setUsernameState] = useState<string>("Player");
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [tempName, setTempName] = useState("");
 
   useEffect(() => {
     loadData();
   }, []);
 
   const loadData = async () => {
-    const state = await getGameState();
-    setGameState(state);
+    setLoading(true);
+    try {
+      const state = await getGameState();
+      setGameState(state);
+      
+      const deviceId = await getDeviceId();
+      setCurrentDeviceId(deviceId);
+      
+      const storedUsername = await getUsername();
+      setUsernameState(storedUsername);
 
-    const entries = [...MOCK_LEADERBOARD];
-    const userScore = state.bestScore;
-
-    if (userScore > 0) {
-      const userEntry: LeaderboardEntry = {
-        rank: 0,
-        username: "You",
-        score: userScore,
-        isCurrentUser: true,
-      };
-
-      let inserted = false;
-      for (let i = 0; i < entries.length; i++) {
-        if (userScore > entries[i].score) {
-          entries.splice(i, 0, userEntry);
-          inserted = true;
-          break;
+      const baseUrl = getApiUrl();
+      const response = await fetch(`${baseUrl}api/leaderboard`);
+      
+      if (response.ok) {
+        const data = await response.json();
+        const entries: LeaderboardEntry[] = data.map((entry: any, index: number) => ({
+          rank: index + 1,
+          username: entry.username,
+          score: entry.score,
+          deviceId: entry.deviceId,
+          isCurrentUser: entry.deviceId === deviceId,
+        }));
+        
+        const hasUserEntry = entries.some(e => e.deviceId === deviceId);
+        if (!hasUserEntry && state.bestScore > 0) {
+          await submitScore(deviceId, storedUsername, state.bestScore);
+          await loadData();
+          return;
         }
+        
+        setLeaderboard(entries.slice(0, 100));
+      } else {
+        setLeaderboard([]);
       }
-
-      if (!inserted && userScore > 0) {
-        entries.push(userEntry);
-      }
-
-      entries.forEach((entry, index) => {
-        entry.rank = index + 1;
-      });
+    } catch (error) {
+      console.error("Error loading leaderboard:", error);
+      setLeaderboard([]);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    setLeaderboard(entries.slice(0, 20));
+  const submitScore = async (deviceId: string, name: string, score: number) => {
+    try {
+      const baseUrl = getApiUrl();
+      await fetch(`${baseUrl}api/leaderboard`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: name, score, deviceId }),
+      });
+    } catch (error) {
+      console.error("Error submitting score:", error);
+    }
+  };
+
+  const handleSaveName = async () => {
+    if (tempName.trim()) {
+      await setUsername(tempName.trim());
+      setUsernameState(tempName.trim());
+      if (gameState && gameState.bestScore > 0) {
+        await submitScore(currentDeviceId, tempName.trim(), gameState.bestScore);
+        await loadData();
+      }
+    }
+    setIsEditingName(false);
   };
 
   const renderItem = ({
@@ -96,72 +126,123 @@ export default function LeaderboardScreen() {
 
   const userRank = leaderboard.find((e) => e.isCurrentUser)?.rank;
 
+  if (loading) {
+    return (
+      <LinearGradient colors={backgroundGradient} style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={GameColors.primary} />
+          <ThemedText style={styles.loadingText}>Loading Rankings...</ThemedText>
+        </View>
+      </LinearGradient>
+    );
+  }
+
   return (
     <LinearGradient
       colors={backgroundGradient}
-      style={[styles.container, { paddingTop: headerHeight + Spacing.lg }]}
+      style={styles.container}
     >
-      {userRank ? (
-        <LinearGradient
-          colors={[GameColors.surfaceLight, GameColors.surface]}
-          style={styles.userRankCard}
-        >
-          <View style={styles.userRankInfo}>
-            <LinearGradient
-              colors={[GameColors.primary, GameColors.primaryGlow]}
-              style={styles.userRankBadge}
-            >
-              <ThemedText style={styles.userRankNumber}>#{userRank}</ThemedText>
-            </LinearGradient>
-            <View>
-              <ThemedText style={styles.userRankLabel}>Your Rank</ThemedText>
-              <ThemedText style={styles.userScore}>
-                Best Score: {gameState?.bestScore || 0}
-              </ThemedText>
-            </View>
-          </View>
-          <Feather name="trending-up" size={24} color={GameColors.success} />
-        </LinearGradient>
-      ) : (
-        <LinearGradient
-          colors={[GameColors.surfaceLight, GameColors.surface]}
-          style={styles.noRankCard}
-        >
-          <Feather name="play" size={24} color={GameColors.primary} />
-          <ThemedText style={styles.noRankText}>
-            Play a game to get on the leaderboard!
-          </ThemedText>
-        </LinearGradient>
-      )}
-
-      <View style={styles.header}>
-        <LinearGradient
-          colors={[GameColors.gold, GameColors.goldGlow]}
-          style={styles.headerIcon}
-        >
-          <Feather name="award" size={18} color={GameColors.background} />
-        </LinearGradient>
-        <ThemedText style={styles.headerTitle}>Global Rankings</ThemedText>
-      </View>
-
-      <FlatList
-        data={leaderboard}
-        renderItem={renderItem}
-        keyExtractor={(item) => `${item.rank}-${item.username}`}
-        contentContainerStyle={[
-          styles.listContent,
-          { paddingBottom: insets.bottom + Spacing.xl },
+      <View
+        style={[
+          styles.content,
+          { paddingTop: headerHeight + Spacing.md, paddingBottom: insets.bottom },
         ]}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Feather name="users" size={48} color={GameColors.textMuted} />
-            <ThemedText style={styles.emptyText}>
-              No rankings yet
+      >
+        <View style={styles.headerCard}>
+          <LinearGradient
+            colors={[GameColors.surfaceLight, GameColors.surface]}
+            style={styles.headerCardGradient}
+          >
+            <View style={styles.userSection}>
+              {isEditingName ? (
+                <View style={styles.editNameContainer}>
+                  <TextInput
+                    style={styles.nameInput}
+                    value={tempName}
+                    onChangeText={setTempName}
+                    placeholder="Enter your name"
+                    placeholderTextColor={GameColors.textSecondary}
+                    maxLength={20}
+                    autoFocus
+                  />
+                  <Pressable style={styles.saveButton} onPress={handleSaveName}>
+                    <Feather name="check" size={20} color={GameColors.success} />
+                  </Pressable>
+                </View>
+              ) : (
+                <Pressable 
+                  style={styles.nameRow}
+                  onPress={() => {
+                    setTempName(username);
+                    setIsEditingName(true);
+                  }}
+                >
+                  <ThemedText style={styles.userName}>{username}</ThemedText>
+                  <Feather name="edit-2" size={14} color={GameColors.textSecondary} />
+                </Pressable>
+              )}
+              
+              <View style={styles.userStats}>
+                <View style={styles.statBox}>
+                  <LinearGradient
+                    colors={[GameColors.gold, GameColors.goldGlow]}
+                    style={styles.statIconBg}
+                  >
+                    <Feather name="award" size={16} color="#FFF" />
+                  </LinearGradient>
+                  <View>
+                    <ThemedText style={styles.statLabel}>Your Best</ThemedText>
+                    <ThemedText style={styles.statValue}>
+                      {gameState?.bestScore || 0}
+                    </ThemedText>
+                  </View>
+                </View>
+                
+                <View style={styles.statBox}>
+                  <LinearGradient
+                    colors={[GameColors.primary, GameColors.primaryGlow]}
+                    style={styles.statIconBg}
+                  >
+                    <Feather name="hash" size={16} color="#FFF" />
+                  </LinearGradient>
+                  <View>
+                    <ThemedText style={styles.statLabel}>Your Rank</ThemedText>
+                    <ThemedText style={styles.statValue}>
+                      {userRank ? `#${userRank}` : "-"}
+                    </ThemedText>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </LinearGradient>
+        </View>
+
+        <View style={styles.listHeader}>
+          <ThemedText style={styles.listHeaderText}>Global Rankings</ThemedText>
+          <View style={styles.totalPlayers}>
+            <Feather name="users" size={14} color={GameColors.textSecondary} />
+            <ThemedText style={styles.totalPlayersText}>
+              {leaderboard.length} Players
             </ThemedText>
           </View>
-        }
-      />
+        </View>
+
+        {leaderboard.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Feather name="award" size={48} color={GameColors.textSecondary} />
+            <ThemedText style={styles.emptyText}>No rankings yet!</ThemedText>
+            <ThemedText style={styles.emptySubtext}>Be the first to set a high score</ThemedText>
+          </View>
+        ) : (
+          <FlatList
+            data={leaderboard}
+            renderItem={renderItem}
+            keyExtractor={(item) => `${item.rank}-${item.username}`}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.listContent}
+          />
+        )}
+      </View>
     </LinearGradient>
   );
 }
@@ -171,80 +252,76 @@ interface LeaderboardRowProps {
 }
 
 function LeaderboardRow({ entry }: LeaderboardRowProps) {
-  const getRankColors = (): readonly [string, string] => {
+  const isTop3 = entry.rank <= 3;
+  const getMedalColor = () => {
     switch (entry.rank) {
       case 1:
-        return ["#FFD700", "#B8860B"] as const;
+        return GameColors.gold;
       case 2:
-        return ["#C0C0C0", "#A0A0A0"] as const;
+        return "#C0C0C0";
       case 3:
-        return ["#CD7F32", "#8B4513"] as const;
+        return "#CD7F32";
       default:
-        return [GameColors.surface, GameColors.surfaceLight] as const;
+        return GameColors.textSecondary;
     }
-  };
-
-  const getRankIcon = () => {
-    if (entry.rank <= 3) {
-      return <Feather name="award" size={18} color="#FFFFFF" />;
-    }
-    return (
-      <ThemedText style={styles.rankNumber}>{entry.rank}</ThemedText>
-    );
   };
 
   return (
     <LinearGradient
-      colors={entry.isCurrentUser ? [GameColors.primary + "30", GameColors.primary + "15"] : [GameColors.surfaceLight, GameColors.surface]}
-      style={[styles.row, entry.isCurrentUser && styles.rowCurrentUser]}
+      colors={
+        entry.isCurrentUser
+          ? [GameColors.primaryGlow + "40", GameColors.primary + "20"]
+          : [GameColors.surfaceLight, GameColors.surface]
+      }
+      style={[styles.row, entry.isCurrentUser && styles.currentUserRow]}
     >
       <View style={styles.rankContainer}>
-        {entry.rank <= 3 ? (
+        {isTop3 ? (
           <LinearGradient
-            colors={getRankColors()}
-            style={styles.rankBadge}
+            colors={
+              entry.rank === 1
+                ? [GameColors.gold, GameColors.goldGlow]
+                : entry.rank === 2
+                ? ["#E8E8E8", "#A0A0A0"]
+                : ["#D4A574", "#8B6914"]
+            }
+            style={styles.medalBadge}
           >
-            {getRankIcon()}
+            <ThemedText style={styles.medalText}>{entry.rank}</ThemedText>
           </LinearGradient>
         ) : (
-          <View style={[styles.rankBadge, { backgroundColor: GameColors.surface }]}>
-            {getRankIcon()}
-          </View>
+          <ThemedText style={styles.rankText}>#{entry.rank}</ThemedText>
         )}
       </View>
 
-      <View style={styles.userInfo}>
-        <LinearGradient
-          colors={entry.isCurrentUser ? [GameColors.primary, GameColors.primaryGlow] : [GameColors.surfaceGlass, GameColors.surfaceGlass]}
-          style={styles.avatar}
-        >
-          <Feather
-            name="user"
-            size={14}
-            color={entry.isCurrentUser ? "#FFFFFF" : GameColors.textSecondary}
-          />
-        </LinearGradient>
+      <View style={styles.nameContainer}>
         <ThemedText
           style={[
-            styles.username,
-            entry.isCurrentUser && styles.usernameCurrentUser,
+            styles.entryName,
+            entry.isCurrentUser && styles.currentUserName,
           ]}
         >
           {entry.username}
+          {entry.isCurrentUser && " (You)"}
         </ThemedText>
-        {entry.isCurrentUser ? (
-          <View style={styles.youBadge}>
-            <ThemedText style={styles.youBadgeText}>You</ThemedText>
-          </View>
-        ) : null}
       </View>
 
-      <LinearGradient
-        colors={[GameColors.gold + "30", GameColors.gold + "15"]}
-        style={styles.scoreBadge}
-      >
-        <ThemedText style={styles.scoreText}>{entry.score}</ThemedText>
-      </LinearGradient>
+      <View style={styles.scoreContainer}>
+        <LinearGradient
+          colors={
+            isTop3
+              ? [getMedalColor(), getMedalColor() + "80"]
+              : [GameColors.surface, GameColors.surfaceLight]
+          }
+          style={styles.scoreBadge}
+        >
+          <ThemedText
+            style={[styles.scoreText, isTop3 && styles.topScoreText]}
+          >
+            {entry.score}
+          </ThemedText>
+        </LinearGradient>
+      </View>
     </LinearGradient>
   );
 }
@@ -253,164 +330,194 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  userRankCard: {
-    marginHorizontal: Spacing.xl,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.lg,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: Spacing.xl,
-    borderWidth: 1,
-    borderColor: GameColors.primary + "40",
+  content: {
+    flex: 1,
+    paddingHorizontal: Spacing.lg,
   },
-  userRankInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.md,
-  },
-  userRankBadge: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+  loadingContainer: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  userRankNumber: {
+  loadingText: {
+    marginTop: Spacing.lg,
+    color: GameColors.textSecondary,
     fontSize: 16,
-    fontWeight: "900",
-    color: "#FFFFFF",
   },
-  userRankLabel: {
-    fontSize: 13,
-    color: GameColors.textMuted,
+  headerCard: {
+    marginBottom: Spacing.lg,
+    borderRadius: BorderRadius.xl,
+    overflow: "hidden",
   },
-  userScore: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: GameColors.textPrimary,
-  },
-  noRankCard: {
-    marginHorizontal: Spacing.xl,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.xl,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.md,
-    marginBottom: Spacing.xl,
+  headerCardGradient: {
+    padding: Spacing.lg,
+    borderRadius: BorderRadius.xl,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
   },
-  noRankText: {
-    fontSize: 14,
-    color: GameColors.textSecondary,
-    flex: 1,
+  userSection: {
+    alignItems: "center",
   },
-  header: {
-    paddingHorizontal: Spacing.xl,
-    marginBottom: Spacing.lg,
+  nameRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.md,
+    gap: Spacing.sm,
+    marginBottom: Spacing.md,
   },
-  headerIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  headerTitle: {
-    fontSize: 18,
+  userName: {
+    fontSize: 20,
     fontWeight: "700",
     color: GameColors.textPrimary,
   },
-  listContent: {
-    paddingHorizontal: Spacing.xl,
-  },
-  row: {
+  editNameContainer: {
     flexDirection: "row",
     alignItems: "center",
-    borderRadius: BorderRadius.md,
-    padding: Spacing.md,
-    marginBottom: Spacing.sm,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.05)",
+    gap: Spacing.sm,
+    marginBottom: Spacing.md,
   },
-  rowCurrentUser: {
-    borderColor: GameColors.primary + "50",
-  },
-  rankContainer: {
-    width: 44,
-    marginRight: Spacing.sm,
-  },
-  rankBadge: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  rankNumber: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: GameColors.textMuted,
-  },
-  userInfo: {
+  nameInput: {
     flex: 1,
+    backgroundColor: GameColors.surface,
+    borderRadius: BorderRadius.md,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    color: GameColors.textPrimary,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: GameColors.primary,
+  },
+  saveButton: {
+    padding: Spacing.sm,
+    backgroundColor: GameColors.surface,
+    borderRadius: BorderRadius.md,
+  },
+  userStats: {
+    flexDirection: "row",
+    gap: Spacing.xl,
+  },
+  statBox: {
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.sm,
   },
-  avatar: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+  statIconBg: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     justifyContent: "center",
     alignItems: "center",
   },
-  username: {
-    fontSize: 14,
+  statLabel: {
+    fontSize: 11,
+    color: GameColors.textSecondary,
+    textTransform: "uppercase",
+  },
+  statValue: {
+    fontSize: 18,
+    fontWeight: "700",
     color: GameColors.textPrimary,
-    fontWeight: "500",
   },
-  usernameCurrentUser: {
+  listHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: Spacing.md,
+  },
+  listHeaderText: {
+    fontSize: 18,
     fontWeight: "700",
-    color: GameColors.primary,
+    color: GameColors.textPrimary,
   },
-  youBadge: {
-    backgroundColor: GameColors.primary + "25",
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 2,
-    borderRadius: BorderRadius.xs,
+  totalPlayers: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+  },
+  totalPlayersText: {
+    fontSize: 12,
+    color: GameColors.textSecondary,
+  },
+  listContent: {
+    paddingBottom: Spacing.xl,
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: Spacing["3xl"],
+  },
+  emptyText: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: GameColors.textPrimary,
+    marginTop: Spacing.lg,
+  },
+  emptySubtext: {
+    fontSize: 14,
+    color: GameColors.textSecondary,
+    marginTop: Spacing.sm,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    marginBottom: Spacing.sm,
+    borderRadius: BorderRadius.lg,
     borderWidth: 1,
-    borderColor: GameColors.primary + "40",
+    borderColor: "rgba(255,255,255,0.1)",
   },
-  youBadgeText: {
-    fontSize: 10,
-    fontWeight: "700",
+  currentUserRow: {
+    borderColor: GameColors.primary,
+    borderWidth: 2,
+  },
+  rankContainer: {
+    width: 50,
+    alignItems: "center",
+  },
+  medalBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  medalText: {
+    fontSize: 14,
+    fontWeight: "800",
+    color: "#FFF",
+  },
+  rankText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: GameColors.textSecondary,
+  },
+  nameContainer: {
+    flex: 1,
+    paddingHorizontal: Spacing.sm,
+  },
+  entryName: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: GameColors.textPrimary,
+  },
+  currentUserName: {
     color: GameColors.primary,
+  },
+  scoreContainer: {
+    alignItems: "flex-end",
   },
   scoreBadge: {
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.full,
-    borderWidth: 1,
-    borderColor: GameColors.gold + "40",
+    borderRadius: BorderRadius.md,
   },
   scoreText: {
     fontSize: 16,
-    fontWeight: "800",
-    color: GameColors.gold,
+    fontWeight: "700",
+    color: GameColors.textPrimary,
   },
-  emptyContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingTop: Spacing["5xl"],
-  },
-  emptyText: {
-    fontSize: 16,
-    color: GameColors.textMuted,
-    marginTop: Spacing.lg,
+  topScoreText: {
+    color: "#FFF",
   },
 });
