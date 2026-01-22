@@ -11,8 +11,7 @@ import {
 import { Feather } from "@expo/vector-icons";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
-import { useTheme } from "@/hooks/useTheme";
-import { Spacing, BorderRadius, Fonts } from "@/constants/theme";
+import { GameColors, Spacing, BorderRadius, Fonts } from "@/constants/theme";
 
 export type ErrorFallbackProps = {
   error: Error;
@@ -20,7 +19,6 @@ export type ErrorFallbackProps = {
 };
 
 export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
-  const { theme } = useTheme();
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const handleRestart = async () => {
@@ -41,29 +39,33 @@ export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <View style={styles.container}>
       {__DEV__ ? (
         <Pressable
           onPress={() => setIsModalVisible(true)}
           style={({ pressed }) => [
             styles.topButton,
             {
-              backgroundColor: theme.backgroundDefault,
+              backgroundColor: GameColors.surface,
               opacity: pressed ? 0.8 : 1,
             },
           ]}
         >
-          <Feather name="alert-circle" size={20} color={theme.text} />
+          <Feather name="alert-circle" size={20} color={GameColors.danger} />
         </Pressable>
       ) : null}
 
       <View style={styles.content}>
+        <View style={styles.iconContainer}>
+          <Feather name="rotate-ccw" size={48} color={GameColors.primary} />
+        </View>
+
         <ThemedText type="h1" style={styles.title}>
-          Something went wrong
+          Oops! Flip One crashed
         </ThemedText>
 
         <ThemedText type="body" style={styles.message}>
-          Please reload the app to continue.
+          Something went wrong. Tap below to restart and flip again!
         </ThemedText>
 
         <Pressable
@@ -71,18 +73,14 @@ export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
           style={({ pressed }) => [
             styles.button,
             {
-              backgroundColor: theme.link,
+              backgroundColor: GameColors.primary,
               opacity: pressed ? 0.9 : 1,
               transform: [{ scale: pressed ? 0.98 : 1 }],
             },
           ]}
         >
-          <ThemedText
-            type="body"
-            style={[styles.buttonText, { color: theme.buttonText }]}
-          >
-            Try Again
-          </ThemedText>
+          <Feather name="refresh-cw" size={20} color={GameColors.background} />
+          <Text style={styles.buttonText}>Flip Back In</Text>
         </Pressable>
       </View>
 
@@ -94,7 +92,7 @@ export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
           onRequestClose={() => setIsModalVisible(false)}
         >
           <View style={styles.modalOverlay}>
-            <ThemedView style={styles.modalContainer}>
+            <View style={styles.modalContainer}>
               <View style={styles.modalHeader}>
                 <ThemedText type="h2" style={styles.modalTitle}>
                   Error Details
@@ -106,7 +104,7 @@ export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
                     { opacity: pressed ? 0.6 : 1 },
                   ]}
                 >
-                  <Feather name="x" size={24} color={theme.text} />
+                  <Feather name="x" size={24} color={GameColors.textPrimary} />
                 </Pressable>
               </View>
 
@@ -115,31 +113,17 @@ export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
                 contentContainerStyle={styles.modalScrollContent}
                 showsVerticalScrollIndicator
               >
-                <View
-                  style={[
-                    styles.errorContainer,
-                    { backgroundColor: theme.backgroundDefault },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.errorText,
-                      {
-                        color: theme.text,
-                        fontFamily: Fonts?.mono || "monospace",
-                      },
-                    ]}
-                    selectable
-                  >
+                <View style={styles.errorContainer}>
+                  <Text style={styles.errorText} selectable>
                     {formatErrorDetails()}
                   </Text>
                 </View>
               </ScrollView>
-            </ThemedView>
+            </View>
           </View>
         </Modal>
       ) : null}
-    </ThemedView>
+    </View>
   );
 }
 
@@ -151,6 +135,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: Spacing["2xl"],
+    backgroundColor: GameColors.background,
   },
   content: {
     alignItems: "center",
@@ -159,14 +144,25 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 600,
   },
+  iconContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: GameColors.primary + "20",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: Spacing.lg,
+  },
   title: {
     textAlign: "center",
     lineHeight: 40,
+    color: GameColors.textPrimary,
   },
   message: {
     textAlign: "center",
     opacity: 0.7,
     lineHeight: 24,
+    color: GameColors.textSecondary,
   },
   topButton: {
     position: "absolute",
@@ -181,27 +177,29 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   button: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
     paddingVertical: Spacing.lg,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing["2xl"],
     minWidth: 200,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    justifyContent: "center",
+    shadowColor: GameColors.primary,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
     elevation: 3,
   },
   buttonText: {
-    fontWeight: "600",
+    fontWeight: "700",
     textAlign: "center",
     fontSize: 16,
+    color: GameColors.background,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
     justifyContent: "flex-end",
   },
   modalContainer: {
@@ -209,6 +207,7 @@ const styles = StyleSheet.create({
     height: "90%",
     borderTopLeftRadius: BorderRadius.lg,
     borderTopRightRadius: BorderRadius.lg,
+    backgroundColor: GameColors.surface,
   },
   modalHeader: {
     flexDirection: "row",
@@ -218,10 +217,11 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.lg,
     paddingBottom: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(128, 128, 128, 0.2)",
+    borderBottomColor: GameColors.surfaceLight,
   },
   modalTitle: {
     fontWeight: "600",
+    color: GameColors.textPrimary,
   },
   closeButton: {
     padding: Spacing.xs,
@@ -237,10 +237,13 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     overflow: "hidden",
     padding: Spacing.lg,
+    backgroundColor: GameColors.background,
   },
   errorText: {
     fontSize: 12,
     lineHeight: 18,
     width: "100%",
+    color: GameColors.textSecondary,
+    fontFamily: Fonts?.mono || "monospace",
   },
 });
