@@ -79,6 +79,18 @@ interface FloatingParticle {
   opacity: number;
 }
 
+interface ExplosionParticle {
+  id: number;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  size: number;
+  color: string;
+  opacity: number;
+  life: number;
+}
+
 export default function GameScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -92,9 +104,13 @@ export default function GameScreen() {
   const [obstacles, setObstacles] = useState<Obstacle[]>([]);
   const [isReady, setIsReady] = useState(false);
   const [floatingParticles, setFloatingParticles] = useState<FloatingParticle[]>([]);
+  const [explosionParticles, setExplosionParticles] = useState<ExplosionParticle[]>([]);
   const [availablePowers, setAvailablePowers] = useState<string[]>([]);
   const [activePowers, setActivePowers] = useState<ActivePower[]>([]);
   const [activePowerTypes, setActivePowerTypes] = useState<string[]>([]);
+  const [combo, setCombo] = useState(0);
+  const [showCombo, setShowCombo] = useState(false);
+  const [backgroundLevel, setBackgroundLevel] = useState(0);
   
   const currentTrackRef = useRef<"top" | "bottom">("bottom");
   const freezeActiveRef = useRef(false);
@@ -117,6 +133,22 @@ export default function GameScreen() {
   const playerGlow = useSharedValue(0.5);
   const scoreScale = useSharedValue(1);
   const sparkleOpacity = useSharedValue(0.4);
+  const screenShakeX = useSharedValue(0);
+  const screenShakeY = useSharedValue(0);
+  const comboScale = useSharedValue(0);
+  const comboOpacity = useSharedValue(0);
+  
+  const comboTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastObstaclePassTime = useRef(0);
+  
+  const BACKGROUND_GRADIENTS: [string, string][] = [
+    ["#1A0A2E", "#2D1B4E"],
+    ["#0D1B2A", "#1B263B"],
+    ["#2C1654", "#3D2066"],
+    ["#1A1A2E", "#16213E"],
+    ["#0F0F23", "#1A1A3E"],
+    ["#2E1A4A", "#3D1B5E"],
+  ];
 
   const trackTopY = height / 2 - TRACK_HEIGHT - 30;
   const trackBottomY = height / 2 + 30;
@@ -175,6 +207,76 @@ export default function GameScreen() {
     
     return SkinColors.default;
   };
+
+  const createExplosion = useCallback((x: number, y: number) => {
+    const colors = ["#FFD700", "#FF6B6B", "#4ECDC4", "#FF9FF3", "#54E346", "#A66CFF"];
+    const particles: ExplosionParticle[] = Array.from({ length: 12 }).map((_, i) => ({
+      id: Date.now() + i,
+      x,
+      y,
+      vx: (Math.random() - 0.5) * 8,
+      vy: (Math.random() - 0.5) * 8,
+      size: Math.random() * 8 + 4,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      opacity: 1,
+      life: 1,
+    }));
+    setExplosionParticles(prev => [...prev, ...particles]);
+    
+    setTimeout(() => {
+      setExplosionParticles(prev => prev.filter(p => !particles.find(np => np.id === p.id)));
+    }, 500);
+  }, []);
+
+  const triggerScreenShake = useCallback(() => {
+    screenShakeX.value = withSequence(
+      withTiming(8, { duration: 50 }),
+      withTiming(-8, { duration: 50 }),
+      withTiming(4, { duration: 50 }),
+      withTiming(-4, { duration: 50 }),
+      withTiming(0, { duration: 50 })
+    );
+    screenShakeY.value = withSequence(
+      withTiming(-6, { duration: 50 }),
+      withTiming(6, { duration: 50 }),
+      withTiming(-3, { duration: 50 }),
+      withTiming(3, { duration: 50 }),
+      withTiming(0, { duration: 50 })
+    );
+  }, []);
+
+  const incrementCombo = useCallback(() => {
+    const now = Date.now();
+    const timeSinceLastPass = now - lastObstaclePassTime.current;
+    
+    if (timeSinceLastPass < 2000) {
+      setCombo(prev => prev + 1);
+      setShowCombo(true);
+      comboScale.value = withSequence(
+        withSpring(1.3, { damping: 8 }),
+        withSpring(1, { damping: 12 })
+      );
+      comboOpacity.value = withTiming(1, { duration: 100 });
+    } else {
+      setCombo(1);
+      setShowCombo(true);
+      comboScale.value = withSpring(1, { damping: 12 });
+      comboOpacity.value = withTiming(1, { duration: 100 });
+    }
+    
+    lastObstaclePassTime.current = now;
+    
+    if (comboTimeoutRef.current) {
+      clearTimeout(comboTimeoutRef.current);
+    }
+    comboTimeoutRef.current = setTimeout(() => {
+      comboOpacity.value = withTiming(0, { duration: 300 });
+      setTimeout(() => {
+        setShowCombo(false);
+        setCombo(0);
+      }, 300);
+    }, 2000);
+  }, []);
 
   const activatePower = useCallback((powerType: "freeze" | "slow" | "shield" | "double") => {
     if (!availablePowers.includes(powerType) || !isPlaying) return;
@@ -270,6 +372,8 @@ export default function GameScreen() {
     setIsGameOver(true);
     setIsPlaying(false);
     cleanupGame();
+    
+    triggerScreenShake();
 
     if (gameState?.hapticsEnabled) {
       triggerGameOverHaptic(true);
@@ -341,13 +445,15 @@ export default function GameScreen() {
         }
         
         const updated = prev
-          .map((obs) => ({ ...obs, x: obs.x - gameSpeedRef.current }))
-          .filter((obs) => obs.x > -50);
+          .map((obs) => ({ ...obs, x: obs.x - gameSpeedRef.current }));
 
         if (Date.now() - gameStartTime < GRACE_PERIOD) {
-          return updated;
+          return updated.filter((obs) => obs.x > -50);
         }
 
+        const passedObstacles: Obstacle[] = [];
+        const remainingObstacles: Obstacle[] = [];
+        
         for (const obs of updated) {
           const playerLeft = playerX - PLAYER_SIZE / 2;
           const playerRight = playerX + PLAYER_SIZE / 2;
@@ -362,14 +468,30 @@ export default function GameScreen() {
               hasShieldRef.current = false;
               setActivePowers(p => p.filter(pw => pw.type !== "shield"));
               setActivePowerTypes(p => p.filter(pt => pt !== "shield"));
-              return updated.filter(o => o.id !== obs.id);
+              continue;
             }
             handleGameOver();
             return [];
           }
+          
+          if (obs.x < playerLeft - 20 && obs.x > playerLeft - 25) {
+            passedObstacles.push(obs);
+          }
+          
+          if (obs.x > -50) {
+            remainingObstacles.push(obs);
+          }
+        }
+        
+        if (passedObstacles.length > 0) {
+          passedObstacles.forEach(obs => {
+            const obsY = obs.track === "top" ? trackTopY + TRACK_HEIGHT / 2 : trackBottomY + TRACK_HEIGHT / 2;
+            runOnJS(createExplosion)(obs.x, obsY);
+            runOnJS(incrementCombo)();
+          });
         }
 
-        return updated;
+        return remainingObstacles;
       });
     }, 16);
 
@@ -411,13 +533,18 @@ export default function GameScreen() {
       if (isGameOverRef.current) return;
       
       setScore((prev) => {
-        const increment = doublePointsRef.current ? 2 : 1;
+        const comboMultiplier = combo > 3 ? 1 + (combo - 3) * 0.1 : 1;
+        const baseIncrement = doublePointsRef.current ? 2 : 1;
+        const increment = Math.floor(baseIncrement * comboMultiplier);
         const newScore = prev + increment;
         if (newScore % LEVEL_INCREASE_INTERVAL === 0) {
           setLevel((prevLevel) => {
             const newLevel = prevLevel + 1;
             if (newLevel % 5 === 0) {
               gameSpeedRef.current = Math.min(gameSpeedRef.current + 0.5, 12);
+            }
+            if (newLevel % 10 === 0) {
+              setBackgroundLevel(bl => (bl + 1) % BACKGROUND_GRADIENTS.length);
             }
             return newLevel;
           });
@@ -466,6 +593,18 @@ export default function GameScreen() {
   const playerGlowStyle = useAnimatedStyle(() => ({
     opacity: playerGlow.value,
   }));
+  
+  const screenShakeStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: screenShakeX.value },
+      { translateY: screenShakeY.value },
+    ],
+  }));
+  
+  const comboAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: comboScale.value }],
+    opacity: comboOpacity.value,
+  }));
 
   const scoreAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scoreScale.value }],
@@ -479,10 +618,11 @@ export default function GameScreen() {
 
   return (
     <Pressable style={styles.container} onPress={handleFlip} testID="game-area">
-      <LinearGradient
-        colors={backgroundGradient}
-        style={StyleSheet.absoluteFill}
-      />
+      <Animated.View style={[StyleSheet.absoluteFill, screenShakeStyle]}>
+        <LinearGradient
+          colors={BACKGROUND_GRADIENTS[backgroundLevel]}
+          style={StyleSheet.absoluteFill}
+        />
 
       <View style={styles.sparklesContainer}>
         {Array.from({ length: 25 }).map((_, i) => (
@@ -614,6 +754,36 @@ export default function GameScreen() {
             style={styles.player}
           />
         </Animated.View>
+      </Animated.View>
+      
+      {explosionParticles.map((particle) => (
+        <View
+          key={particle.id}
+          style={[
+            styles.explosionParticle,
+            {
+              left: particle.x + particle.vx * 10,
+              top: particle.y + particle.vy * 10,
+              width: particle.size,
+              height: particle.size,
+              backgroundColor: particle.color,
+              opacity: particle.opacity * 0.5,
+            },
+          ]}
+        />
+      ))}
+      
+      {showCombo && combo > 1 ? (
+        <Animated.View style={[styles.comboContainer, comboAnimatedStyle]}>
+          <LinearGradient
+            colors={combo >= 5 ? ["#FFD700", "#FFA500"] : ["#A66CFF", "#FF9FF3"]}
+            style={styles.comboBadge}
+          >
+            <ThemedText style={styles.comboText}>x{combo} COMBO!</ThemedText>
+          </LinearGradient>
+        </Animated.View>
+      ) : null}
+
       </Animated.View>
 
       <View style={[styles.powerButtonsContainer, { bottom: insets.bottom + Spacing.md }]}>
@@ -817,6 +987,8 @@ const suitStyles = StyleSheet.create({
     borderRadius: 9,
     position: "absolute",
     top: 2,
+    borderWidth: 2,
+    borderColor: "#FFFFFF",
   },
   spadeBottom: {
     width: 20,
@@ -825,6 +997,8 @@ const suitStyles = StyleSheet.create({
     position: "absolute",
     top: 8,
     borderRadius: 3,
+    borderWidth: 2,
+    borderColor: "#FFFFFF",
   },
   spadeStem: {
     width: 6,
@@ -833,12 +1007,16 @@ const suitStyles = StyleSheet.create({
     bottom: 0,
     borderBottomLeftRadius: 4,
     borderBottomRightRadius: 4,
+    borderWidth: 2,
+    borderColor: "#FFFFFF",
   },
   diamond: {
-    width: 22,
-    height: 22,
+    width: 24,
+    height: 24,
     transform: [{ rotate: "45deg" }],
     borderRadius: 4,
+    borderWidth: 2,
+    borderColor: "#FFFFFF",
   },
   heartTop: {
     flexDirection: "row",
@@ -850,6 +1028,8 @@ const suitStyles = StyleSheet.create({
     height: 14,
     borderRadius: 7,
     marginHorizontal: -2,
+    borderWidth: 2,
+    borderColor: "#FFFFFF",
   },
   heartPoint: {
     width: 18,
@@ -858,6 +1038,8 @@ const suitStyles = StyleSheet.create({
     position: "absolute",
     top: 10,
     borderRadius: 3,
+    borderWidth: 2,
+    borderColor: "#FFFFFF",
   },
   clubTop: {
     width: 12,
@@ -865,6 +1047,8 @@ const suitStyles = StyleSheet.create({
     borderRadius: 6,
     position: "absolute",
     top: 2,
+    borderWidth: 2,
+    borderColor: "#FFFFFF",
   },
   clubRow: {
     flexDirection: "row",
@@ -876,6 +1060,8 @@ const suitStyles = StyleSheet.create({
     height: 12,
     borderRadius: 6,
     marginHorizontal: -1,
+    borderWidth: 2,
+    borderColor: "#FFFFFF",
   },
   clubStem: {
     width: 6,
@@ -884,8 +1070,10 @@ const suitStyles = StyleSheet.create({
     bottom: 0,
     borderBottomLeftRadius: 4,
     borderBottomRightRadius: 4,
+    borderWidth: 2,
+    borderColor: "#FFFFFF",
   },
-  });
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -1122,5 +1310,35 @@ const styles = StyleSheet.create({
     gap: Spacing.lg,
     zIndex: 20,
     paddingHorizontal: Spacing.lg,
+  },
+  explosionParticle: {
+    position: "absolute",
+    borderRadius: 50,
+    zIndex: 15,
+  },
+  comboContainer: {
+    position: "absolute",
+    top: height * 0.35,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    zIndex: 25,
+  },
+  comboBadge: {
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.xl,
+    shadowColor: "#FFD700",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 20,
+  },
+  comboText: {
+    fontSize: 24,
+    fontWeight: "900",
+    color: "#FFFFFF",
+    textShadowColor: "rgba(0,0,0,0.5)",
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
   },
 });
