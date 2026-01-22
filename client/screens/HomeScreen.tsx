@@ -171,7 +171,8 @@ export default function HomeScreen() {
       </View>
 
       <Animated.View style={[styles.logoSection, logoAnimatedStyle]}>
-        <View style={styles.logoGlow}>
+        <View style={styles.logoContainer}>
+          <View style={styles.logoShadow} />
           <View style={styles.logoWrapper}>
             <Image
               source={require("../../assets/images/icon.png")}
@@ -349,28 +350,36 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: Spacing["2xl"],
   },
-  logoGlow: {
+  logoContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  logoShadow: {
+    position: "absolute",
+    width: 160,
+    height: 160,
+    borderRadius: 40,
+    backgroundColor: GameColors.primary,
     shadowColor: GameColors.primary,
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 40,
+    shadowOpacity: 1,
+    shadowRadius: 50,
+    opacity: 0.4,
   },
   logoWrapper: {
     width: 140,
     height: 140,
     borderRadius: 36,
     overflow: "hidden",
-    backgroundColor: GameColors.background,
-    shadowColor: GameColors.primary,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1,
-    shadowRadius: 30,
+    shadowColor: GameColors.gold,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
     elevation: 20,
   },
   logo: {
     width: 140,
     height: 140,
-    borderRadius: 36,
   },
   titleContainer: {
     alignItems: "center",
