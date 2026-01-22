@@ -112,3 +112,12 @@ The app runs on Expo and can be tested via:
 - Horizontal score layout in game: Level | Score | Best | Points
 - Bottom decorations in game: animated colored dots and "F L I P O N E" word pattern
 - AdModal component for simulated ads (powers and extra life)
+- Score animation gentler (scale 1.08 with damping 12/15)
+- Speed increases every 5 levels (not points) - more gradual difficulty curve
+- Share with Friends button working with React Native Share API
+
+## Game Progression
+
+- **Level**: Increases every 10 points (LEVEL_INCREASE_INTERVAL = 10)
+- **Speed**: Increases every 5 levels (0.5 speed boost each time, max 12)
+- **Grace Period**: 1.5 seconds at game start before obstacles spawn
