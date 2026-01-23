@@ -26,6 +26,7 @@ import AdModal from "@/components/AdModal";
 import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import { triggerSuccessHaptic } from "@/lib/sounds";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
+import { useNightMode } from "@/contexts/NightModeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -99,6 +100,7 @@ function ConfettiPiece({ delay, startX }: { delay: number; startX: number }) {
 export default function GameOverScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const route = useRoute<RouteProp<RootStackParamList, "GameOver">>();
+  const { backgroundGradient } = useNightMode();
   
   const { score, bestScore, isNewBest } = route.params;
   
@@ -185,7 +187,7 @@ export default function GameOverScreen() {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={["rgba(26, 10, 46, 0.95)", "rgba(45, 27, 78, 0.98)"]}
+        colors={backgroundGradient}
         style={StyleSheet.absoluteFill}
       />
 

@@ -126,7 +126,7 @@ interface ExplosionParticle {
 export default function GameScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { backgroundGradient } = useNightMode();
+  const { backgroundGradient, isNightMode } = useNightMode();
   
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [score, setScore] = useState(0);
@@ -180,7 +180,7 @@ export default function GameScreen() {
   const isDyingRef = useRef(false);
   const lastMovementHapticRef = useRef(0);
   
-  const BACKGROUND_GRADIENTS: [string, string][] = [
+  const DAY_GRADIENTS: [string, string][] = [
     ["#1A0A2E", "#2D1B4E"],
     ["#0D1B2A", "#1B263B"],
     ["#2C1654", "#3D2066"],
@@ -188,6 +188,17 @@ export default function GameScreen() {
     ["#0F0F23", "#1A1A3E"],
     ["#2E1A4A", "#3D1B5E"],
   ];
+  
+  const NIGHT_GRADIENTS: [string, string][] = [
+    ["#0A0A0F", "#1A1A25"],
+    ["#080810", "#151520"],
+    ["#0C0C14", "#1C1C28"],
+    ["#0A0A12", "#18181E"],
+    ["#060608", "#12121A"],
+    ["#0B0B10", "#1B1B22"],
+  ];
+  
+  const BACKGROUND_GRADIENTS = isNightMode ? NIGHT_GRADIENTS : DAY_GRADIENTS;
 
   const trackTopY = height / 2 - TRACK_HEIGHT - 30;
   const trackBottomY = height / 2 + 30;
