@@ -86,7 +86,7 @@ const { width, height } = Dimensions.get("window");
 const PLAYER_SIZE = 32;
 const TRACK_HEIGHT = 80;
 const GAME_SPEED_BASE = 3;
-const SPAWN_INTERVAL = 1200; // More frequent obstacles
+const SPAWN_INTERVAL = 1500; // Balanced obstacle frequency
 const DIFFICULTY_INCREASE_INTERVAL = 5;
 const LEVEL_INCREASE_INTERVAL = 10;
 const MIN_OBSTACLE_GAP = 150;
@@ -522,7 +522,15 @@ export default function GameScreen() {
 
   const startGame = useCallback(() => {
     const gameStartTime = Date.now();
-    const GRACE_PERIOD = 1500;
+    const GRACE_PERIOD = 2000; // Extended grace period for stability
+    
+    // Reset critical refs at game start
+    isGameOverRef.current = false;
+    isDyingRef.current = false;
+    currentTrackRef.current = "bottom";
+    
+    // Clear any leftover obstacles from previous game
+    setObstacles([]);
     
     // Initialize floating distraction particles - more particles with vibrant colors
     const distractionColors = [
