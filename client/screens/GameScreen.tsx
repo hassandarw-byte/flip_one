@@ -336,10 +336,22 @@ export default function GameScreen() {
     }, 2000);
   }, []);
 
-  const activatePower = useCallback((powerType: "freeze" | "slow" | "shield" | "double") => {
+  const activatePower = useCallback(async (powerType: "freeze" | "slow" | "shield" | "double") => {
     if (!availablePowers.includes(powerType) || !isPlaying) return;
     
     setAvailablePowers(prev => prev.filter(p => p !== powerType));
+    
+    // Save power usage to storage
+    const today = new Date().toISOString().split("T")[0];
+    const currentState = await getGameState();
+    const usedToday = currentState.lastPowerDate === today 
+      ? [...(currentState.powersUsedToday || []), powerType]
+      : [powerType];
+    await saveGameState({
+      ...currentState,
+      powersUsedToday: usedToday,
+      lastPowerDate: today,
+    });
     
     if (gameState?.hapticsEnabled) {
       const hapticMap: Record<string, 'freeze' | 'slowmo' | 'shield' | 'doublePoints'> = {
