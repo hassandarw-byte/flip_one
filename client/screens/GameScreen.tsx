@@ -21,7 +21,7 @@ import Animated, {
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
-import Svg, { Path } from "react-native-svg";
+import Svg, { Path, Circle } from "react-native-svg";
 
 import { ThemedText } from "@/components/ThemedText";
 import { GameColors, Spacing, BorderRadius, SkinColors } from "@/constants/theme";
@@ -1151,8 +1151,11 @@ function ObstacleShape({ obstacle }: { obstacle: Obstacle }) {
       return (
         <View style={[suitStyles.container, { width: w, height: h }]}>
           <Svg width={size} height={size} viewBox="0 0 100 100">
+            <Circle cx="50" cy="25" r="20" fill={color} stroke="#FFFFFF" strokeWidth={strokeWidth} />
+            <Circle cx="25" cy="55" r="20" fill={color} stroke="#FFFFFF" strokeWidth={strokeWidth} />
+            <Circle cx="75" cy="55" r="20" fill={color} stroke="#FFFFFF" strokeWidth={strokeWidth} />
             <Path
-              d="M50 15 C38 15 28 25 28 37 C28 45 33 52 40 55 C33 57 28 64 28 72 C28 84 38 92 50 92 C62 92 72 84 72 72 C72 64 67 57 60 55 C67 52 72 45 72 37 C72 25 62 15 50 15 Z M20 45 C10 45 2 55 2 65 C2 77 12 85 22 82 C18 75 16 65 18 55 C18 50 18 47 20 45 Z M80 45 C82 47 82 50 82 55 C84 65 82 75 78 82 C88 85 98 77 98 65 C98 55 90 45 80 45 Z M42 88 L42 98 L58 98 L58 88"
+              d="M40 50 L40 92 L60 92 L60 50 Q50 60 40 50"
               fill={color}
               stroke="#FFFFFF"
               strokeWidth={strokeWidth}
