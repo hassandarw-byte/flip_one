@@ -12,7 +12,7 @@ const FLIP_UP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2568/2568
 const FLIP_DOWN_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3";
 const GAME_OVER_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2656/2656-preview.mp3";
 const SCORE_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3";
-const SIREN_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3";
+const TENSION_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2574/2574-preview.mp3";
 const POWER_UP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3";
 
 let soundsLoaded = false;
@@ -30,7 +30,7 @@ export async function initializeSounds(): Promise<void> {
     flipDownPlayer = createAudioPlayer({ uri: FLIP_DOWN_SOUND_URI });
     gameOverPlayer = createAudioPlayer({ uri: GAME_OVER_SOUND_URI });
     scorePlayer = createAudioPlayer({ uri: SCORE_SOUND_URI });
-    sirenPlayer = createAudioPlayer({ uri: SIREN_SOUND_URI });
+    sirenPlayer = createAudioPlayer({ uri: TENSION_SOUND_URI });
     powerUpPlayer = createAudioPlayer({ uri: POWER_UP_SOUND_URI });
     
     soundsLoaded = true;
@@ -116,10 +116,10 @@ export function startHeartbeat(soundEnabled: boolean): void {
   if (!soundEnabled) return;
   stopHeartbeat();
   
-  const playSiren = () => {
+  const playTension = () => {
     try {
       if (sirenPlayer) {
-        sirenPlayer.volume = 0.25;
+        sirenPlayer.volume = 0.15;
         sirenPlayer.seekTo(0);
         sirenPlayer.play();
       }
@@ -128,8 +128,8 @@ export function startHeartbeat(soundEnabled: boolean): void {
     }
   };
   
-  playSiren();
-  heartbeatInterval = setInterval(playSiren, 1200);
+  playTension();
+  heartbeatInterval = setInterval(playTension, 1500);
 }
 
 export function stopHeartbeat(): void {
