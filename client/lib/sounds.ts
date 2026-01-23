@@ -113,23 +113,8 @@ export async function playPowerUpSound(soundEnabled: boolean): Promise<void> {
 }
 
 export function startHeartbeat(soundEnabled: boolean): void {
-  if (!soundEnabled) return;
-  stopHeartbeat();
-  
-  const playTension = () => {
-    try {
-      if (sirenPlayer) {
-        sirenPlayer.volume = 0.15;
-        sirenPlayer.seekTo(0);
-        sirenPlayer.play();
-      }
-    } catch (error) {
-      // Sound not available
-    }
-  };
-  
-  playTension();
-  heartbeatInterval = setInterval(playTension, 1500);
+  // Disabled - no tension sound during gameplay
+  return;
 }
 
 export function stopHeartbeat(): void {
