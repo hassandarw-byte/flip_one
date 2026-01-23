@@ -421,10 +421,11 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   scoreLabel: {
-    fontSize: 12,
+    fontSize: 16,
     color: GameColors.textMuted,
     letterSpacing: 2,
     marginBottom: Spacing.sm,
+    textAlign: "center",
   },
   scoreBadge: {
     paddingHorizontal: Spacing["3xl"],
@@ -465,9 +466,10 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.full,
   },
   bestScoreText: {
-    fontSize: 16,
+    fontSize: 18,
     color: GameColors.textSecondary,
-    fontWeight: "600",
+    fontWeight: "700",
+    textAlign: "center",
   },
   buttonsContainer: {
     width: "100%",
@@ -500,15 +502,18 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   buttonTextContainer: {
-    alignItems: "flex-start",
+    alignItems: "center",
+    justifyContent: "center",
   },
   buttonLabel: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "700",
     color: "#FFFFFF",
+    textAlign: "center",
   },
   buttonSubtitle: {
-    fontSize: 11,
+    fontSize: 14,
     color: "rgba(255,255,255,0.7)",
+    textAlign: "center",
   },
 });
