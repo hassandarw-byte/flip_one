@@ -51,6 +51,9 @@ import {
   playFlipSound,
   playGameOverSound,
   playNearMissSound,
+  playScoreSound,
+  playPowerUpSound,
+  initializeSounds,
 } from "@/lib/sounds";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useNightMode } from "@/contexts/NightModeContext";
@@ -192,6 +195,7 @@ export default function GameScreen() {
   useEffect(() => {
     loadGameState();
     startSparkleAnimation();
+    initializeSounds();
     
     // Small delay then start game automatically
     const timer = setTimeout(() => {
@@ -360,6 +364,11 @@ export default function GameScreen() {
         double: 'doublePoints',
       };
       triggerPowerUpHaptic(true, hapticMap[powerType]);
+    }
+    
+    // Play power-up sound
+    if (gameState?.soundEnabled) {
+      playPowerUpSound(true);
     }
     
     const now = Date.now();
@@ -600,7 +609,10 @@ export default function GameScreen() {
             runOnJS(createExplosion)(obs.x, obsY);
             runOnJS(incrementCombo)();
           });
-          // Victory sound when avoiding obstacles
+          // Victory sound and haptic when avoiding obstacles
+          if (gameState?.soundEnabled) {
+            playScoreSound(true);
+          }
           if (gameState?.hapticsEnabled) {
             triggerVictoryHaptic(true);
           }
@@ -692,12 +704,15 @@ export default function GameScreen() {
     currentTrackRef.current = newTrack;
     flipCountRef.current += 1;
 
-    // Different sounds for up vs down flip
-    if (gameState?.soundEnabled || gameState?.hapticsEnabled) {
+    // Different sounds and haptics for up vs down flip
+    if (gameState?.soundEnabled) {
+      playFlipSound(true);
+    }
+    if (gameState?.hapticsEnabled) {
       if (newTrack === "top") {
-        triggerFlipUpHaptic(gameState?.hapticsEnabled ?? false);
+        triggerFlipUpHaptic(true);
       } else {
-        triggerFlipDownHaptic(gameState?.hapticsEnabled ?? false);
+        triggerFlipDownHaptic(true);
       }
     }
     

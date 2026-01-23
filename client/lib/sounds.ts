@@ -1,12 +1,50 @@
 import * as Haptics from "expo-haptics";
+import { createAudioPlayer, AudioPlayer, setAudioModeAsync } from "expo-audio";
+
+let flipPlayer: AudioPlayer | null = null;
+let gameOverPlayer: AudioPlayer | null = null;
+let scorePlayer: AudioPlayer | null = null;
+let tapPlayer: AudioPlayer | null = null;
+let powerUpPlayer: AudioPlayer | null = null;
+
+const FLIP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3";
+const GAME_OVER_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2658/2658-preview.mp3";
+const SCORE_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3";
+const TAP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3";
+const POWER_UP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3";
+
+let soundsLoaded = false;
+
+export async function initializeSounds(): Promise<void> {
+  if (soundsLoaded) return;
+  
+  try {
+    await setAudioModeAsync({
+      playsInSilentMode: true,
+    });
+    
+    flipPlayer = createAudioPlayer({ uri: FLIP_SOUND_URI });
+    gameOverPlayer = createAudioPlayer({ uri: GAME_OVER_SOUND_URI });
+    scorePlayer = createAudioPlayer({ uri: SCORE_SOUND_URI });
+    tapPlayer = createAudioPlayer({ uri: TAP_SOUND_URI });
+    powerUpPlayer = createAudioPlayer({ uri: POWER_UP_SOUND_URI });
+    
+    soundsLoaded = true;
+  } catch (error) {
+    console.log("Failed to load sounds:", error);
+  }
+}
 
 export async function playTapSound(soundEnabled: boolean): Promise<void> {
   if (!soundEnabled) return;
   
   try {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (tapPlayer) {
+      tapPlayer.seekTo(0);
+      tapPlayer.play();
+    }
   } catch (error) {
-    // Haptics not available
+    // Sound not available
   }
 }
 
@@ -14,9 +52,12 @@ export async function playFlipSound(soundEnabled: boolean): Promise<void> {
   if (!soundEnabled) return;
   
   try {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (flipPlayer) {
+      flipPlayer.seekTo(0);
+      flipPlayer.play();
+    }
   } catch (error) {
-    // Haptics not available
+    // Sound not available
   }
 }
 
@@ -24,9 +65,38 @@ export async function playGameOverSound(soundEnabled: boolean): Promise<void> {
   if (!soundEnabled) return;
   
   try {
-    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    if (gameOverPlayer) {
+      gameOverPlayer.seekTo(0);
+      gameOverPlayer.play();
+    }
   } catch (error) {
-    // Haptics not available
+    // Sound not available
+  }
+}
+
+export async function playScoreSound(soundEnabled: boolean): Promise<void> {
+  if (!soundEnabled) return;
+  
+  try {
+    if (scorePlayer) {
+      scorePlayer.seekTo(0);
+      scorePlayer.play();
+    }
+  } catch (error) {
+    // Sound not available
+  }
+}
+
+export async function playPowerUpSound(soundEnabled: boolean): Promise<void> {
+  if (!soundEnabled) return;
+  
+  try {
+    if (powerUpPlayer) {
+      powerUpPlayer.seekTo(0);
+      powerUpPlayer.play();
+    }
+  } catch (error) {
+    // Sound not available
   }
 }
 
@@ -34,9 +104,16 @@ export async function playNearMissSound(soundEnabled: boolean): Promise<void> {
   if (!soundEnabled) return;
   
   try {
-    await Haptics.selectionAsync();
+    if (scorePlayer) {
+      scorePlayer.volume = 0.5;
+      scorePlayer.seekTo(0);
+      scorePlayer.play();
+      setTimeout(() => {
+        if (scorePlayer) scorePlayer.volume = 1.0;
+      }, 500);
+    }
   } catch (error) {
-    // Haptics not available
+    // Sound not available
   }
 }
 
@@ -54,7 +131,6 @@ export async function triggerFlipUpHaptic(hapticsEnabled: boolean): Promise<void
   if (!hapticsEnabled) return;
   
   try {
-    // Lighter, faster feel for flipping up
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setTimeout(() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light), 40);
   } catch (error) {
@@ -66,7 +142,6 @@ export async function triggerFlipDownHaptic(hapticsEnabled: boolean): Promise<vo
   if (!hapticsEnabled) return;
   
   try {
-    // Heavier feel for flipping down (gravity pull)
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
   } catch (error) {
     // Haptics may not be available
@@ -77,7 +152,6 @@ export async function triggerVictoryHaptic(hapticsEnabled: boolean): Promise<voi
   if (!hapticsEnabled) return;
   
   try {
-    // Quick celebration tap when avoiding obstacle
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   } catch (error) {
     // Haptics may not be available
@@ -88,7 +162,6 @@ export async function triggerDeathHaptic(hapticsEnabled: boolean): Promise<void>
   if (!hapticsEnabled) return;
   
   try {
-    // Strong rumble for death/collision
     await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     setTimeout(() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy), 100);
     setTimeout(() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium), 200);
@@ -195,7 +268,6 @@ export async function triggerMovementHaptic(hapticsEnabled: boolean): Promise<vo
   if (!hapticsEnabled) return;
   
   try {
-    // Deep, subtle vibration for player movement
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
   } catch (error) {
     // Haptics may not be available
@@ -203,5 +275,20 @@ export async function triggerMovementHaptic(hapticsEnabled: boolean): Promise<vo
 }
 
 export async function cleanupSounds(): Promise<void> {
-  // No cleanup needed for haptics
+  try {
+    if (flipPlayer) flipPlayer.release();
+    if (gameOverPlayer) gameOverPlayer.release();
+    if (scorePlayer) scorePlayer.release();
+    if (tapPlayer) tapPlayer.release();
+    if (powerUpPlayer) powerUpPlayer.release();
+    
+    flipPlayer = null;
+    gameOverPlayer = null;
+    scorePlayer = null;
+    tapPlayer = null;
+    powerUpPlayer = null;
+    soundsLoaded = false;
+  } catch (error) {
+    // Cleanup failed
+  }
 }
