@@ -89,7 +89,14 @@ The app runs on Expo and can be tested via:
 
 ## Recent Changes
 
-### Latest (Sound & HUD Improvements)
+### Latest (Premium Shop & Sound Updates)
+- **Premium Skin Purchases**: Premium characters now purchasable with in-game points (1000-5000 points)
+- **Character Images**: Superhero character avatars displayed on premium skin buttons
+- **Soft Emergency Siren**: Replaced heartbeat sound with softer siren alert during gameplay
+- **Button Text Centering**: All button text centered horizontally and vertically across the game
+- **Premium Skin Storage**: Added ownedPremiumSkins array to track purchased premium characters
+
+### Previous (Sound & HUD Improvements)
 - **Directional Flip Sounds**: Different sounds for flip up vs flip down
 - **Heartbeat Sound**: Tension-building heartbeat during gameplay (stops on game over)
 - **Slow Flash Effect**: Multi-pulse red flash on collision for dramatic death effect
