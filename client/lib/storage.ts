@@ -5,6 +5,7 @@ const KEYS = {
   CURRENT_SCORE: "flip_one_current_score",
   POINTS: "flip_one_points",
   OWNED_SKINS: "flip_one_owned_skins",
+  OWNED_PREMIUM_SKINS: "flip_one_owned_premium_skins",
   EQUIPPED_SKIN: "flip_one_equipped_skin",
   EQUIPPED_PREMIUM_SKIN: "flip_one_equipped_premium_skin",
   SOUND_ENABLED: "flip_one_sound_enabled",
@@ -49,6 +50,7 @@ export interface GameState {
   bestScore: number;
   points: number;
   ownedSkins: string[];
+  ownedPremiumSkins: string[];
   equippedSkin: string;
   equippedPremiumSkin: string | null;
   soundEnabled: boolean;
@@ -122,6 +124,7 @@ export async function getGameState(): Promise<GameState> {
       bestScore,
       points,
       ownedSkins,
+      ownedPremiumSkins,
       equippedSkin,
       equippedPremiumSkin,
       soundEnabled,
@@ -142,6 +145,7 @@ export async function getGameState(): Promise<GameState> {
       AsyncStorage.getItem(KEYS.BEST_SCORE),
       AsyncStorage.getItem(KEYS.POINTS),
       AsyncStorage.getItem(KEYS.OWNED_SKINS),
+      AsyncStorage.getItem(KEYS.OWNED_PREMIUM_SKINS),
       AsyncStorage.getItem(KEYS.EQUIPPED_SKIN),
       AsyncStorage.getItem(KEYS.EQUIPPED_PREMIUM_SKIN),
       AsyncStorage.getItem(KEYS.SOUND_ENABLED),
@@ -187,6 +191,7 @@ export async function getGameState(): Promise<GameState> {
       bestScore: bestScore ? parseInt(bestScore, 10) : 0,
       points: points ? parseInt(points, 10) : 0,
       ownedSkins: ownedSkins ? JSON.parse(ownedSkins) : DEFAULT_SKINS,
+      ownedPremiumSkins: ownedPremiumSkins ? JSON.parse(ownedPremiumSkins) : [],
       equippedSkin: equippedSkin || DEFAULT_SKIN,
       equippedPremiumSkin: equippedPremiumSkin || null,
       soundEnabled: soundEnabled !== "false",
@@ -209,6 +214,7 @@ export async function getGameState(): Promise<GameState> {
       bestScore: 0,
       points: 0,
       ownedSkins: DEFAULT_SKINS,
+      ownedPremiumSkins: [],
       equippedSkin: DEFAULT_SKIN,
       equippedPremiumSkin: null,
       soundEnabled: true,
@@ -281,6 +287,14 @@ export async function saveOwnedSkins(skins: string[]): Promise<void> {
     await AsyncStorage.setItem(KEYS.OWNED_SKINS, JSON.stringify(skins));
   } catch (error) {
     console.error("Error saving owned skins:", error);
+  }
+}
+
+export async function saveOwnedPremiumSkins(skins: string[]): Promise<void> {
+  try {
+    await AsyncStorage.setItem(KEYS.OWNED_PREMIUM_SKINS, JSON.stringify(skins));
+  } catch (error) {
+    console.error("Error saving owned premium skins:", error);
   }
 }
 

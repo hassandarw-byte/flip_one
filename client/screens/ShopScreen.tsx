@@ -29,6 +29,7 @@ import {
   getGameState,
   savePoints,
   saveOwnedSkins,
+  saveOwnedPremiumSkins,
   saveEquippedSkin,
   saveEquippedPremiumSkin,
   usePower,
@@ -70,13 +71,13 @@ const SKINS: SkinItem[] = [
 ];
 
 const PREMIUM_SKINS: SkinItem[] = [
-  { id: "dark_knight", name: "Dark Knight", colors: ["#1a1a2e", "#16213e"], price: 0, isPremium: true, icon: "shield" },
-  { id: "web_hero", name: "Web Hero", colors: ["#e63946", "#1d3557"], price: 0, isPremium: true, icon: "target" },
-  { id: "green_giant", name: "Green Giant", colors: ["#2d6a4f", "#40916c"], price: 0, isPremium: true, icon: "zap" },
-  { id: "iron_armor", name: "Iron Armor", colors: ["#c1121f", "#ffd60a"], price: 0, isPremium: true, icon: "cpu" },
-  { id: "ice_queen", name: "Ice Queen", colors: ["#90e0ef", "#48cae4"], price: 0, isPremium: true, icon: "star" },
-  { id: "kawaii_cat", name: "Kawaii Cat", colors: ["#ffb6c1", "#ff69b4"], price: 0, isPremium: true, icon: "heart" },
-  { id: "captain_star", name: "Captain Star", colors: ["#002855", "#bf0a30"], price: 0, isPremium: true, icon: "award" },
+  { id: "dark_knight", name: "Dark Knight", colors: ["#1a1a2e", "#16213e"], price: 1000, isPremium: true, icon: "shield" },
+  { id: "web_hero", name: "Web Hero", colors: ["#e63946", "#1d3557"], price: 1500, isPremium: true, icon: "target" },
+  { id: "green_giant", name: "Green Giant", colors: ["#2d6a4f", "#40916c"], price: 2000, isPremium: true, icon: "zap" },
+  { id: "iron_armor", name: "Iron Armor", colors: ["#c1121f", "#ffd60a"], price: 2500, isPremium: true, icon: "cpu" },
+  { id: "ice_queen", name: "Ice Queen", colors: ["#90e0ef", "#48cae4"], price: 3000, isPremium: true, icon: "star" },
+  { id: "kawaii_cat", name: "Kawaii Cat", colors: ["#ffb6c1", "#ff69b4"], price: 3500, isPremium: true, icon: "heart" },
+  { id: "captain_star", name: "Captain Star", colors: ["#002855", "#bf0a30"], price: 5000, isPremium: true, icon: "award" },
 ];
 
 const SPECIAL_POWERS: PowerItem[] = [
@@ -168,10 +169,35 @@ export default function ShopScreen() {
   const handlePremiumSkinSelect = async (skin: SkinItem) => {
     if (!gameState) return;
 
-    const newPremiumSkin = gameState.equippedPremiumSkin === skin.id ? null : skin.id;
-    await saveEquippedPremiumSkin(newPremiumSkin);
-    setGameState({ ...gameState, equippedPremiumSkin: newPremiumSkin });
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    const isOwned = gameState.ownedPremiumSkins.includes(skin.id);
+
+    if (isOwned) {
+      const newPremiumSkin = gameState.equippedPremiumSkin === skin.id ? null : skin.id;
+      await saveEquippedPremiumSkin(newPremiumSkin);
+      setGameState({ ...gameState, equippedPremiumSkin: newPremiumSkin });
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      return;
+    }
+
+    if (gameState.points >= skin.price) {
+      const newPoints = gameState.points - skin.price;
+      const newOwnedPremiumSkins = [...gameState.ownedPremiumSkins, skin.id];
+      
+      await savePoints(newPoints);
+      await saveOwnedPremiumSkins(newOwnedPremiumSkins);
+      await saveEquippedPremiumSkin(skin.id);
+      
+      setGameState({
+        ...gameState,
+        points: newPoints,
+        ownedPremiumSkins: newOwnedPremiumSkins,
+        equippedPremiumSkin: skin.id,
+      });
+      
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } else {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    }
   };
 
   const handleWatchAd = (power: PowerItem) => {
@@ -219,12 +245,16 @@ export default function ShopScreen() {
   };
 
   const renderPremiumItem = ({ item, index }: { item: SkinItem; index: number }) => {
+    const isOwned = gameState?.ownedPremiumSkins.includes(item.id) || false;
     const isEquipped = gameState?.equippedPremiumSkin === item.id;
+    const canAfford = (gameState?.points || 0) >= item.price;
     return (
       <Animated.View entering={FadeInDown.delay(index * 50).springify()}>
         <PremiumSkinCard 
           skin={item} 
+          isOwned={isOwned}
           isEquipped={isEquipped || false}
+          canAfford={canAfford}
           onPress={() => handlePremiumSkinSelect(item)}
         />
       </Animated.View>
@@ -434,11 +464,13 @@ function SkinCard({
 
 interface PremiumSkinCardProps {
   skin: SkinItem;
+  isOwned: boolean;
   isEquipped: boolean;
+  canAfford: boolean;
   onPress: () => void;
 }
 
-function PremiumSkinCard({ skin, isEquipped, onPress }: PremiumSkinCardProps) {
+function PremiumSkinCard({ skin, isOwned, isEquipped, canAfford, onPress }: PremiumSkinCardProps) {
   const scale = useSharedValue(1);
   const glow = useSharedValue(0.5);
 
@@ -507,13 +539,21 @@ function PremiumSkinCard({ skin, isEquipped, onPress }: PremiumSkinCardProps) {
           <View style={styles.ownedBadge}>
             <ThemedText style={styles.ownedText}>Equipped</ThemedText>
           </View>
-        ) : (
+        ) : isOwned ? (
           <LinearGradient
-            colors={[GameColors.gold, GameColors.goldGlow]}
+            colors={[GameColors.success, GameColors.successGlow]}
             style={styles.premiumPriceTag}
           >
-            <Feather name="play" size={12} color={GameColors.background} />
+            <Feather name="check" size={12} color="#FFFFFF" />
             <ThemedText style={styles.premiumPriceText}>Select</ThemedText>
+          </LinearGradient>
+        ) : (
+          <LinearGradient
+            colors={canAfford ? [GameColors.gold, GameColors.goldGlow] : ["#666", "#444"]}
+            style={styles.premiumPriceTag}
+          >
+            <Feather name="star" size={12} color={canAfford ? GameColors.background : "#999"} />
+            <ThemedText style={[styles.premiumPriceText, !canAfford && { color: "#999" }]}>{skin.price}</ThemedText>
           </LinearGradient>
         )}
       </LinearGradient>
