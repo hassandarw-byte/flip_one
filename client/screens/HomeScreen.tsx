@@ -361,7 +361,7 @@ function MenuButton({ icon, label, onPress, colors, badge }: MenuButtonProps) {
           end={{ x: 1, y: 1 }}
           style={styles.menuButtonIcon}
         >
-          <Feather name={icon} size={24} color="#FFFFFF" />
+          <Feather name={icon} size={26} color="#FFFFFF" />
           {badge && badge > 0 ? (
             <View style={styles.badge}>
               <ThemedText style={styles.badgeText}>{badge}</ThemedText>
@@ -496,41 +496,42 @@ const styles = StyleSheet.create({
   },
   playButtonGlow: {
     position: "absolute",
-    width: width * 0.7,
-    height: 100,
+    width: width * 0.55,
+    height: 60,
     backgroundColor: GameColors.player,
-    borderRadius: BorderRadius.xl,
+    borderRadius: BorderRadius.lg,
     shadowColor: GameColors.player,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
-    shadowRadius: 40,
+    shadowRadius: 30,
   },
   playButton: {
-    width: width * 0.65,
-    height: 80,
-    borderRadius: BorderRadius.xl,
+    width: width * 0.5,
+    height: 54,
+    borderRadius: BorderRadius.lg,
     overflow: "hidden",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 8 },
+    shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.4,
-    shadowRadius: 15,
-    elevation: 15,
+    shadowRadius: 12,
+    elevation: 12,
   },
   playButtonGradient: {
     flex: 1,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    gap: Spacing.md,
+    gap: Spacing.sm,
   },
   playIcon: {
     marginRight: Spacing.xs,
   },
   playButtonText: {
-    fontSize: 28,
+    fontSize: 22,
     fontWeight: "900",
     color: GameColors.background,
-    letterSpacing: 4,
+    letterSpacing: 3,
+    textAlign: "center",
   },
   menuGrid: {
     paddingHorizontal: Spacing.xl,
@@ -559,16 +560,16 @@ const styles = StyleSheet.create({
   },
   menuButtonGlow: {
     position: "absolute",
-    width: 70,
-    height: 70,
-    borderRadius: 35,
+    width: 58,
+    height: 58,
+    borderRadius: 29,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
-    shadowRadius: 15,
+    shadowRadius: 12,
   },
   menuButtonIcon: {
-    width: 60,
-    height: 60,
+    width: 52,
+    height: 52,
     borderRadius: BorderRadius.lg,
     justifyContent: "center",
     alignItems: "center",
@@ -579,10 +580,11 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   menuButtonLabel: {
-    fontSize: 12,
+    fontSize: 13,
     color: GameColors.textSecondary,
-    marginTop: Spacing.sm,
-    fontWeight: "600",
+    marginTop: Spacing.xs,
+    fontWeight: "700",
+    textAlign: "center",
   },
   badge: {
     position: "absolute",
