@@ -82,7 +82,7 @@ const { width, height } = Dimensions.get("window");
 const PLAYER_SIZE = 32;
 const TRACK_HEIGHT = 80;
 const GAME_SPEED_BASE = 3;
-const SPAWN_INTERVAL = 2000;
+const SPAWN_INTERVAL = 1200; // More frequent obstacles
 const DIFFICULTY_INCREASE_INTERVAL = 5;
 const LEVEL_INCREASE_INTERVAL = 10;
 const MIN_OBSTACLE_GAP = 150;
@@ -1113,7 +1113,7 @@ function ObstacleShape({ obstacle }: { obstacle: Obstacle }) {
         <View style={[suitStyles.container, { width: w, height: h }]}>
           <Svg width={size} height={size} viewBox="0 0 100 100">
             <Path
-              d="M50 8 C50 8 15 40 15 58 C15 72 28 78 38 72 C36 80 34 88 32 95 L68 95 C66 88 64 80 62 72 C72 78 85 72 85 58 C85 40 50 8 50 8 Z"
+              d="M50 5 C50 5 10 35 10 55 C10 70 22 80 35 75 L35 78 C35 78 30 85 28 92 L72 92 C70 85 65 78 65 78 L65 75 C78 80 90 70 90 55 C90 35 50 5 50 5 Z"
               fill={color}
               stroke="#FFFFFF"
               strokeWidth={strokeWidth}

@@ -298,7 +298,7 @@ export async function saveEquippedPremiumSkin(skin: string | null): Promise<void
 
 export async function usePower(powerId: string): Promise<boolean> {
   try {
-    const today = new Date().toDateString();
+    const today = new Date().toISOString().split("T")[0]; // Use ISO format for consistency
     const lastDate = await AsyncStorage.getItem(KEYS.LAST_POWER_DATE);
     let usedPowers: string[] = [];
 
