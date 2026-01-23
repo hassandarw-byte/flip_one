@@ -12,7 +12,7 @@ const FLIP_UP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2568/2568
 const FLIP_DOWN_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3";
 const GAME_OVER_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2656/2656-preview.mp3";
 const SCORE_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3";
-const TENSION_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2574/2574-preview.mp3";
+const TENSION_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3";
 const POWER_UP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3";
 
 let soundsLoaded = false;
@@ -113,8 +113,23 @@ export async function playPowerUpSound(soundEnabled: boolean): Promise<void> {
 }
 
 export function startHeartbeat(soundEnabled: boolean): void {
-  // Disabled - no tension sound during gameplay
-  return;
+  if (!soundEnabled) return;
+  stopHeartbeat();
+  
+  const playTick = () => {
+    try {
+      if (sirenPlayer) {
+        sirenPlayer.volume = 0.08;
+        sirenPlayer.seekTo(0);
+        sirenPlayer.play();
+      }
+    } catch (error) {
+      // Sound not available
+    }
+  };
+  
+  playTick();
+  heartbeatInterval = setInterval(playTick, 2000);
 }
 
 export function stopHeartbeat(): void {
