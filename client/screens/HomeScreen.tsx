@@ -486,7 +486,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: Spacing.xl,
+    marginBottom: Spacing["2xl"],
+    paddingBottom: Spacing.lg,
   },
   playButtonContainer: {
     position: "relative",
@@ -533,7 +534,8 @@ const styles = StyleSheet.create({
   },
   menuGrid: {
     paddingHorizontal: Spacing.xl,
-    paddingTop: Spacing.lg,
+    paddingTop: Spacing["2xl"],
+    marginTop: Spacing.lg,
   },
   menuRow: {
     flexDirection: "row",
