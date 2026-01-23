@@ -268,6 +268,14 @@ export async function saveNightModeEnabled(enabled: boolean): Promise<void> {
   }
 }
 
+export async function saveAdsRemoved(removed: boolean): Promise<void> {
+  try {
+    await AsyncStorage.setItem(KEYS.ADS_REMOVED, removed.toString());
+  } catch (error) {
+    console.error("Error saving ads removed setting:", error);
+  }
+}
+
 export async function saveOwnedSkins(skins: string[]): Promise<void> {
   try {
     await AsyncStorage.setItem(KEYS.OWNED_SKINS, JSON.stringify(skins));

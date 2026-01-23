@@ -27,8 +27,10 @@ import {
   getGameState,
   saveSoundEnabled,
   saveHapticsEnabled,
+  saveAdsRemoved,
   GameState,
 } from "@/lib/storage";
+import { purchaseProduct, PRODUCT_IDS } from "@/lib/purchases";
 import { useNightMode } from "@/contexts/NightModeContext";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -64,6 +66,17 @@ export default function SettingsScreen() {
   const handleNightModeToggle = async (value: boolean) => {
     await toggleNightMode(value);
     setGameState((prev) => (prev ? { ...prev, nightMode: value } : null));
+  };
+
+  const handleRemoveAdsPurchase = async () => {
+    if (gameState?.adsRemoved) return;
+    
+    const result = await purchaseProduct(PRODUCT_IDS.REMOVE_ADS);
+    if (result.success) {
+      await saveAdsRemoved(true);
+      setGameState((prev) => (prev ? { ...prev, adsRemoved: true } : null));
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }
   };
 
   return (
@@ -152,7 +165,7 @@ export default function SettingsScreen() {
               price="$0.99"
               isPurchased={gameState?.adsRemoved}
               colors={[GameColors.candy5, GameColors.secondaryGlow]}
-              onPress={() => {}}
+              onPress={handleRemoveAdsPurchase}
             />
           </View>
         </Animated.View>
