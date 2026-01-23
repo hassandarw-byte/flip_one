@@ -50,6 +50,53 @@ export async function triggerFlipHaptic(hapticsEnabled: boolean): Promise<void> 
   }
 }
 
+export async function triggerFlipUpHaptic(hapticsEnabled: boolean): Promise<void> {
+  if (!hapticsEnabled) return;
+  
+  try {
+    // Lighter, faster feel for flipping up
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setTimeout(() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light), 40);
+  } catch (error) {
+    // Haptics may not be available
+  }
+}
+
+export async function triggerFlipDownHaptic(hapticsEnabled: boolean): Promise<void> {
+  if (!hapticsEnabled) return;
+  
+  try {
+    // Heavier feel for flipping down (gravity pull)
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+  } catch (error) {
+    // Haptics may not be available
+  }
+}
+
+export async function triggerVictoryHaptic(hapticsEnabled: boolean): Promise<void> {
+  if (!hapticsEnabled) return;
+  
+  try {
+    // Quick celebration tap when avoiding obstacle
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  } catch (error) {
+    // Haptics may not be available
+  }
+}
+
+export async function triggerDeathHaptic(hapticsEnabled: boolean): Promise<void> {
+  if (!hapticsEnabled) return;
+  
+  try {
+    // Strong rumble for death/collision
+    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    setTimeout(() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy), 100);
+    setTimeout(() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium), 200);
+  } catch (error) {
+    // Haptics may not be available
+  }
+}
+
 export async function triggerTapHaptic(hapticsEnabled: boolean): Promise<void> {
   if (!hapticsEnabled) return;
   

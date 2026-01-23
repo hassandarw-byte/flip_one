@@ -37,11 +37,15 @@ import {
 } from "@/lib/storage";
 import { 
   triggerFlipHaptic, 
+  triggerFlipUpHaptic,
+  triggerFlipDownHaptic,
   triggerGameOverHaptic, 
   triggerPowerUpHaptic, 
   triggerComboHaptic, 
   triggerExplosionHaptic,
   triggerDeathFreezeHaptic,
+  triggerVictoryHaptic,
+  triggerDeathHaptic,
   playTapSound,
   playFlipSound,
   playGameOverSound,
@@ -439,13 +443,16 @@ export default function GameScreen() {
     
     isDyingRef.current = true;
     
-    cleanupGame();
+    // Slow motion effect before death
+    const originalSpeed = gameSpeedRef.current;
+    gameSpeedRef.current = originalSpeed * 0.2; // 80% slower
     
+    // Play death sound with haptics
+    if (gameState?.hapticsEnabled) {
+      triggerDeathHaptic(true);
+    }
     if (gameState?.soundEnabled) {
       playGameOverSound(true);
-    }
-    if (gameState?.hapticsEnabled) {
-      triggerDeathFreezeHaptic(true);
     }
     
     setShowNearMissFrame(true);
@@ -454,6 +461,11 @@ export default function GameScreen() {
     setTimeout(() => {
       setDeathFlashOpacity(0);
     }, 80);
+    
+    // Longer slow motion before cleanup
+    setTimeout(() => {
+      cleanupGame();
+    }, 300);
     
     setTimeout(async () => {
       setShowNearMissFrame(false);
@@ -579,6 +591,10 @@ export default function GameScreen() {
             runOnJS(createExplosion)(obs.x, obsY);
             runOnJS(incrementCombo)();
           });
+          // Victory sound when avoiding obstacles
+          if (gameState?.hapticsEnabled) {
+            triggerVictoryHaptic(true);
+          }
         }
 
         return remainingObstacles;
@@ -667,11 +683,13 @@ export default function GameScreen() {
     currentTrackRef.current = newTrack;
     flipCountRef.current += 1;
 
-    if (gameState?.soundEnabled) {
-      playFlipSound(true);
-    }
-    if (gameState?.hapticsEnabled) {
-      triggerFlipHaptic(true);
+    // Different sounds for up vs down flip
+    if (gameState?.soundEnabled || gameState?.hapticsEnabled) {
+      if (newTrack === "top") {
+        triggerFlipUpHaptic(gameState?.hapticsEnabled ?? false);
+      } else {
+        triggerFlipDownHaptic(gameState?.hapticsEnabled ?? false);
+      }
     }
     
     createFlipParticles();
@@ -1095,7 +1113,7 @@ function ObstacleShape({ obstacle }: { obstacle: Obstacle }) {
         <View style={[suitStyles.container, { width: w, height: h }]}>
           <Svg width={size} height={size} viewBox="0 0 100 100">
             <Path
-              d="M50 5 C50 5 20 35 20 55 C20 70 30 75 40 72 C35 82 30 90 30 95 L70 95 C70 90 65 82 60 72 C70 75 80 70 80 55 C80 35 50 5 50 5 Z"
+              d="M50 8 C50 8 15 40 15 58 C15 72 28 78 38 72 C36 80 34 88 32 95 L68 95 C66 88 64 80 62 72 C72 78 85 72 85 58 C85 40 50 8 50 8 Z"
               fill={color}
               stroke="#FFFFFF"
               strokeWidth={strokeWidth}
