@@ -32,14 +32,14 @@ const { width, height } = Dimensions.get("window");
 const SPARKLE_COLORS = [GameColors.candy1, GameColors.candy2, GameColors.candy3, GameColors.candy4, GameColors.gold];
 
 const WHEEL_SEGMENTS = [
-  { label: "25", color: "#FF6B6B", type: "points" },
-  { label: "PWR", color: "#4ECDC4", type: "power" },
-  { label: "50", color: "#FFE66D", type: "points" },
-  { label: "PWR", color: "#95E1D3", type: "power" },
-  { label: "75", color: "#F38181", type: "points" },
-  { label: "PWR", color: "#AA96DA", type: "power" },
-  { label: "100", color: "#FCBAD3", type: "points" },
-  { label: "150", color: "#FFD700", type: "points" },
+  { label: "25", color: "#FF6B9D", gradient: ["#FF6B9D", "#FF4777"], type: "points" },
+  { label: "PWR", color: "#00D4FF", gradient: ["#00D4FF", "#0099CC"], type: "power" },
+  { label: "50", color: "#FFD700", gradient: ["#FFD700", "#FFA500"], type: "points" },
+  { label: "PWR", color: "#9B59B6", gradient: ["#9B59B6", "#8E44AD"], type: "power" },
+  { label: "75", color: "#2ECC71", gradient: ["#2ECC71", "#27AE60"], type: "points" },
+  { label: "PWR", color: "#E74C3C", gradient: ["#E74C3C", "#C0392B"], type: "power" },
+  { label: "100", color: "#3498DB", gradient: ["#3498DB", "#2980B9"], type: "points" },
+  { label: "150", color: "#F39C12", gradient: ["#F39C12", "#E67E22"], type: "points" },
 ];
 
 export default function LuckyWheelScreen() {
@@ -188,6 +188,7 @@ export default function LuckyWheelScreen() {
 
       <View style={styles.wheelContainer}>
         <Animated.View style={[styles.wheelGlow, wheelGlowStyle]} />
+        <View style={styles.wheelOuterRing} />
         <Animated.View style={[styles.wheel, wheelAnimatedStyle]}>
           {WHEEL_SEGMENTS.map((segment, index) => {
             const angle = (index * 360) / WHEEL_SEGMENTS.length;
@@ -205,7 +206,7 @@ export default function LuckyWheelScreen() {
                 ]}
               >
                 <LinearGradient
-                  colors={[segment.color, segment.color + "CC"]}
+                  colors={segment.gradient as [string, string]}
                   style={styles.segmentGradient}
                 >
                   <ThemedText style={styles.segmentText}>{segment.label}</ThemedText>
@@ -299,6 +300,7 @@ const styles = StyleSheet.create({
   pointsBadge: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     backgroundColor: "rgba(255,255,255,0.1)",
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
@@ -309,6 +311,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
     color: GameColors.gold,
+    textAlign: "center",
   },
   wheelContainer: {
     flex: 1,
@@ -317,24 +320,37 @@ const styles = StyleSheet.create({
   },
   wheelGlow: {
     position: "absolute",
-    width: 320,
-    height: 320,
-    borderRadius: 160,
-    backgroundColor: GameColors.gold,
-    shadowColor: GameColors.gold,
+    width: 340,
+    height: 340,
+    borderRadius: 170,
+    backgroundColor: "#FFD700",
+    shadowColor: "#FFD700",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
-    shadowRadius: 50,
+    shadowRadius: 60,
+  },
+  wheelOuterRing: {
+    position: "absolute",
+    width: 310,
+    height: 310,
+    borderRadius: 155,
+    borderWidth: 8,
+    borderColor: "#FFD700",
+    backgroundColor: "transparent",
+    shadowColor: "#FFD700",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 20,
   },
   wheel: {
     width: 280,
     height: 280,
     borderRadius: 140,
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: "rgba(20,10,40,0.9)",
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 4,
-    borderColor: GameColors.gold,
+    borderWidth: 6,
+    borderColor: "#FFA500",
   },
   segment: {
     position: "absolute",
@@ -344,23 +360,26 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   segmentGradient: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 54,
+    height: 54,
+    borderRadius: 27,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
+    borderWidth: 3,
+    borderColor: "rgba(255,255,255,0.4)",
   },
   segmentText: {
-    fontSize: 14,
-    fontWeight: "800",
+    fontSize: 15,
+    fontWeight: "900",
     color: "#FFFFFF",
-    textShadowColor: "rgba(0,0,0,0.5)",
+    textAlign: "center",
+    textShadowColor: "rgba(0,0,0,0.7)",
     textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
+    textShadowRadius: 3,
   },
   wheelCenter: {
     position: "absolute",
@@ -423,11 +442,14 @@ const styles = StyleSheet.create({
   },
   spinButtonGradient: {
     paddingVertical: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
     alignItems: "center",
+    justifyContent: "center",
   },
   spinButtonText: {
     fontSize: 20,
     fontWeight: "800",
     color: "#FFFFFF",
+    textAlign: "center",
   },
 });
