@@ -412,7 +412,7 @@ export default function GameScreen() {
         }, 30000);
         break;
     }
-  }, [availablePowers, isPlaying, gameState?.hapticsEnabled]);
+  }, [availablePowers, isPlaying, gameState?.hapticsEnabled, gameState?.soundEnabled]);
 
   const startSparkleAnimation = () => {
     sparkleOpacity.value = withRepeat(
