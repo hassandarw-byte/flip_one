@@ -993,7 +993,7 @@ export default function GameScreen() {
       </Animated.View>
     </Pressable>
 
-    <View style={[styles.powerButtonsContainer, { bottom: insets.bottom + Spacing.md }]}>
+    <View style={[styles.powerButtonsContainer, { bottom: insets.bottom + Spacing["2xl"] }]}>
       <PowerButton 
         type="freeze" 
         icon="pause" 
@@ -1289,22 +1289,22 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
   },
   hudGradient: {
-    paddingVertical: Spacing.sm,
+    paddingVertical: Spacing.xs,
     paddingHorizontal: Spacing.xs,
     borderRadius: BorderRadius.md,
     alignItems: "center",
     justifyContent: "center",
-    minHeight: 52,
+    minHeight: 44,
   },
   hudLabel: {
-    fontSize: 10,
-    fontWeight: "600",
-    color: "rgba(255,255,255,0.9)",
+    fontSize: 11,
+    fontWeight: "700",
+    color: "rgba(255,255,255,0.95)",
     textAlign: "center",
-    marginBottom: 2,
+    marginBottom: 1,
   },
   hudValue: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "800",
     color: "#FFFFFF",
     textAlign: "center",
@@ -1447,6 +1447,7 @@ const styles = StyleSheet.create({
     gap: Spacing.lg,
     zIndex: 20,
     paddingHorizontal: Spacing.lg,
+    marginBottom: Spacing.xl,
   },
   explosionParticle: {
     position: "absolute",
