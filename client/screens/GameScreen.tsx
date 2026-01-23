@@ -1152,7 +1152,7 @@ function ObstacleShape({ obstacle }: { obstacle: Obstacle }) {
         <View style={[suitStyles.container, { width: w, height: h }]}>
           <Svg width={size} height={size} viewBox="0 0 100 100">
             <Path
-              d="M50 10 C35 10 25 20 25 33 C25 43 32 50 42 52 C35 55 30 62 30 95 L70 95 C70 62 65 55 58 52 C68 50 75 43 75 33 C75 20 65 10 50 10 Z M25 55 C12 55 5 65 5 75 C5 88 18 92 30 88 C28 82 27 70 28 58 C25 56 23 55 25 55 Z M75 55 C77 55 75 56 72 58 C73 70 72 82 70 88 C82 92 95 88 95 75 C95 65 88 55 75 55 Z"
+              d="M50 15 C38 15 28 25 28 37 C28 45 33 52 40 55 C33 57 28 64 28 72 C28 84 38 92 50 92 C62 92 72 84 72 72 C72 64 67 57 60 55 C67 52 72 45 72 37 C72 25 62 15 50 15 Z M20 45 C10 45 2 55 2 65 C2 77 12 85 22 82 C18 75 16 65 18 55 C18 50 18 47 20 45 Z M80 45 C82 47 82 50 82 55 C84 65 82 75 78 82 C88 85 98 77 98 65 C98 55 90 45 80 45 Z M42 88 L42 98 L58 98 L58 88"
               fill={color}
               stroke="#FFFFFF"
               strokeWidth={strokeWidth}
@@ -1426,7 +1426,7 @@ const styles = StyleSheet.create({
   },
   comboContainer: {
     position: "absolute",
-    top: height * 0.35,
+    top: height * 0.22,
     left: 0,
     right: 0,
     alignItems: "center",

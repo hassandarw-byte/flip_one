@@ -97,8 +97,15 @@ export default function LuckyWheelScreen() {
     setReward(null);
     triggerFlipHaptic(true);
     
-    const spins = 5 + Math.random() * 3;
-    const finalRotation = spins * 360 + Math.random() * 360;
+    // Pick a random segment first
+    const segmentCount = WHEEL_SEGMENTS.length;
+    const selectedSegment = Math.floor(Math.random() * segmentCount);
+    
+    // Calculate rotation to land on that segment (pointer at top)
+    const segmentAngle = 360 / segmentCount;
+    const targetAngle = selectedSegment * segmentAngle + segmentAngle / 2;
+    const spins = 5 + Math.floor(Math.random() * 3);
+    const finalRotation = spins * 360 + (360 - targetAngle);
     
     wheelRotation.value = withTiming(finalRotation, {
       duration: 4000,
@@ -106,7 +113,7 @@ export default function LuckyWheelScreen() {
     });
     
     setTimeout(async () => {
-      const result = await spinWheel();
+      const result = await spinWheel(selectedSegment);
       setReward(result);
       setCanSpin(false);
       setIsSpinning(false);

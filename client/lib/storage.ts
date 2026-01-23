@@ -484,7 +484,7 @@ export async function updateDailyStreak(): Promise<{ streak: number; bonusPoints
 
 export async function canSpinWheel(): Promise<boolean> {
   try {
-    const today = new Date().toDateString();
+    const today = new Date().toISOString().split("T")[0];
     const lastSpinDate = await AsyncStorage.getItem(KEYS.LAST_WHEEL_SPIN_DATE);
     return lastSpinDate !== today;
   } catch (error) {
@@ -492,25 +492,33 @@ export async function canSpinWheel(): Promise<boolean> {
   }
 }
 
-export async function spinWheel(): Promise<{ reward: number; type: "points" | "power" | "skin" }> {
+export async function spinWheel(segmentIndex?: number): Promise<{ reward: number; type: "points" | "power" | "skin" }> {
   try {
-    const today = new Date().toDateString();
+    const today = new Date().toISOString().split("T")[0];
     await AsyncStorage.setItem(KEYS.LAST_WHEEL_SPIN_DATE, today);
     
-    const random = Math.random();
+    const wheelSegments = [
+      { label: "25", type: "points" as const },
+      { label: "PWR", type: "power" as const },
+      { label: "50", type: "points" as const },
+      { label: "PWR", type: "power" as const },
+      { label: "75", type: "points" as const },
+      { label: "PWR", type: "power" as const },
+      { label: "100", type: "points" as const },
+      { label: "150", type: "points" as const },
+    ];
+    
+    const selectedIndex = segmentIndex !== undefined ? segmentIndex : Math.floor(Math.random() * wheelSegments.length);
+    const segment = wheelSegments[selectedIndex];
+    
     let reward: number;
     let type: "points" | "power" | "skin";
     
-    if (random < 0.4) {
-      reward = [25, 50, 75, 100][Math.floor(Math.random() * 4)];
-      type = "points";
-      const points = parseInt(await AsyncStorage.getItem(KEYS.POINTS) || "0", 10);
-      await AsyncStorage.setItem(KEYS.POINTS, (points + reward).toString());
-    } else if (random < 0.8) {
+    if (segment.type === "power") {
       reward = 1;
       type = "power";
     } else {
-      reward = 150;
+      reward = parseInt(segment.label, 10);
       type = "points";
       const points = parseInt(await AsyncStorage.getItem(KEYS.POINTS) || "0", 10);
       await AsyncStorage.setItem(KEYS.POINTS, (points + reward).toString());
