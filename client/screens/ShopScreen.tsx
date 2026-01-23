@@ -78,9 +78,12 @@ const PREMIUM_SKINS: SkinItem[] = [
   { id: "web_hero", name: "Web Hero", colors: ["#e63946", "#1d3557"], price: 1500, isPremium: true, icon: "target", image: require("@/assets/images/web-hero.png") },
   { id: "green_giant", name: "Green Giant", colors: ["#2d6a4f", "#40916c"], price: 2000, isPremium: true, icon: "zap", image: require("@/assets/images/green-giant.png") },
   { id: "iron_armor", name: "Iron Armor", colors: ["#c1121f", "#ffd60a"], price: 2500, isPremium: true, icon: "cpu", image: require("@/assets/images/iron-armor.png") },
-  { id: "ice_queen", name: "Ice Queen", colors: ["#90e0ef", "#48cae4"], price: 3000, isPremium: true, icon: "star", image: require("@/assets/images/ice-queen.png") },
-  { id: "kawaii_cat", name: "Kawaii Cat", colors: ["#ffb6c1", "#ff69b4"], price: 3500, isPremium: true, icon: "heart", image: require("@/assets/images/kawaii-cat.png") },
-  { id: "captain_star", name: "Captain Star", colors: ["#002855", "#bf0a30"], price: 5000, isPremium: true, icon: "award", image: require("@/assets/images/captain-star.png") },
+  { id: "cozy_bunny", name: "Cozy Bunny", colors: ["#8B4513", "#D2691E"], price: 3000, isPremium: true, icon: "smile", image: require("@/assets/images/cozy-bunny.webp") },
+  { id: "ice_queen", name: "Ice Queen", colors: ["#90e0ef", "#48cae4"], price: 3500, isPremium: true, icon: "star", image: require("@/assets/images/ice-queen.png") },
+  { id: "sweet_kitty", name: "Sweet Kitty", colors: ["#FF69B4", "#FF1493"], price: 4000, isPremium: true, icon: "heart", image: require("@/assets/images/sweet-kitty.png") },
+  { id: "purple_devil", name: "Purple Devil", colors: ["#9370DB", "#8B008B"], price: 4500, isPremium: true, icon: "zap", image: require("@/assets/images/purple-devil.jpg") },
+  { id: "kawaii_cat", name: "Kawaii Cat", colors: ["#ffb6c1", "#ff69b4"], price: 5000, isPremium: true, icon: "heart", image: require("@/assets/images/kawaii-cat.png") },
+  { id: "captain_star", name: "Captain Star", colors: ["#002855", "#bf0a30"], price: 6000, isPremium: true, icon: "award", image: require("@/assets/images/captain-star.png") },
 ];
 
 const SPECIAL_POWERS: PowerItem[] = [
