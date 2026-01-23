@@ -5,7 +5,10 @@ import {
   Switch,
   Pressable,
   ScrollView,
+  Image,
 } from "react-native";
+
+import appIcon from "../../assets/store/app-icon-512.png";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { Feather } from "@expo/vector-icons";
@@ -162,10 +165,7 @@ export default function SettingsScreen() {
               colors={[GameColors.surfaceLight, GameColors.surface]}
               style={styles.aboutCard}
             >
-              <LinearGradient
-                colors={[GameColors.player, GameColors.playerGlow]}
-                style={styles.aboutLogo}
-              />
+              <Image source={appIcon} style={styles.aboutLogo} />
               <ThemedText style={styles.appName}>Flip One</ThemedText>
               <ThemedText style={styles.appVersion}>Version 1.0.0</ThemedText>
               <ThemedText style={styles.developerText}>HHD Apps</ThemedText>
