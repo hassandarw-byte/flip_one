@@ -47,13 +47,13 @@ import {
   triggerVictoryHaptic,
   triggerDeathHaptic,
   triggerMovementHaptic,
-  playTapSound,
   playFlipSound,
   playGameOverSound,
-  playNearMissSound,
   playScoreSound,
   playPowerUpSound,
   initializeSounds,
+  startHeartbeat,
+  stopHeartbeat,
 } from "@/lib/sounds";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useNightMode } from "@/contexts/NightModeContext";
@@ -435,6 +435,7 @@ export default function GameScreen() {
   };
 
   const cleanupGame = useCallback(() => {
+    stopHeartbeat();
     if (gameLoopRef.current) {
       clearInterval(gameLoopRef.current);
       gameLoopRef.current = null;
@@ -454,6 +455,9 @@ export default function GameScreen() {
     
     isDyingRef.current = true;
     
+    // Stop heartbeat
+    stopHeartbeat();
+    
     // Slow motion effect before death
     const originalSpeed = gameSpeedRef.current;
     gameSpeedRef.current = originalSpeed * 0.2; // 80% slower
@@ -466,12 +470,21 @@ export default function GameScreen() {
       playGameOverSound(true);
     }
     
+    // Slow flash effect on collision - multiple pulses
     setShowNearMissFrame(true);
-    setDeathFlashOpacity(0.6);
+    setDeathFlashOpacity(0.8);
+    
+    setTimeout(() => {
+      setDeathFlashOpacity(0.3);
+    }, 150);
+    
+    setTimeout(() => {
+      setDeathFlashOpacity(0.6);
+    }, 300);
     
     setTimeout(() => {
       setDeathFlashOpacity(0);
-    }, 80);
+    }, 500);
     
     // Longer slow motion before cleanup
     setTimeout(() => {
@@ -548,6 +561,11 @@ export default function GameScreen() {
       opacity: Math.random() * 0.5 + 0.3,
     }));
     setFloatingParticles(initialParticles);
+    
+    // Start heartbeat sound for tension
+    if (gameState?.soundEnabled) {
+      startHeartbeat(true);
+    }
     
     gameLoopRef.current = setInterval(() => {
       if (isGameOverRef.current) return;
@@ -693,8 +711,8 @@ export default function GameScreen() {
             return newLevel;
           });
         }
-        scoreScale.value = withSpring(1.08, { damping: 12 }, () => {
-          scoreScale.value = withSpring(1, { damping: 15 });
+        scoreScale.value = withSpring(1.05, { damping: 15 }, () => {
+          scoreScale.value = withSpring(1, { damping: 20 });
         });
         return newScore;
       });
@@ -714,7 +732,7 @@ export default function GameScreen() {
 
     // Different sounds and haptics for up vs down flip
     if (gameState?.soundEnabled) {
-      playFlipSound(true);
+      playFlipSound(true, newTrack === "top" ? "up" : "down");
     }
     if (gameState?.hapticsEnabled) {
       if (newTrack === "top") {
@@ -813,35 +831,43 @@ export default function GameScreen() {
       </View>
 
       <View style={[styles.scoreContainer, { top: insets.top + Spacing.lg }]}>
-        <View style={styles.levelBadge}>
+        <View style={[styles.hudBadge, { shadowColor: "#A66CFF" }]}>
           <LinearGradient
-            colors={[GameColors.primary, GameColors.primaryGlow]}
-            style={styles.levelGradient}
+            colors={["#A66CFF", "#8B5CF6"]}
+            style={styles.hudGradient}
           >
-            <ThemedText style={styles.levelText}>LVL {level}</ThemedText>
+            <ThemedText style={styles.hudLabel}>LEVEL</ThemedText>
+            <ThemedText style={styles.hudValue}>{level}</ThemedText>
           </LinearGradient>
         </View>
         
-        <Animated.View style={[styles.scoreBadge, scoreAnimatedStyle]}>
+        <Animated.View style={[styles.hudBadge, { shadowColor: "#FFD93D" }, scoreAnimatedStyle]}>
           <LinearGradient
-            colors={[GameColors.gold, GameColors.goldGlow]}
-            style={styles.scoreGradient}
+            colors={["#FFD93D", "#FFA726"]}
+            style={styles.hudGradient}
           >
-            <ThemedText style={styles.scoreText}>{score}</ThemedText>
+            <ThemedText style={styles.hudLabel}>SCORE</ThemedText>
+            <ThemedText style={[styles.hudValue, { color: "#1A0A2E" }]}>{score}</ThemedText>
           </LinearGradient>
         </Animated.View>
         
-        <View style={styles.bestScoreBadge}>
-          <ThemedText style={styles.bestScoreLabel}>BEST</ThemedText>
-          <ThemedText style={styles.bestScoreText}>{gameState?.bestScore || 0}</ThemedText>
+        <View style={[styles.hudBadge, { shadowColor: "#FF6B9D" }]}>
+          <LinearGradient
+            colors={["#FF6B9D", "#FF4081"]}
+            style={styles.hudGradient}
+          >
+            <ThemedText style={styles.hudLabel}>BEST</ThemedText>
+            <ThemedText style={styles.hudValue}>{gameState?.bestScore || 0}</ThemedText>
+          </LinearGradient>
         </View>
         
-        <View style={styles.pointsBadge}>
+        <View style={[styles.hudBadge, { shadowColor: "#4ECDC4" }]}>
           <LinearGradient
-            colors={[GameColors.success, GameColors.successGlow]}
-            style={styles.pointsGradient}
+            colors={["#4ECDC4", "#26A69A"]}
+            style={styles.hudGradient}
           >
-            <ThemedText style={styles.pointsText}>{gameState?.points || 0}</ThemedText>
+            <ThemedText style={styles.hudLabel}>POINTS</ThemedText>
+            <ThemedText style={styles.hudValue}>{gameState?.points || 0}</ThemedText>
           </LinearGradient>
         </View>
       </View>
@@ -1235,83 +1261,40 @@ const styles = StyleSheet.create({
   },
   scoreContainer: {
     position: "absolute",
-    left: Spacing.lg,
-    right: Spacing.lg,
+    left: Spacing.sm,
+    right: Spacing.sm,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     zIndex: 10,
   },
-  levelBadge: {
+  hudBadge: {
+    flex: 1,
+    marginHorizontal: 4,
     borderRadius: BorderRadius.md,
     overflow: "hidden",
-    shadowColor: GameColors.primary,
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
+    shadowOpacity: 0.6,
+    shadowRadius: 8,
   },
-  levelGradient: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.md,
-  },
-  levelText: {
-    fontSize: 12,
-    fontWeight: "700",
-    color: "#FFFFFF",
-    textAlign: "center",
-  },
-  scoreBadge: {
-    borderRadius: BorderRadius.lg,
-    overflow: "hidden",
-    shadowColor: GameColors.gold,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 15,
-  },
-  scoreGradient: {
-    paddingHorizontal: Spacing.lg,
+  hudGradient: {
     paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.lg,
-  },
-  scoreText: {
-    fontSize: 32,
-    fontWeight: "900",
-    color: GameColors.background,
-  },
-  bestScoreBadge: {
+    paddingHorizontal: Spacing.xs,
+    borderRadius: BorderRadius.md,
     alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.1)",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.md,
+    justifyContent: "center",
+    minHeight: 52,
   },
-  bestScoreLabel: {
-    fontSize: 8,
-    color: GameColors.textMuted,
+  hudLabel: {
+    fontSize: 10,
     fontWeight: "600",
+    color: "rgba(255,255,255,0.9)",
+    textAlign: "center",
+    marginBottom: 2,
   },
-  bestScoreText: {
-    fontSize: 14,
-    color: GameColors.textPrimary,
-    fontWeight: "700",
-  },
-  pointsBadge: {
-    borderRadius: BorderRadius.md,
-    overflow: "hidden",
-    shadowColor: GameColors.success,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
-  },
-  pointsGradient: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.md,
-  },
-  pointsText: {
-    fontSize: 14,
-    fontWeight: "700",
+  hudValue: {
+    fontSize: 16,
+    fontWeight: "800",
     color: "#FFFFFF",
     textAlign: "center",
   },

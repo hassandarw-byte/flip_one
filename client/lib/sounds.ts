@@ -1,19 +1,22 @@
 import * as Haptics from "expo-haptics";
 import { createAudioPlayer, AudioPlayer, setAudioModeAsync } from "expo-audio";
 
-let flipPlayer: AudioPlayer | null = null;
+let flipUpPlayer: AudioPlayer | null = null;
+let flipDownPlayer: AudioPlayer | null = null;
 let gameOverPlayer: AudioPlayer | null = null;
 let scorePlayer: AudioPlayer | null = null;
-let tapPlayer: AudioPlayer | null = null;
+let heartbeatPlayer: AudioPlayer | null = null;
 let powerUpPlayer: AudioPlayer | null = null;
 
-const FLIP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3";
+const FLIP_UP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3";
+const FLIP_DOWN_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3";
 const GAME_OVER_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2658/2658-preview.mp3";
 const SCORE_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3";
-const TAP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3";
+const HEARTBEAT_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2010/2010-preview.mp3";
 const POWER_UP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3";
 
 let soundsLoaded = false;
+let heartbeatInterval: ReturnType<typeof setInterval> | null = null;
 
 export async function initializeSounds(): Promise<void> {
   if (soundsLoaded) return;
@@ -23,10 +26,11 @@ export async function initializeSounds(): Promise<void> {
       playsInSilentMode: true,
     });
     
-    flipPlayer = createAudioPlayer({ uri: FLIP_SOUND_URI });
+    flipUpPlayer = createAudioPlayer({ uri: FLIP_UP_SOUND_URI });
+    flipDownPlayer = createAudioPlayer({ uri: FLIP_DOWN_SOUND_URI });
     gameOverPlayer = createAudioPlayer({ uri: GAME_OVER_SOUND_URI });
     scorePlayer = createAudioPlayer({ uri: SCORE_SOUND_URI });
-    tapPlayer = createAudioPlayer({ uri: TAP_SOUND_URI });
+    heartbeatPlayer = createAudioPlayer({ uri: HEARTBEAT_SOUND_URI });
     powerUpPlayer = createAudioPlayer({ uri: POWER_UP_SOUND_URI });
     
     soundsLoaded = true;
@@ -35,29 +39,37 @@ export async function initializeSounds(): Promise<void> {
   }
 }
 
-export async function playTapSound(soundEnabled: boolean): Promise<void> {
+export async function playFlipUpSound(soundEnabled: boolean): Promise<void> {
   if (!soundEnabled) return;
   
   try {
-    if (tapPlayer) {
-      tapPlayer.seekTo(0);
-      tapPlayer.play();
+    if (flipUpPlayer) {
+      flipUpPlayer.seekTo(0);
+      flipUpPlayer.play();
     }
   } catch (error) {
     // Sound not available
   }
 }
 
-export async function playFlipSound(soundEnabled: boolean): Promise<void> {
+export async function playFlipDownSound(soundEnabled: boolean): Promise<void> {
   if (!soundEnabled) return;
   
   try {
-    if (flipPlayer) {
-      flipPlayer.seekTo(0);
-      flipPlayer.play();
+    if (flipDownPlayer) {
+      flipDownPlayer.seekTo(0);
+      flipDownPlayer.play();
     }
   } catch (error) {
     // Sound not available
+  }
+}
+
+export async function playFlipSound(soundEnabled: boolean, direction: "up" | "down" = "up"): Promise<void> {
+  if (direction === "up") {
+    await playFlipUpSound(soundEnabled);
+  } else {
+    await playFlipDownSound(soundEnabled);
   }
 }
 
@@ -100,20 +112,30 @@ export async function playPowerUpSound(soundEnabled: boolean): Promise<void> {
   }
 }
 
-export async function playNearMissSound(soundEnabled: boolean): Promise<void> {
+export function startHeartbeat(soundEnabled: boolean): void {
   if (!soundEnabled) return;
+  stopHeartbeat();
   
-  try {
-    if (scorePlayer) {
-      scorePlayer.volume = 0.5;
-      scorePlayer.seekTo(0);
-      scorePlayer.play();
-      setTimeout(() => {
-        if (scorePlayer) scorePlayer.volume = 1.0;
-      }, 500);
+  const playBeat = () => {
+    try {
+      if (heartbeatPlayer) {
+        heartbeatPlayer.volume = 0.4;
+        heartbeatPlayer.seekTo(0);
+        heartbeatPlayer.play();
+      }
+    } catch (error) {
+      // Sound not available
     }
-  } catch (error) {
-    // Sound not available
+  };
+  
+  playBeat();
+  heartbeatInterval = setInterval(playBeat, 800);
+}
+
+export function stopHeartbeat(): void {
+  if (heartbeatInterval) {
+    clearInterval(heartbeatInterval);
+    heartbeatInterval = null;
   }
 }
 
@@ -275,17 +297,21 @@ export async function triggerMovementHaptic(hapticsEnabled: boolean): Promise<vo
 }
 
 export async function cleanupSounds(): Promise<void> {
+  stopHeartbeat();
+  
   try {
-    if (flipPlayer) flipPlayer.release();
+    if (flipUpPlayer) flipUpPlayer.release();
+    if (flipDownPlayer) flipDownPlayer.release();
     if (gameOverPlayer) gameOverPlayer.release();
     if (scorePlayer) scorePlayer.release();
-    if (tapPlayer) tapPlayer.release();
+    if (heartbeatPlayer) heartbeatPlayer.release();
     if (powerUpPlayer) powerUpPlayer.release();
     
-    flipPlayer = null;
+    flipUpPlayer = null;
+    flipDownPlayer = null;
     gameOverPlayer = null;
     scorePlayer = null;
-    tapPlayer = null;
+    heartbeatPlayer = null;
     powerUpPlayer = null;
     soundsLoaded = false;
   } catch (error) {

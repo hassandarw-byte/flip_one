@@ -89,7 +89,19 @@ The app runs on Expo and can be tested via:
 
 ## Recent Changes
 
-### Latest (Luxury Visual Enhancements)
+### Latest (Sound & HUD Improvements)
+- **Directional Flip Sounds**: Different sounds for flip up vs flip down
+- **Heartbeat Sound**: Tension-building heartbeat during gameplay (stops on game over)
+- **Slow Flash Effect**: Multi-pulse red flash on collision for dramatic death effect
+- **Unified HUD Design**: 4 equally-sized badges with cheerful colors:
+  - LEVEL: Purple gradient
+  - SCORE: Gold gradient
+  - BEST: Pink gradient  
+  - POINTS: Teal gradient
+- **HUD Centering**: All badges have label + value centered horizontally and vertically
+- **No Background Music**: Only sound effects as per user preference
+
+### Previous (Luxury Visual Enhancements)
 - **Sparkle Particle Effects**: 20-30 animated sparkle particles on HomeScreen, LuckyWheelScreen, AchievementsScreen, GameOverScreen
 - **Button Glow Effects**: Animated glow halos on menu buttons with pulsing opacity (0.3-0.8)
 - **Button Shimmer Animation**: Horizontal shimmer sweep across buttons using withRepeat
