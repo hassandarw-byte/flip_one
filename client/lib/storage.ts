@@ -160,7 +160,7 @@ export async function getGameState(): Promise<GameState> {
       AsyncStorage.getItem(KEYS.ACHIEVEMENTS),
     ]);
 
-    const today = new Date().toDateString();
+    const today = new Date().toISOString().split("T")[0]; // Use ISO format for consistency
     let missions: DailyMission[];
 
     if (lastMissionDate !== today || !dailyMissions) {

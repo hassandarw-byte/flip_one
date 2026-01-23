@@ -46,6 +46,7 @@ import {
   triggerDeathFreezeHaptic,
   triggerVictoryHaptic,
   triggerDeathHaptic,
+  triggerMovementHaptic,
   playTapSound,
   playFlipSound,
   playGameOverSound,
@@ -174,6 +175,7 @@ export default function GameScreen() {
   const comboTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastObstaclePassTime = useRef(0);
   const isDyingRef = useRef(false);
+  const lastMovementHapticRef = useRef(0);
   
   const BACKGROUND_GRADIENTS: [string, string][] = [
     ["#1A0A2E", "#2D1B4E"],
@@ -532,6 +534,13 @@ export default function GameScreen() {
     
     gameLoopRef.current = setInterval(() => {
       if (isGameOverRef.current) return;
+
+      // Movement haptic - deep sound every 400ms while playing
+      const now = Date.now();
+      if (gameState?.hapticsEnabled && now - lastMovementHapticRef.current > 400) {
+        lastMovementHapticRef.current = now;
+        triggerMovementHaptic(true);
+      }
 
       // Update floating particles
       setFloatingParticles((prev) =>

@@ -191,6 +191,17 @@ export async function triggerDeathFreezeHaptic(hapticsEnabled: boolean): Promise
   }
 }
 
+export async function triggerMovementHaptic(hapticsEnabled: boolean): Promise<void> {
+  if (!hapticsEnabled) return;
+  
+  try {
+    // Deep, subtle vibration for player movement
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+  } catch (error) {
+    // Haptics may not be available
+  }
+}
+
 export async function cleanupSounds(): Promise<void> {
   // No cleanup needed for haptics
 }
