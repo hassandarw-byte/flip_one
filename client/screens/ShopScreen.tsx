@@ -6,6 +6,8 @@ import {
   Pressable,
   Dimensions,
   ScrollView,
+  Image,
+  ImageSourcePropType,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -49,6 +51,7 @@ interface SkinItem {
   price: number;
   isPremium?: boolean;
   icon?: string;
+  image?: ImageSourcePropType;
 }
 
 interface PowerItem {
@@ -71,13 +74,13 @@ const SKINS: SkinItem[] = [
 ];
 
 const PREMIUM_SKINS: SkinItem[] = [
-  { id: "dark_knight", name: "Dark Knight", colors: ["#1a1a2e", "#16213e"], price: 1000, isPremium: true, icon: "shield" },
-  { id: "web_hero", name: "Web Hero", colors: ["#e63946", "#1d3557"], price: 1500, isPremium: true, icon: "target" },
-  { id: "green_giant", name: "Green Giant", colors: ["#2d6a4f", "#40916c"], price: 2000, isPremium: true, icon: "zap" },
-  { id: "iron_armor", name: "Iron Armor", colors: ["#c1121f", "#ffd60a"], price: 2500, isPremium: true, icon: "cpu" },
-  { id: "ice_queen", name: "Ice Queen", colors: ["#90e0ef", "#48cae4"], price: 3000, isPremium: true, icon: "star" },
-  { id: "kawaii_cat", name: "Kawaii Cat", colors: ["#ffb6c1", "#ff69b4"], price: 3500, isPremium: true, icon: "heart" },
-  { id: "captain_star", name: "Captain Star", colors: ["#002855", "#bf0a30"], price: 5000, isPremium: true, icon: "award" },
+  { id: "dark_knight", name: "Dark Knight", colors: ["#1a1a2e", "#16213e"], price: 1000, isPremium: true, icon: "shield", image: require("@/assets/images/dark-knight.png") },
+  { id: "web_hero", name: "Web Hero", colors: ["#e63946", "#1d3557"], price: 1500, isPremium: true, icon: "target", image: require("@/assets/images/web-hero.png") },
+  { id: "green_giant", name: "Green Giant", colors: ["#2d6a4f", "#40916c"], price: 2000, isPremium: true, icon: "zap", image: require("@/assets/images/green-giant.png") },
+  { id: "iron_armor", name: "Iron Armor", colors: ["#c1121f", "#ffd60a"], price: 2500, isPremium: true, icon: "cpu", image: require("@/assets/images/iron-armor.png") },
+  { id: "ice_queen", name: "Ice Queen", colors: ["#90e0ef", "#48cae4"], price: 3000, isPremium: true, icon: "star", image: require("@/assets/images/ice-queen.png") },
+  { id: "kawaii_cat", name: "Kawaii Cat", colors: ["#ffb6c1", "#ff69b4"], price: 3500, isPremium: true, icon: "heart", image: require("@/assets/images/kawaii-cat.png") },
+  { id: "captain_star", name: "Captain Star", colors: ["#002855", "#bf0a30"], price: 5000, isPremium: true, icon: "award", image: require("@/assets/images/captain-star.png") },
 ];
 
 const SPECIAL_POWERS: PowerItem[] = [
@@ -516,16 +519,22 @@ function PremiumSkinCard({ skin, isOwned, isEquipped, canAfford, onPress }: Prem
               style={styles.premiumGlowGradient}
             />
           </Animated.View>
-          <LinearGradient
-            colors={skin.colors}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.skinPreview}
-          >
-            {skin.icon ? (
-              <Feather name={skin.icon as any} size={24} color="#FFFFFF" />
-            ) : null}
-          </LinearGradient>
+          {skin.image ? (
+            <View style={styles.characterImageContainer}>
+              <Image source={skin.image} style={styles.characterImage} />
+            </View>
+          ) : (
+            <LinearGradient
+              colors={skin.colors}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.skinPreview}
+            >
+              {skin.icon ? (
+                <Feather name={skin.icon as any} size={24} color="#FFFFFF" />
+              ) : null}
+            </LinearGradient>
+          )}
           {isEquipped ? (
             <View style={styles.equippedBadge}>
               <Feather name="check" size={14} color="#FFFFFF" />
@@ -737,6 +746,22 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  characterImageContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    overflow: "hidden",
+    backgroundColor: GameColors.surface,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: GameColors.gold + "40",
+  },
+  characterImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+  },
   premiumGlow: {
     position: "absolute",
     top: -8,
@@ -777,6 +802,8 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.full,
     borderWidth: 1,
     borderColor: GameColors.success + "40",
+    alignItems: "center",
+    justifyContent: "center",
   },
   ownedText: {
     fontSize: 11,
@@ -786,6 +813,7 @@ const styles = StyleSheet.create({
   priceTag: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     gap: Spacing.xs,
     backgroundColor: GameColors.gold + "20",
     paddingHorizontal: Spacing.md,
@@ -805,6 +833,7 @@ const styles = StyleSheet.create({
   premiumPriceTag: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     gap: Spacing.xs,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
@@ -852,6 +881,7 @@ const styles = StyleSheet.create({
   watchAdButton: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     gap: Spacing.xs,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
