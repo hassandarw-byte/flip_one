@@ -1057,8 +1057,8 @@ export default function GameScreen() {
                 left: obs.x - obs.width / 2,
                 top:
                   obs.track === "top"
-                    ? trackTopY + (TRACK_HEIGHT - obs.height) / 2
-                    : trackBottomY + (TRACK_HEIGHT - obs.height) / 2,
+                    ? trackTopY + TRACK_HEIGHT - obs.height
+                    : trackBottomY - obs.height + 4,
               },
             ]}
           >
