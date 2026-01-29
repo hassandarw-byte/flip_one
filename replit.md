@@ -96,9 +96,6 @@ The app runs on Expo and can be tested via:
 - **Slow-Motion Death**: Dramatic slow-motion effect on collision before game over
 - **Distance Counter**: Real-time distance traveled display in HUD
 - **Smart Obstacle Patterns**: Obstacles alternate between tracks at higher scores
-- **Boss Levels**: Every 50 points spawns large red obstacles on alternating tracks
-- **Collectibles System**: Random power-ups spawn (stars +5pts, hearts shield, gems +10pts)
-- **Fever Mode**: 5-second invincibility with rainbow glow after 20 consecutive points
 - **Daily Challenges**: 5 challenge types with 75-150 point rewards (no_power, high_score, distance, fever, collect)
 - **Free Daily Revive**: One free continue per day tracked with date checking
 - **Card Suit Orientation**: Top track obstacles rotated 180° to face inward
