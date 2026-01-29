@@ -1425,14 +1425,14 @@ const styles = StyleSheet.create({
     minHeight: 36,
   },
   hudLabel: {
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: "700",
     color: "rgba(255,255,255,0.95)",
     textAlign: "center",
-    marginBottom: 0,
+    marginBottom: 1,
   },
   hudValue: {
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: "800",
     color: "#FFFFFF",
     textAlign: "center",

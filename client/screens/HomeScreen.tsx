@@ -227,7 +227,7 @@ export default function HomeScreen() {
               end={{ x: 1, y: 1 }}
               style={styles.playButtonGradient}
             >
-              <Feather name="play" size={32} color={GameColors.background} style={styles.playIcon} />
+              <Feather name="play" size={24} color={GameColors.background} style={styles.playIcon} />
               <ThemedText style={styles.playButtonText}>PLAY</ThemedText>
             </LinearGradient>
           </AnimatedPressable>
@@ -496,35 +496,35 @@ const styles = StyleSheet.create({
   },
   playButtonGlow: {
     position: "absolute",
-    width: width * 0.55,
-    height: 60,
+    width: width * 0.45,
+    height: 48,
     backgroundColor: GameColors.player,
-    borderRadius: BorderRadius.lg,
+    borderRadius: BorderRadius.md,
     shadowColor: GameColors.player,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
-    shadowRadius: 30,
+    shadowRadius: 25,
   },
   playButton: {
-    width: width * 0.5,
-    height: 54,
-    borderRadius: BorderRadius.lg,
+    width: width * 0.4,
+    height: 44,
+    borderRadius: BorderRadius.md,
     overflow: "hidden",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 6 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
-    shadowRadius: 12,
-    elevation: 12,
+    shadowRadius: 10,
+    elevation: 10,
   },
   playButtonGradient: {
     flex: 1,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    gap: Spacing.sm,
+    gap: Spacing.xs,
   },
   playIcon: {
-    marginRight: Spacing.xs,
+    marginRight: 2,
   },
   playButtonText: {
     fontSize: 22,

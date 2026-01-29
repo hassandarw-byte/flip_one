@@ -101,6 +101,11 @@ export default function AdModal({ visible, onClose, onComplete, rewardName }: Ad
         if (prev <= 1) {
           clearInterval(timer);
           setCanClose(true);
+          // Auto-complete after countdown
+          setTimeout(() => {
+            onComplete();
+            onClose();
+          }, 500);
           return 0;
         }
         return prev - 1;
@@ -213,31 +218,21 @@ export default function AdModal({ visible, onClose, onComplete, rewardName }: Ad
               {canClose ? `Claim your ${rewardName}!` : `Reward: ${rewardName}`}
             </ThemedText>
             
-            {!canClose ? (
-              <View style={styles.progressContainer}>
-                <View style={styles.progressBackground}>
-                  <Animated.View style={[styles.progressFill, progressStyle]}>
-                    <LinearGradient
-                      colors={[GameColors.gold, GameColors.goldGlow]}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 0 }}
-                      style={StyleSheet.absoluteFill}
-                    />
-                  </Animated.View>
-                </View>
-                <ThemedText style={styles.countdownText}>{countdown}s</ThemedText>
+            <View style={styles.progressContainer}>
+              <View style={styles.progressBackground}>
+                <Animated.View style={[styles.progressFill, progressStyle]}>
+                  <LinearGradient
+                    colors={[GameColors.gold, GameColors.goldGlow]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={StyleSheet.absoluteFill}
+                  />
+                </Animated.View>
               </View>
-            ) : (
-              <Pressable style={styles.claimButton} onPress={handleComplete}>
-                <LinearGradient
-                  colors={[GameColors.success, GameColors.successGlow]}
-                  style={styles.claimButtonGradient}
-                >
-                  <Feather name="check-circle" size={24} color="#FFFFFF" />
-                  <ThemedText style={styles.claimButtonText}>Claim Reward</ThemedText>
-                </LinearGradient>
-              </Pressable>
-            )}
+              <ThemedText style={styles.countdownText}>
+                {canClose ? "Continuing..." : `${countdown}s`}
+              </ThemedText>
+            </View>
             
             {!IS_DEVELOPMENT_BUILD && (
               <ThemedText style={styles.disclaimerText}>

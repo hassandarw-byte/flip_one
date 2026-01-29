@@ -11,7 +11,7 @@ let powerUpPlayer: AudioPlayer | null = null;
 const FLIP_UP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3";
 const FLIP_DOWN_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3";
 const GAME_OVER_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2656/2656-preview.mp3";
-const SCORE_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3";
+const SCORE_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3";
 const TENSION_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2457/2457-preview.mp3";
 const POWER_UP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3";
 

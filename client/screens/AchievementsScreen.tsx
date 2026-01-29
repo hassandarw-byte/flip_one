@@ -116,7 +116,7 @@ export default function AchievementsScreen() {
         contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + Spacing.xl }]}
         showsVerticalScrollIndicator={false}
       >
-        {achievements.map((achievement) => (
+        {[...achievements].sort((a, b) => a.reward - b.reward).map((achievement) => (
           <AchievementCard key={achievement.id} achievement={achievement} />
         ))}
       </ScrollView>

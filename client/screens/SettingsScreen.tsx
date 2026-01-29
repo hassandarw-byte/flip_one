@@ -181,7 +181,7 @@ export default function SettingsScreen() {
               <Image source={appIcon} style={styles.aboutLogo} />
               <ThemedText style={styles.appName}>Flip One</ThemedText>
               <ThemedText style={styles.appVersion}>Version 1.0.0</ThemedText>
-              <ThemedText style={styles.developerText}>HHD Apps</ThemedText>
+              <ThemedText style={styles.developerText}>© 2026 HHD Apps</ThemedText>
             </LinearGradient>
           </View>
         </Animated.View>
