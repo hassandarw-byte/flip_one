@@ -89,7 +89,21 @@ The app runs on Expo and can be tested via:
 
 ## Recent Changes
 
-### Latest (Premium Shop & Sound Updates)
+### Latest (Advanced Gameplay Enhancements)
+- **Trail Effect**: Player leaves animated particle trail while moving
+- **Obstacle Pulse**: Obstacles have subtle pulse animation for visual appeal
+- **Moving Background Stars**: Animated stars drift across the background
+- **Slow-Motion Death**: Dramatic slow-motion effect on collision before game over
+- **Distance Counter**: Real-time distance traveled display in HUD
+- **Smart Obstacle Patterns**: Obstacles alternate between tracks at higher scores
+- **Boss Levels**: Every 50 points spawns large red obstacles on alternating tracks
+- **Collectibles System**: Random power-ups spawn (stars +5pts, hearts shield, gems +10pts)
+- **Fever Mode**: 5-second invincibility with rainbow glow after 20 consecutive points
+- **Daily Challenges**: 5 challenge types with 75-150 point rewards (no_power, high_score, distance, fever, collect)
+- **Free Daily Revive**: One free continue per day tracked with date checking
+- **Card Suit Orientation**: Top track obstacles rotated 180° to face inward
+
+### Previous (Premium Shop & Sound Updates)
 - **Premium Skin Purchases**: Premium characters now purchasable with in-game points (1000-5000 points)
 - **Character Images**: Superhero character avatars displayed on premium skin buttons
 - **Soft Emergency Siren**: Replaced heartbeat sound with softer siren alert during gameplay
