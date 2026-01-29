@@ -854,21 +854,27 @@ export default function GameScreen() {
         });
       }, SPAWN_INTERVAL);
       
-      // Spawn collectibles (hearts and stars)
+      // Spawn collectibles (hearts and stars) on player track levels
       collectibleSpawnRef.current = setInterval(() => {
         if (isGameOverRef.current) return;
         
         const collectibleTypes: Collectible["type"][] = ["heart", "star"];
         const type = collectibleTypes[Math.floor(Math.random() * collectibleTypes.length)];
-        const playAreaTop = trackTopY + TRACK_HEIGHT + 20;
-        const playAreaBottom = trackBottomY - 20;
+        const collectibleSize = 28;
+        
+        // Spawn on one of the two tracks (same Y as player positions)
+        const isTopTrack = Math.random() > 0.5;
+        // Match player Y positions for collision detection
+        const collectibleY = isTopTrack 
+          ? trackTopY + TRACK_HEIGHT - 4 - collectibleSize / 2  // Top track (player center)
+          : trackBottomY - PLAYER_SIZE + 4;                      // Bottom track (player top)
         
         const newCollectible: Collectible = {
           id: collectibleIdRef.current++,
           x: width + 30,
-          y: playAreaTop + Math.random() * (playAreaBottom - playAreaTop - 30),
+          y: collectibleY,
           type,
-          size: 28,
+          size: collectibleSize,
           collected: false,
         };
         
