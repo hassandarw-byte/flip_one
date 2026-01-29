@@ -224,8 +224,8 @@ export default function GameScreen() {
   
   const BACKGROUND_GRADIENTS = isNightMode ? NIGHT_GRADIENTS : DAY_GRADIENTS;
 
-  const trackTopY = height / 2 - TRACK_HEIGHT - 30;
-  const trackBottomY = height / 2 + 30;
+  const trackTopY = height / 2 - TRACK_HEIGHT - 60;
+  const trackBottomY = height / 2 + 60;
 
   useEffect(() => {
     loadGameState();
@@ -1409,20 +1409,20 @@ const styles = StyleSheet.create({
   },
   hudBadge: {
     flex: 1,
-    marginHorizontal: 3,
+    marginHorizontal: 2,
     borderRadius: BorderRadius.sm,
     overflow: "hidden",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
-    shadowRadius: 6,
+    shadowRadius: 4,
   },
   hudGradient: {
-    paddingVertical: 4,
-    paddingHorizontal: 4,
+    paddingVertical: 2,
+    paddingHorizontal: 3,
     borderRadius: BorderRadius.sm,
     alignItems: "center",
     justifyContent: "center",
-    minHeight: 36,
+    minHeight: 28,
   },
   hudLabel: {
     fontSize: 11,
