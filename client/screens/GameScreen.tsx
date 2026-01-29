@@ -935,7 +935,7 @@ export default function GameScreen() {
               },
             ]}
           >
-            <ObstacleShape obstacle={obs} />
+            <ObstacleShape obstacle={obs} track={obs.track} />
           </View>
         ))}
 
@@ -1171,15 +1171,16 @@ const powerStyles = StyleSheet.create({
   },
 });
 
-function ObstacleShape({ obstacle }: { obstacle: Obstacle }) {
+function ObstacleShape({ obstacle, track }: { obstacle: Obstacle; track: "top" | "bottom" }) {
   const { type, color, width: w, height: h } = obstacle;
   const size = Math.min(w, h) * 0.85;
   const strokeWidth = 2;
+  const rotation = track === "top" ? "180deg" : "0deg";
 
   switch (type) {
     case "spade":
       return (
-        <View style={[suitStyles.container, { width: w, height: h }]}>
+        <View style={[suitStyles.container, { width: w, height: h, transform: [{ rotate: rotation }] }]}>
           <Svg width={size} height={size} viewBox="0 0 100 100">
             <Path
               d="M50 5 C50 5 10 35 10 55 C10 70 22 80 35 75 L35 78 C35 78 30 85 28 92 L72 92 C70 85 65 78 65 78 L65 75 C78 80 90 70 90 55 C90 35 50 5 50 5 Z"
@@ -1205,7 +1206,7 @@ function ObstacleShape({ obstacle }: { obstacle: Obstacle }) {
       );
     case "heart":
       return (
-        <View style={[suitStyles.container, { width: w, height: h }]}>
+        <View style={[suitStyles.container, { width: w, height: h, transform: [{ rotate: rotation }] }]}>
           <Svg width={size} height={size} viewBox="0 0 100 100">
             <Path
               d="M50 88 C50 88 10 55 10 35 C10 15 30 10 50 30 C70 10 90 15 90 35 C90 55 50 88 50 88 Z"
@@ -1218,7 +1219,7 @@ function ObstacleShape({ obstacle }: { obstacle: Obstacle }) {
       );
     case "club":
       return (
-        <View style={[suitStyles.container, { width: w, height: h }]}>
+        <View style={[suitStyles.container, { width: w, height: h, transform: [{ rotate: rotation }] }]}>
           <Svg width={size} height={size} viewBox="0 0 100 100">
             <Circle cx="50" cy="25" r="20" fill={color} stroke="#FFFFFF" strokeWidth={strokeWidth} />
             <Circle cx="25" cy="55" r="20" fill={color} stroke="#FFFFFF" strokeWidth={strokeWidth} />
