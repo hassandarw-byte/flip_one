@@ -133,13 +133,13 @@ export default function HomeScreen() {
 
   const handleShare = async () => {
     try {
-      const message = Platform.OS === 'ios' 
-        ? "Check out Flip One - the addictive gravity-flipping game! Flip the world. Stay alive."
-        : "Check out Flip One - the addictive gravity-flipping game! Flip the world. Stay alive. Download now!";
+      const appLink = "https://play.google.com/store/apps/details?id=com.hhdapps.flipone";
+      const message = `Check out Flip One - the addictive gravity-flipping game! Flip the world. Stay alive. Download now!\n\n${appLink}`;
       
       await Share.share({
         message,
         title: "Flip One",
+        url: appLink,
       });
     } catch (error) {
       console.log("Share error:", error);
@@ -246,41 +246,41 @@ export default function HomeScreen() {
             icon="shopping-bag"
             label="Shop"
             onPress={() => navigation.navigate("Shop")}
-            colors={[GameColors.candy4, GameColors.primaryGlow]}
+            colors={["#FF6B9D", "#C44569"]}
           />
           <MenuButton
             icon="target"
             label="Missions"
             onPress={() => navigation.navigate("Missions")}
-            colors={[GameColors.candy6, GameColors.successGlow]}
+            colors={["#4ECDC4", "#26A69A"]}
             badge={gameState?.dailyMissions.filter((m) => m.completed && !m.claimed).length}
           />
           <MenuButton
             icon="award"
             label="Ranks"
             onPress={() => navigation.navigate("Leaderboard")}
-            colors={[GameColors.gold, GameColors.goldGlow]}
-          />
-          <MenuButton
-            icon="settings"
-            label="Settings"
-            onPress={() => navigation.navigate("Settings")}
-            colors={[GameColors.candy5, GameColors.secondaryGlow]}
+            colors={["#FFD93D", "#F4A020"]}
           />
         </View>
         
-        <View style={styles.secondaryMenuRow}>
+        <View style={styles.menuRow}>
           <MenuButton
             icon="gift"
             label="Wheel"
             onPress={() => navigation.navigate("LuckyWheel")}
-            colors={["#FF9F43", "#F39C12"]}
+            colors={["#FF9F43", "#E67E22"]}
           />
           <MenuButton
             icon="star"
             label="Awards"
             onPress={() => navigation.navigate("Achievements")}
-            colors={["#9B59B6", "#8E44AD"]}
+            colors={["#A66CFF", "#7B4FD0"]}
+          />
+          <MenuButton
+            icon="settings"
+            label="Settings"
+            onPress={() => navigation.navigate("Settings")}
+            colors={["#74B9FF", "#4A90D9"]}
           />
         </View>
 
@@ -361,7 +361,7 @@ function MenuButton({ icon, label, onPress, colors, badge }: MenuButtonProps) {
           end={{ x: 1, y: 1 }}
           style={styles.menuButtonIcon}
         >
-          <Feather name={icon} size={26} color="#FFFFFF" />
+          <Feather name={icon} size={22} color="#FFFFFF" />
           {badge && badge > 0 ? (
             <View style={styles.badge}>
               <ThemedText style={styles.badgeText}>{badge}</ThemedText>
@@ -486,8 +486,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: Spacing["2xl"],
-    paddingBottom: Spacing.lg,
+    marginTop: Spacing.xl,
+    paddingTop: Spacing.lg,
   },
   playButtonContainer: {
     position: "relative",
@@ -540,18 +540,13 @@ const styles = StyleSheet.create({
   },
   menuRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: Spacing.xl,
-  },
-  secondaryMenuRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: Spacing.xl,
-    marginBottom: Spacing.xl,
+    justifyContent: "space-around",
+    marginBottom: Spacing.lg,
+    paddingHorizontal: Spacing.md,
   },
   menuButton: {
     alignItems: "center",
-    width: (width - Spacing.xl * 2 - Spacing.lg * 3) / 4,
+    width: (width - Spacing.xl * 2) / 3.5,
   },
   menuButtonWrapper: {
     position: "relative",
@@ -560,27 +555,27 @@ const styles = StyleSheet.create({
   },
   menuButtonGlow: {
     position: "absolute",
-    width: 58,
-    height: 58,
-    borderRadius: 29,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 12,
+    shadowOpacity: 1,
+    shadowRadius: 15,
   },
   menuButtonIcon: {
-    width: 52,
-    height: 52,
-    borderRadius: BorderRadius.lg,
+    width: 46,
+    height: 46,
+    borderRadius: BorderRadius.md,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    elevation: 10,
   },
   menuButtonLabel: {
-    fontSize: 13,
+    fontSize: 11,
     color: GameColors.textSecondary,
     marginTop: Spacing.xs,
     fontWeight: "700",
