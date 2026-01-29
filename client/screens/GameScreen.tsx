@@ -123,6 +123,32 @@ interface ExplosionParticle {
   life: number;
 }
 
+interface TrailParticle {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
+  opacity: number;
+  color: string;
+}
+
+interface Collectible {
+  id: number;
+  x: number;
+  y: number;
+  type: "star" | "heart" | "gem";
+  collected: boolean;
+}
+
+interface BackgroundStar {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
+  speed: number;
+  opacity: number;
+}
+
 export default function GameScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -146,6 +172,14 @@ export default function GameScreen() {
   const [flipParticles, setFlipParticles] = useState<FlipParticle[]>([]);
   const [deathFlashOpacity, setDeathFlashOpacity] = useState(0);
   const [showNearMissFrame, setShowNearMissFrame] = useState(false);
+  const [trailParticles, setTrailParticles] = useState<TrailParticle[]>([]);
+  const [collectibles, setCollectibles] = useState<Collectible[]>([]);
+  const [backgroundStars, setBackgroundStars] = useState<BackgroundStar[]>([]);
+  const [distance, setDistance] = useState(0);
+  const [isFeverMode, setIsFeverMode] = useState(false);
+  const [feverTimeLeft, setFeverTimeLeft] = useState(0);
+  const [isBossLevel, setIsBossLevel] = useState(false);
+  const [consecutiveScore, setConsecutiveScore] = useState(0);
   
   const currentTrackRef = useRef<"top" | "bottom">("bottom");
   const freezeActiveRef = useRef(false);
@@ -179,6 +213,13 @@ export default function GameScreen() {
   const lastObstaclePassTime = useRef(0);
   const isDyingRef = useRef(false);
   const lastMovementHapticRef = useRef(0);
+  const trailIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const collectibleIdRef = useRef(0);
+  const feverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastBossScoreRef = useRef(0);
+  
+  const obstacleScale = useSharedValue(1);
+  const feverGlow = useSharedValue(0);
   
   const DAY_GRADIENTS: [string, string][] = [
     ["#1A0A2E", "#2D1B4E"],
@@ -301,6 +342,97 @@ export default function GameScreen() {
       setExplosionParticles(prev => prev.filter(p => !particles.find(np => np.id === p.id)));
     }, 500);
   }, [gameState?.hapticsEnabled]);
+
+  const handleCollectItem = useCallback((type: "star" | "heart" | "gem") => {
+    if (gameState?.soundEnabled) {
+      playScoreSound(true);
+    }
+    if (gameState?.hapticsEnabled) {
+      triggerVictoryHaptic(true);
+    }
+    
+    switch (type) {
+      case "star":
+        setScore(s => s + 5);
+        break;
+      case "heart":
+        // Activate temporary shield
+        hasShieldRef.current = true;
+        setActivePowers(prev => [...prev, { type: "shield", expiresAt: Date.now() + 10000 }]);
+        setActivePowerTypes(prev => [...prev, "shield"]);
+        setTimeout(() => {
+          if (hasShieldRef.current) {
+            hasShieldRef.current = false;
+            setActivePowers(p => p.filter(pw => pw.type !== "shield"));
+            setActivePowerTypes(p => p.filter(pt => pt !== "shield"));
+          }
+        }, 10000);
+        break;
+      case "gem":
+        setScore(s => s + 10);
+        break;
+    }
+  }, [gameState?.soundEnabled, gameState?.hapticsEnabled]);
+
+  const activateFeverMode = useCallback(() => {
+    setIsFeverMode(true);
+    setFeverTimeLeft(5);
+    hasShieldRef.current = true;
+    
+    feverGlow.value = withRepeat(
+      withSequence(
+        withTiming(1, { duration: 200 }),
+        withTiming(0.3, { duration: 200 })
+      ),
+      -1,
+      true
+    );
+    
+    if (gameState?.soundEnabled) {
+      playPowerUpSound(true);
+    }
+    if (gameState?.hapticsEnabled) {
+      triggerPowerUpHaptic(true, 'doublePoints');
+    }
+    
+    // Countdown timer
+    let remaining = 5;
+    const interval = setInterval(() => {
+      remaining--;
+      setFeverTimeLeft(remaining);
+      if (remaining <= 0) {
+        clearInterval(interval);
+        setIsFeverMode(false);
+        hasShieldRef.current = false;
+        feverGlow.value = withTiming(0, { duration: 300 });
+      }
+    }, 1000);
+    
+    feverTimeoutRef.current = setTimeout(() => {
+      setIsFeverMode(false);
+      hasShieldRef.current = false;
+      feverGlow.value = withTiming(0, { duration: 300 });
+    }, 5000);
+  }, [gameState?.soundEnabled, gameState?.hapticsEnabled]);
+
+  const spawnCollectible = useCallback(() => {
+    const types: Array<"star" | "heart" | "gem"> = ["star", "star", "star", "gem", "heart"];
+    const type = types[Math.floor(Math.random() * types.length)];
+    const track = Math.random() > 0.5 ? "top" : "bottom";
+    const y = track === "top" 
+      ? trackTopY + TRACK_HEIGHT - 20 
+      : trackBottomY + 20;
+    
+    const newCollectible: Collectible = {
+      id: collectibleIdRef.current++,
+      x: width + 30,
+      y,
+      type,
+      collected: false,
+    };
+    
+    setCollectibles(prev => [...prev, newCollectible]);
+  }, [trackTopY, trackBottomY]);
 
   const triggerScreenShake = useCallback(() => {
     screenShakeX.value = withSequence(
@@ -459,6 +591,16 @@ export default function GameScreen() {
       clearInterval(scoreIntervalRef.current);
       scoreIntervalRef.current = null;
     }
+    if (trailIntervalRef.current) {
+      clearInterval(trailIntervalRef.current);
+      trailIntervalRef.current = null;
+    }
+    if (feverTimeoutRef.current) {
+      clearTimeout(feverTimeoutRef.current);
+      feverTimeoutRef.current = null;
+    }
+    setTrailParticles([]);
+    setCollectibles([]);
   }, []);
 
   const handleGameOver = useCallback(async () => {
@@ -552,9 +694,54 @@ export default function GameScreen() {
     isGameOverRef.current = false;
     isDyingRef.current = false;
     currentTrackRef.current = "bottom";
+    lastBossScoreRef.current = 0;
     
-    // Clear any leftover obstacles from previous game
+    // Clear any leftover obstacles and collectibles from previous game
     setObstacles([]);
+    setCollectibles([]);
+    setDistance(0);
+    setIsFeverMode(false);
+    setFeverTimeLeft(0);
+    setIsBossLevel(false);
+    setConsecutiveScore(0);
+    
+    // Initialize background stars
+    const stars: BackgroundStar[] = Array.from({ length: 40 }).map((_, i) => ({
+      id: i,
+      x: Math.random() * width,
+      y: Math.random() * height,
+      size: Math.random() * 2 + 1,
+      speed: Math.random() * 0.5 + 0.2,
+      opacity: Math.random() * 0.6 + 0.2,
+    }));
+    setBackgroundStars(stars);
+    
+    // Start obstacle pulse animation
+    obstacleScale.value = withRepeat(
+      withSequence(
+        withTiming(1.08, { duration: 600, easing: Easing.inOut(Easing.ease) }),
+        withTiming(1, { duration: 600, easing: Easing.inOut(Easing.ease) })
+      ),
+      -1,
+      true
+    );
+    
+    // Start trail effect
+    trailIntervalRef.current = setInterval(() => {
+      if (isGameOverRef.current) return;
+      const colors = ["#FFD93D", "#FFA726", "#FF9800"];
+      const newTrail: TrailParticle = {
+        id: Date.now(),
+        x: playerX - PLAYER_SIZE / 2 - 5,
+        y: currentTrackRef.current === "bottom" 
+          ? trackBottomY - PLAYER_SIZE / 2 + 4 
+          : trackTopY + TRACK_HEIGHT + PLAYER_SIZE / 2 - 4,
+        size: Math.random() * 8 + 6,
+        opacity: 0.7,
+        color: colors[Math.floor(Math.random() * colors.length)],
+      };
+      setTrailParticles(prev => [...prev.slice(-8), newTrail]);
+    }, 80);
     
     // Initialize floating distraction particles - more particles with vibrant colors
     const distractionColors = [
@@ -595,6 +782,48 @@ export default function GameScreen() {
           x: particle.x - particle.speed > -20 ? particle.x - particle.speed : width + 20,
         }))
       );
+      
+      // Update background stars
+      setBackgroundStars((prev) =>
+        prev.map((star) => ({
+          ...star,
+          x: star.x - star.speed > -10 ? star.x - star.speed : width + 10,
+        }))
+      );
+      
+      // Update distance
+      setDistance(d => d + gameSpeedRef.current * 0.1);
+      
+      // Update trail particles opacity
+      setTrailParticles(prev => 
+        prev.map(p => ({ ...p, opacity: p.opacity * 0.92 }))
+          .filter(p => p.opacity > 0.1)
+      );
+      
+      // Update collectibles
+      setCollectibles((prev) => {
+        const playerLeft = playerX - PLAYER_SIZE / 2;
+        const playerRight = playerX + PLAYER_SIZE / 2;
+        const playerTop = currentTrackRef.current === "bottom" 
+          ? trackBottomY - PLAYER_SIZE + 4 
+          : trackTopY + TRACK_HEIGHT - 4;
+        const playerBottom = playerTop + PLAYER_SIZE;
+        
+        return prev.map(c => {
+          if (c.collected) return c;
+          const newX = c.x - gameSpeedRef.current;
+          
+          // Check collection
+          if (newX > playerLeft - 20 && newX < playerRight + 20 &&
+              c.y > playerTop - 20 && c.y < playerBottom + 20) {
+            // Collected!
+            runOnJS(handleCollectItem)(c.type);
+            return { ...c, x: newX, collected: true };
+          }
+          
+          return { ...c, x: newX };
+        }).filter(c => c.x > -50 && !c.collected);
+      });
 
       setObstacles((prev) => {
         if (freezeActiveRef.current) {
@@ -672,13 +901,50 @@ export default function GameScreen() {
       obstacleSpawnRef.current = setInterval(() => {
         if (isGameOverRef.current) return;
         
-        const track: "top" | "bottom" = Math.random() > 0.5 ? "top" : "bottom";
-        const suitConfig = cardSuits[Math.floor(Math.random() * cardSuits.length)];
-        
         setScore(currentScore => {
+          // Boss Level check - every 50 points
+          if (currentScore > 0 && currentScore % 50 === 0 && lastBossScoreRef.current !== currentScore) {
+            lastBossScoreRef.current = currentScore;
+            setIsBossLevel(true);
+            // Boss: spawn double obstacles on both tracks
+            const bossObstacles: Obstacle[] = [
+              {
+                id: obstacleIdRef.current++,
+                x: width + 50,
+                track: "top",
+                type: "spade",
+                color: "#8B0000",
+                width: 52,
+                height: 52,
+              },
+              {
+                id: obstacleIdRef.current++,
+                x: width + 120,
+                track: "bottom",
+                type: "spade",
+                color: "#8B0000",
+                width: 52,
+                height: 52,
+              },
+            ];
+            setObstacles(prev => [...prev, ...bossObstacles]);
+            setTimeout(() => setIsBossLevel(false), 2000);
+            return currentScore;
+          }
+          
+          // Smart patterns - alternating tracks
+          let track: "top" | "bottom";
+          if (currentScore >= 30 && Math.random() > 0.7) {
+            // Pattern mode: alternating obstacles
+            const lastObs = obstacles[obstacles.length - 1];
+            track = lastObs?.track === "top" ? "bottom" : "top";
+          } else {
+            track = Math.random() > 0.5 ? "top" : "bottom";
+          }
+          
+          const suitConfig = cardSuits[Math.floor(Math.random() * cardSuits.length)];
           const obstacleHeight = currentScore >= 20 ? 44 : 36;
           const obstacleWidth = currentScore >= 20 ? 44 : 36;
-          
           const minGap = currentScore >= 40 ? 100 : MIN_OBSTACLE_GAP;
           
           const newObstacle: Obstacle = {
@@ -697,6 +963,11 @@ export default function GameScreen() {
             return [...prev, newObstacle];
           });
           
+          // Spawn collectibles randomly (10% chance)
+          if (Math.random() < 0.1) {
+            spawnCollectible();
+          }
+          
           return currentScore;
         });
       }, SPAWN_INTERVAL);
@@ -710,6 +981,17 @@ export default function GameScreen() {
         const baseIncrement = doublePointsRef.current ? 2 : 1;
         const increment = Math.floor(baseIncrement * comboMultiplier);
         const newScore = prev + increment;
+        
+        // Track consecutive score for Fever Mode
+        setConsecutiveScore(cs => {
+          const newCs = cs + 1;
+          if (newCs >= 20 && !isFeverMode) {
+            activateFeverMode();
+            return 0;
+          }
+          return newCs;
+        });
+        
         if (newScore % LEVEL_INCREASE_INTERVAL === 0) {
           setLevel((prevLevel) => {
             const newLevel = prevLevel + 1;
@@ -728,7 +1010,7 @@ export default function GameScreen() {
         return newScore;
       });
     }, 600);
-  }, [playerX, handleGameOver, scoreScale]);
+  }, [playerX, handleGameOver, scoreScale, isFeverMode, activateFeverMode, spawnCollectible, obstacles]);
 
   const handleFlip = useCallback(() => {
     if (isGameOverRef.current || isDyingRef.current) return;
@@ -840,6 +1122,39 @@ export default function GameScreen() {
           />
         ))}
       </View>
+      
+      {backgroundStars.map((star) => (
+        <View
+          key={`star-${star.id}`}
+          style={[
+            styles.backgroundStar,
+            {
+              left: star.x,
+              top: star.y,
+              width: star.size,
+              height: star.size,
+              opacity: star.opacity,
+            },
+          ]}
+        />
+      ))}
+      
+      {trailParticles.map((particle) => (
+        <View
+          key={`trail-${particle.id}`}
+          style={[
+            styles.trailParticle,
+            {
+              left: particle.x,
+              top: particle.y,
+              width: particle.size,
+              height: particle.size,
+              backgroundColor: particle.color,
+              opacity: particle.opacity,
+            },
+          ]}
+        />
+      ))}
 
       <View style={[styles.scoreContainer, { top: insets.top + Spacing.lg }]}>
         <View style={[styles.hudBadge, { shadowColor: "#A66CFF" }]}>
@@ -877,11 +1192,36 @@ export default function GameScreen() {
             colors={["#4ECDC4", "#26A69A"]}
             style={styles.hudGradient}
           >
-            <ThemedText style={styles.hudLabel}>POINTS</ThemedText>
-            <ThemedText style={styles.hudValue}>{gameState?.points || 0}</ThemedText>
+            <ThemedText style={styles.hudLabel}>DIST</ThemedText>
+            <ThemedText style={styles.hudValue}>{Math.floor(distance)}m</ThemedText>
           </LinearGradient>
         </View>
       </View>
+      
+      {isFeverMode ? (
+        <View style={styles.feverContainer}>
+          <LinearGradient
+            colors={["#FFD700", "#FF6B6B", "#A66CFF"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.feverBadge}
+          >
+            <ThemedText style={styles.feverText}>FEVER MODE! {feverTimeLeft}s</ThemedText>
+          </LinearGradient>
+        </View>
+      ) : null}
+      
+      {isBossLevel ? (
+        <View style={styles.bossContainer}>
+          <LinearGradient
+            colors={["#8B0000", "#DC143C"]}
+            style={styles.bossBadge}
+          >
+            <Feather name="alert-triangle" size={16} color="#FFFFFF" />
+            <ThemedText style={styles.bossText}>BOSS LEVEL!</ThemedText>
+          </LinearGradient>
+        </View>
+      ) : null}
 
       <Animated.View style={[styles.gameWorld, worldAnimatedStyle]}>
         <View style={[styles.track, { top: trackTopY }]}>
@@ -936,6 +1276,27 @@ export default function GameScreen() {
             ]}
           >
             <ObstacleShape obstacle={obs} track={obs.track} />
+          </View>
+        ))}
+        
+        {collectibles.map((c) => (
+          <View
+            key={`collectible-${c.id}`}
+            style={[
+              styles.collectible,
+              {
+                left: c.x - 15,
+                top: c.y - 15,
+              },
+            ]}
+          >
+            {c.type === "star" ? (
+              <Feather name="star" size={28} color="#FFD700" />
+            ) : c.type === "heart" ? (
+              <Feather name="heart" size={28} color="#FF6B6B" />
+            ) : (
+              <Feather name="hexagon" size={28} color="#A66CFF" />
+            )}
           </View>
         ))}
 
@@ -1502,5 +1863,75 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: "#FF0000",
     zIndex: 30,
+  },
+  backgroundStar: {
+    position: "absolute",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 50,
+    zIndex: 1,
+  },
+  trailParticle: {
+    position: "absolute",
+    borderRadius: 50,
+    zIndex: 8,
+  },
+  feverContainer: {
+    position: "absolute",
+    top: height * 0.15,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    zIndex: 25,
+  },
+  feverBadge: {
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.xl,
+    shadowColor: "#FFD700",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius: 20,
+  },
+  feverText: {
+    fontSize: 18,
+    fontWeight: "900",
+    color: "#FFFFFF",
+    textShadowColor: "rgba(0,0,0,0.5)",
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+  },
+  bossContainer: {
+    position: "absolute",
+    top: height * 0.15,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    zIndex: 25,
+  },
+  bossBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.xl,
+    shadowColor: "#8B0000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius: 15,
+  },
+  bossText: {
+    fontSize: 18,
+    fontWeight: "900",
+    color: "#FFFFFF",
+    textShadowColor: "rgba(0,0,0,0.5)",
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+  },
+  collectible: {
+    position: "absolute",
+    zIndex: 12,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

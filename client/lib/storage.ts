@@ -24,6 +24,9 @@ const KEYS = {
   LAST_PLAY_DATE: "flip_one_last_play_date",
   LAST_WHEEL_SPIN_DATE: "flip_one_last_wheel_spin_date",
   ACHIEVEMENTS: "flip_one_achievements",
+  LAST_FREE_REVIVE_DATE: "flip_one_last_free_revive_date",
+  DAILY_CHALLENGE: "flip_one_daily_challenge",
+  LAST_DAILY_CHALLENGE_DATE: "flip_one_last_daily_challenge_date",
 };
 
 export interface DailyMission {
@@ -46,6 +49,16 @@ export interface Achievement {
   unlockedAt?: string;
 }
 
+export interface DailyChallenge {
+  id: string;
+  description: string;
+  type: "no_power" | "high_score" | "distance" | "fever" | "collect";
+  target: number;
+  reward: number;
+  completed: boolean;
+  claimed: boolean;
+}
+
 export interface GameState {
   bestScore: number;
   points: number;
@@ -66,6 +79,9 @@ export interface GameState {
   lastPlayDate: string;
   lastWheelSpinDate: string;
   achievements: Achievement[];
+  lastFreeReviveDate: string;
+  dailyChallenge: DailyChallenge | null;
+  lastDailyChallengeDate: string;
 }
 
 const DEFAULT_SKINS = ["default"];
@@ -207,6 +223,9 @@ export async function getGameState(): Promise<GameState> {
       lastPlayDate: lastPlayDate || "",
       lastWheelSpinDate: lastWheelSpinDate || "",
       achievements: currentAchievements,
+      lastFreeReviveDate: "",
+      dailyChallenge: null,
+      lastDailyChallengeDate: "",
     };
   } catch (error) {
     console.error("Error loading game state:", error);
@@ -230,6 +249,9 @@ export async function getGameState(): Promise<GameState> {
       lastPlayDate: "",
       lastWheelSpinDate: "",
       achievements: generateDefaultAchievements(),
+      lastFreeReviveDate: "",
+      dailyChallenge: null,
+      lastDailyChallengeDate: "",
     };
   }
 }
@@ -639,4 +661,96 @@ export async function checkAndUnlockAchievements(gameState: GameState, score: nu
   }
   
   return unlockedIds;
+}
+
+export async function canUseFreeRevive(): Promise<boolean> {
+  try {
+    const today = new Date().toISOString().split("T")[0];
+    const lastReviveDate = await AsyncStorage.getItem(KEYS.LAST_FREE_REVIVE_DATE);
+    return lastReviveDate !== today;
+  } catch (error) {
+    console.error("Error checking free revive:", error);
+    return false;
+  }
+}
+
+export async function useFreeRevive(): Promise<boolean> {
+  try {
+    const canUse = await canUseFreeRevive();
+    if (!canUse) return false;
+    
+    const today = new Date().toISOString().split("T")[0];
+    await AsyncStorage.setItem(KEYS.LAST_FREE_REVIVE_DATE, today);
+    return true;
+  } catch (error) {
+    console.error("Error using free revive:", error);
+    return false;
+  }
+}
+
+function generateDailyChallenge(): DailyChallenge {
+  const challenges: DailyChallenge[] = [
+    { id: "no_power", description: "Score 30+ without using powers", type: "no_power", target: 30, reward: 100, completed: false, claimed: false },
+    { id: "high_score", description: "Score 50 points in one game", type: "high_score", target: 50, reward: 150, completed: false, claimed: false },
+    { id: "distance", description: "Travel 500 meters total", type: "distance", target: 500, reward: 75, completed: false, claimed: false },
+    { id: "fever", description: "Activate Fever Mode 2 times", type: "fever", target: 2, reward: 125, completed: false, claimed: false },
+    { id: "collect", description: "Collect 10 items", type: "collect", target: 10, reward: 100, completed: false, claimed: false },
+  ];
+  return challenges[Math.floor(Math.random() * challenges.length)];
+}
+
+export async function getDailyChallenge(): Promise<DailyChallenge> {
+  try {
+    const today = new Date().toISOString().split("T")[0];
+    const lastDate = await AsyncStorage.getItem(KEYS.LAST_DAILY_CHALLENGE_DATE);
+    const storedChallenge = await AsyncStorage.getItem(KEYS.DAILY_CHALLENGE);
+    
+    if (lastDate === today && storedChallenge) {
+      return JSON.parse(storedChallenge);
+    }
+    
+    const newChallenge = generateDailyChallenge();
+    await AsyncStorage.setItem(KEYS.DAILY_CHALLENGE, JSON.stringify(newChallenge));
+    await AsyncStorage.setItem(KEYS.LAST_DAILY_CHALLENGE_DATE, today);
+    return newChallenge;
+  } catch (error) {
+    console.error("Error getting daily challenge:", error);
+    return generateDailyChallenge();
+  }
+}
+
+export async function updateDailyChallenge(progress: number): Promise<DailyChallenge | null> {
+  try {
+    const challenge = await getDailyChallenge();
+    if (challenge.completed) return challenge;
+    
+    if (progress >= challenge.target) {
+      challenge.completed = true;
+    }
+    
+    await AsyncStorage.setItem(KEYS.DAILY_CHALLENGE, JSON.stringify(challenge));
+    return challenge;
+  } catch (error) {
+    console.error("Error updating daily challenge:", error);
+    return null;
+  }
+}
+
+export async function claimDailyChallengeReward(): Promise<number> {
+  try {
+    const challenge = await getDailyChallenge();
+    if (!challenge.completed || challenge.claimed) return 0;
+    
+    challenge.claimed = true;
+    await AsyncStorage.setItem(KEYS.DAILY_CHALLENGE, JSON.stringify(challenge));
+    
+    const currentPoints = await AsyncStorage.getItem(KEYS.POINTS);
+    const newPoints = (currentPoints ? parseInt(currentPoints, 10) : 0) + challenge.reward;
+    await AsyncStorage.setItem(KEYS.POINTS, newPoints.toString());
+    
+    return challenge.reward;
+  } catch (error) {
+    console.error("Error claiming daily challenge reward:", error);
+    return 0;
+  }
 }
