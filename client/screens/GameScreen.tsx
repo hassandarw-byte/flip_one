@@ -21,7 +21,7 @@ import Animated, {
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
-import Svg, { Path, Circle } from "react-native-svg";
+import Svg, { Path, Circle, Defs, LinearGradient as SvgLinearGradient, Stop, Rect, Line, Text as SvgText } from "react-native-svg";
 
 import { ThemedText } from "@/components/ThemedText";
 import { GameColors, Spacing, BorderRadius, SkinColors } from "@/constants/theme";
@@ -161,6 +161,7 @@ export default function GameScreen() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [obstacles, setObstacles] = useState<Obstacle[]>([]);
+  const [collectibles, setCollectibles] = useState<Collectible[]>([]);
   const [isReady, setIsReady] = useState(false);
   const [floatingParticles, setFloatingParticles] = useState<FloatingParticle[]>([]);
   const [explosionParticles, setExplosionParticles] = useState<ExplosionParticle[]>([]);
@@ -189,6 +190,9 @@ export default function GameScreen() {
   
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
   const obstacleSpawnRef = useRef<NodeJS.Timeout | null>(null);
+  const collectibleSpawnRef = useRef<NodeJS.Timeout | null>(null);
+  const collectibleIdRef = useRef(0);
+  const bonusPointsRef = useRef(0);
   const scoreIntervalRef = useRef<NodeJS.Timeout | null>(null);
   
   const playerX = width * 0.2;
@@ -488,6 +492,10 @@ export default function GameScreen() {
       clearInterval(obstacleSpawnRef.current);
       obstacleSpawnRef.current = null;
     }
+    if (collectibleSpawnRef.current) {
+      clearInterval(collectibleSpawnRef.current);
+      collectibleSpawnRef.current = null;
+    }
     if (scoreIntervalRef.current) {
       clearInterval(scoreIntervalRef.current);
       scoreIntervalRef.current = null;
@@ -570,7 +578,7 @@ export default function GameScreen() {
           await saveBestScore(currentScore);
         }
 
-        const pointsEarned = Math.floor(currentScore / 2);
+        const pointsEarned = Math.floor(currentScore / 2) + bonusPointsRef.current;
         await savePoints(gameState.points + pointsEarned);
       }
 
@@ -591,9 +599,11 @@ export default function GameScreen() {
     isDyingRef.current = false;
     currentTrackRef.current = "bottom";
     
-    // Clear any leftover obstacles from previous game
+    // Clear any leftover obstacles and collectibles from previous game
     setObstacles([]);
+    setCollectibles([]);
     setDistance(0);
+    bonusPointsRef.current = 0;
     
     // Initialize background stars
     const stars: BackgroundStar[] = Array.from({ length: 40 }).map((_, i) => ({
@@ -751,6 +761,48 @@ export default function GameScreen() {
 
         return remainingObstacles;
       });
+      
+      // Move collectibles and check collection
+      setCollectibles(prev => {
+        if (freezeActiveRef.current) return prev;
+        
+        const playerLeft = playerX - PLAYER_SIZE / 2;
+        const playerRight = playerX + PLAYER_SIZE / 2;
+        const playerTop = currentTrackRef.current === "bottom" 
+          ? trackBottomY - PLAYER_SIZE + 4 
+          : trackTopY + TRACK_HEIGHT - 4;
+        const playerBottom = playerTop + PLAYER_SIZE;
+        
+        return prev
+          .map(c => ({ ...c, x: c.x - gameSpeedRef.current }))
+          .filter(c => {
+            if (c.collected || c.x < -50) return false;
+            
+            // Check if player collected this
+            const colLeft = c.x - c.size / 2;
+            const colRight = c.x + c.size / 2;
+            const colTop = c.y;
+            const colBottom = c.y + c.size;
+            
+            const horizontalCollision = playerRight > colLeft && playerLeft < colRight;
+            const verticalCollision = playerBottom > colTop && playerTop < colBottom;
+            
+            if (horizontalCollision && verticalCollision) {
+              // Collected!
+              const pointsToAdd = c.type === "star" ? 5 : 3;
+              bonusPointsRef.current += pointsToAdd;
+              if (gameState?.soundEnabled) {
+                playScoreSound(true);
+              }
+              if (gameState?.hapticsEnabled) {
+                triggerVictoryHaptic(true);
+              }
+              return false;
+            }
+            
+            return true;
+          });
+      });
     }, 16);
 
     setTimeout(() => {
@@ -801,6 +853,27 @@ export default function GameScreen() {
           return currentScore;
         });
       }, SPAWN_INTERVAL);
+      
+      // Spawn collectibles (hearts and stars)
+      collectibleSpawnRef.current = setInterval(() => {
+        if (isGameOverRef.current) return;
+        
+        const collectibleTypes: Collectible["type"][] = ["heart", "star"];
+        const type = collectibleTypes[Math.floor(Math.random() * collectibleTypes.length)];
+        const playAreaTop = trackTopY + TRACK_HEIGHT + 20;
+        const playAreaBottom = trackBottomY - 20;
+        
+        const newCollectible: Collectible = {
+          id: collectibleIdRef.current++,
+          x: width + 30,
+          y: playAreaTop + Math.random() * (playAreaBottom - playAreaTop - 30),
+          type,
+          size: 28,
+          collected: false,
+        };
+        
+        setCollectibles(prev => [...prev, newCollectible]);
+      }, 3000);
     }, GRACE_PERIOD);
 
     scoreIntervalRef.current = setInterval(() => {
@@ -1074,6 +1147,21 @@ export default function GameScreen() {
           </View>
         ))}
 
+        {collectibles.map((col) => (
+          <View
+            key={`col-${col.id}`}
+            style={[
+              styles.collectible,
+              {
+                left: col.x - col.size / 2,
+                top: col.y,
+              },
+            ]}
+          >
+            <CollectibleShape type={col.type} size={col.size} />
+          </View>
+        ))}
+
         <Animated.View
           style={[
             styles.playerContainer,
@@ -1318,10 +1406,10 @@ function ObstacleShape({ obstacle, track }: { obstacle: Obstacle; track: "top" |
         <View style={[suitStyles.container, { width: w, height: h }]}>
           <Svg width={size} height={size} viewBox="0 0 100 100">
             <Defs>
-              <LinearGradient id="lightningGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+              <SvgLinearGradient id="lightningGlow" x1="0%" y1="0%" x2="100%" y2="100%">
                 <Stop offset="0%" stopColor="#FFD700" />
                 <Stop offset="100%" stopColor="#FFA500" />
-              </LinearGradient>
+              </SvgLinearGradient>
             </Defs>
             <Path
               d="M55 5 L25 45 L45 45 L35 95 L75 50 L52 50 L65 5 Z"
@@ -1342,14 +1430,14 @@ function ObstacleShape({ obstacle, track }: { obstacle: Obstacle; track: "top" |
               stroke="#FFFFFF"
               strokeWidth={strokeWidth}
             />
-            <Text
+            <SvgText
               x="50"
               y="72"
               fontSize="40"
               fontWeight="bold"
               fill="#FFFFFF"
               textAnchor="middle"
-            >!</Text>
+            >!</SvgText>
           </Svg>
         </View>
       );
@@ -1358,10 +1446,10 @@ function ObstacleShape({ obstacle, track }: { obstacle: Obstacle; track: "top" |
         <View style={[suitStyles.container, { width: w, height: h }]}>
           <Svg width={size} height={size} viewBox="0 0 100 100">
             <Defs>
-              <LinearGradient id="skullGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+              <SvgLinearGradient id="skullGlow" x1="0%" y1="0%" x2="100%" y2="100%">
                 <Stop offset="0%" stopColor="#4A0000" />
                 <Stop offset="100%" stopColor="#8B0000" />
-              </LinearGradient>
+              </SvgLinearGradient>
             </Defs>
             <Circle cx="50" cy="40" r="35" fill="url(#skullGlow)" stroke="#FFFFFF" strokeWidth={strokeWidth} />
             <Circle cx="35" cy="35" r="8" fill="#000000" />
@@ -1388,6 +1476,44 @@ function ObstacleShape({ obstacle, track }: { obstacle: Obstacle; track: "top" |
         </View>
       );
   }
+}
+
+function CollectibleShape({ type, size }: { type: Collectible["type"]; size: number }) {
+  if (type === "heart") {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 100 100">
+        <Defs>
+          <SvgLinearGradient id="heartGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+            <Stop offset="0%" stopColor="#FF6B9D" />
+            <Stop offset="100%" stopColor="#FF1744" />
+          </SvgLinearGradient>
+        </Defs>
+        <Path
+          d="M50 88 C50 88 10 55 10 35 C10 15 30 10 50 30 C70 10 90 15 90 35 C90 55 50 88 50 88 Z"
+          fill="url(#heartGlow)"
+          stroke="#FFFFFF"
+          strokeWidth="3"
+        />
+      </Svg>
+    );
+  }
+  
+  return (
+    <Svg width={size} height={size} viewBox="0 0 100 100">
+      <Defs>
+        <SvgLinearGradient id="starGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+          <Stop offset="0%" stopColor="#FFD700" />
+          <Stop offset="100%" stopColor="#FFA500" />
+        </SvgLinearGradient>
+      </Defs>
+      <Path
+        d="M50 5 L61 35 L95 35 L68 55 L79 90 L50 70 L21 90 L32 55 L5 35 L39 35 Z"
+        fill="url(#starGlow)"
+        stroke="#FFFFFF"
+        strokeWidth="2"
+      />
+    </Svg>
+  );
 }
 
 const suitStyles = StyleSheet.create({
@@ -1525,6 +1651,13 @@ const styles = StyleSheet.create({
   },
   obstacle: {
     position: "absolute",
+  },
+  collectible: {
+    position: "absolute",
+    shadowColor: "#FFD700",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 8,
   },
   floatingParticle: {
     position: "absolute",
