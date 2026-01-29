@@ -95,10 +95,19 @@ interface Obstacle {
   id: number;
   x: number;
   track: "top" | "bottom";
-  type: "spade" | "diamond" | "heart" | "club";
+  type: "lightning" | "danger" | "skull";
   width: number;
   height: number;
   color: string;
+}
+
+interface Collectible {
+  id: number;
+  x: number;
+  y: number;
+  type: "heart" | "star";
+  size: number;
+  collected: boolean;
 }
 
 interface FloatingParticle {
@@ -747,11 +756,10 @@ export default function GameScreen() {
     setTimeout(() => {
       if (isGameOverRef.current) return;
       
-      const cardSuits: Array<{ type: Obstacle["type"]; color: string }> = [
-        { type: "spade", color: "#1A1A2E" },
-        { type: "diamond", color: "#E63946" },
-        { type: "heart", color: "#E63946" },
-        { type: "club", color: "#1A1A2E" },
+      const obstacleTypes: Array<{ type: Obstacle["type"]; color: string }> = [
+        { type: "lightning", color: "#FFD700" },
+        { type: "danger", color: "#FF4444" },
+        { type: "skull", color: "#8B0000" },
       ];
       
       obstacleSpawnRef.current = setInterval(() => {
@@ -769,7 +777,7 @@ export default function GameScreen() {
             track = Math.random() > 0.5 ? "top" : "bottom";
           }
           
-          const suitConfig = cardSuits[Math.floor(Math.random() * cardSuits.length)];
+          const typeConfig = obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)];
           const obstacleHeight = currentScore >= 20 ? 44 : 36;
           const obstacleWidth = currentScore >= 20 ? 44 : 36;
           const minGap = currentScore >= 40 ? 100 : MIN_OBSTACLE_GAP;
@@ -778,8 +786,8 @@ export default function GameScreen() {
             id: obstacleIdRef.current++,
             x: width + 50,
             track,
-            type: suitConfig.type,
-            color: suitConfig.color,
+            type: typeConfig.type,
+            color: typeConfig.color,
             width: obstacleWidth,
             height: obstacleHeight,
           };
@@ -1300,63 +1308,69 @@ const powerStyles = StyleSheet.create({
 
 function ObstacleShape({ obstacle, track }: { obstacle: Obstacle; track: "top" | "bottom" }) {
   const { type, color, width: w, height: h } = obstacle;
-  const size = Math.min(w, h) * 0.85;
+  const size = Math.min(w, h) * 0.9;
   const strokeWidth = 2;
   const rotation = track === "top" ? "180deg" : "0deg";
 
   switch (type) {
-    case "spade":
-      return (
-        <View style={[suitStyles.container, { width: w, height: h, transform: [{ rotate: rotation }] }]}>
-          <Svg width={size} height={size} viewBox="0 0 100 100">
-            <Path
-              d="M50 5 C50 5 10 35 10 55 C10 70 22 80 35 75 L35 78 C35 78 30 85 28 92 L72 92 C70 85 65 78 65 78 L65 75 C78 80 90 70 90 55 C90 35 50 5 50 5 Z"
-              fill={color}
-              stroke="#FFFFFF"
-              strokeWidth={strokeWidth}
-            />
-          </Svg>
-        </View>
-      );
-    case "diamond":
+    case "lightning":
       return (
         <View style={[suitStyles.container, { width: w, height: h }]}>
           <Svg width={size} height={size} viewBox="0 0 100 100">
+            <Defs>
+              <LinearGradient id="lightningGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                <Stop offset="0%" stopColor="#FFD700" />
+                <Stop offset="100%" stopColor="#FFA500" />
+              </LinearGradient>
+            </Defs>
             <Path
-              d="M50 5 L90 50 L50 95 L10 50 Z"
-              fill={color}
+              d="M55 5 L25 45 L45 45 L35 95 L75 50 L52 50 L65 5 Z"
+              fill="url(#lightningGlow)"
               stroke="#FFFFFF"
               strokeWidth={strokeWidth}
             />
           </Svg>
         </View>
       );
-    case "heart":
+    case "danger":
       return (
         <View style={[suitStyles.container, { width: w, height: h, transform: [{ rotate: rotation }] }]}>
           <Svg width={size} height={size} viewBox="0 0 100 100">
             <Path
-              d="M50 88 C50 88 10 55 10 35 C10 15 30 10 50 30 C70 10 90 15 90 35 C90 55 50 88 50 88 Z"
+              d="M50 8 L95 85 L5 85 Z"
               fill={color}
               stroke="#FFFFFF"
               strokeWidth={strokeWidth}
             />
+            <Text
+              x="50"
+              y="72"
+              fontSize="40"
+              fontWeight="bold"
+              fill="#FFFFFF"
+              textAnchor="middle"
+            >!</Text>
           </Svg>
         </View>
       );
-    case "club":
+    case "skull":
       return (
-        <View style={[suitStyles.container, { width: w, height: h, transform: [{ rotate: rotation }] }]}>
+        <View style={[suitStyles.container, { width: w, height: h }]}>
           <Svg width={size} height={size} viewBox="0 0 100 100">
-            <Circle cx="50" cy="25" r="20" fill={color} stroke="#FFFFFF" strokeWidth={strokeWidth} />
-            <Circle cx="25" cy="55" r="20" fill={color} stroke="#FFFFFF" strokeWidth={strokeWidth} />
-            <Circle cx="75" cy="55" r="20" fill={color} stroke="#FFFFFF" strokeWidth={strokeWidth} />
-            <Path
-              d="M40 50 L40 92 L60 92 L60 50 Q50 60 40 50"
-              fill={color}
-              stroke="#FFFFFF"
-              strokeWidth={strokeWidth}
-            />
+            <Defs>
+              <LinearGradient id="skullGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                <Stop offset="0%" stopColor="#4A0000" />
+                <Stop offset="100%" stopColor="#8B0000" />
+              </LinearGradient>
+            </Defs>
+            <Circle cx="50" cy="40" r="35" fill="url(#skullGlow)" stroke="#FFFFFF" strokeWidth={strokeWidth} />
+            <Circle cx="35" cy="35" r="8" fill="#000000" />
+            <Circle cx="65" cy="35" r="8" fill="#000000" />
+            <Path d="M40 55 L45 65 L50 55 L55 65 L60 55" stroke="#000000" strokeWidth="3" fill="none" />
+            <Rect x="35" y="70" width="30" height="20" fill="url(#skullGlow)" stroke="#FFFFFF" strokeWidth={strokeWidth} />
+            <Line x1="42" y1="70" x2="42" y2="90" stroke="#000000" strokeWidth="2" />
+            <Line x1="50" y1="70" x2="50" y2="90" stroke="#000000" strokeWidth="2" />
+            <Line x1="58" y1="70" x2="58" y2="90" stroke="#000000" strokeWidth="2" />
           </Svg>
         </View>
       );
@@ -1365,8 +1379,8 @@ function ObstacleShape({ obstacle, track }: { obstacle: Obstacle; track: "top" |
         <View style={[suitStyles.container, { width: w, height: h }]}>
           <Svg width={size} height={size} viewBox="0 0 100 100">
             <Path
-              d="M50 5 L90 50 L50 95 L10 50 Z"
-              fill={color}
+              d="M55 5 L25 45 L45 45 L35 95 L75 50 L52 50 L65 5 Z"
+              fill="#FFD700"
               stroke="#FFFFFF"
               strokeWidth={strokeWidth}
             />
