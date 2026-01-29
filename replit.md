@@ -89,7 +89,15 @@ The app runs on Expo and can be tested via:
 
 ## Recent Changes
 
-### Latest (Visual & Gameplay Enhancements)
+### Latest (Obstacles & Collectibles Update)
+- **New Obstacle Types**: Electric lightning symbols (yellow), danger triangles (red), and fancy skulls (white) replace card suits
+- **Collectible Hearts**: Pink hearts spawn every 3 seconds and grant +3 bonus points when collected
+- **Collectible Stars**: Golden stars spawn every 3 seconds and grant +5 bonus points when collected
+- **Bonus Points System**: Collectible points tracked separately and added to final score at game over
+- **Track Spacing**: Increased vertical gap between tracks to 120px for better visibility
+- **Compact HUD**: Badge height reduced to 28px while maintaining readable font sizes
+
+### Previous (Visual & Gameplay Enhancements)
 - **Trail Effect**: Player leaves animated golden particle trail while moving
 - **Obstacle Pulse**: Obstacles have subtle pulse animation (1.08x scale) for visual appeal
 - **Moving Background Stars**: 40 animated white stars drift across the background
