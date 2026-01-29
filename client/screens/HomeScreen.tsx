@@ -133,7 +133,7 @@ export default function HomeScreen() {
 
   const handleShare = async () => {
     try {
-      const appLink = "https://play.google.com/store/apps/details?id=com.hhdapps.flipone";
+      const appLink = "Download Flip One from HHD Apps!";
       const message = `Check out Flip One - the addictive gravity-flipping game! Flip the world. Stay alive. Download now!\n\n${appLink}`;
       
       await Share.share({
@@ -534,19 +534,19 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   menuGrid: {
-    paddingHorizontal: Spacing.xl,
-    paddingTop: Spacing["2xl"],
-    marginTop: Spacing.lg,
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.lg,
+    marginTop: Spacing.sm,
   },
   menuRow: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginBottom: Spacing.lg,
-    paddingHorizontal: Spacing.md,
+    marginBottom: Spacing.sm,
+    paddingHorizontal: Spacing.sm,
   },
   menuButton: {
     alignItems: "center",
-    width: (width - Spacing.xl * 2) / 3.5,
+    width: (width - Spacing.xl * 2) / 4,
   },
   menuButtonWrapper: {
     position: "relative",
@@ -555,29 +555,29 @@ const styles = StyleSheet.create({
   },
   menuButtonGlow: {
     position: "absolute",
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
-    shadowRadius: 15,
+    shadowRadius: 12,
   },
   menuButtonIcon: {
-    width: 46,
-    height: 46,
-    borderRadius: BorderRadius.md,
+    width: 38,
+    height: 38,
+    borderRadius: BorderRadius.sm,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.4,
-    shadowRadius: 10,
-    elevation: 10,
+    shadowRadius: 8,
+    elevation: 8,
   },
   menuButtonLabel: {
-    fontSize: 11,
+    fontSize: 10,
     color: GameColors.textSecondary,
-    marginTop: Spacing.xs,
+    marginTop: 4,
     fontWeight: "700",
     textAlign: "center",
   },

@@ -1241,7 +1241,7 @@ function PowerButton({ type, icon, available, active, onPress }: PowerButtonProp
       >
         <Feather 
           name={icon} 
-          size={20} 
+          size={16} 
           color={available ? "#FFFFFF" : "#666"} 
         />
       </LinearGradient>
@@ -1256,9 +1256,9 @@ function PowerButton({ type, icon, available, active, onPress }: PowerButtonProp
 
 const powerStyles = StyleSheet.create({
   button: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
@@ -1268,16 +1268,16 @@ const powerStyles = StyleSheet.create({
   },
   glow: {
     position: "absolute",
-    top: -6,
-    left: -6,
-    right: -6,
-    bottom: -6,
-    borderRadius: 34,
+    top: -4,
+    left: -4,
+    right: -4,
+    bottom: -4,
+    borderRadius: 26,
   },
   gradient: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 2,
@@ -1285,14 +1285,14 @@ const powerStyles = StyleSheet.create({
   },
   activeBadge: {
     position: "absolute",
-    top: -4,
-    right: -4,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 8,
+    top: -3,
+    right: -3,
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    borderRadius: 6,
   },
   activeBadgeText: {
-    fontSize: 8,
+    fontSize: 7,
     fontWeight: "800",
     color: "#FFFFFF",
   },
@@ -1409,30 +1409,30 @@ const styles = StyleSheet.create({
   },
   hudBadge: {
     flex: 1,
-    marginHorizontal: 4,
-    borderRadius: BorderRadius.md,
+    marginHorizontal: 3,
+    borderRadius: BorderRadius.sm,
     overflow: "hidden",
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.6,
-    shadowRadius: 8,
+    shadowOpacity: 0.5,
+    shadowRadius: 6,
   },
   hudGradient: {
-    paddingVertical: Spacing.xs,
-    paddingHorizontal: Spacing.xs,
-    borderRadius: BorderRadius.md,
+    paddingVertical: 4,
+    paddingHorizontal: 4,
+    borderRadius: BorderRadius.sm,
     alignItems: "center",
     justifyContent: "center",
-    minHeight: 44,
+    minHeight: 36,
   },
   hudLabel: {
-    fontSize: 11,
+    fontSize: 9,
     fontWeight: "700",
     color: "rgba(255,255,255,0.95)",
     textAlign: "center",
-    marginBottom: 1,
+    marginBottom: 0,
   },
   hudValue: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: "800",
     color: "#FFFFFF",
     textAlign: "center",
