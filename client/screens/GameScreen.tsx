@@ -51,6 +51,7 @@ import {
   playGameOverSound,
   playScoreSound,
   playPowerUpSound,
+  playCollectSound,
   initializeSounds,
   startHeartbeat,
   stopHeartbeat,
@@ -792,7 +793,7 @@ export default function GameScreen() {
               const pointsToAdd = c.type === "star" ? 5 : 3;
               bonusPointsRef.current += pointsToAdd;
               if (gameState?.soundEnabled) {
-                playScoreSound(true);
+                playCollectSound(true);
               }
               if (gameState?.hapticsEnabled) {
                 triggerVictoryHaptic(true);
@@ -855,31 +856,34 @@ export default function GameScreen() {
       }, SPAWN_INTERVAL);
       
       // Spawn collectibles (hearts and stars) on player track levels
-      collectibleSpawnRef.current = setInterval(() => {
-        if (isGameOverRef.current) return;
-        
-        const collectibleTypes: Collectible["type"][] = ["heart", "star"];
-        const type = collectibleTypes[Math.floor(Math.random() * collectibleTypes.length)];
-        const collectibleSize = 28;
-        
-        // Spawn on one of the two tracks (same Y as player positions)
-        const isTopTrack = Math.random() > 0.5;
-        // Match player Y positions for collision detection
-        const collectibleY = isTopTrack 
-          ? trackTopY + TRACK_HEIGHT - 4 - collectibleSize / 2  // Top track (player center)
-          : trackBottomY - PLAYER_SIZE + 4;                      // Bottom track (player top)
-        
-        const newCollectible: Collectible = {
-          id: collectibleIdRef.current++,
-          x: width + 30,
-          y: collectibleY,
-          type,
-          size: collectibleSize,
-          collected: false,
-        };
-        
-        setCollectibles(prev => [...prev, newCollectible]);
-      }, 3000);
+      // Spawn at 1.5 second offset from obstacles (obstacles spawn every ~1.2s based on speed)
+      setTimeout(() => {
+        collectibleSpawnRef.current = setInterval(() => {
+          if (isGameOverRef.current) return;
+          
+          const collectibleTypes: Collectible["type"][] = ["heart", "star"];
+          const type = collectibleTypes[Math.floor(Math.random() * collectibleTypes.length)];
+          const collectibleSize = 28;
+          
+          // Spawn on one of the two tracks (same Y as player positions)
+          const isTopTrack = Math.random() > 0.5;
+          // Match player Y positions for collision detection
+          const collectibleY = isTopTrack 
+            ? trackTopY + TRACK_HEIGHT - 4 - collectibleSize / 2  // Top track (player center)
+            : trackBottomY - PLAYER_SIZE + 4;                      // Bottom track (player top)
+          
+          const newCollectible: Collectible = {
+            id: collectibleIdRef.current++,
+            x: width + 100,  // Spawn further right to avoid obstacle overlap
+            y: collectibleY,
+            type,
+            size: collectibleSize,
+            collected: false,
+          };
+          
+          setCollectibles(prev => [...prev, newCollectible]);
+        }, 4000);  // Every 4 seconds to ensure spacing from obstacles
+      }, 2000);  // Start 2 seconds after obstacles begin
     }, GRACE_PERIOD);
 
     scoreIntervalRef.current = setInterval(() => {

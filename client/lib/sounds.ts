@@ -7,13 +7,15 @@ let gameOverPlayer: AudioPlayer | null = null;
 let scorePlayer: AudioPlayer | null = null;
 let sirenPlayer: AudioPlayer | null = null;
 let powerUpPlayer: AudioPlayer | null = null;
+let collectPlayer: AudioPlayer | null = null;
 
 const FLIP_UP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3";
 const FLIP_DOWN_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3";
 const GAME_OVER_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2656/2656-preview.mp3";
-const SCORE_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3";
+const SCORE_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3";
 const TENSION_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2457/2457-preview.mp3";
 const POWER_UP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3";
+const COLLECT_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3";
 
 let soundsLoaded = false;
 let heartbeatInterval: ReturnType<typeof setInterval> | null = null;
@@ -32,6 +34,7 @@ export async function initializeSounds(): Promise<void> {
     scorePlayer = createAudioPlayer({ uri: SCORE_SOUND_URI });
     sirenPlayer = createAudioPlayer({ uri: TENSION_SOUND_URI });
     powerUpPlayer = createAudioPlayer({ uri: POWER_UP_SOUND_URI });
+    collectPlayer = createAudioPlayer({ uri: COLLECT_SOUND_URI });
     
     soundsLoaded = true;
   } catch (error) {
@@ -106,6 +109,19 @@ export async function playPowerUpSound(soundEnabled: boolean): Promise<void> {
     if (powerUpPlayer) {
       powerUpPlayer.seekTo(0);
       powerUpPlayer.play();
+    }
+  } catch (error) {
+    // Sound not available
+  }
+}
+
+export async function playCollectSound(soundEnabled: boolean): Promise<void> {
+  if (!soundEnabled) return;
+  
+  try {
+    if (collectPlayer) {
+      collectPlayer.seekTo(0);
+      collectPlayer.play();
     }
   } catch (error) {
     // Sound not available
@@ -306,6 +322,7 @@ export async function cleanupSounds(): Promise<void> {
     if (scorePlayer) scorePlayer.release();
     if (sirenPlayer) sirenPlayer.release();
     if (powerUpPlayer) powerUpPlayer.release();
+    if (collectPlayer) collectPlayer.release();
     
     flipUpPlayer = null;
     flipDownPlayer = null;
@@ -313,6 +330,7 @@ export async function cleanupSounds(): Promise<void> {
     scorePlayer = null;
     sirenPlayer = null;
     powerUpPlayer = null;
+    collectPlayer = null;
     soundsLoaded = false;
   } catch (error) {
     // Cleanup failed
