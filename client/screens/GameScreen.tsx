@@ -178,6 +178,9 @@ export default function GameScreen() {
   const [trailParticles, setTrailParticles] = useState<TrailParticle[]>([]);
   const [backgroundStars, setBackgroundStars] = useState<BackgroundStar[]>([]);
   const [distance, setDistance] = useState(0);
+  const [encourageMessage, setEncourageMessage] = useState<string | null>(null);
+  const [collectExplosions, setCollectExplosions] = useState<{id: number, x: number, y: number, color: string}[]>([]);
+  const [streak, setStreak] = useState(0);
   
   const currentTrackRef = useRef<"top" | "bottom">("bottom");
   const freezeActiveRef = useRef(false);
@@ -215,6 +218,11 @@ export default function GameScreen() {
   const isDyingRef = useRef(false);
   const lastMovementHapticRef = useRef(0);
   const trailIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  
+  const playerRotation = useSharedValue(0);
+  const encourageScale = useSharedValue(0);
+  const encourageOpacity = useSharedValue(0);
+  const powerGlowPulse = useSharedValue(1);
   
   const obstacleScale = useSharedValue(1);
   
@@ -355,6 +363,26 @@ export default function GameScreen() {
       withTiming(3, { duration: 50 }),
       withTiming(0, { duration: 50 })
     );
+  }, []);
+
+  const triggerCollectExplosion = useCallback((x: number, y: number, type: "heart" | "star") => {
+    const color = type === "heart" ? "#FF6B9D" : "#FFD700";
+    const id = Date.now();
+    setCollectExplosions(prev => [...prev, { id, x, y, color }]);
+    setTimeout(() => {
+      setCollectExplosions(prev => prev.filter(e => e.id !== id));
+    }, 600);
+  }, []);
+
+  const showEncouragement = useCallback((message: string) => {
+    setEncourageMessage(message);
+    encourageScale.value = 0;
+    encourageOpacity.value = 1;
+    encourageScale.value = withSpring(1.2, { damping: 8 });
+    setTimeout(() => {
+      encourageOpacity.value = withTiming(0, { duration: 300 });
+      setTimeout(() => setEncourageMessage(null), 300);
+    }, 800);
   }, []);
 
   const incrementCombo = useCallback(() => {
@@ -792,6 +820,19 @@ export default function GameScreen() {
               // Collected!
               const pointsToAdd = c.type === "star" ? 5 : 3;
               bonusPointsRef.current += pointsToAdd;
+              
+              // Trigger collect explosion
+              triggerCollectExplosion(c.x, c.y, c.type);
+              
+              // Update streak and show encouragement
+              setStreak(prev => {
+                const newStreak = prev + 1;
+                if (newStreak === 3) showEncouragement("Nice!");
+                if (newStreak === 5) showEncouragement("Amazing!");
+                if (newStreak === 10) showEncouragement("GODLIKE!");
+                return newStreak;
+              });
+              
               if (gameState?.soundEnabled) {
                 playCollectSound(true);
               }
@@ -935,6 +976,12 @@ export default function GameScreen() {
     currentTrackRef.current = newTrack;
     flipCountRef.current += 1;
 
+    // Player rotation animation (360 degree spin)
+    playerRotation.value = withSequence(
+      withTiming(newTrack === "top" ? 360 : -360, { duration: 300, easing: Easing.out(Easing.cubic) }),
+      withTiming(0, { duration: 0 })
+    );
+
     // Different sounds and haptics for up vs down flip
     if (gameState?.soundEnabled) {
       playFlipSound(true, newTrack === "top" ? "up" : "down");
@@ -966,11 +1013,19 @@ export default function GameScreen() {
   }));
 
   const playerAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: playerBounce.value }],
+    transform: [
+      { translateY: playerBounce.value },
+      { rotate: `${playerRotation.value}deg` },
+    ],
   }));
 
   const playerGlowStyle = useAnimatedStyle(() => ({
     opacity: playerGlow.value,
+  }));
+  
+  const encourageAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: encourageScale.value }],
+    opacity: encourageOpacity.value,
   }));
   
   const screenShakeStyle = useAnimatedStyle(() => ({
@@ -1228,6 +1283,39 @@ export default function GameScreen() {
             style={styles.comboBadge}
           >
             <ThemedText style={styles.comboText}>x{combo} COMBO!</ThemedText>
+          </LinearGradient>
+        </Animated.View>
+      ) : null}
+
+      {/* Collect Explosion Effects */}
+      {collectExplosions.map((explosion) => (
+        <View key={explosion.id} style={[styles.collectExplosion, { left: explosion.x - 25, top: explosion.y - 25 }]}>
+          {Array.from({ length: 8 }).map((_, i) => (
+            <Animated.View
+              key={i}
+              style={[
+                styles.collectParticle,
+                {
+                  backgroundColor: explosion.color,
+                  transform: [
+                    { rotate: `${i * 45}deg` },
+                    { translateY: -20 },
+                  ],
+                },
+              ]}
+            />
+          ))}
+        </View>
+      ))}
+
+      {/* Encouragement Message */}
+      {encourageMessage ? (
+        <Animated.View style={[styles.encourageContainer, encourageAnimatedStyle]}>
+          <LinearGradient
+            colors={["#FFD700", "#FFA500"]}
+            style={styles.encourageBadge}
+          >
+            <ThemedText style={styles.encourageText}>{encourageMessage}</ThemedText>
           </LinearGradient>
         </Animated.View>
       ) : null}
@@ -1772,6 +1860,46 @@ const styles = StyleSheet.create({
     textShadowColor: "rgba(0,0,0,0.5)",
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 4,
+  },
+  collectExplosion: {
+    position: "absolute",
+    width: 50,
+    height: 50,
+    zIndex: 25,
+  },
+  collectParticle: {
+    position: "absolute",
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    left: 21,
+    top: 21,
+  },
+  encourageContainer: {
+    position: "absolute",
+    top: height * 0.35,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    zIndex: 30,
+  },
+  encourageBadge: {
+    paddingHorizontal: Spacing["2xl"],
+    paddingVertical: Spacing.lg,
+    borderRadius: BorderRadius.xl,
+    shadowColor: "#FFD700",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius: 25,
+  },
+  encourageText: {
+    fontSize: 32,
+    fontWeight: "900",
+    color: "#FFFFFF",
+    textShadowColor: "rgba(0,0,0,0.5)",
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+    letterSpacing: 2,
   },
   flipParticle: {
     position: "absolute",
