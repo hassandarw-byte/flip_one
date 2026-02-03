@@ -1,65 +1,91 @@
 import { Platform } from "react-native";
 
 export const GameColors = {
-  background: "#1A0A2E",
-  backgroundGradientStart: "#1A0A2E",
-  backgroundGradientEnd: "#2D1B4E",
-  surface: "#2D1B4E",
-  surfaceLight: "#3D2B5E",
-  surfaceGlass: "rgba(255, 255, 255, 0.1)",
+  // Cheerful bright sky background (Sonic/Mario style)
+  background: "#4FC3F7",
+  backgroundGradientStart: "#29B6F6",
+  backgroundGradientEnd: "#81D4FA",
+  surface: "#03A9F4",
+  surfaceLight: "#4FC3F7",
+  surfaceGlass: "rgba(255, 255, 255, 0.3)",
   
-  player: "#FFD93D",
+  // Bright golden player (Sonic rings style)
+  player: "#FFD700",
   playerGlow: "#FFC107",
-  playerHighlight: "#FFEB99",
+  playerHighlight: "#FFEB3B",
   
-  spike: "#FF6B6B",
-  spikeGlow: "#FF4757",
-  platform: "#4ECDC4",
-  platformGlow: "#26D0CE",
+  // Angry Birds style danger colors
+  spike: "#F44336",
+  spikeGlow: "#E53935",
+  platform: "#4CAF50",
+  platformGlow: "#66BB6A",
   
-  candy1: "#FF6B6B",
-  candy2: "#4ECDC4",
-  candy3: "#FFD93D",
-  candy4: "#A66CFF",
-  candy5: "#FF9FF3",
-  candy6: "#54E346",
+  // Candy Crush vibrant colors
+  candy1: "#FF5252",   // Red candy
+  candy2: "#FF9800",   // Orange candy
+  candy3: "#FFEB3B",   // Yellow candy
+  candy4: "#8BC34A",   // Green candy
+  candy5: "#2196F3",   // Blue candy
+  candy6: "#9C27B0",   // Purple candy
+  candyPink: "#E91E63", // Pink candy
   
+  // Mario classic colors
   marioRed: "#E52521",
   marioBlue: "#049CD8",
   marioYellow: "#FBD000",
   marioGreen: "#43B047",
   marioBrown: "#8B4513",
+  marioOrange: "#FF9800",
   
+  // Sonic colors
   sonicBlue: "#0066CC",
   sonicGold: "#FFD700",
   sonicRed: "#CC0000",
   sonicGreen: "#00CC00",
+  sonicRingGold: "#FFCC00",
   
-  primary: "#A66CFF",
-  primaryGlow: "#8B5CF6",
-  secondary: "#FF9FF3",
-  secondaryGlow: "#F472B6",
-  success: "#54E346",
-  successGlow: "#22C55E",
-  danger: "#FF6B6B",
-  dangerGlow: "#EF4444",
-  warning: "#FFD93D",
+  // Angry Birds colors
+  angryRed: "#C62828",
+  angryYellow: "#FFD600",
+  angryBlue: "#1565C0",
+  angryGreen: "#2E7D32",
+  angryPink: "#EC407A",
+  
+  // UI Colors (bright and cheerful)
+  primary: "#FF5722",
+  primaryGlow: "#FF7043",
+  secondary: "#E91E63",
+  secondaryGlow: "#F06292",
+  success: "#4CAF50",
+  successGlow: "#66BB6A",
+  danger: "#F44336",
+  dangerGlow: "#EF5350",
+  warning: "#FFC107",
   gold: "#FFD700",
-  goldGlow: "#F59E0B",
+  goldGlow: "#FFCA28",
   
   textPrimary: "#FFFFFF",
-  textSecondary: "#E8D5FF",
-  textMuted: "#B794F6",
+  textSecondary: "#FFF9C4",
+  textMuted: "#BBDEFB",
   
-  trackTop: "#FF6B6B",
-  trackBottom: "#4ECDC4",
+  // Road colors
+  trackTop: "#424242",
+  trackBottom: "#424242",
+  roadAsphalt: "#37474F",
+  roadLine: "#FFEB3B",
+  roadEdge: "#FFFFFF",
+  grassGreen: "#4CAF50",
   
   star: "#FFD700",
   sparkle: "#FFFFFF",
   
-  wheelColor: "#333333",
+  wheelColor: "#212121",
   eyeWhite: "#FFFFFF",
   eyePupil: "#000000",
+  
+  // Cloud white
+  cloudWhite: "#FFFFFF",
+  cloudShadow: "#E0E0E0",
 };
 
 export const NightModeColors = {

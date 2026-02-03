@@ -1239,23 +1239,46 @@ export default function GameScreen() {
       </View>
 
       <Animated.View style={[styles.gameWorld, worldAnimatedStyle]}>
-        <View style={[styles.track, { top: trackTopY }]}>
-          <LinearGradient
-            colors={[GameColors.spike, GameColors.spikeGlow]}
-            style={styles.trackLineTop}
-          />
-          <View style={styles.spikesContainer}>
-            {Array.from({ length: 25 }).map((_, i) => (
-              <View key={i} style={[styles.trackSpike, { borderBottomColor: GameColors.spike }]} />
-            ))}
+        {/* Top Road/Track */}
+        <View style={[styles.roadTrack, { top: trackTopY }]}>
+          {/* Grass edge */}
+          <View style={[styles.grassEdge, styles.grassTop]} />
+          {/* Asphalt */}
+          <View style={styles.asphaltSurface}>
+            {/* White edge line */}
+            <View style={[styles.roadEdgeLine, styles.roadEdgeTop]} />
+            {/* Yellow center dashes */}
+            <View style={styles.roadCenterContainer}>
+              {Array.from({ length: 15 }).map((_, i) => (
+                <View key={i} style={styles.roadCenterDash} />
+              ))}
+            </View>
+            {/* White edge line */}
+            <View style={[styles.roadEdgeLine, styles.roadEdgeBottom]} />
           </View>
+          {/* Grass edge */}
+          <View style={[styles.grassEdge, styles.grassBottom]} />
         </View>
 
-        <View style={[styles.track, { top: trackBottomY }]}>
-          <LinearGradient
-            colors={[GameColors.platform, GameColors.platformGlow]}
-            style={styles.trackLineBottom}
-          />
+        {/* Bottom Road/Track */}
+        <View style={[styles.roadTrack, { top: trackBottomY }]}>
+          {/* Grass edge */}
+          <View style={[styles.grassEdge, styles.grassTop]} />
+          {/* Asphalt */}
+          <View style={styles.asphaltSurface}>
+            {/* White edge line */}
+            <View style={[styles.roadEdgeLine, styles.roadEdgeTop]} />
+            {/* Yellow center dashes */}
+            <View style={styles.roadCenterContainer}>
+              {Array.from({ length: 15 }).map((_, i) => (
+                <View key={i} style={styles.roadCenterDash} />
+              ))}
+            </View>
+            {/* White edge line */}
+            <View style={[styles.roadEdgeLine, styles.roadEdgeBottom]} />
+          </View>
+          {/* Grass edge */}
+          <View style={[styles.grassEdge, styles.grassBottom]} />
         </View>
 
         {floatingParticles.map((particle) => (
