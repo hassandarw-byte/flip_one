@@ -52,6 +52,8 @@ import {
   playScoreSound,
   playPowerUpSound,
   playCollectSound,
+  playCarEngineSound,
+  playThunderSound,
   initializeSounds,
   startHeartbeat,
   stopHeartbeat,
@@ -181,6 +183,9 @@ export default function GameScreen() {
   const [encourageMessage, setEncourageMessage] = useState<string | null>(null);
   const [collectExplosions, setCollectExplosions] = useState<{id: number, x: number, y: number, color: string}[]>([]);
   const [streak, setStreak] = useState(0);
+  const [successfulFlips, setSuccessfulFlips] = useState(0);
+  const [showSuperman, setShowSuperman] = useState(false);
+  const [supermanX, setSupermanX] = useState(-100);
   
   const currentTrackRef = useRef<"top" | "bottom">("bottom");
   const freezeActiveRef = useRef(false);
@@ -223,6 +228,8 @@ export default function GameScreen() {
   const encourageScale = useSharedValue(0);
   const encourageOpacity = useSharedValue(0);
   const powerGlowPulse = useSharedValue(1);
+  const wheelRotation = useSharedValue(0);
+  const eyeSparkle = useSharedValue(1);
   
   const obstacleScale = useSharedValue(1);
   
@@ -548,6 +555,9 @@ export default function GameScreen() {
       trailIntervalRef.current = null;
     }
     setTrailParticles([]);
+    setSuccessfulFlips(0);
+    setShowSuperman(false);
+    setSupermanX(-100);
   }, []);
 
   const handleGameOver = useCallback(async () => {
@@ -669,22 +679,25 @@ export default function GameScreen() {
       true
     );
     
-    // Start trail effect
-    trailIntervalRef.current = setInterval(() => {
-      if (isGameOverRef.current) return;
-      const colors = ["#FFD93D", "#FFA726", "#FF9800"];
-      const newTrail: TrailParticle = {
-        id: Date.now(),
-        x: playerX - PLAYER_SIZE / 2 - 5,
-        y: currentTrackRef.current === "bottom" 
-          ? trackBottomY - PLAYER_SIZE / 2 + 4 
-          : trackTopY + TRACK_HEIGHT + PLAYER_SIZE / 2 - 4,
-        size: Math.random() * 8 + 6,
-        opacity: 0.7,
-        color: colors[Math.floor(Math.random() * colors.length)],
-      };
-      setTrailParticles(prev => [...prev.slice(-8), newTrail]);
-    }, 80);
+    // Start wheel rotation animation (car-like movement)
+    wheelRotation.value = withRepeat(
+      withTiming(360, { duration: 300, easing: Easing.linear }),
+      -1,
+      false
+    );
+    
+    // Start eye sparkle animation
+    eyeSparkle.value = withRepeat(
+      withSequence(
+        withTiming(1.3, { duration: 400 }),
+        withTiming(1, { duration: 400 })
+      ),
+      -1,
+      true
+    );
+    
+    // Play car engine sound at game start
+    playCarEngineSound(gameState?.soundEnabled ?? false);
     
     // Initialize floating distraction particles - more particles with vibrant colors
     const distractionColors = [
@@ -737,11 +750,14 @@ export default function GameScreen() {
       // Update distance
       setDistance(d => d + gameSpeedRef.current * 0.1);
       
-      // Update trail particles opacity
-      setTrailParticles(prev => 
-        prev.map(p => ({ ...p, opacity: p.opacity * 0.92 }))
-          .filter(p => p.opacity > 0.1)
-      );
+      // Update superman position (flies across screen)
+      setSupermanX(prev => {
+        if (prev > width + 100) {
+          setShowSuperman(false);
+          return -100;
+        }
+        return prev + 8;
+      });
 
       setObstacles((prev) => {
         if (freezeActiveRef.current) {
@@ -989,12 +1005,28 @@ export default function GameScreen() {
     const newTrack = currentTrackRef.current === "bottom" ? "top" : "bottom";
     currentTrackRef.current = newTrack;
     flipCountRef.current += 1;
+    
+    // Track successful flips for superman trigger
+    setSuccessfulFlips(prev => {
+      const newCount = prev + 1;
+      // Trigger superman after 15 successful flips
+      if (newCount === 15 && !showSuperman) {
+        setShowSuperman(true);
+        setSupermanX(-100);
+      }
+      return newCount;
+    });
 
-    // Player rotation animation (360 degree spin)
+    // Special 360 rotation with dramatic effect + thunder sound
     playerRotation.value = withSequence(
-      withTiming(newTrack === "top" ? 360 : -360, { duration: 300, easing: Easing.out(Easing.cubic) }),
+      withTiming(newTrack === "top" ? 720 : -720, { duration: 400, easing: Easing.out(Easing.back(1.5)) }),
       withTiming(0, { duration: 0 })
     );
+    
+    // Play thunder sound for dramatic flip effect
+    if (gameState?.soundEnabled) {
+      playThunderSound(true);
+    }
 
     // Different sounds and haptics for up vs down flip
     if (gameState?.soundEnabled) {
@@ -1040,6 +1072,14 @@ export default function GameScreen() {
   const powerGlowStyle = useAnimatedStyle(() => ({
     transform: [{ scale: powerGlowPulse.value }],
     opacity: activePowerTypes.length > 0 ? 0.8 : 0,
+  }));
+  
+  const wheelAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${wheelRotation.value}deg` }],
+  }));
+  
+  const eyeSparkleStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: eyeSparkle.value }],
   }));
   
   const encourageAnimatedStyle = useAnimatedStyle(() => ({
@@ -1125,22 +1165,24 @@ export default function GameScreen() {
         />
       ))}
       
-      {trailParticles.map((particle) => (
-        <View
-          key={`trail-${particle.id}`}
+      {/* Superman flying after 15 successful flips */}
+      {showSuperman ? (
+        <Animated.View 
           style={[
-            styles.trailParticle,
+            styles.supermanContainer,
             {
-              left: particle.x,
-              top: particle.y,
-              width: particle.size,
-              height: particle.size,
-              backgroundColor: particle.color,
-              opacity: particle.opacity,
-            },
+              left: supermanX,
+              top: height * 0.3,
+            }
           ]}
-        />
-      ))}
+        >
+          <View style={styles.supermanBody}>
+            <View style={styles.supermanCape} />
+            <View style={styles.supermanHead} />
+            <View style={styles.supermanArm} />
+          </View>
+        </Animated.View>
+      ) : null}
 
       <View style={[styles.scoreContainer, { top: insets.top + Spacing.lg }]}>
         <View style={[styles.hudBadge, { shadowColor: "#A66CFF" }]}>
@@ -1278,12 +1320,36 @@ export default function GameScreen() {
                               "#2ECC71",
             }]} />
           ) : null}
+          {/* Car body */}
           <LinearGradient
             colors={getPlayerColors()}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.player}
-          />
+          >
+            {/* Sparkling Eyes */}
+            <View style={styles.eyesContainer}>
+              <Animated.View style={[styles.eye, eyeSparkleStyle]}>
+                <View style={styles.eyePupil} />
+                <View style={styles.eyeSparkle} />
+              </Animated.View>
+              <Animated.View style={[styles.eye, eyeSparkleStyle]}>
+                <View style={styles.eyePupil} />
+                <View style={styles.eyeSparkle} />
+              </Animated.View>
+            </View>
+          </LinearGradient>
+          {/* Spinning Wheels */}
+          <View style={styles.wheelsContainer}>
+            <Animated.View style={[styles.wheel, wheelAnimatedStyle]}>
+              <View style={styles.wheelSpoke} />
+              <View style={[styles.wheelSpoke, { transform: [{ rotate: '90deg' }] }]} />
+            </Animated.View>
+            <Animated.View style={[styles.wheel, wheelAnimatedStyle]}>
+              <View style={styles.wheelSpoke} />
+              <View style={[styles.wheelSpoke, { transform: [{ rotate: '90deg' }] }]} />
+            </Animated.View>
+          </View>
         </Animated.View>
       </Animated.View>
       
@@ -1902,6 +1968,104 @@ const styles = StyleSheet.create({
     borderRadius: (PLAYER_SIZE + 20) / 2,
     left: -10,
     top: -10,
+  },
+  eyesContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    top: 6,
+    left: 0,
+    right: 0,
+  },
+  eye: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "#FFFFFF",
+    marginHorizontal: 3,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  eyePupil: {
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    backgroundColor: "#000000",
+    position: "absolute",
+  },
+  eyeSparkle: {
+    width: 3,
+    height: 3,
+    borderRadius: 1.5,
+    backgroundColor: "#FFFFFF",
+    position: "absolute",
+    top: 1,
+    right: 1,
+  },
+  wheelsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    position: "absolute",
+    bottom: -6,
+    left: 2,
+    right: 2,
+  },
+  wheel: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: "#333333",
+    borderWidth: 2,
+    borderColor: "#666666",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  wheelSpoke: {
+    position: "absolute",
+    width: 8,
+    height: 2,
+    backgroundColor: "#888888",
+    borderRadius: 1,
+  },
+  supermanContainer: {
+    position: "absolute",
+    zIndex: 100,
+  },
+  supermanBody: {
+    width: 50,
+    height: 30,
+    backgroundColor: "#0066CC",
+    borderRadius: 15,
+    position: "relative",
+  },
+  supermanCape: {
+    position: "absolute",
+    left: -15,
+    top: 5,
+    width: 20,
+    height: 25,
+    backgroundColor: "#CC0000",
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 15,
+  },
+  supermanHead: {
+    position: "absolute",
+    right: -8,
+    top: 2,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: "#FFCC99",
+  },
+  supermanArm: {
+    position: "absolute",
+    right: -20,
+    top: 8,
+    width: 25,
+    height: 8,
+    backgroundColor: "#0066CC",
+    borderRadius: 4,
   },
   collectParticle: {
     position: "absolute",
