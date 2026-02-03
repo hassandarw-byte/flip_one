@@ -452,6 +452,16 @@ export default function GameScreen() {
     
     setActivePowerTypes(prev => [...prev, powerType]);
     
+    // Start pulsing glow animation
+    powerGlowPulse.value = withRepeat(
+      withSequence(
+        withTiming(1.5, { duration: 300 }),
+        withTiming(1, { duration: 300 })
+      ),
+      -1,
+      true
+    );
+    
     switch (powerType) {
       case "freeze":
         freezeActiveRef.current = true;
@@ -460,6 +470,7 @@ export default function GameScreen() {
           freezeActiveRef.current = false;
           setActivePowers(prev => prev.filter(p => p.type !== "freeze"));
           setActivePowerTypes(prev => prev.filter(p => p !== "freeze"));
+          powerGlowPulse.value = 1;
         }, 3000);
         break;
         
@@ -471,12 +482,14 @@ export default function GameScreen() {
           gameSpeedRef.current = originalSpeedRef.current;
           setActivePowers(prev => prev.filter(p => p.type !== "slow"));
           setActivePowerTypes(prev => prev.filter(p => p !== "slow"));
+          powerGlowPulse.value = 1;
         }, 5000);
         break;
         
       case "shield":
         hasShieldRef.current = true;
         setActivePowers(prev => [...prev, { type: "shield", expiresAt: now + 60000 }]);
+        // Shield glow stays until hit
         break;
         
       case "double":
@@ -486,6 +499,7 @@ export default function GameScreen() {
           doublePointsRef.current = false;
           setActivePowers(prev => prev.filter(p => p.type !== "double"));
           setActivePowerTypes(prev => prev.filter(p => p !== "double"));
+          powerGlowPulse.value = 1;
         }, 30000);
         break;
     }
@@ -1023,6 +1037,11 @@ export default function GameScreen() {
     opacity: playerGlow.value,
   }));
   
+  const powerGlowStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: powerGlowPulse.value }],
+    opacity: activePowerTypes.length > 0 ? 0.8 : 0,
+  }));
+  
   const encourageAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: encourageScale.value }],
     opacity: encourageOpacity.value,
@@ -1250,6 +1269,15 @@ export default function GameScreen() {
           ]}
         >
           <Animated.View style={[styles.playerGlow, playerGlowStyle]} />
+          {/* Power active glow */}
+          {activePowerTypes.length > 0 ? (
+            <Animated.View style={[styles.powerActiveGlow, powerGlowStyle, {
+              backgroundColor: activePowerTypes.includes("freeze") ? "#00D4FF" :
+                              activePowerTypes.includes("shield") ? "#9B59B6" :
+                              activePowerTypes.includes("slow") ? "#FFB800" :
+                              "#2ECC71",
+            }]} />
+          ) : null}
           <LinearGradient
             colors={getPlayerColors()}
             start={{ x: 0, y: 0 }}
@@ -1866,6 +1894,14 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     zIndex: 25,
+  },
+  powerActiveGlow: {
+    position: "absolute",
+    width: PLAYER_SIZE + 20,
+    height: PLAYER_SIZE + 20,
+    borderRadius: (PLAYER_SIZE + 20) / 2,
+    left: -10,
+    top: -10,
   },
   collectParticle: {
     position: "absolute",
