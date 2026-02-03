@@ -8,6 +8,8 @@ let scorePlayer: AudioPlayer | null = null;
 let sirenPlayer: AudioPlayer | null = null;
 let powerUpPlayer: AudioPlayer | null = null;
 let collectPlayer: AudioPlayer | null = null;
+let carEnginePlayer: AudioPlayer | null = null;
+let thunderPlayer: AudioPlayer | null = null;
 
 const FLIP_UP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3";
 const FLIP_DOWN_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3";
@@ -15,7 +17,9 @@ const GAME_OVER_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2656/26
 const SCORE_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3";
 const TENSION_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2457/2457-preview.mp3";
 const POWER_UP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3";
-const COLLECT_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3";
+const SONIC_RING_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3";
+const CAR_ENGINE_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/558/558-preview.mp3";
+const THUNDER_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/1166/1166-preview.mp3";
 
 let soundsLoaded = false;
 let heartbeatInterval: ReturnType<typeof setInterval> | null = null;
@@ -34,7 +38,9 @@ export async function initializeSounds(): Promise<void> {
     scorePlayer = createAudioPlayer({ uri: SCORE_SOUND_URI });
     sirenPlayer = createAudioPlayer({ uri: TENSION_SOUND_URI });
     powerUpPlayer = createAudioPlayer({ uri: POWER_UP_SOUND_URI });
-    collectPlayer = createAudioPlayer({ uri: COLLECT_SOUND_URI });
+    collectPlayer = createAudioPlayer({ uri: SONIC_RING_SOUND_URI });
+    carEnginePlayer = createAudioPlayer({ uri: CAR_ENGINE_SOUND_URI });
+    thunderPlayer = createAudioPlayer({ uri: THUNDER_SOUND_URI });
     
     soundsLoaded = true;
   } catch (error) {
@@ -122,6 +128,34 @@ export async function playCollectSound(soundEnabled: boolean): Promise<void> {
     if (collectPlayer) {
       collectPlayer.seekTo(0);
       collectPlayer.play();
+    }
+  } catch (error) {
+    // Sound not available
+  }
+}
+
+export async function playCarEngineSound(soundEnabled: boolean): Promise<void> {
+  if (!soundEnabled) return;
+  
+  try {
+    if (carEnginePlayer) {
+      carEnginePlayer.volume = 0.3;
+      carEnginePlayer.seekTo(0);
+      carEnginePlayer.play();
+    }
+  } catch (error) {
+    // Sound not available
+  }
+}
+
+export async function playThunderSound(soundEnabled: boolean): Promise<void> {
+  if (!soundEnabled) return;
+  
+  try {
+    if (thunderPlayer) {
+      thunderPlayer.volume = 0.4;
+      thunderPlayer.seekTo(0);
+      thunderPlayer.play();
     }
   } catch (error) {
     // Sound not available
@@ -323,6 +357,8 @@ export async function cleanupSounds(): Promise<void> {
     if (sirenPlayer) sirenPlayer.release();
     if (powerUpPlayer) powerUpPlayer.release();
     if (collectPlayer) collectPlayer.release();
+    if (carEnginePlayer) carEnginePlayer.release();
+    if (thunderPlayer) thunderPlayer.release();
     
     flipUpPlayer = null;
     flipDownPlayer = null;
@@ -331,6 +367,8 @@ export async function cleanupSounds(): Promise<void> {
     sirenPlayer = null;
     powerUpPlayer = null;
     collectPlayer = null;
+    carEnginePlayer = null;
+    thunderPlayer = null;
     soundsLoaded = false;
   } catch (error) {
     // Cleanup failed

@@ -24,6 +24,17 @@ export const GameColors = {
   candy5: "#FF9FF3",
   candy6: "#54E346",
   
+  marioRed: "#E52521",
+  marioBlue: "#049CD8",
+  marioYellow: "#FBD000",
+  marioGreen: "#43B047",
+  marioBrown: "#8B4513",
+  
+  sonicBlue: "#0066CC",
+  sonicGold: "#FFD700",
+  sonicRed: "#CC0000",
+  sonicGreen: "#00CC00",
+  
   primary: "#A66CFF",
   primaryGlow: "#8B5CF6",
   secondary: "#FF9FF3",
@@ -45,6 +56,10 @@ export const GameColors = {
   
   star: "#FFD700",
   sparkle: "#FFFFFF",
+  
+  wheelColor: "#333333",
+  eyeWhite: "#FFFFFF",
+  eyePupil: "#000000",
 };
 
 export const NightModeColors = {
