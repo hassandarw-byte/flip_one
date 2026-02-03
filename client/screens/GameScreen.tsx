@@ -54,6 +54,9 @@ import {
   playCollectSound,
   playCarEngineSound,
   playThunderSound,
+  playCarStartupSound,
+  startGasPedalSound,
+  stopGasPedalSound,
   initializeSounds,
   startHeartbeat,
   stopHeartbeat,
@@ -534,6 +537,7 @@ export default function GameScreen() {
 
   const cleanupGame = useCallback(() => {
     stopHeartbeat();
+    stopGasPedalSound();
     if (gameLoopRef.current) {
       clearInterval(gameLoopRef.current);
       gameLoopRef.current = null;
@@ -565,8 +569,9 @@ export default function GameScreen() {
     
     isDyingRef.current = true;
     
-    // Stop heartbeat
+    // Stop heartbeat and gas pedal sounds
     stopHeartbeat();
+    stopGasPedalSound();
     
     // Slow motion effect before death
     const originalSpeed = gameSpeedRef.current;
@@ -696,8 +701,11 @@ export default function GameScreen() {
       true
     );
     
-    // Play car engine sound at game start
-    playCarEngineSound(gameState?.soundEnabled ?? false);
+    // Play car startup sound at game start
+    playCarStartupSound(gameState?.soundEnabled ?? false);
+    
+    // Start continuous gas pedal sound during gameplay
+    startGasPedalSound(gameState?.soundEnabled ?? false);
     
     // Initialize floating distraction particles - more particles with vibrant colors
     const distractionColors = [
@@ -1078,6 +1086,10 @@ export default function GameScreen() {
     transform: [{ rotate: `${wheelRotation.value}deg` }],
   }));
   
+  const wheelsContainerAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${-worldRotation.value}deg` }],
+  }));
+  
   const eyeSparkleStyle = useAnimatedStyle(() => ({
     transform: [{ scale: eyeSparkle.value }],
   }));
@@ -1339,8 +1351,8 @@ export default function GameScreen() {
               </Animated.View>
             </View>
           </LinearGradient>
-          {/* Spinning Wheels */}
-          <View style={styles.wheelsContainer}>
+          {/* Spinning Wheels - counter-rotate to stay at bottom */}
+          <Animated.View style={[styles.wheelsContainer, wheelsContainerAnimatedStyle]}>
             <Animated.View style={[styles.wheel, wheelAnimatedStyle]}>
               <View style={styles.wheelSpoke} />
               <View style={[styles.wheelSpoke, { transform: [{ rotate: '90deg' }] }]} />
@@ -1349,7 +1361,7 @@ export default function GameScreen() {
               <View style={styles.wheelSpoke} />
               <View style={[styles.wheelSpoke, { transform: [{ rotate: '90deg' }] }]} />
             </Animated.View>
-          </View>
+          </Animated.View>
         </Animated.View>
       </Animated.View>
       

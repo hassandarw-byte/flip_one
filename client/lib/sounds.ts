@@ -10,6 +10,10 @@ let powerUpPlayer: AudioPlayer | null = null;
 let collectPlayer: AudioPlayer | null = null;
 let carEnginePlayer: AudioPlayer | null = null;
 let thunderPlayer: AudioPlayer | null = null;
+let carStartupPlayer: AudioPlayer | null = null;
+let gasPedalPlayer: AudioPlayer | null = null;
+
+let gasPedalInterval: ReturnType<typeof setInterval> | null = null;
 
 const FLIP_UP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3";
 const FLIP_DOWN_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3";
@@ -20,6 +24,8 @@ const POWER_UP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/1435/143
 const SONIC_RING_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3";
 const CAR_ENGINE_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/558/558-preview.mp3";
 const THUNDER_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/1166/1166-preview.mp3";
+const CAR_STARTUP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/552/552-preview.mp3";
+const GAS_PEDAL_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/560/560-preview.mp3";
 
 let soundsLoaded = false;
 let heartbeatInterval: ReturnType<typeof setInterval> | null = null;
@@ -41,6 +47,8 @@ export async function initializeSounds(): Promise<void> {
     collectPlayer = createAudioPlayer({ uri: SONIC_RING_SOUND_URI });
     carEnginePlayer = createAudioPlayer({ uri: CAR_ENGINE_SOUND_URI });
     thunderPlayer = createAudioPlayer({ uri: THUNDER_SOUND_URI });
+    carStartupPlayer = createAudioPlayer({ uri: CAR_STARTUP_SOUND_URI });
+    gasPedalPlayer = createAudioPlayer({ uri: GAS_PEDAL_SOUND_URI });
     
     soundsLoaded = true;
   } catch (error) {
@@ -159,6 +167,47 @@ export async function playThunderSound(soundEnabled: boolean): Promise<void> {
     }
   } catch (error) {
     // Sound not available
+  }
+}
+
+export async function playCarStartupSound(soundEnabled: boolean): Promise<void> {
+  if (!soundEnabled) return;
+  
+  try {
+    if (carStartupPlayer) {
+      carStartupPlayer.volume = 0.5;
+      carStartupPlayer.seekTo(0);
+      carStartupPlayer.play();
+    }
+  } catch (error) {
+    // Sound not available
+  }
+}
+
+export function startGasPedalSound(soundEnabled: boolean): void {
+  if (!soundEnabled) return;
+  stopGasPedalSound();
+  
+  const playGas = () => {
+    try {
+      if (gasPedalPlayer) {
+        gasPedalPlayer.volume = 0.25;
+        gasPedalPlayer.seekTo(0);
+        gasPedalPlayer.play();
+      }
+    } catch (error) {
+      // Sound not available
+    }
+  };
+  
+  playGas();
+  gasPedalInterval = setInterval(playGas, 2000);
+}
+
+export function stopGasPedalSound(): void {
+  if (gasPedalInterval) {
+    clearInterval(gasPedalInterval);
+    gasPedalInterval = null;
   }
 }
 
@@ -348,6 +397,7 @@ export async function triggerMovementHaptic(hapticsEnabled: boolean): Promise<vo
 
 export async function cleanupSounds(): Promise<void> {
   stopHeartbeat();
+  stopGasPedalSound();
   
   try {
     if (flipUpPlayer) flipUpPlayer.release();
@@ -359,6 +409,8 @@ export async function cleanupSounds(): Promise<void> {
     if (collectPlayer) collectPlayer.release();
     if (carEnginePlayer) carEnginePlayer.release();
     if (thunderPlayer) thunderPlayer.release();
+    if (carStartupPlayer) carStartupPlayer.release();
+    if (gasPedalPlayer) gasPedalPlayer.release();
     
     flipUpPlayer = null;
     flipDownPlayer = null;
@@ -369,6 +421,8 @@ export async function cleanupSounds(): Promise<void> {
     collectPlayer = null;
     carEnginePlayer = null;
     thunderPlayer = null;
+    carStartupPlayer = null;
+    gasPedalPlayer = null;
     soundsLoaded = false;
   } catch (error) {
     // Cleanup failed
