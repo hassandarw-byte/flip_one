@@ -89,7 +89,18 @@ The app runs on Expo and can be tested via:
 
 ## Recent Changes
 
-### Latest (Obstacles & Collectibles Update)
+### Latest (Car-Style Player & Superman Update)
+- **Car-Like Player**: Player now has spinning wheels at the bottom with spoke animation
+- **Sparkling Eyes**: Animated eyes on the player with sparkle effect
+- **Removed Trail**: Golden trail particles removed for cleaner look
+- **Car Engine Sound**: Engine sound plays at game start
+- **Thunder Flip Sound**: Light thunder sound on each flip for dramatic effect
+- **720° Special Flip**: Double rotation (720°) with dramatic back easing animation
+- **Superman Easter Egg**: After 15 successful flips, Superman flies across the screen horizontally
+- **Mario/Sonic/Candy Crush Colors**: Added color palette inspiration from classic games
+- **Sonic Ring Sound**: Collectibles now use Sonic-style ring collection sound
+
+### Previous (Obstacles & Collectibles Update)
 - **New Obstacle Types**: Electric lightning symbols (yellow), danger triangles (red), and fancy skulls (white) replace card suits
 - **Collectible Hearts**: Pink hearts spawn every 3 seconds and grant +3 bonus points when collected
 - **Collectible Stars**: Golden stars spawn every 3 seconds and grant +5 bonus points when collected
