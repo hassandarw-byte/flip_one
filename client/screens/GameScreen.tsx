@@ -147,6 +147,16 @@ interface TrailParticle {
   color: string;
 }
 
+interface SeaCreature {
+  id: number;
+  x: number;
+  y: number;
+  type: "crab" | "fish" | "lobster";
+  speed: number;
+  direction: 1 | -1;
+  stream: "top" | "bottom";
+}
+
 interface BackgroundStar {
   id: number;
   x: number;
@@ -189,6 +199,7 @@ export default function GameScreen() {
   const [successfulFlips, setSuccessfulFlips] = useState(0);
   const [showSuperman, setShowSuperman] = useState(false);
   const [supermanX, setSupermanX] = useState(-100);
+  const [seaCreatures, setSeaCreatures] = useState<SeaCreature[]>([]);
   
   const currentTrackRef = useRef<"top" | "bottom">("bottom");
   const freezeActiveRef = useRef(false);
@@ -680,6 +691,35 @@ export default function GameScreen() {
     }));
     setBackgroundStars(stars);
     
+    // Initialize sea creatures in water streams
+    const creatureTypes: ("crab" | "fish" | "lobster")[] = ["crab", "fish", "lobster"];
+    const creatures: SeaCreature[] = [];
+    // Top stream creatures (above top track)
+    for (let i = 0; i < 4; i++) {
+      creatures.push({
+        id: i,
+        x: Math.random() * width,
+        y: trackTopY - 30 - Math.random() * 20,
+        type: creatureTypes[i % 3],
+        speed: 1.5 + Math.random() * 1.5,
+        direction: Math.random() > 0.5 ? 1 : -1,
+        stream: "top",
+      });
+    }
+    // Bottom stream creatures (below bottom track)
+    for (let i = 0; i < 4; i++) {
+      creatures.push({
+        id: i + 4,
+        x: Math.random() * width,
+        y: trackBottomY + TRACK_HEIGHT + 10 + Math.random() * 20,
+        type: creatureTypes[i % 3],
+        speed: 1.5 + Math.random() * 1.5,
+        direction: Math.random() > 0.5 ? 1 : -1,
+        stream: "bottom",
+      });
+    }
+    setSeaCreatures(creatures);
+    
     // Start obstacle pulse animation
     obstacleScale.value = withRepeat(
       withSequence(
@@ -763,6 +803,17 @@ export default function GameScreen() {
       
       // Update distance
       setDistance(d => d + gameSpeedRef.current * 0.1);
+      
+      // Update sea creatures positions
+      setSeaCreatures((prev) =>
+        prev.map((creature) => {
+          let newX = creature.x + creature.speed * creature.direction;
+          // Wrap around screen
+          if (newX > width + 50) newX = -50;
+          if (newX < -50) newX = width + 50;
+          return { ...creature, x: newX };
+        })
+      );
       
       // Update superman position (flies across screen slowly)
       setSupermanX(prev => {
@@ -1253,6 +1304,14 @@ export default function GameScreen() {
       </View>
 
       <Animated.View style={[styles.gameWorld, worldAnimatedStyle]}>
+        {/* Top Water Stream */}
+        <View style={[styles.waterStream, { top: trackTopY - 50, height: 50 }]}>
+          <LinearGradient
+            colors={["#87CEEB", "#4FC3F7", "#29B6F6"]}
+            style={styles.waterGradient}
+          />
+        </View>
+        
         {/* Top Road/Track */}
         <View style={[styles.roadTrack, { top: trackTopY }]}>
           {/* Grass edge */}
@@ -1295,6 +1354,31 @@ export default function GameScreen() {
           <View style={[styles.grassEdge, styles.grassBottom]} />
         </View>
 
+        {/* Bottom Water Stream */}
+        <View style={[styles.waterStream, { top: trackBottomY + TRACK_HEIGHT, height: 50 }]}>
+          <LinearGradient
+            colors={["#29B6F6", "#4FC3F7", "#87CEEB"]}
+            style={styles.waterGradient}
+          />
+        </View>
+
+        {/* Sea Creatures in water streams */}
+        {seaCreatures.map((creature) => (
+          <View
+            key={`creature-${creature.id}`}
+            style={[
+              styles.seaCreature,
+              {
+                left: creature.x,
+                top: creature.y,
+                transform: [{ scaleX: creature.direction }],
+              },
+            ]}
+          >
+            <SeaCreatureShape type={creature.type} />
+          </View>
+        ))}
+
         {floatingParticles.map((particle) => (
           <View
             key={`particle-${particle.id}`}
@@ -1313,23 +1397,7 @@ export default function GameScreen() {
           />
         ))}
 
-        {obstacles.map((obs) => (
-          <View
-            key={obs.id}
-            style={[
-              styles.obstacle,
-              {
-                left: obs.x - obs.width / 2,
-                top:
-                  obs.track === "top"
-                    ? trackTopY + TRACK_HEIGHT
-                    : trackBottomY - obs.height,
-              },
-            ]}
-          >
-            <ObstacleShape obstacle={obs} track={obs.track} />
-          </View>
-        ))}
+        {/* Obstacles removed from tracks */}
 
         {collectibles.map((col) => (
           <View
@@ -1644,6 +1712,77 @@ const powerStyles = StyleSheet.create({
   },
 });
 
+function SeaCreatureShape({ type }: { type: "crab" | "fish" | "lobster" }) {
+  const size = 35;
+  
+  switch (type) {
+    case "crab":
+      return (
+        <Svg width={size} height={size} viewBox="0 0 100 100">
+          {/* Crab body */}
+          <Circle cx="50" cy="55" r="25" fill="#E57373" stroke="#C62828" strokeWidth={2} />
+          {/* Eyes */}
+          <Circle cx="40" cy="40" r="8" fill="#FFFFFF" />
+          <Circle cx="60" cy="40" r="8" fill="#FFFFFF" />
+          <Circle cx="40" cy="40" r="4" fill="#000000" />
+          <Circle cx="60" cy="40" r="4" fill="#000000" />
+          {/* Claws */}
+          <Path d="M15 50 Q5 45, 10 35 Q15 25, 25 40" fill="#E57373" stroke="#C62828" strokeWidth={2} />
+          <Path d="M85 50 Q95 45, 90 35 Q85 25, 75 40" fill="#E57373" stroke="#C62828" strokeWidth={2} />
+          {/* Legs */}
+          <Path d="M30 70 L20 85" stroke="#C62828" strokeWidth={3} />
+          <Path d="M40 75 L35 90" stroke="#C62828" strokeWidth={3} />
+          <Path d="M60 75 L65 90" stroke="#C62828" strokeWidth={3} />
+          <Path d="M70 70 L80 85" stroke="#C62828" strokeWidth={3} />
+        </Svg>
+      );
+    case "fish":
+      return (
+        <Svg width={size} height={size} viewBox="0 0 100 100">
+          {/* Fish body */}
+          <Path
+            d="M80 50 Q60 25, 30 40 Q10 50, 30 60 Q60 75, 80 50 Z"
+            fill="#64B5F6"
+            stroke="#1976D2"
+            strokeWidth={2}
+          />
+          {/* Tail */}
+          <Path d="M15 50 L5 35 L5 65 Z" fill="#64B5F6" stroke="#1976D2" strokeWidth={2} />
+          {/* Eye */}
+          <Circle cx="65" cy="48" r="6" fill="#FFFFFF" />
+          <Circle cx="66" cy="48" r="3" fill="#000000" />
+          {/* Fins */}
+          <Path d="M45 35 Q50 20, 55 35" fill="#42A5F5" stroke="#1976D2" strokeWidth={1} />
+          <Path d="M45 65 Q50 80, 55 65" fill="#42A5F5" stroke="#1976D2" strokeWidth={1} />
+        </Svg>
+      );
+    case "lobster":
+      return (
+        <Svg width={size} height={size} viewBox="0 0 100 100">
+          {/* Lobster body */}
+          <Rect x="35" y="35" width="30" height="45" rx="10" fill="#D32F2F" stroke="#B71C1C" strokeWidth={2} />
+          {/* Head */}
+          <Circle cx="50" cy="30" r="15" fill="#D32F2F" stroke="#B71C1C" strokeWidth={2} />
+          {/* Eyes on stalks */}
+          <Path d="M40 25 L35 15" stroke="#B71C1C" strokeWidth={3} />
+          <Path d="M60 25 L65 15" stroke="#B71C1C" strokeWidth={3} />
+          <Circle cx="35" cy="13" r="5" fill="#FFFFFF" />
+          <Circle cx="65" cy="13" r="5" fill="#FFFFFF" />
+          <Circle cx="35" cy="13" r="2" fill="#000000" />
+          <Circle cx="65" cy="13" r="2" fill="#000000" />
+          {/* Claws */}
+          <Path d="M25 40 Q10 35, 15 25 Q20 15, 30 30" fill="#D32F2F" stroke="#B71C1C" strokeWidth={2} />
+          <Path d="M75 40 Q90 35, 85 25 Q80 15, 70 30" fill="#D32F2F" stroke="#B71C1C" strokeWidth={2} />
+          {/* Tail segments */}
+          <Rect x="40" y="80" width="20" height="8" rx="3" fill="#D32F2F" stroke="#B71C1C" strokeWidth={1} />
+          <Path d="M45 88 L40 98 L50 95 L60 98 L55 88" fill="#D32F2F" stroke="#B71C1C" strokeWidth={1} />
+        </Svg>
+      );
+    default:
+      return null;
+  }
+}
+
 function ObstacleShape({ obstacle, track }: { obstacle: Obstacle; track: "top" | "bottom" }) {
   const { type, color, width: w, height: h } = obstacle;
   const size = Math.min(w, h) * 0.9;
@@ -1869,6 +2008,21 @@ const styles = StyleSheet.create({
     right: 0,
     height: TRACK_HEIGHT,
     overflow: "hidden",
+  },
+  waterStream: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    overflow: "hidden",
+  },
+  waterGradient: {
+    flex: 1,
+    opacity: 0.7,
+  },
+  seaCreature: {
+    position: "absolute",
+    width: 35,
+    height: 35,
   },
   grassEdge: {
     position: "absolute",

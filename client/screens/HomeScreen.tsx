@@ -24,6 +24,7 @@ import Animated, {
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 
+import Svg, { Path, Ellipse, Text as SvgText } from "react-native-svg";
 import { ThemedText } from "@/components/ThemedText";
 import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import { getGameState, GameState } from "@/lib/storage";
@@ -375,14 +376,39 @@ export default function HomeScreen() {
             onPressOut={handlePressOut}
             testID="button-play"
           >
-            <Image
-              source={require("../../assets/images/shell-button.png")}
-              style={styles.shellImage}
-              resizeMode="contain"
-            />
-            <View style={styles.playIconOverlay}>
-              <Feather name="play" size={32} color="#1A1A1A" />
-            </View>
+            <Svg width={140} height={120} viewBox="0 0 140 120">
+              {/* Shell body - fan shape */}
+              <Path
+                d="M70 110 
+                   Q20 80, 10 40 
+                   Q5 20, 20 10 
+                   Q40 0, 70 5 
+                   Q100 0, 120 10 
+                   Q135 20, 130 40 
+                   Q120 80, 70 110 Z"
+                fill="#FFCCBB"
+                stroke="#E8A090"
+                strokeWidth={3}
+              />
+              {/* Shell ridges */}
+              <Path d="M70 110 Q55 70, 35 20" stroke="#E8A090" strokeWidth={2} fill="none" />
+              <Path d="M70 110 Q60 65, 52 15" stroke="#E8A090" strokeWidth={2} fill="none" />
+              <Path d="M70 110 Q70 60, 70 10" stroke="#E8A090" strokeWidth={2} fill="none" />
+              <Path d="M70 110 Q80 65, 88 15" stroke="#E8A090" strokeWidth={2} fill="none" />
+              <Path d="M70 110 Q85 70, 105 20" stroke="#E8A090" strokeWidth={2} fill="none" />
+              {/* Shell base */}
+              <Ellipse cx="70" cy="108" rx="25" ry="8" fill="#E8A090" />
+              {/* PLAY text */}
+              <SvgText
+                x="70"
+                y="70"
+                fontSize="22"
+                fontWeight="bold"
+                fill="#1A1A1A"
+                textAnchor="middle"
+                fontFamily="Tajawal_700Bold"
+              >PLAY</SvgText>
+            </Svg>
           </AnimatedPressable>
         </View>
       </Animated.View>
