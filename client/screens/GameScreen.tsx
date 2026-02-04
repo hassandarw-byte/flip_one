@@ -237,12 +237,12 @@ export default function GameScreen() {
   const obstacleScale = useSharedValue(1);
   
   const DAY_GRADIENTS: [string, string][] = [
-    ["#E8F5E9", "#C8E6C9"],  // Light green (Mario style)
-    ["#C8E6C9", "#A5D6A7"],  // Medium green
-    ["#E8F5E9", "#A5D6A7"],  // Soft green
-    ["#C8E6C9", "#81C784"],  // Fresh green
-    ["#A5D6A7", "#66BB6A"],  // Bright green
-    ["#E8F5E9", "#81C784"],  // Light to medium green
+    ["#F5E6D3", "#E8D4C0"],  // Sandy beach
+    ["#E8D4C0", "#DEC8B0"],  // Warm sand
+    ["#F5E6D3", "#D4B896"],  // Light to dark sand
+    ["#E8D4C0", "#C9B896"],  // Medium sand
+    ["#DEC8B0", "#D4B896"],  // Deep sand
+    ["#F5E6D3", "#DEC8B0"],  // Soft sand gradient
   ];
   
   const NIGHT_GRADIENTS: [string, string][] = [

@@ -151,23 +151,29 @@ export default function HomeScreen() {
       colors={backgroundGradient}
       style={[styles.container, { paddingTop: insets.top + Spacing.xl }]}
     >
-      <View style={styles.sparklesContainer}>
-        {Array.from({ length: 30 }).map((_, i) => (
-          <Animated.View
-            key={i}
-            style={[
-              styles.sparkle,
-              sparkleStyle,
-              {
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                width: Math.random() * 4 + 2,
-                height: Math.random() * 4 + 2,
-                backgroundColor: [GameColors.candy1, GameColors.candy2, GameColors.candy3, GameColors.candy4, GameColors.candy5][Math.floor(Math.random() * 5)],
-              },
-            ]}
-          />
-        ))}
+      <View style={styles.shellsContainer}>
+        {Array.from({ length: 12 }).map((_, i) => {
+          const size = 15 + Math.random() * 20;
+          const rotation = Math.random() * 360;
+          return (
+            <Animated.View
+              key={i}
+              style={[
+                styles.shell,
+                sparkleStyle,
+                {
+                  left: `${5 + Math.random() * 90}%`,
+                  top: `${5 + Math.random() * 90}%`,
+                  width: size,
+                  height: size * 0.8,
+                  borderRadius: size / 2,
+                  backgroundColor: ["#00BCD4", "#26C6DA", "#4DD0E1", "#00ACC1"][Math.floor(Math.random() * 4)],
+                  transform: [{ rotate: `${rotation}deg` }],
+                },
+              ]}
+            />
+          );
+        })}
       </View>
 
       <Animated.View style={[styles.logoSection, logoAnimatedStyle]}>
@@ -378,15 +384,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  sparklesContainer: {
+  shellsContainer: {
     position: "absolute",
     width: "100%",
     height: "100%",
     zIndex: 0,
   },
-  sparkle: {
+  shell: {
     position: "absolute",
-    borderRadius: 10,
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
   },
   logoSection: {
     alignItems: "center",

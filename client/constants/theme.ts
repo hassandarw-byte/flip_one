@@ -1,13 +1,19 @@
 import { Platform } from "react-native";
 
 export const GameColors = {
-  // Light green background (Mario style)
-  background: "#E8F5E9",
-  backgroundGradientStart: "#E8F5E9",
-  backgroundGradientEnd: "#C8E6C9",
-  surface: "#A5D6A7",
-  surfaceLight: "#C8E6C9",
+  // Sandy beach background
+  background: "#F5E6D3",
+  backgroundGradientStart: "#F5E6D3",
+  backgroundGradientEnd: "#E8D4C0",
+  surface: "#DEC8B0",
+  surfaceLight: "#E8D4C0",
   surfaceGlass: "rgba(255, 255, 255, 0.4)",
+  
+  // Beach/Shell colors
+  sandLight: "#F5E6D3",
+  sandDark: "#D4B896",
+  shellBlue: "#00BCD4",
+  shellTurquoise: "#26C6DA",
   
   // Mario green for buttons
   marioGreenDark: "#2E7D32",
