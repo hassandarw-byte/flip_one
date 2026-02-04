@@ -87,6 +87,49 @@ function ArcadeStarfish({ size = 35, color = "#FFD93D", rotation = 0, style }: a
   );
 }
 
+// Arcade-style Fish component
+function ArcadeFish({ size = 40, color = "#64B5F6", style }: any) {
+  return (
+    <View style={[{ width: size, height: size * 0.6 }, style]}>
+      {/* Body */}
+      <View style={{
+        width: size * 0.7,
+        height: size * 0.5,
+        backgroundColor: color,
+        borderRadius: size * 0.25,
+        alignSelf: 'center',
+        marginTop: size * 0.05,
+        borderWidth: 3,
+        borderColor: "#FFFFFF",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 3,
+        elevation: 5,
+      }}>
+        {/* Eye */}
+        <View style={{ position: 'absolute', top: size * 0.08, right: size * 0.12, width: size * 0.12, height: size * 0.12, backgroundColor: "#FFF", borderRadius: size * 0.06, borderWidth: 1, borderColor: "#000" }}>
+          <View style={{ position: 'absolute', top: 2, right: 2, width: size * 0.05, height: size * 0.05, backgroundColor: "#000", borderRadius: size * 0.025 }} />
+        </View>
+      </View>
+      {/* Tail */}
+      <View style={{ 
+        position: 'absolute', 
+        left: 0, 
+        top: size * 0.12, 
+        width: 0, 
+        height: 0, 
+        borderTopWidth: size * 0.15,
+        borderBottomWidth: size * 0.15,
+        borderRightWidth: size * 0.2,
+        borderTopColor: 'transparent',
+        borderBottomColor: 'transparent',
+        borderRightColor: color,
+      }} />
+    </View>
+  );
+}
+
 // Arcade-style Crab component
 function ArcadeCrab({ size = 40, style }: any) {
   return (
@@ -189,6 +232,19 @@ export default function HomeScreen() {
   const crab2X = useSharedValue(width + 60);
   const crab3X = useSharedValue(-60);
   const crab4X = useSharedValue(width + 60);
+  
+  // Moving fish
+  const fish1X = useSharedValue(-60);
+  const fish2X = useSharedValue(width + 60);
+  const fish3X = useSharedValue(-60);
+  
+  // Moving starfish (floating)
+  const star1Y = useSharedValue(0);
+  const star2Y = useSharedValue(0);
+  
+  // Moving shells (drifting)
+  const shell1X = useSharedValue(-60);
+  const shell2X = useSharedValue(width + 60);
 
   useEffect(() => {
     loadGameState();
@@ -260,6 +316,72 @@ export default function HomeScreen() {
       -1,
       false
     ));
+    
+    // Animate fish swimming
+    fish1X.value = withRepeat(
+      withSequence(
+        withTiming(width + 60, { duration: 4000, easing: Easing.linear }),
+        withTiming(-60, { duration: 0 })
+      ),
+      -1,
+      false
+    );
+    
+    fish2X.value = withDelay(1000, withRepeat(
+      withSequence(
+        withTiming(-60, { duration: 3500, easing: Easing.linear }),
+        withTiming(width + 60, { duration: 0 })
+      ),
+      -1,
+      false
+    ));
+    
+    fish3X.value = withDelay(2000, withRepeat(
+      withSequence(
+        withTiming(width + 60, { duration: 5000, easing: Easing.linear }),
+        withTiming(-60, { duration: 0 })
+      ),
+      -1,
+      false
+    ));
+    
+    // Animate starfish floating up and down
+    star1Y.value = withRepeat(
+      withSequence(
+        withTiming(15, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
+        withTiming(-15, { duration: 2000, easing: Easing.inOut(Easing.ease) })
+      ),
+      -1,
+      true
+    );
+    
+    star2Y.value = withDelay(1000, withRepeat(
+      withSequence(
+        withTiming(-12, { duration: 1800, easing: Easing.inOut(Easing.ease) }),
+        withTiming(12, { duration: 1800, easing: Easing.inOut(Easing.ease) })
+      ),
+      -1,
+      true
+    ));
+    
+    // Animate shells drifting
+    shell1X.value = withRepeat(
+      withSequence(
+        withTiming(width + 60, { duration: 8000, easing: Easing.linear }),
+        withTiming(-60, { duration: 0 })
+      ),
+      -1,
+      false
+    );
+    
+    shell2X.value = withDelay(4000, withRepeat(
+      withSequence(
+        withTiming(-60, { duration: 9000, easing: Easing.linear }),
+        withTiming(width + 60, { duration: 0 })
+      ),
+      -1,
+      false
+    ));
   };
 
   // Animated styles for moving crabs
@@ -277,6 +399,37 @@ export default function HomeScreen() {
   
   const crab4Style = useAnimatedStyle(() => ({
     transform: [{ translateX: crab4X.value }, { scaleX: -1 }],
+  }));
+  
+  // Animated styles for moving fish
+  const fish1Style = useAnimatedStyle(() => ({
+    transform: [{ translateX: fish1X.value }],
+  }));
+  
+  const fish2Style = useAnimatedStyle(() => ({
+    transform: [{ translateX: fish2X.value }, { scaleX: -1 }],
+  }));
+  
+  const fish3Style = useAnimatedStyle(() => ({
+    transform: [{ translateX: fish3X.value }],
+  }));
+  
+  // Animated styles for floating starfish
+  const star1Style = useAnimatedStyle(() => ({
+    transform: [{ translateY: star1Y.value }],
+  }));
+  
+  const star2Style = useAnimatedStyle(() => ({
+    transform: [{ translateY: star2Y.value }],
+  }));
+  
+  // Animated styles for drifting shells
+  const shell1Style = useAnimatedStyle(() => ({
+    transform: [{ translateX: shell1X.value }],
+  }));
+  
+  const shell2Style = useAnimatedStyle(() => ({
+    transform: [{ translateX: shell2X.value }, { scaleX: -1 }],
   }));
 
   const buttonsAnimatedStyle = useAnimatedStyle(() => ({
@@ -327,7 +480,9 @@ export default function HomeScreen() {
       colors={backgroundGradient}
       style={[styles.container, { paddingTop: insets.top + Spacing.xl }]}
     >
-      {/* Moving crabs only - 4 crabs moving horizontally at edges */}
+      {/* Moving sea creatures - crabs, fish, starfish, shells */}
+      
+      {/* Crabs at top and bottom edges */}
       <Animated.View style={[styles.movingCrab, { top: 50 }, crab1Style]}>
         <ArcadeCrab size={45} />
       </Animated.View>
@@ -339,6 +494,33 @@ export default function HomeScreen() {
       </Animated.View>
       <Animated.View style={[styles.movingCrab, { bottom: 230 }, crab4Style]}>
         <ArcadeCrab size={38} />
+      </Animated.View>
+      
+      {/* Fish swimming across screen */}
+      <Animated.View style={[styles.movingCrab, { top: 130 }, fish1Style]}>
+        <ArcadeFish size={40} color="#64B5F6" />
+      </Animated.View>
+      <Animated.View style={[styles.movingCrab, { top: 160 }, fish2Style]}>
+        <ArcadeFish size={35} color="#FF7043" />
+      </Animated.View>
+      <Animated.View style={[styles.movingCrab, { bottom: 130 }, fish3Style]}>
+        <ArcadeFish size={38} color="#4DD0E1" />
+      </Animated.View>
+      
+      {/* Starfish floating at corners */}
+      <Animated.View style={[styles.floatingDecor, { top: 70, left: 20 }, star1Style]}>
+        <ArcadeStarfish size={40} color="#FFD93D" rotation={15} />
+      </Animated.View>
+      <Animated.View style={[styles.floatingDecor, { top: 90, right: 25 }, star2Style]}>
+        <ArcadeStarfish size={35} color="#FF5722" rotation={-10} />
+      </Animated.View>
+      
+      {/* Shells drifting slowly */}
+      <Animated.View style={[styles.movingCrab, { bottom: 280 }, shell1Style]}>
+        <ArcadeShell size={32} color="#E91E63" rotation={10} />
+      </Animated.View>
+      <Animated.View style={[styles.movingCrab, { top: 200 }, shell2Style]}>
+        <ArcadeShell size={28} color="#9C27B0" rotation={-15} />
       </Animated.View>
 
       {/* Stats section without logo */}
@@ -880,6 +1062,10 @@ const styles = StyleSheet.create({
     zIndex: 0,
   },
   movingCrab: {
+    position: "absolute",
+    zIndex: 1,
+  },
+  floatingDecor: {
     position: "absolute",
     zIndex: 1,
   },
