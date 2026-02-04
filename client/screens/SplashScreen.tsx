@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { View, StyleSheet, Image, Dimensions } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
@@ -18,13 +18,12 @@ interface SplashScreenProps {
   onComplete: () => void;
 }
 
-interface Shell {
-  x: number;
-  y: number;
-  size: number;
-  color: string;
-  rotation: number;
-}
+// Beach decoration images
+const seashellImage = require("../../assets/images/beach/seashell-spiral.png");
+const coralImage = require("../../assets/images/beach/coral-pieces.png");
+const seaGlassImage = require("../../assets/images/beach/sea-glass.png");
+const pebblesImage = require("../../assets/images/beach/polished-pebbles.png");
+const crabImage = require("../../assets/images/beach/crab.png");
 
 export default function SplashScreen({ onComplete }: SplashScreenProps) {
   const { backgroundGradient } = useNightMode();
@@ -32,19 +31,10 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
   const logoOpacity = useSharedValue(0);
   const logoScale = useSharedValue(0.3);
   const titleOpacity = useSharedValue(0);
-  const shellsOpacity = useSharedValue(0.3);
-
-  const shells = useMemo<Shell[]>(() => 
-    Array.from({ length: 10 }).map(() => ({
-      x: Math.random() * width,
-      y: Math.random() * height,
-      size: 15 + Math.random() * 25,
-      color: ["#00BCD4", "#26C6DA", "#4DD0E1", "#00ACC1"][Math.floor(Math.random() * 4)],
-      rotation: Math.random() * 360,
-    })),
-  []);
+  const decorOpacity = useSharedValue(0);
 
   useEffect(() => {
+    decorOpacity.value = withTiming(0.7, { duration: 500 });
     logoOpacity.value = withTiming(1, { duration: 400, easing: Easing.out(Easing.cubic) });
     
     logoScale.value = withSequence(
@@ -53,7 +43,6 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
     );
 
     titleOpacity.value = withTiming(1, { duration: 400, easing: Easing.out(Easing.cubic) });
-    shellsOpacity.value = withTiming(0.6, { duration: 600 });
 
     const timer = setTimeout(() => {
       logoOpacity.value = withTiming(0, { duration: 300 });
@@ -74,8 +63,8 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
     opacity: titleOpacity.value,
   }));
 
-  const shellsStyle = useAnimatedStyle(() => ({
-    opacity: shellsOpacity.value,
+  const decorStyle = useAnimatedStyle(() => ({
+    opacity: decorOpacity.value,
   }));
 
   return (
@@ -83,23 +72,21 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
       colors={backgroundGradient}
       style={styles.container}
     >
-      <Animated.View style={[styles.shellsContainer, shellsStyle]}>
-        {shells.map((shell, i) => (
-          <View
-            key={i}
-            style={[
-              styles.shell,
-              {
-                left: shell.x,
-                top: shell.y,
-                width: shell.size,
-                height: shell.size * 0.8,
-                backgroundColor: shell.color,
-                transform: [{ rotate: `${shell.rotation}deg` }],
-              },
-            ]}
-          />
-        ))}
+      <Animated.View style={[styles.decorContainer, decorStyle]}>
+        {/* Seashell - top left */}
+        <Image source={seashellImage} style={[styles.decor, { left: 30, top: 100, width: 55, height: 55 }]} />
+        {/* Coral - top right */}
+        <Image source={coralImage} style={[styles.decor, { right: 25, top: 80, width: 60, height: 60 }]} />
+        {/* Sea glass - bottom left */}
+        <Image source={seaGlassImage} style={[styles.decor, { left: 20, bottom: 120, width: 50, height: 50 }]} />
+        {/* Pebbles - bottom right */}
+        <Image source={pebblesImage} style={[styles.decor, { right: 30, bottom: 100, width: 55, height: 55 }]} />
+        {/* Crab - bottom center */}
+        <Image source={crabImage} style={[styles.decor, { left: width * 0.4, bottom: 60, width: 70, height: 70 }]} />
+        {/* Extra seashell - middle left */}
+        <Image source={seashellImage} style={[styles.decor, { left: 15, top: height * 0.45, width: 40, height: 40, transform: [{ rotate: '-30deg' }] }]} />
+        {/* Extra coral - middle right */}
+        <Image source={coralImage} style={[styles.decor, { right: 20, top: height * 0.5, width: 45, height: 45 }]} />
       </Animated.View>
 
       <Animated.View style={[styles.logoContainer, logoAnimatedStyle]}>
@@ -126,18 +113,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  shellsContainer: {
+  decorContainer: {
     position: "absolute",
     width: "100%",
     height: "100%",
     zIndex: 0,
   },
-  shell: {
+  decor: {
     position: "absolute",
-    borderTopLeftRadius: 50,
-    borderTopRightRadius: 50,
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
+    resizeMode: "contain",
   },
   logoContainer: {
     alignItems: "center",

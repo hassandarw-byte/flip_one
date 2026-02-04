@@ -35,6 +35,15 @@ const { width, height } = Dimensions.get("window");
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
+// Beach decoration images
+const BEACH_DECORATIONS = [
+  { image: require("../../assets/images/beach/seashell-spiral.png"), size: 45 },
+  { image: require("../../assets/images/beach/coral-pieces.png"), size: 50 },
+  { image: require("../../assets/images/beach/sea-glass.png"), size: 40 },
+  { image: require("../../assets/images/beach/polished-pebbles.png"), size: 45 },
+  { image: require("../../assets/images/beach/crab.png"), size: 55 },
+];
+
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -151,30 +160,24 @@ export default function HomeScreen() {
       colors={backgroundGradient}
       style={[styles.container, { paddingTop: insets.top + Spacing.xl }]}
     >
-      <View style={styles.shellsContainer}>
-        {Array.from({ length: 12 }).map((_, i) => {
-          const size = 15 + Math.random() * 20;
-          const rotation = Math.random() * 360;
-          return (
-            <Animated.View
-              key={i}
-              style={[
-                styles.shell,
-                sparkleStyle,
-                {
-                  left: `${5 + Math.random() * 90}%`,
-                  top: `${5 + Math.random() * 90}%`,
-                  width: size,
-                  height: size * 0.8,
-                  borderRadius: size / 2,
-                  backgroundColor: ["#00BCD4", "#26C6DA", "#4DD0E1", "#00ACC1"][Math.floor(Math.random() * 4)],
-                  transform: [{ rotate: `${rotation}deg` }],
-                },
-              ]}
-            />
-          );
-        })}
-      </View>
+      <Animated.View style={[styles.beachDecorContainer, sparkleStyle]}>
+        {/* Seashell - top left */}
+        <Image source={BEACH_DECORATIONS[0].image} style={[styles.beachDecor, { left: 20, top: 80, width: 50, height: 50 }]} />
+        {/* Coral - top right */}
+        <Image source={BEACH_DECORATIONS[1].image} style={[styles.beachDecor, { right: 15, top: 120, width: 55, height: 55 }]} />
+        {/* Sea glass - middle left */}
+        <Image source={BEACH_DECORATIONS[2].image} style={[styles.beachDecor, { left: 10, top: height * 0.4, width: 45, height: 45 }]} />
+        {/* Pebbles - middle right */}
+        <Image source={BEACH_DECORATIONS[3].image} style={[styles.beachDecor, { right: 20, top: height * 0.35, width: 50, height: 50 }]} />
+        {/* Crab - bottom left */}
+        <Image source={BEACH_DECORATIONS[4].image} style={[styles.beachDecor, { left: 25, bottom: 150, width: 60, height: 60 }]} />
+        {/* Extra seashell - bottom right */}
+        <Image source={BEACH_DECORATIONS[0].image} style={[styles.beachDecor, { right: 30, bottom: 180, width: 40, height: 40, transform: [{ rotate: '45deg' }] }]} />
+        {/* Extra coral - bottom center */}
+        <Image source={BEACH_DECORATIONS[1].image} style={[styles.beachDecor, { left: width * 0.4, bottom: 100, width: 45, height: 45 }]} />
+        {/* Extra sea glass - top center */}
+        <Image source={BEACH_DECORATIONS[2].image} style={[styles.beachDecor, { left: width * 0.35, top: 60, width: 35, height: 35 }]} />
+      </Animated.View>
 
       <Animated.View style={[styles.logoSection, logoAnimatedStyle]}>
         <View style={styles.logoContainer}>
@@ -384,18 +387,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  shellsContainer: {
+  beachDecorContainer: {
     position: "absolute",
     width: "100%",
     height: "100%",
     zIndex: 0,
   },
-  shell: {
+  beachDecor: {
     position: "absolute",
-    borderTopLeftRadius: 50,
-    borderTopRightRadius: 50,
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
+    resizeMode: "contain",
   },
   logoSection: {
     alignItems: "center",
