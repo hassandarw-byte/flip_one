@@ -1126,7 +1126,7 @@ export default function GameScreen() {
   const playerAnimatedStyle = useAnimatedStyle(() => ({
     transform: [
       { translateY: playerBounce.value },
-      { rotate: `${playerRotation.value}deg` },
+      { rotate: `${playerRotation.value - worldRotation.value}deg` },
     ],
   }));
 
@@ -1556,7 +1556,7 @@ export default function GameScreen() {
       </Animated.View>
     </Pressable>
 
-    <View style={[styles.powerButtonsContainer, { bottom: insets.bottom + Spacing["2xl"] }]}>
+    <View style={[styles.powerButtonsContainer, { bottom: insets.bottom + Spacing["2xl"] + 40 }]}>
       <PowerButton 
         type="freeze" 
         icon="pause" 
@@ -2112,7 +2112,7 @@ const styles = StyleSheet.create({
   roadCenterDash: {
     width: 20,
     height: 4,
-    backgroundColor: GameColors.roadLine,
+    backgroundColor: "rgba(255,255,255,0.3)",
     borderRadius: 2,
   },
   spikesContainer: {

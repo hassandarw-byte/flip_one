@@ -518,7 +518,7 @@ export default function HomeScreen() {
         >
           <View style={styles.statItem}>
             <View style={styles.statIconContainer}>
-              <Feather name="award" size={18} color={GameColors.gold} />
+              <Feather name="award" size={18} color="#9C27B0" />
             </View>
             <ThemedText style={styles.statLabel}>BEST</ThemedText>
             <ThemedText style={styles.statValue}>{gameState?.bestScore || 0}</ThemedText>
@@ -526,10 +526,10 @@ export default function HomeScreen() {
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
             <View style={[styles.statIconContainer, { backgroundColor: GameColors.primary + "30" }]}>
-              <Feather name="star" size={18} color={GameColors.gold} />
+              <Feather name="star" size={18} color="#9C27B0" />
             </View>
             <ThemedText style={styles.statLabel}>POINTS</ThemedText>
-            <ThemedText style={[styles.statValue, { color: GameColors.gold }]}>
+            <ThemedText style={[styles.statValue, { color: "#9C27B0" }]}>
               {gameState?.points || 0}
             </ThemedText>
           </View>
@@ -545,7 +545,7 @@ export default function HomeScreen() {
             onPressOut={handlePressOut}
             testID="button-play"
           >
-            <Svg width={140} height={120} viewBox="0 0 140 120">
+            <Svg width={100} height={85} viewBox="0 0 140 120">
               {/* Shell body - fan shape */}
               <Path
                 d="M70 110 
@@ -1020,12 +1020,12 @@ function MenuButton({ seaCreature, label, onPress, colors, badge }: MenuButtonPr
           end={{ x: 1, y: 1 }}
           style={styles.menuButtonIcon}
         >
-          {seaCreature === 'seahorse' ? <SeahorseIcon size={26} color="#FFFFFF" /> : null}
-          {seaCreature === 'fish' ? <FishIcon size={26} color="#FFFFFF" /> : null}
-          {seaCreature === 'turtle' ? <TurtleIcon size={26} color="#FFFFFF" /> : null}
-          {seaCreature === 'shell' ? <ShellButtonIcon size={26} color="#FFFFFF" /> : null}
-          {seaCreature === 'crab' ? <CrabButtonIcon size={26} color="#FFFFFF" /> : null}
-          {seaCreature === 'starfish' ? <StarfishButtonIcon size={26} color="#FFFFFF" /> : null}
+          {seaCreature === 'seahorse' ? <SeahorseIcon size={26} color="#4DD0E1" /> : null}
+          {seaCreature === 'fish' ? <FishIcon size={26} color="#FF7043" /> : null}
+          {seaCreature === 'turtle' ? <TurtleIcon size={26} color="#4CAF50" /> : null}
+          {seaCreature === 'shell' ? <ShellButtonIcon size={26} color="#FF6B9D" /> : null}
+          {seaCreature === 'crab' ? <CrabButtonIcon size={26} color="#E57373" /> : null}
+          {seaCreature === 'starfish' ? <StarfishButtonIcon size={26} color="#FFD93D" /> : null}
           {badge && badge > 0 ? (
             <View style={styles.badge}>
               <ThemedText style={styles.badgeText}>{badge}</ThemedText>
@@ -1058,7 +1058,7 @@ const styles = StyleSheet.create({
   },
   statsSection: {
     alignItems: "center",
-    paddingTop: Spacing["2xl"],
+    paddingTop: Spacing.md,
   },
   titleText: {
     fontSize: 36,
@@ -1069,7 +1069,7 @@ const styles = StyleSheet.create({
   titleUnderline: {
     width: 100,
     height: 4,
-    backgroundColor: "#FFD700",
+    backgroundColor: "#9C27B0",
     borderRadius: 2,
     marginTop: Spacing.sm,
   },
@@ -1118,8 +1118,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: Spacing.xl,
-    paddingTop: Spacing.lg,
+    marginTop: Spacing.sm,
+    paddingTop: Spacing.xs,
   },
   playButtonContainer: {
     position: "relative",
@@ -1161,8 +1161,8 @@ const styles = StyleSheet.create({
   },
   menuGrid: {
     paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.lg,
-    marginTop: Spacing.sm,
+    paddingTop: Spacing.xl,
+    marginTop: Spacing.lg,
   },
   menuRow: {
     flexDirection: "row",
