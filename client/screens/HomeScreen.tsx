@@ -517,7 +517,7 @@ export default function HomeScreen() {
           style={styles.statsRow}
         >
           <View style={styles.statItem}>
-            <View style={[styles.statIconContainer, { backgroundColor: GameColors.primary + "30" }]}>
+            <View style={[styles.statIconContainer, { backgroundColor: "#FFD700" + "50" }]}>
               <Feather name="award" size={18} color="#000000" />
             </View>
             <ThemedText style={[styles.statLabel, { color: "#000000" }]}>BEST</ThemedText>
@@ -525,7 +525,7 @@ export default function HomeScreen() {
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
-            <View style={[styles.statIconContainer, { backgroundColor: GameColors.primary + "30" }]}>
+            <View style={[styles.statIconContainer, { backgroundColor: "#FFD700" + "50" }]}>
               <Feather name="star" size={18} color="#000000" />
             </View>
             <ThemedText style={styles.statLabel}>POINTS</ThemedText>
