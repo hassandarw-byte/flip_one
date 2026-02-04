@@ -520,7 +520,7 @@ export default function HomeScreen() {
             <View style={styles.statIconContainer}>
               <Feather name="award" size={18} color="#9C27B0" />
             </View>
-            <ThemedText style={styles.statLabel}>الأفضل</ThemedText>
+            <ThemedText style={styles.statLabel}>BEST</ThemedText>
             <ThemedText style={styles.statValue}>{gameState?.bestScore || 0}</ThemedText>
           </View>
           <View style={styles.statDivider} />
@@ -528,7 +528,7 @@ export default function HomeScreen() {
             <View style={[styles.statIconContainer, { backgroundColor: GameColors.primary + "30" }]}>
               <Feather name="star" size={18} color="#9C27B0" />
             </View>
-            <ThemedText style={styles.statLabel}>النقاط</ThemedText>
+            <ThemedText style={styles.statLabel}>POINTS</ThemedText>
             <ThemedText style={[styles.statValue, { color: "#9C27B0" }]}>
               {gameState?.points || 0}
             </ThemedText>
@@ -576,7 +576,7 @@ export default function HomeScreen() {
                 fill="#1A1A1A"
                 textAnchor="middle"
                 fontFamily="Tajawal_700Bold"
-              >إلعب</SvgText>
+              >PLAY</SvgText>
             </Svg>
           </AnimatedPressable>
         </View>
@@ -592,20 +592,20 @@ export default function HomeScreen() {
         <View style={styles.menuRow}>
           <MenuButton
             seaCreature="shell"
-            label="المتجر"
+            label="Shop"
             onPress={() => navigation.navigate("Shop")}
             colors={["#9C27B0", "#7B1FA2"]}
           />
           <MenuButton
             seaCreature="fish"
-            label="المهام"
+            label="Missions"
             onPress={() => navigation.navigate("Missions")}
             colors={["#2196F3", "#1976D2"]}
             badge={gameState?.dailyMissions.filter((m) => m.completed && !m.claimed).length}
           />
           <MenuButton
             seaCreature="turtle"
-            label="الترتيب"
+            label="Ranks"
             onPress={() => navigation.navigate("Leaderboard")}
             colors={["#1A1A1A", "#000000"]}
           />
@@ -614,19 +614,19 @@ export default function HomeScreen() {
         <View style={styles.menuRow}>
           <MenuButton
             seaCreature="seahorse"
-            label="العجلة"
+            label="Wheel"
             onPress={() => navigation.navigate("LuckyWheel")}
             colors={["#2196F3", "#1565C0"]}
           />
           <MenuButton
             seaCreature="starfish"
-            label="الجوائز"
+            label="Awards"
             onPress={() => navigation.navigate("Achievements")}
             colors={["#9C27B0", "#6A1B9A"]}
           />
           <MenuButton
             seaCreature="crab"
-            label="الإعدادات"
+            label="Settings"
             onPress={() => navigation.navigate("Settings")}
             colors={["#1A1A1A", "#000000"]}
           />
@@ -642,7 +642,7 @@ export default function HomeScreen() {
             style={styles.shareButtonGradient}
           >
             <Feather name="share-2" size={18} color={GameColors.textSecondary} />
-            <ThemedText style={styles.shareButtonText}>شارك مع الأصدقاء</ThemedText>
+            <ThemedText style={styles.shareButtonText}>Share with Friends</ThemedText>
           </LinearGradient>
         </Pressable>
       </Animated.View>
