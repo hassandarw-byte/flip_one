@@ -105,7 +105,7 @@ export default function AchievementsScreen() {
           <ThemedText style={[styles.statLabel, { color: textColor }]}>Unlocked</ThemedText>
         </View>
         <View style={styles.pointsBadge}>
-          <Feather name="star" size={16} color="#FFD700" />
+          <Feather name="star" size={16} color="#9C27B0" />
           <ThemedText style={styles.pointsText}>{points}</ThemedText>
         </View>
         <View style={styles.statBadge}>
