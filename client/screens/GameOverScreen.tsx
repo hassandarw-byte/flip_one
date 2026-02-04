@@ -421,9 +421,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   scoreBadge: {
-    paddingHorizontal: Spacing["3xl"],
-    paddingVertical: Spacing.lg,
-    borderRadius: BorderRadius.xl,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -432,6 +432,7 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     color: "#9C27B0",
     textAlign: "center",
+    textAlignVertical: "center",
   },
   newBestBadge: {
     flexDirection: "row",
