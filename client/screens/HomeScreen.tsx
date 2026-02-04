@@ -517,7 +517,7 @@ export default function HomeScreen() {
           style={styles.statsRow}
         >
           <View style={styles.statItem}>
-            <View style={styles.statIconContainer}>
+            <View style={[styles.statIconContainer, { backgroundColor: GameColors.primary + "30" }]}>
               <Feather name="award" size={18} color="#9C27B0" />
             </View>
             <ThemedText style={[styles.statLabel, { color: "#000000" }]}>BEST</ThemedText>
