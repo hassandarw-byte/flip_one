@@ -154,7 +154,7 @@ function MissionCard({ mission, onClaim }: MissionCardProps) {
             </ThemedText>
             
             <View style={styles.rewardCenter}>
-              <Feather name="star" size={16} color="#FFD700" />
+              <Feather name="star" size={16} color="#000000" />
               <ThemedText style={styles.rewardText}>{mission.reward}</ThemedText>
             </View>
             
