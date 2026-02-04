@@ -602,7 +602,7 @@ export default function HomeScreen() {
             label="Missions"
             onPress={() => navigation.navigate("Missions")}
             colors={["#2196F3", "#1976D2"]}
-            iconColor="#F8BBD9"
+            iconColor="#FF1493"
             badge={gameState?.dailyMissions.filter((m) => m.completed && !m.claimed).length}
           />
           <MenuButton
@@ -625,7 +625,7 @@ export default function HomeScreen() {
             seaCreature="starfish"
             label="Awards"
             onPress={() => navigation.navigate("Achievements")}
-            colors={["#F8BBD9", "#F48FB1"]}
+            colors={["#FF1493", "#E91E8C"]}
             iconColor="#2196F3"
           />
           <MenuButton
