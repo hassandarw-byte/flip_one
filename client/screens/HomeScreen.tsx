@@ -610,6 +610,7 @@ export default function HomeScreen() {
             label="Ranks"
             onPress={() => navigation.navigate("Leaderboard")}
             colors={["#1A1A1A", "#000000"]}
+            iconColor="#4CAF50"
           />
         </View>
         
