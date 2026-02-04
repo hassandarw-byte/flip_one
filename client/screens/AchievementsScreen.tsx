@@ -211,7 +211,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "800",
-    color: "#FFFFFF",
+    color: "#000000",
+    textAlign: "center",
   },
   pointsBadge: {
     flexDirection: "row",
