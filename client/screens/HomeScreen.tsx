@@ -377,12 +377,12 @@ export default function HomeScreen() {
             testID="button-play"
           >
             <LinearGradient
-              colors={["#2196F3", "#1565C0"]}
+              colors={["#E91E63", "#C2185B"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.playButtonGradient}
             >
-              <Feather name="play" size={24} color="#FFFFFF" style={styles.playIcon} />
+              <Feather name="play" size={28} color="#FFFFFF" style={styles.playIcon} />
               <ThemedText style={styles.playButtonText}>PLAY</ThemedText>
             </LinearGradient>
           </AnimatedPressable>
@@ -457,63 +457,63 @@ export default function HomeScreen() {
   );
 }
 
-// Sea Creature Button Icons
+// Sea Creature Button Icons - Clear and Bold designs
 function SeahorseIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?: string }) {
   return (
     <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-      {/* Seahorse body - curved S shape */}
+      {/* Seahorse - simplified clear shape */}
       <View style={{
-        width: size * 0.5,
-        height: size * 0.85,
+        width: size * 0.45,
+        height: size * 0.75,
         backgroundColor: color,
-        borderRadius: size * 0.25,
-        borderTopLeftRadius: size * 0.4,
+        borderRadius: size * 0.2,
+        borderTopLeftRadius: size * 0.35,
         borderTopRightRadius: size * 0.15,
-        transform: [{ rotate: '-10deg' }],
       }}>
-        {/* Head */}
+        {/* Head bump */}
         <View style={{
           position: 'absolute',
-          top: -size * 0.08,
-          left: size * 0.05,
-          width: size * 0.35,
-          height: size * 0.25,
+          top: -size * 0.1,
+          left: size * 0.02,
+          width: size * 0.3,
+          height: size * 0.22,
           backgroundColor: color,
-          borderRadius: size * 0.15,
+          borderRadius: size * 0.12,
         }} />
         {/* Snout */}
         <View style={{
           position: 'absolute',
-          top: -size * 0.02,
-          left: -size * 0.15,
-          width: size * 0.2,
-          height: size * 0.08,
-          backgroundColor: color,
-          borderRadius: size * 0.04,
-        }} />
-        {/* Eye */}
-        <View style={{
-          position: 'absolute',
           top: size * 0.02,
-          left: size * 0.15,
-          width: size * 0.08,
-          height: size * 0.08,
-          backgroundColor: '#1A1A1A',
-          borderRadius: size * 0.04,
+          left: -size * 0.18,
+          width: size * 0.22,
+          height: size * 0.1,
+          backgroundColor: color,
+          borderRadius: size * 0.05,
         }} />
-        {/* Tail curl */}
+        {/* Curly tail */}
         <View style={{
           position: 'absolute',
-          bottom: -size * 0.05,
-          right: -size * 0.1,
-          width: size * 0.25,
-          height: size * 0.25,
-          borderWidth: size * 0.08,
+          bottom: -size * 0.12,
+          right: -size * 0.05,
+          width: size * 0.22,
+          height: size * 0.22,
+          borderWidth: size * 0.07,
           borderColor: color,
-          borderRadius: size * 0.15,
+          borderRadius: size * 0.11,
           backgroundColor: 'transparent',
           borderTopColor: 'transparent',
           borderLeftColor: 'transparent',
+        }} />
+        {/* Dorsal fin */}
+        <View style={{
+          position: 'absolute',
+          top: size * 0.15,
+          right: -size * 0.08,
+          width: size * 0.12,
+          height: size * 0.25,
+          backgroundColor: color,
+          borderRadius: size * 0.06,
+          transform: [{ rotate: '15deg' }],
         }} />
       </View>
     </View>
@@ -523,49 +523,55 @@ function SeahorseIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?:
 function FishIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?: string }) {
   return (
     <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-      {/* Fish body */}
+      {/* Fish body - clear oval shape */}
       <View style={{
-        width: size * 0.75,
-        height: size * 0.5,
+        width: size * 0.7,
+        height: size * 0.45,
         backgroundColor: color,
-        borderRadius: size * 0.25,
+        borderRadius: size * 0.22,
+        borderTopLeftRadius: size * 0.15,
+        borderBottomLeftRadius: size * 0.15,
       }}>
-        {/* Eye */}
+        {/* Tail - big and clear */}
         <View style={{
           position: 'absolute',
-          top: size * 0.12,
-          left: size * 0.12,
-          width: size * 0.12,
-          height: size * 0.12,
-          backgroundColor: '#1A1A1A',
-          borderRadius: size * 0.06,
-        }} />
-        {/* Tail */}
-        <View style={{
-          position: 'absolute',
-          right: -size * 0.15,
-          top: size * 0.05,
+          right: -size * 0.2,
+          top: -size * 0.02,
           width: 0,
           height: 0,
-          borderLeftWidth: size * 0.2,
+          borderLeftWidth: size * 0.25,
           borderLeftColor: color,
-          borderTopWidth: size * 0.2,
+          borderTopWidth: size * 0.25,
           borderTopColor: 'transparent',
-          borderBottomWidth: size * 0.2,
+          borderBottomWidth: size * 0.25,
           borderBottomColor: 'transparent',
         }} />
-        {/* Top fin */}
+        {/* Top fin - larger */}
         <View style={{
           position: 'absolute',
-          top: -size * 0.12,
+          top: -size * 0.15,
+          left: size * 0.2,
+          width: 0,
+          height: 0,
+          borderBottomWidth: size * 0.18,
+          borderBottomColor: color,
+          borderLeftWidth: size * 0.1,
+          borderLeftColor: 'transparent',
+          borderRightWidth: size * 0.1,
+          borderRightColor: 'transparent',
+        }} />
+        {/* Bottom fin */}
+        <View style={{
+          position: 'absolute',
+          bottom: -size * 0.1,
           left: size * 0.25,
           width: 0,
           height: 0,
-          borderBottomWidth: size * 0.15,
-          borderBottomColor: color,
-          borderLeftWidth: size * 0.08,
+          borderTopWidth: size * 0.12,
+          borderTopColor: color,
+          borderLeftWidth: size * 0.06,
           borderLeftColor: 'transparent',
-          borderRightWidth: size * 0.08,
+          borderRightWidth: size * 0.06,
           borderRightColor: 'transparent',
         }} />
       </View>
@@ -576,68 +582,68 @@ function FishIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?: str
 function TurtleIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?: string }) {
   return (
     <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-      {/* Shell */}
+      {/* Shell - dome shaped */}
       <View style={{
-        width: size * 0.65,
-        height: size * 0.5,
+        width: size * 0.6,
+        height: size * 0.45,
         backgroundColor: color,
-        borderRadius: size * 0.25,
+        borderRadius: size * 0.3,
         borderTopLeftRadius: size * 0.35,
         borderTopRightRadius: size * 0.35,
       }}>
-        {/* Shell pattern */}
+        {/* Shell pattern - hexagon lines */}
         <View style={{
           position: 'absolute',
-          top: size * 0.1,
-          left: size * 0.15,
-          width: size * 0.35,
-          height: size * 0.25,
+          top: size * 0.08,
+          left: size * 0.12,
+          width: size * 0.36,
+          height: size * 0.28,
           borderWidth: 2,
-          borderColor: 'rgba(0,0,0,0.3)',
-          borderRadius: size * 0.12,
+          borderColor: 'rgba(0,0,0,0.25)',
+          borderRadius: size * 0.14,
         }} />
       </View>
-      {/* Head */}
+      {/* Head - rounder */}
       <View style={{
         position: 'absolute',
-        left: size * 0.05,
-        top: size * 0.35,
-        width: size * 0.2,
-        height: size * 0.15,
-        backgroundColor: color,
-        borderRadius: size * 0.08,
-      }}>
-        {/* Eye */}
-        <View style={{
-          position: 'absolute',
-          top: size * 0.02,
-          left: size * 0.02,
-          width: size * 0.05,
-          height: size * 0.05,
-          backgroundColor: '#1A1A1A',
-          borderRadius: size * 0.025,
-        }} />
-      </View>
-      {/* Flippers */}
-      <View style={{
-        position: 'absolute',
-        left: size * 0.12,
-        top: size * 0.55,
-        width: size * 0.15,
+        left: size * 0.02,
+        top: size * 0.32,
+        width: size * 0.22,
         height: size * 0.18,
         backgroundColor: color,
-        borderRadius: size * 0.08,
-        transform: [{ rotate: '-30deg' }],
+        borderRadius: size * 0.09,
       }} />
+      {/* Front left flipper */}
       <View style={{
         position: 'absolute',
-        right: size * 0.12,
-        top: size * 0.55,
-        width: size * 0.15,
-        height: size * 0.18,
+        left: size * 0.08,
+        top: size * 0.52,
+        width: size * 0.2,
+        height: size * 0.12,
         backgroundColor: color,
-        borderRadius: size * 0.08,
-        transform: [{ rotate: '30deg' }],
+        borderRadius: size * 0.06,
+        transform: [{ rotate: '-35deg' }],
+      }} />
+      {/* Front right flipper */}
+      <View style={{
+        position: 'absolute',
+        right: size * 0.08,
+        top: size * 0.52,
+        width: size * 0.2,
+        height: size * 0.12,
+        backgroundColor: color,
+        borderRadius: size * 0.06,
+        transform: [{ rotate: '35deg' }],
+      }} />
+      {/* Tail */}
+      <View style={{
+        position: 'absolute',
+        right: size * 0.05,
+        top: size * 0.38,
+        width: size * 0.12,
+        height: size * 0.08,
+        backgroundColor: color,
+        borderRadius: size * 0.04,
       }} />
     </View>
   );
@@ -646,20 +652,32 @@ function TurtleIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?: s
 function ShellButtonIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?: string }) {
   return (
     <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
+      {/* Scallop shell - fan shaped */}
       <View style={{
-        width: size * 0.8,
-        height: size * 0.65,
+        width: size * 0.85,
+        height: size * 0.7,
         backgroundColor: color,
-        borderTopLeftRadius: size * 0.4,
-        borderTopRightRadius: size * 0.4,
-        borderBottomLeftRadius: size * 0.15,
-        borderBottomRightRadius: size * 0.15,
+        borderTopLeftRadius: size * 0.45,
+        borderTopRightRadius: size * 0.45,
+        borderBottomLeftRadius: size * 0.12,
+        borderBottomRightRadius: size * 0.12,
       }}>
-        {/* Shell ridges */}
-        <View style={{ position: 'absolute', top: size * 0.1, left: size * 0.15, width: 2, height: size * 0.4, backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 1 }} />
-        <View style={{ position: 'absolute', top: size * 0.08, left: size * 0.32, width: 2, height: size * 0.45, backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 1 }} />
-        <View style={{ position: 'absolute', top: size * 0.1, left: size * 0.5, width: 2, height: size * 0.4, backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 1 }} />
+        {/* Shell ridges - radiating lines */}
+        <View style={{ position: 'absolute', top: size * 0.08, left: size * 0.1, width: 3, height: size * 0.5, backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: 1.5, transform: [{ rotate: '-15deg' }] }} />
+        <View style={{ position: 'absolute', top: size * 0.05, left: size * 0.25, width: 3, height: size * 0.55, backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: 1.5, transform: [{ rotate: '-5deg' }] }} />
+        <View style={{ position: 'absolute', top: size * 0.04, left: size * 0.4, width: 3, height: size * 0.58, backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: 1.5 }} />
+        <View style={{ position: 'absolute', top: size * 0.05, right: size * 0.25, width: 3, height: size * 0.55, backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: 1.5, transform: [{ rotate: '5deg' }] }} />
+        <View style={{ position: 'absolute', top: size * 0.08, right: size * 0.1, width: 3, height: size * 0.5, backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: 1.5, transform: [{ rotate: '15deg' }] }} />
       </View>
+      {/* Shell hinge at bottom */}
+      <View style={{
+        position: 'absolute',
+        bottom: size * 0.08,
+        width: size * 0.2,
+        height: size * 0.1,
+        backgroundColor: color,
+        borderRadius: size * 0.05,
+      }} />
     </View>
   );
 }
@@ -667,93 +685,81 @@ function ShellButtonIcon({ size = 24, color = "#FFFFFF" }: { size?: number; colo
 function CrabButtonIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?: string }) {
   return (
     <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-      {/* Body */}
+      {/* Body - wider oval */}
       <View style={{
-        width: size * 0.6,
-        height: size * 0.4,
+        width: size * 0.55,
+        height: size * 0.35,
         backgroundColor: color,
-        borderRadius: size * 0.2,
+        borderRadius: size * 0.18,
+        marginTop: size * 0.1,
       }}>
-        {/* Eyes */}
+        {/* Eye stalks */}
         <View style={{
           position: 'absolute',
-          top: -size * 0.08,
-          left: size * 0.1,
-          width: size * 0.1,
+          top: -size * 0.12,
+          left: size * 0.08,
+          width: size * 0.08,
           height: size * 0.15,
           backgroundColor: color,
-          borderRadius: size * 0.05,
-        }}>
-          <View style={{
-            position: 'absolute',
-            top: 0,
-            left: size * 0.02,
-            width: size * 0.06,
-            height: size * 0.06,
-            backgroundColor: '#1A1A1A',
-            borderRadius: size * 0.03,
-          }} />
-        </View>
+          borderRadius: size * 0.04,
+        }} />
         <View style={{
           position: 'absolute',
-          top: -size * 0.08,
-          right: size * 0.1,
-          width: size * 0.1,
+          top: -size * 0.12,
+          right: size * 0.08,
+          width: size * 0.08,
           height: size * 0.15,
           backgroundColor: color,
-          borderRadius: size * 0.05,
-        }}>
-          <View style={{
-            position: 'absolute',
-            top: 0,
-            right: size * 0.02,
-            width: size * 0.06,
-            height: size * 0.06,
-            backgroundColor: '#1A1A1A',
-            borderRadius: size * 0.03,
-          }} />
-        </View>
+          borderRadius: size * 0.04,
+        }} />
       </View>
-      {/* Claws */}
+      {/* Big left claw */}
       <View style={{
         position: 'absolute',
-        left: size * 0.05,
-        top: size * 0.35,
-        width: size * 0.2,
-        height: size * 0.15,
+        left: 0,
+        top: size * 0.3,
+        width: size * 0.3,
+        height: size * 0.18,
         backgroundColor: color,
-        borderRadius: size * 0.08,
-        transform: [{ rotate: '-20deg' }],
+        borderRadius: size * 0.09,
+        transform: [{ rotate: '-25deg' }],
       }} />
+      {/* Big right claw */}
       <View style={{
         position: 'absolute',
-        right: size * 0.05,
-        top: size * 0.35,
-        width: size * 0.2,
-        height: size * 0.15,
+        right: 0,
+        top: size * 0.3,
+        width: size * 0.3,
+        height: size * 0.18,
         backgroundColor: color,
-        borderRadius: size * 0.08,
-        transform: [{ rotate: '20deg' }],
+        borderRadius: size * 0.09,
+        transform: [{ rotate: '25deg' }],
       }} />
+      {/* Legs - 3 on each side */}
+      <View style={{ position: 'absolute', left: size * 0.12, bottom: size * 0.08, width: size * 0.15, height: size * 0.06, backgroundColor: color, borderRadius: size * 0.03, transform: [{ rotate: '-45deg' }] }} />
+      <View style={{ position: 'absolute', right: size * 0.12, bottom: size * 0.08, width: size * 0.15, height: size * 0.06, backgroundColor: color, borderRadius: size * 0.03, transform: [{ rotate: '45deg' }] }} />
     </View>
   );
 }
 
 function StarfishButtonIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?: string }) {
-  const armLength = size * 0.35;
+  const armLength = size * 0.38;
   return (
     <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-      {/* Center */}
-      <View style={{ width: size * 0.3, height: size * 0.3, backgroundColor: color, borderRadius: size * 0.1 }} />
-      {/* 5 Arms */}
+      {/* Center - larger */}
+      <View style={{ width: size * 0.35, height: size * 0.35, backgroundColor: color, borderRadius: size * 0.12 }} />
+      {/* 5 Arms - thicker and tapered */}
       {[0, 72, 144, 216, 288].map((angle, i) => (
         <View key={i} style={{
           position: 'absolute',
-          width: size * 0.15,
+          width: size * 0.18,
           height: armLength,
           backgroundColor: color,
-          borderRadius: size * 0.08,
-          transform: [{ rotate: `${angle}deg` }, { translateY: -armLength * 0.5 }],
+          borderTopLeftRadius: size * 0.09,
+          borderTopRightRadius: size * 0.09,
+          borderBottomLeftRadius: size * 0.04,
+          borderBottomRightRadius: size * 0.04,
+          transform: [{ rotate: `${angle}deg` }, { translateY: -armLength * 0.45 }],
         }} />
       ))}
     </View>
@@ -927,27 +933,30 @@ const styles = StyleSheet.create({
     display: "none",
   },
   playButton: {
-    width: width * 0.4,
-    height: 44,
-    borderRadius: BorderRadius.md,
+    width: 100,
+    height: 80,
     overflow: "hidden",
-    elevation: 4,
+    elevation: 6,
   },
   playButtonGradient: {
     flex: 1,
-    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    gap: Spacing.xs,
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
+    borderWidth: 4,
+    borderColor: "#FFFFFF",
   },
   playIcon: {
-    marginRight: 2,
+    marginBottom: 2,
   },
   playButtonText: {
-    fontSize: 22,
+    fontSize: 14,
     fontWeight: "900",
     color: "#FFFFFF",
-    letterSpacing: 3,
+    letterSpacing: 2,
     textAlign: "center",
   },
   menuGrid: {
@@ -974,17 +983,17 @@ const styles = StyleSheet.create({
     display: "none",
   },
   menuButtonIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: BorderRadius.sm,
+    width: 50,
+    height: 50,
+    borderRadius: BorderRadius.md,
     justifyContent: "center",
     alignItems: "center",
     elevation: 4,
   },
   menuButtonLabel: {
-    fontSize: 10,
+    fontSize: 14,
     color: "#1A1A1A",
-    marginTop: 4,
+    marginTop: 6,
     fontWeight: "700",
     textAlign: "center",
   },
