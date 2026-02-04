@@ -167,10 +167,10 @@ function MissionCard({ mission, onClaim }: MissionCardProps) {
 
           <View style={styles.rewardSection}>
             <LinearGradient
-              colors={[GameColors.gold + "30", GameColors.gold + "15"]}
+              colors={["#9C27B0" + "30", "#9C27B0" + "15"]}
               style={styles.rewardBadge}
             >
-              <Feather name="star" size={14} color={GameColors.gold} />
+              <Feather name="star" size={14} color="#9C27B0" />
               <ThemedText style={styles.rewardText}>{mission.reward}</ThemedText>
             </LinearGradient>
 
@@ -297,12 +297,12 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.full,
     borderWidth: 1,
-    borderColor: GameColors.gold + "40",
+    borderColor: "#9C27B0" + "40",
   },
   rewardText: {
     fontSize: 14,
     fontWeight: "700",
-    color: GameColors.gold,
+    color: "#9C27B0",
   },
   claimButton: {
     borderRadius: BorderRadius.md,
