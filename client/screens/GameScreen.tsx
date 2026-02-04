@@ -1172,6 +1172,10 @@ export default function GameScreen() {
     transform: [{ scale: scoreScale.value }],
   }));
 
+  const obstacleAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: obstacleScale.value }],
+  }));
+
   const sparkleStyle = useAnimatedStyle(() => ({
     opacity: sparkleOpacity.value,
   }));
@@ -1397,7 +1401,25 @@ export default function GameScreen() {
           />
         ))}
 
-        {/* Obstacles removed from tracks */}
+        {/* Obstacles on tracks */}
+        {obstacles.map((obs) => (
+          <Animated.View
+            key={`obs-${obs.id}`}
+            style={[
+              styles.obstacle,
+              obstacleAnimatedStyle,
+              {
+                left: obs.x - obs.width / 2,
+                top:
+                  obs.track === "top"
+                    ? trackTopY + TRACK_HEIGHT - obs.height
+                    : trackBottomY,
+              },
+            ]}
+          >
+            <ObstacleShape obstacle={obs} track={obs.track} />
+          </Animated.View>
+        ))}
 
         {collectibles.map((col) => (
           <View
