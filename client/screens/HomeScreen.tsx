@@ -545,7 +545,7 @@ export default function HomeScreen() {
             onPressOut={handlePressOut}
             testID="button-play"
           >
-            <Svg width={100} height={85} viewBox="0 0 140 120">
+            <Svg width={80} height={68} viewBox="0 0 140 120">
               {/* Shell body - fan shape */}
               <Path
                 d="M70 110 
@@ -1164,7 +1164,8 @@ const styles = StyleSheet.create({
   },
   statsSection: {
     alignItems: "center",
-    paddingTop: Spacing.xs,
+    paddingTop: Spacing.sm,
+    marginBottom: Spacing.xs,
   },
   titleText: {
     fontSize: 36,
@@ -1221,11 +1222,11 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.2)",
   },
   centerSection: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 0,
-    paddingTop: 0,
+    marginTop: Spacing.md,
+    marginBottom: Spacing.md,
+    paddingVertical: Spacing.sm,
   },
   playButtonContainer: {
     position: "relative",
@@ -1267,8 +1268,8 @@ const styles = StyleSheet.create({
   },
   menuGrid: {
     paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing["2xl"],
-    marginTop: Spacing["2xl"],
+    paddingTop: Spacing.md,
+    marginTop: Spacing.sm,
   },
   menuRow: {
     flexDirection: "row",
