@@ -518,18 +518,18 @@ export default function HomeScreen() {
         >
           <View style={styles.statItem}>
             <View style={[styles.statIconContainer, { backgroundColor: "#FFD700" + "50" }]}>
-              <Feather name="award" size={18} color={textColor} />
+              <Feather name="award" size={18} color="#000000" />
             </View>
-            <ThemedText style={[styles.statLabel, { color: textColor }]}>BEST</ThemedText>
-            <ThemedText style={[styles.statValue, { color: "#9C27B0" }]}>{gameState?.bestScore || 0}</ThemedText>
+            <ThemedText style={styles.statLabel}>BEST</ThemedText>
+            <ThemedText style={styles.statValue}>{gameState?.bestScore || 0}</ThemedText>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
             <View style={[styles.statIconContainer, { backgroundColor: "#FFD700" + "50" }]}>
-              <Feather name="star" size={18} color={textColor} />
+              <Feather name="star" size={18} color="#000000" />
             </View>
-            <ThemedText style={[styles.statLabel, { color: textColor }]}>POINTS</ThemedText>
-            <ThemedText style={[styles.statValue, { color: "#9C27B0" }]}>
+            <ThemedText style={styles.statLabel}>POINTS</ThemedText>
+            <ThemedText style={styles.statValue}>
               {gameState?.points || 0}
             </ThemedText>
           </View>
@@ -911,7 +911,7 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 36,
     fontFamily: "Tajawal_800ExtraBold",
-    color: "#1A1A1A",
+    color: "#000000",
     letterSpacing: 6,
   },
   titleUnderline: {
@@ -947,7 +947,7 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: 11,
-    color: "#333333",
+    color: "#000000",
     letterSpacing: 1,
     marginTop: Spacing.xs,
     fontWeight: "600",
@@ -955,7 +955,7 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 24,
     fontWeight: "800",
-    color: "#1A1A1A",
+    color: "#000000",
   },
   statDivider: {
     width: 1,
@@ -1040,7 +1040,7 @@ const styles = StyleSheet.create({
   },
   menuButtonLabel: {
     fontSize: 14,
-    color: "#1A1A1A",
+    color: "#000000",
     marginTop: 6,
     fontWeight: "700",
     textAlign: "center",
@@ -1079,7 +1079,7 @@ const styles = StyleSheet.create({
   },
   shareButtonText: {
     fontSize: 14,
-    color: "#1A1A1A",
+    color: "#000000",
     fontWeight: "600",
   },
 });
