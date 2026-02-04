@@ -616,7 +616,7 @@ export default function HomeScreen() {
         <View style={styles.menuRow}>
           <MenuButton
             seaCreature="turtle"
-            label="(Ranks)"
+            label="Ranks"
             onPress={() => navigation.navigate("Leaderboard")}
             colors={["#1A1A1A", "#000000"]}
             iconColor="#4CAF50"
@@ -630,7 +630,7 @@ export default function HomeScreen() {
           />
           <MenuButton
             seaCreature="jellyfish"
-            label="(Missions)"
+            label="Missions"
             onPress={() => navigation.navigate("Missions")}
             colors={["#2196F3", "#1976D2"]}
             iconColor="#FF1493"
