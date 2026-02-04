@@ -277,10 +277,10 @@ export default function ShopScreen() {
     >
       <View style={styles.header}>
         <LinearGradient
-          colors={[GameColors.gold, GameColors.goldGlow]}
+          colors={["#1A1A1A", "#000000"]}
           style={styles.pointsContainer}
         >
-          <Feather name="star" size={18} color={GameColors.background} />
+          <Feather name="star" size={18} color="#FFD700" />
           <ThemedText style={styles.pointsText}>
             {gameState?.points || 0}
           </ThemedText>
@@ -670,7 +670,7 @@ const styles = StyleSheet.create({
   pointsText: {
     fontSize: 18,
     fontWeight: "800",
-    color: GameColors.background,
+    color: "#FFD700",
   },
   tabs: {
     flexDirection: "row",
