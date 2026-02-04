@@ -155,27 +155,27 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
   const { backgroundGradient } = useNightMode();
   
   const logoOpacity = useSharedValue(0);
-  const logoScale = useSharedValue(0.3);
+  const logoScale = useSharedValue(0.2);
   const titleOpacity = useSharedValue(0);
   const decorOpacity = useSharedValue(0);
 
   useEffect(() => {
     // Decorations fade in
-    decorOpacity.value = withTiming(1, { duration: 1000 });
+    decorOpacity.value = withTiming(1, { duration: 800 });
     
-    // Logo appears slowly over 4 seconds - starts small
-    logoOpacity.value = withTiming(1, { duration: 1000, easing: Easing.out(Easing.cubic) });
+    // Logo appears immediately
+    logoOpacity.value = withTiming(1, { duration: 500, easing: Easing.out(Easing.cubic) });
     
-    // Logo: starts small (0.3) -> grows slowly to 1.4 -> shrinks to 1.0 and settles
+    // Logo: starts very small (0.2) -> grows slowly to 1.5 over 2.5s -> shrinks to 1.0 over 1s and settles
     logoScale.value = withSequence(
-      withTiming(1.4, { duration: 2500, easing: Easing.out(Easing.cubic) }),
-      withTiming(1.0, { duration: 1000, easing: Easing.inOut(Easing.cubic) })
+      withTiming(1.5, { duration: 2500, easing: Easing.out(Easing.quad) }),
+      withTiming(1.0, { duration: 1000, easing: Easing.inOut(Easing.bounce) })
     );
 
-    // Title appears with delay
-    titleOpacity.value = withDelay(1000, withTiming(1, { duration: 1500, easing: Easing.out(Easing.cubic) }));
+    // Title appears after logo starts growing
+    titleOpacity.value = withDelay(800, withTiming(1, { duration: 1200, easing: Easing.out(Easing.cubic) }));
 
-    // Transition to home after 4 seconds
+    // Transition to home after 4 seconds total
     const timer = setTimeout(() => {
       logoOpacity.value = withTiming(0, { duration: 400 });
       titleOpacity.value = withTiming(0, { duration: 400 }, () => {
