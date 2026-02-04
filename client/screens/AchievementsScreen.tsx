@@ -95,7 +95,7 @@ export default function AchievementsScreen() {
         </Pressable>
         <ThemedText style={styles.title}>Achievements</ThemedText>
         <View style={styles.pointsBadge}>
-          <Feather name="star" size={16} color={GameColors.gold} />
+          <Feather name="star" size={16} color="#9C27B0" />
           <ThemedText style={styles.pointsText}>{points}</ThemedText>
         </View>
       </View>
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
   pointsText: {
     fontSize: 16,
     fontWeight: "700",
-    color: GameColors.gold,
+    color: "#9C27B0",
   },
   statsRow: {
     flexDirection: "row",
@@ -295,10 +295,10 @@ const styles = StyleSheet.create({
   },
   achievementDesc: {
     fontSize: 12,
-    color: "#333333",
+    color: "#000000",
   },
   textLocked: {
-    color: "#666",
+    color: "#444444",
   },
   rewardContainer: {
     flexDirection: "row",
