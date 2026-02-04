@@ -662,17 +662,19 @@ function SeahorseIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?:
     <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
       {/* Seahorse - simplified clear shape */}
       <View style={{
-        width: size * 0.45,
-        height: size * 0.75,
+        width: size * 0.5,
+        height: size * 0.8,
         backgroundColor: color,
         borderRadius: size * 0.2,
         borderTopLeftRadius: size * 0.35,
         borderTopRightRadius: size * 0.15,
+        borderWidth: 2,
+        borderColor: 'rgba(0,0,0,0.2)',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.3,
-        shadowRadius: 2,
-        elevation: 3,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.4,
+        shadowRadius: 3,
+        elevation: 4,
       }}>
         {/* Head bump */}
         <View style={{
@@ -729,17 +731,19 @@ function FishIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?: str
     <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
       {/* Fish body - clear oval shape */}
       <View style={{
-        width: size * 0.7,
-        height: size * 0.45,
+        width: size * 0.75,
+        height: size * 0.5,
         backgroundColor: color,
-        borderRadius: size * 0.22,
-        borderTopLeftRadius: size * 0.15,
-        borderBottomLeftRadius: size * 0.15,
+        borderRadius: size * 0.25,
+        borderTopLeftRadius: size * 0.18,
+        borderBottomLeftRadius: size * 0.18,
+        borderWidth: 2,
+        borderColor: 'rgba(0,0,0,0.2)',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.3,
-        shadowRadius: 2,
-        elevation: 3,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.4,
+        shadowRadius: 3,
+        elevation: 4,
       }}>
         {/* Tail - big and clear */}
         <View style={{
@@ -793,17 +797,19 @@ function TurtleIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?: s
     <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
       {/* Shell - dome shaped */}
       <View style={{
-        width: size * 0.6,
-        height: size * 0.45,
+        width: size * 0.65,
+        height: size * 0.5,
         backgroundColor: color,
         borderRadius: size * 0.3,
         borderTopLeftRadius: size * 0.35,
         borderTopRightRadius: size * 0.35,
+        borderWidth: 2,
+        borderColor: 'rgba(0,0,0,0.2)',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.3,
-        shadowRadius: 2,
-        elevation: 3,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.4,
+        shadowRadius: 3,
+        elevation: 4,
       }}>
         {/* Shell pattern - hexagon lines */}
         <View style={{
@@ -868,18 +874,20 @@ function ShellButtonIcon({ size = 24, color = "#FFFFFF" }: { size?: number; colo
     <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
       {/* Scallop shell - fan shaped */}
       <View style={{
-        width: size * 0.85,
-        height: size * 0.7,
+        width: size * 0.9,
+        height: size * 0.75,
         backgroundColor: color,
         borderTopLeftRadius: size * 0.45,
         borderTopRightRadius: size * 0.45,
-        borderBottomLeftRadius: size * 0.12,
-        borderBottomRightRadius: size * 0.12,
+        borderBottomLeftRadius: size * 0.15,
+        borderBottomRightRadius: size * 0.15,
+        borderWidth: 2,
+        borderColor: 'rgba(0,0,0,0.2)',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.3,
-        shadowRadius: 2,
-        elevation: 3,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.4,
+        shadowRadius: 3,
+        elevation: 4,
       }}>
         {/* Shell ridges - radiating lines */}
         <View style={{ position: 'absolute', top: size * 0.08, left: size * 0.1, width: 3, height: size * 0.5, backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: 1.5, transform: [{ rotate: '-15deg' }] }} />
@@ -906,16 +914,18 @@ function CrabButtonIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color
     <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
       {/* Body - wider oval */}
       <View style={{
-        width: size * 0.55,
-        height: size * 0.35,
+        width: size * 0.6,
+        height: size * 0.4,
         backgroundColor: color,
-        borderRadius: size * 0.18,
+        borderRadius: size * 0.2,
         marginTop: size * 0.1,
+        borderWidth: 2,
+        borderColor: 'rgba(0,0,0,0.2)',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.3,
-        shadowRadius: 2,
-        elevation: 3,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.4,
+        shadowRadius: 3,
+        elevation: 4,
       }}>
         {/* Eye stalks */}
         <View style={{
@@ -971,18 +981,20 @@ function StarfishButtonIcon({ size = 24, color = "#FFFFFF" }: { size?: number; c
   return (
     <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
       {/* Center - larger */}
-      <View style={{ width: size * 0.35, height: size * 0.35, backgroundColor: color, borderRadius: size * 0.12, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.3, shadowRadius: 2, elevation: 3 }} />
+      <View style={{ width: size * 0.4, height: size * 0.4, backgroundColor: color, borderRadius: size * 0.15, borderWidth: 2, borderColor: 'rgba(0,0,0,0.2)', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.4, shadowRadius: 3, elevation: 4 }} />
       {/* 5 Arms - thicker and tapered */}
       {[0, 72, 144, 216, 288].map((angle, i) => (
         <View key={i} style={{
           position: 'absolute',
-          width: size * 0.18,
+          width: size * 0.22,
           height: armLength,
           backgroundColor: color,
-          borderTopLeftRadius: size * 0.09,
-          borderTopRightRadius: size * 0.09,
-          borderBottomLeftRadius: size * 0.04,
-          borderBottomRightRadius: size * 0.04,
+          borderTopLeftRadius: size * 0.11,
+          borderTopRightRadius: size * 0.11,
+          borderBottomLeftRadius: size * 0.05,
+          borderBottomRightRadius: size * 0.05,
+          borderWidth: 1.5,
+          borderColor: 'rgba(0,0,0,0.15)',
           transform: [{ rotate: `${angle}deg` }, { translateY: -armLength * 0.45 }],
         }} />
       ))}
