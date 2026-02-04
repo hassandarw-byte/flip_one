@@ -80,7 +80,7 @@ export default function MissionsScreen() {
             <Feather name="calendar" size={20} color="#FFFFFF" />
           </LinearGradient>
           <View>
-            <ThemedText style={styles.title}>Daily Missions</ThemedText>
+            <ThemedText style={styles.title}>Missions</ThemedText>
             <ThemedText style={styles.subtitle}>
               Complete missions to earn points
             </ThemedText>
