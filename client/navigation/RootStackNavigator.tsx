@@ -111,7 +111,7 @@ export default function RootStackNavigator() {
         name="Missions"
         component={MissionsScreen}
         options={{
-          headerTitle: "Daily Missions",
+          headerTitle: "Missions",
           headerTransparent: true,
           animation: "slide_from_right",
         }}
