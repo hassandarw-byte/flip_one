@@ -91,13 +91,16 @@ export default function AchievementsScreen() {
       
       <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
         <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Feather name="arrow-left" size={24} color="#FFFFFF" />
+          <Feather name="arrow-left" size={24} color="#000000" />
         </Pressable>
-        <ThemedText style={styles.title}>Achievements</ThemedText>
-        <View style={styles.pointsBadge}>
-          <Feather name="star" size={16} color="#9C27B0" />
-          <ThemedText style={styles.pointsText}>{points}</ThemedText>
+        <View style={styles.headerCenter}>
+          <ThemedText style={styles.title}>Achievements</ThemedText>
+          <View style={styles.pointsBadge}>
+            <Feather name="star" size={16} color="#FFD700" />
+            <ThemedText style={styles.pointsText}>{points}</ThemedText>
+          </View>
         </View>
+        <View style={{ width: 40 }} />
       </View>
 
       <View style={styles.statsRow}>
@@ -204,9 +207,13 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: "rgba(255,255,255,0.2)",
     justifyContent: "center",
     alignItems: "center",
+  },
+  headerCenter: {
+    alignItems: "center",
+    gap: Spacing.sm,
   },
   title: {
     fontSize: 24,
@@ -217,16 +224,13 @@ const styles = StyleSheet.create({
   pointsBadge: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.1)",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.md,
+    justifyContent: "center",
     gap: Spacing.xs,
   },
   pointsText: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#9C27B0",
+    color: "#000000",
   },
   statsRow: {
     flexDirection: "row",
