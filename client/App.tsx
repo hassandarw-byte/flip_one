@@ -40,7 +40,7 @@ export default function App() {
   if (!fontsLoaded && !fontError) {
     return (
       <View style={styles.loading}>
-        <ActivityIndicator size="large" color="#A66CFF" />
+        <ActivityIndicator size="large" color="#4CAF50" />
       </View>
     );
   }
@@ -73,6 +73,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#1A0A2E",
+    backgroundColor: "#E8F5E9",
   },
 });
