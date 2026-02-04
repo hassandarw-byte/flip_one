@@ -656,410 +656,125 @@ export default function HomeScreen() {
   );
 }
 
-// Sea Creature Button Icons - Clear and Bold designs
+// Sea Creature Button Icons - SVG-based Clear designs
 function SeahorseIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?: string }) {
   return (
-    <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-      {/* Seahorse - simplified clear shape */}
-      <View style={{
-        width: size * 0.5,
-        height: size * 0.8,
-        backgroundColor: color,
-        borderRadius: size * 0.2,
-        borderTopLeftRadius: size * 0.35,
-        borderTopRightRadius: size * 0.15,
-        borderWidth: 2,
-        borderColor: 'rgba(0,0,0,0.2)',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.4,
-        shadowRadius: 3,
-        elevation: 4,
-      }}>
-        {/* Head bump */}
-        <View style={{
-          position: 'absolute',
-          top: -size * 0.1,
-          left: size * 0.02,
-          width: size * 0.3,
-          height: size * 0.22,
-          backgroundColor: color,
-          borderRadius: size * 0.12,
-        }} />
-        {/* Snout */}
-        <View style={{
-          position: 'absolute',
-          top: size * 0.02,
-          left: -size * 0.18,
-          width: size * 0.22,
-          height: size * 0.1,
-          backgroundColor: color,
-          borderRadius: size * 0.05,
-        }} />
-        {/* Curly tail */}
-        <View style={{
-          position: 'absolute',
-          bottom: -size * 0.12,
-          right: -size * 0.05,
-          width: size * 0.22,
-          height: size * 0.22,
-          borderWidth: size * 0.07,
-          borderColor: color,
-          borderRadius: size * 0.11,
-          backgroundColor: 'transparent',
-          borderTopColor: 'transparent',
-          borderLeftColor: 'transparent',
-        }} />
-        {/* Dorsal fin */}
-        <View style={{
-          position: 'absolute',
-          top: size * 0.15,
-          right: -size * 0.08,
-          width: size * 0.12,
-          height: size * 0.25,
-          backgroundColor: color,
-          borderRadius: size * 0.06,
-          transform: [{ rotate: '15deg' }],
-        }} />
-      </View>
-    </View>
+    <Svg width={size} height={size} viewBox="0 0 100 100">
+      <Path
+        d="M55 15 Q70 20, 70 35 Q70 50, 60 60 Q55 65, 55 75 Q55 85, 45 90 Q35 85, 40 75"
+        fill={color}
+        stroke="rgba(0,0,0,0.3)"
+        strokeWidth={3}
+      />
+      <Path d="M55 15 Q45 10, 35 20 L45 25" fill={color} stroke="rgba(0,0,0,0.3)" strokeWidth={2} />
+      <Circle cx="48" cy="28" r="4" fill="rgba(0,0,0,0.4)" />
+      <Path d="M70 40 Q80 35, 75 45 Q80 50, 70 50" fill={color} stroke="rgba(0,0,0,0.2)" strokeWidth={2} />
+    </Svg>
   );
 }
 
 function FishIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?: string }) {
   return (
-    <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-      {/* Fish body - clear oval shape */}
-      <View style={{
-        width: size * 0.75,
-        height: size * 0.5,
-        backgroundColor: color,
-        borderRadius: size * 0.25,
-        borderTopLeftRadius: size * 0.18,
-        borderBottomLeftRadius: size * 0.18,
-        borderWidth: 2,
-        borderColor: 'rgba(0,0,0,0.2)',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.4,
-        shadowRadius: 3,
-        elevation: 4,
-      }}>
-        {/* Tail - big and clear */}
-        <View style={{
-          position: 'absolute',
-          right: -size * 0.2,
-          top: -size * 0.02,
-          width: 0,
-          height: 0,
-          borderLeftWidth: size * 0.25,
-          borderLeftColor: color,
-          borderTopWidth: size * 0.25,
-          borderTopColor: 'transparent',
-          borderBottomWidth: size * 0.25,
-          borderBottomColor: 'transparent',
-        }} />
-        {/* Top fin - larger */}
-        <View style={{
-          position: 'absolute',
-          top: -size * 0.15,
-          left: size * 0.2,
-          width: 0,
-          height: 0,
-          borderBottomWidth: size * 0.18,
-          borderBottomColor: color,
-          borderLeftWidth: size * 0.1,
-          borderLeftColor: 'transparent',
-          borderRightWidth: size * 0.1,
-          borderRightColor: 'transparent',
-        }} />
-        {/* Bottom fin */}
-        <View style={{
-          position: 'absolute',
-          bottom: -size * 0.1,
-          left: size * 0.25,
-          width: 0,
-          height: 0,
-          borderTopWidth: size * 0.12,
-          borderTopColor: color,
-          borderLeftWidth: size * 0.06,
-          borderLeftColor: 'transparent',
-          borderRightWidth: size * 0.06,
-          borderRightColor: 'transparent',
-        }} />
-      </View>
-    </View>
+    <Svg width={size} height={size} viewBox="0 0 100 100">
+      <Path
+        d="M80 50 Q60 25, 30 40 Q10 50, 30 60 Q60 75, 80 50 Z"
+        fill={color}
+        stroke="rgba(0,0,0,0.3)"
+        strokeWidth={3}
+      />
+      <Path d="M15 50 L5 35 L5 65 Z" fill={color} stroke="rgba(0,0,0,0.3)" strokeWidth={2} />
+      <Circle cx="65" cy="48" r="6" fill="#FFFFFF" />
+      <Circle cx="66" cy="48" r="3" fill="#000000" />
+      <Path d="M45 35 Q50 20, 55 35" fill={color} stroke="rgba(0,0,0,0.2)" strokeWidth={2} />
+    </Svg>
   );
 }
 
 function TurtleIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?: string }) {
   return (
-    <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-      {/* Shell - dome shaped */}
-      <View style={{
-        width: size * 0.65,
-        height: size * 0.5,
-        backgroundColor: color,
-        borderRadius: size * 0.3,
-        borderTopLeftRadius: size * 0.35,
-        borderTopRightRadius: size * 0.35,
-        borderWidth: 2,
-        borderColor: 'rgba(0,0,0,0.2)',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.4,
-        shadowRadius: 3,
-        elevation: 4,
-      }}>
-        {/* Shell pattern - hexagon lines */}
-        <View style={{
-          position: 'absolute',
-          top: size * 0.08,
-          left: size * 0.12,
-          width: size * 0.36,
-          height: size * 0.28,
-          borderWidth: 2,
-          borderColor: 'rgba(0,0,0,0.25)',
-          borderRadius: size * 0.14,
-        }} />
-      </View>
-      {/* Head - rounder */}
-      <View style={{
-        position: 'absolute',
-        left: size * 0.02,
-        top: size * 0.32,
-        width: size * 0.22,
-        height: size * 0.18,
-        backgroundColor: color,
-        borderRadius: size * 0.09,
-      }} />
-      {/* Front left flipper */}
-      <View style={{
-        position: 'absolute',
-        left: size * 0.08,
-        top: size * 0.52,
-        width: size * 0.2,
-        height: size * 0.12,
-        backgroundColor: color,
-        borderRadius: size * 0.06,
-        transform: [{ rotate: '-35deg' }],
-      }} />
-      {/* Front right flipper */}
-      <View style={{
-        position: 'absolute',
-        right: size * 0.08,
-        top: size * 0.52,
-        width: size * 0.2,
-        height: size * 0.12,
-        backgroundColor: color,
-        borderRadius: size * 0.06,
-        transform: [{ rotate: '35deg' }],
-      }} />
-      {/* Tail */}
-      <View style={{
-        position: 'absolute',
-        right: size * 0.05,
-        top: size * 0.38,
-        width: size * 0.12,
-        height: size * 0.08,
-        backgroundColor: color,
-        borderRadius: size * 0.04,
-      }} />
-    </View>
+    <Svg width={size} height={size} viewBox="0 0 100 100">
+      <Ellipse cx="50" cy="50" rx="30" ry="25" fill={color} stroke="rgba(0,0,0,0.3)" strokeWidth={3} />
+      <Path d="M50 30 L50 70" stroke="rgba(0,0,0,0.2)" strokeWidth={2} />
+      <Path d="M25 50 L75 50" stroke="rgba(0,0,0,0.2)" strokeWidth={2} />
+      <Ellipse cx="20" cy="45" rx="12" ry="8" fill={color} stroke="rgba(0,0,0,0.3)" strokeWidth={2} />
+      <Circle cx="16" cy="43" r="3" fill="#000000" />
+      <Ellipse cx="25" cy="72" rx="10" ry="6" fill={color} stroke="rgba(0,0,0,0.2)" strokeWidth={2} />
+      <Ellipse cx="75" cy="72" rx="10" ry="6" fill={color} stroke="rgba(0,0,0,0.2)" strokeWidth={2} />
+      <Ellipse cx="30" cy="30" rx="8" ry="5" fill={color} stroke="rgba(0,0,0,0.2)" strokeWidth={2} />
+      <Ellipse cx="70" cy="30" rx="8" ry="5" fill={color} stroke="rgba(0,0,0,0.2)" strokeWidth={2} />
+      <Path d="M80 50 L90 50" stroke={color} strokeWidth={5} />
+    </Svg>
   );
 }
 
 function ShellButtonIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?: string }) {
   return (
-    <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-      {/* Scallop shell - fan shaped */}
-      <View style={{
-        width: size * 0.9,
-        height: size * 0.75,
-        backgroundColor: color,
-        borderTopLeftRadius: size * 0.45,
-        borderTopRightRadius: size * 0.45,
-        borderBottomLeftRadius: size * 0.15,
-        borderBottomRightRadius: size * 0.15,
-        borderWidth: 2,
-        borderColor: 'rgba(0,0,0,0.2)',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.4,
-        shadowRadius: 3,
-        elevation: 4,
-      }}>
-        {/* Shell ridges - radiating lines */}
-        <View style={{ position: 'absolute', top: size * 0.08, left: size * 0.1, width: 3, height: size * 0.5, backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: 1.5, transform: [{ rotate: '-15deg' }] }} />
-        <View style={{ position: 'absolute', top: size * 0.05, left: size * 0.25, width: 3, height: size * 0.55, backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: 1.5, transform: [{ rotate: '-5deg' }] }} />
-        <View style={{ position: 'absolute', top: size * 0.04, left: size * 0.4, width: 3, height: size * 0.58, backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: 1.5 }} />
-        <View style={{ position: 'absolute', top: size * 0.05, right: size * 0.25, width: 3, height: size * 0.55, backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: 1.5, transform: [{ rotate: '5deg' }] }} />
-        <View style={{ position: 'absolute', top: size * 0.08, right: size * 0.1, width: 3, height: size * 0.5, backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: 1.5, transform: [{ rotate: '15deg' }] }} />
-      </View>
-      {/* Shell hinge at bottom */}
-      <View style={{
-        position: 'absolute',
-        bottom: size * 0.08,
-        width: size * 0.2,
-        height: size * 0.1,
-        backgroundColor: color,
-        borderRadius: size * 0.05,
-      }} />
-    </View>
+    <Svg width={size} height={size} viewBox="0 0 100 100">
+      <Path
+        d="M50 10 Q80 20, 85 50 Q85 80, 50 90 Q15 80, 15 50 Q20 20, 50 10 Z"
+        fill={color}
+        stroke="rgba(0,0,0,0.3)"
+        strokeWidth={3}
+      />
+      <Path d="M50 15 Q50 50, 50 85" stroke="rgba(0,0,0,0.2)" strokeWidth={2} fill="none" />
+      <Path d="M30 25 Q40 50, 35 80" stroke="rgba(0,0,0,0.15)" strokeWidth={2} fill="none" />
+      <Path d="M70 25 Q60 50, 65 80" stroke="rgba(0,0,0,0.15)" strokeWidth={2} fill="none" />
+    </Svg>
   );
 }
 
 function CrabButtonIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?: string }) {
   return (
-    <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-      {/* Body - wider oval */}
-      <View style={{
-        width: size * 0.6,
-        height: size * 0.4,
-        backgroundColor: color,
-        borderRadius: size * 0.2,
-        marginTop: size * 0.1,
-        borderWidth: 2,
-        borderColor: 'rgba(0,0,0,0.2)',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.4,
-        shadowRadius: 3,
-        elevation: 4,
-      }}>
-        {/* Eye stalks */}
-        <View style={{
-          position: 'absolute',
-          top: -size * 0.12,
-          left: size * 0.08,
-          width: size * 0.08,
-          height: size * 0.15,
-          backgroundColor: color,
-          borderRadius: size * 0.04,
-        }} />
-        <View style={{
-          position: 'absolute',
-          top: -size * 0.12,
-          right: size * 0.08,
-          width: size * 0.08,
-          height: size * 0.15,
-          backgroundColor: color,
-          borderRadius: size * 0.04,
-        }} />
-      </View>
-      {/* Big left claw */}
-      <View style={{
-        position: 'absolute',
-        left: 0,
-        top: size * 0.3,
-        width: size * 0.3,
-        height: size * 0.18,
-        backgroundColor: color,
-        borderRadius: size * 0.09,
-        transform: [{ rotate: '-25deg' }],
-      }} />
-      {/* Big right claw */}
-      <View style={{
-        position: 'absolute',
-        right: 0,
-        top: size * 0.3,
-        width: size * 0.3,
-        height: size * 0.18,
-        backgroundColor: color,
-        borderRadius: size * 0.09,
-        transform: [{ rotate: '25deg' }],
-      }} />
-      {/* Legs - 3 on each side */}
-      <View style={{ position: 'absolute', left: size * 0.12, bottom: size * 0.08, width: size * 0.15, height: size * 0.06, backgroundColor: color, borderRadius: size * 0.03, transform: [{ rotate: '-45deg' }] }} />
-      <View style={{ position: 'absolute', right: size * 0.12, bottom: size * 0.08, width: size * 0.15, height: size * 0.06, backgroundColor: color, borderRadius: size * 0.03, transform: [{ rotate: '45deg' }] }} />
-    </View>
+    <Svg width={size} height={size} viewBox="0 0 100 100">
+      <Circle cx="50" cy="55" r="25" fill={color} stroke="rgba(0,0,0,0.3)" strokeWidth={3} />
+      <Circle cx="40" cy="50" r="6" fill="#FFFFFF" />
+      <Circle cx="60" cy="50" r="6" fill="#FFFFFF" />
+      <Circle cx="40" cy="50" r="3" fill="#000000" />
+      <Circle cx="60" cy="50" r="3" fill="#000000" />
+      <Path d="M15 50 Q5 45, 10 35 Q15 25, 25 40" fill={color} stroke="rgba(0,0,0,0.3)" strokeWidth={2} />
+      <Path d="M85 50 Q95 45, 90 35 Q85 25, 75 40" fill={color} stroke="rgba(0,0,0,0.3)" strokeWidth={2} />
+      <Path d="M30 75 L20 90" stroke="rgba(0,0,0,0.3)" strokeWidth={3} />
+      <Path d="M40 78 L35 93" stroke="rgba(0,0,0,0.3)" strokeWidth={3} />
+      <Path d="M60 78 L65 93" stroke="rgba(0,0,0,0.3)" strokeWidth={3} />
+      <Path d="M70 75 L80 90" stroke="rgba(0,0,0,0.3)" strokeWidth={3} />
+    </Svg>
   );
 }
 
 function JellyfishIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?: string }) {
   return (
-    <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-      {/* Jellyfish dome/bell */}
-      <View style={{
-        width: size * 0.7,
-        height: size * 0.45,
-        backgroundColor: color,
-        borderTopLeftRadius: size * 0.35,
-        borderTopRightRadius: size * 0.35,
-        borderBottomLeftRadius: size * 0.1,
-        borderBottomRightRadius: size * 0.1,
-        borderWidth: 2,
-        borderColor: 'rgba(0,0,0,0.2)',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.4,
-        shadowRadius: 3,
-        elevation: 4,
-      }} />
-      {/* Tentacles */}
-      <View style={{
-        position: 'absolute',
-        bottom: size * 0.05,
-        left: size * 0.2,
-        width: size * 0.08,
-        height: size * 0.35,
-        backgroundColor: color,
-        borderRadius: size * 0.04,
-      }} />
-      <View style={{
-        position: 'absolute',
-        bottom: size * 0.08,
-        left: size * 0.35,
-        width: size * 0.08,
-        height: size * 0.4,
-        backgroundColor: color,
-        borderRadius: size * 0.04,
-      }} />
-      <View style={{
-        position: 'absolute',
-        bottom: size * 0.05,
-        right: size * 0.35,
-        width: size * 0.08,
-        height: size * 0.38,
-        backgroundColor: color,
-        borderRadius: size * 0.04,
-      }} />
-      <View style={{
-        position: 'absolute',
-        bottom: size * 0.08,
-        right: size * 0.2,
-        width: size * 0.08,
-        height: size * 0.32,
-        backgroundColor: color,
-        borderRadius: size * 0.04,
-      }} />
-    </View>
+    <Svg width={size} height={size} viewBox="0 0 100 100">
+      <Path
+        d="M20 45 Q20 15, 50 15 Q80 15, 80 45 Q80 55, 50 55 Q20 55, 20 45 Z"
+        fill={color}
+        stroke="rgba(0,0,0,0.3)"
+        strokeWidth={3}
+      />
+      <Circle cx="35" cy="35" r="5" fill="#FFFFFF" />
+      <Circle cx="65" cy="35" r="5" fill="#FFFFFF" />
+      <Circle cx="35" cy="35" r="2" fill="#000000" />
+      <Circle cx="65" cy="35" r="2" fill="#000000" />
+      <Path d="M30 55 Q25 70, 30 85" stroke={color} strokeWidth={4} fill="none" />
+      <Path d="M42 55 Q47 75, 42 90" stroke={color} strokeWidth={4} fill="none" />
+      <Path d="M58 55 Q53 75, 58 90" stroke={color} strokeWidth={4} fill="none" />
+      <Path d="M70 55 Q75 70, 70 85" stroke={color} strokeWidth={4} fill="none" />
+    </Svg>
   );
 }
 
 function StarfishButtonIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?: string }) {
-  const armLength = size * 0.38;
   return (
-    <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-      {/* Center - larger */}
-      <View style={{ width: size * 0.4, height: size * 0.4, backgroundColor: color, borderRadius: size * 0.15, borderWidth: 2, borderColor: 'rgba(0,0,0,0.2)', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.4, shadowRadius: 3, elevation: 4 }} />
-      {/* 5 Arms - thicker and tapered */}
-      {[0, 72, 144, 216, 288].map((angle, i) => (
-        <View key={i} style={{
-          position: 'absolute',
-          width: size * 0.22,
-          height: armLength,
-          backgroundColor: color,
-          borderTopLeftRadius: size * 0.11,
-          borderTopRightRadius: size * 0.11,
-          borderBottomLeftRadius: size * 0.05,
-          borderBottomRightRadius: size * 0.05,
-          borderWidth: 1.5,
-          borderColor: 'rgba(0,0,0,0.15)',
-          transform: [{ rotate: `${angle}deg` }, { translateY: -armLength * 0.45 }],
-        }} />
-      ))}
-    </View>
+    <Svg width={size} height={size} viewBox="0 0 100 100">
+      <Path
+        d="M50 5 L58 35 L90 35 L65 55 L75 90 L50 70 L25 90 L35 55 L10 35 L42 35 Z"
+        fill={color}
+        stroke="rgba(0,0,0,0.3)"
+        strokeWidth={3}
+      />
+      <Circle cx="50" cy="50" r="8" fill="rgba(0,0,0,0.15)" />
+      <Circle cx="35" cy="40" r="3" fill="rgba(255,255,255,0.5)" />
+      <Circle cx="65" cy="40" r="3" fill="rgba(255,255,255,0.5)" />
+    </Svg>
   );
 }
 
