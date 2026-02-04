@@ -668,6 +668,11 @@ function SeahorseIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?:
         borderRadius: size * 0.2,
         borderTopLeftRadius: size * 0.35,
         borderTopRightRadius: size * 0.15,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.3,
+        shadowRadius: 2,
+        elevation: 3,
       }}>
         {/* Head bump */}
         <View style={{
@@ -730,6 +735,11 @@ function FishIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?: str
         borderRadius: size * 0.22,
         borderTopLeftRadius: size * 0.15,
         borderBottomLeftRadius: size * 0.15,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.3,
+        shadowRadius: 2,
+        elevation: 3,
       }}>
         {/* Tail - big and clear */}
         <View style={{
@@ -789,6 +799,11 @@ function TurtleIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?: s
         borderRadius: size * 0.3,
         borderTopLeftRadius: size * 0.35,
         borderTopRightRadius: size * 0.35,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.3,
+        shadowRadius: 2,
+        elevation: 3,
       }}>
         {/* Shell pattern - hexagon lines */}
         <View style={{
@@ -860,6 +875,11 @@ function ShellButtonIcon({ size = 24, color = "#FFFFFF" }: { size?: number; colo
         borderTopRightRadius: size * 0.45,
         borderBottomLeftRadius: size * 0.12,
         borderBottomRightRadius: size * 0.12,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.3,
+        shadowRadius: 2,
+        elevation: 3,
       }}>
         {/* Shell ridges - radiating lines */}
         <View style={{ position: 'absolute', top: size * 0.08, left: size * 0.1, width: 3, height: size * 0.5, backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: 1.5, transform: [{ rotate: '-15deg' }] }} />
@@ -891,6 +911,11 @@ function CrabButtonIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color
         backgroundColor: color,
         borderRadius: size * 0.18,
         marginTop: size * 0.1,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.3,
+        shadowRadius: 2,
+        elevation: 3,
       }}>
         {/* Eye stalks */}
         <View style={{
@@ -946,7 +971,7 @@ function StarfishButtonIcon({ size = 24, color = "#FFFFFF" }: { size?: number; c
   return (
     <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
       {/* Center - larger */}
-      <View style={{ width: size * 0.35, height: size * 0.35, backgroundColor: color, borderRadius: size * 0.12 }} />
+      <View style={{ width: size * 0.35, height: size * 0.35, backgroundColor: color, borderRadius: size * 0.12, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.3, shadowRadius: 2, elevation: 3 }} />
       {/* 5 Arms - thicker and tapered */}
       {[0, 72, 144, 216, 288].map((angle, i) => (
         <View key={i} style={{
@@ -1027,12 +1052,12 @@ function MenuButton({ seaCreature, label, onPress, colors, badge, iconColor = "#
           end={{ x: 1, y: 1 }}
           style={styles.menuButtonIcon}
         >
-          {seaCreature === 'seahorse' ? <SeahorseIcon size={32} color={iconColor} /> : null}
-          {seaCreature === 'fish' ? <FishIcon size={32} color={iconColor} /> : null}
-          {seaCreature === 'turtle' ? <TurtleIcon size={32} color={iconColor} /> : null}
-          {seaCreature === 'shell' ? <ShellButtonIcon size={32} color={iconColor} /> : null}
-          {seaCreature === 'crab' ? <CrabButtonIcon size={32} color={iconColor} /> : null}
-          {seaCreature === 'starfish' ? <StarfishButtonIcon size={32} color={iconColor} /> : null}
+          {seaCreature === 'seahorse' ? <SeahorseIcon size={26} color={iconColor} /> : null}
+          {seaCreature === 'fish' ? <FishIcon size={26} color={iconColor} /> : null}
+          {seaCreature === 'turtle' ? <TurtleIcon size={26} color={iconColor} /> : null}
+          {seaCreature === 'shell' ? <ShellButtonIcon size={26} color={iconColor} /> : null}
+          {seaCreature === 'crab' ? <CrabButtonIcon size={26} color={iconColor} /> : null}
+          {seaCreature === 'starfish' ? <StarfishButtonIcon size={26} color={iconColor} /> : null}
           {badge && badge > 0 ? (
             <View style={styles.badge}>
               <ThemedText style={styles.badgeText}>{badge}</ThemedText>
