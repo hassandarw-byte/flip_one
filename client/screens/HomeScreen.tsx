@@ -518,10 +518,10 @@ export default function HomeScreen() {
         >
           <View style={styles.statItem}>
             <View style={styles.statIconContainer}>
-              <Feather name="award" size={18} color="#9C27B0" />
+              <Feather name="award" size={18} color="#000000" />
             </View>
-            <ThemedText style={styles.statLabel}>BEST</ThemedText>
-            <ThemedText style={styles.statValue}>{gameState?.bestScore || 0}</ThemedText>
+            <ThemedText style={[styles.statLabel, { color: "#000000" }]}>BEST</ThemedText>
+            <ThemedText style={[styles.statValue, { color: "#9C27B0" }]}>{gameState?.bestScore || 0}</ThemedText>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
