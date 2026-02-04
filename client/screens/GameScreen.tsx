@@ -1556,7 +1556,7 @@ export default function GameScreen() {
       </Animated.View>
     </Pressable>
 
-    <View style={[styles.powerButtonsContainer, { bottom: insets.bottom + Spacing["2xl"] + 160 }]}>
+    <View style={[styles.powerButtonsContainer, { bottom: insets.bottom + Spacing.md }]}>
       <PowerButton 
         type="freeze" 
         icon="pause" 
