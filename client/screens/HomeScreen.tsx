@@ -206,7 +206,7 @@ function ArcadePebble({ size = 20, color = "#9C27B0", style }: any) {
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { backgroundGradient } = useNightMode();
+  const { backgroundGradient, textColor } = useNightMode();
   const [gameState, setGameState] = useState<GameState | null>(null);
 
   const playButtonScale = useSharedValue(1);
@@ -518,17 +518,17 @@ export default function HomeScreen() {
         >
           <View style={styles.statItem}>
             <View style={[styles.statIconContainer, { backgroundColor: "#FFD700" + "50" }]}>
-              <Feather name="award" size={18} color="#000000" />
+              <Feather name="award" size={18} color={textColor} />
             </View>
-            <ThemedText style={[styles.statLabel, { color: "#000000" }]}>BEST</ThemedText>
+            <ThemedText style={[styles.statLabel, { color: textColor }]}>BEST</ThemedText>
             <ThemedText style={[styles.statValue, { color: "#9C27B0" }]}>{gameState?.bestScore || 0}</ThemedText>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
             <View style={[styles.statIconContainer, { backgroundColor: "#FFD700" + "50" }]}>
-              <Feather name="star" size={18} color="#000000" />
+              <Feather name="star" size={18} color={textColor} />
             </View>
-            <ThemedText style={styles.statLabel}>POINTS</ThemedText>
+            <ThemedText style={[styles.statLabel, { color: textColor }]}>POINTS</ThemedText>
             <ThemedText style={[styles.statValue, { color: "#9C27B0" }]}>
               {gameState?.points || 0}
             </ThemedText>

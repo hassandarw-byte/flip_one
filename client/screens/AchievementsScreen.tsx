@@ -31,7 +31,7 @@ const SPARKLE_COLORS = [GameColors.candy1, GameColors.candy2, GameColors.candy3,
 export default function AchievementsScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { backgroundGradient } = useNightMode();
+  const { backgroundGradient, textColor } = useNightMode();
   
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [points, setPoints] = useState(0);
@@ -103,11 +103,11 @@ export default function AchievementsScreen() {
       <View style={styles.statsRow}>
         <View style={styles.statBadge}>
           <ThemedText style={styles.statNumber}>{unlockedCount}/{achievements.length}</ThemedText>
-          <ThemedText style={styles.statLabel}>Unlocked</ThemedText>
+          <ThemedText style={[styles.statLabel, { color: textColor }]}>Unlocked</ThemedText>
         </View>
         <View style={styles.statBadge}>
           <ThemedText style={styles.statNumber}>{totalRewards}</ThemedText>
-          <ThemedText style={styles.statLabel}>Points Earned</ThemedText>
+          <ThemedText style={[styles.statLabel, { color: textColor }]}>Points Earned</ThemedText>
         </View>
       </View>
 
@@ -117,14 +117,14 @@ export default function AchievementsScreen() {
         showsVerticalScrollIndicator={false}
       >
         {[...achievements].sort((a, b) => a.reward - b.reward).map((achievement) => (
-          <AchievementCard key={achievement.id} achievement={achievement} />
+          <AchievementCard key={achievement.id} achievement={achievement} textColor={textColor} />
         ))}
       </ScrollView>
     </View>
   );
 }
 
-function AchievementCard({ achievement }: { achievement: Achievement }) {
+function AchievementCard({ achievement, textColor }: { achievement: Achievement; textColor: string }) {
   const scale = useSharedValue(1);
   
   const cardStyle = useAnimatedStyle(() => ({
@@ -155,10 +155,10 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
           </View>
           
           <View style={styles.achievementInfo}>
-            <ThemedText style={[styles.achievementTitle, !achievement.unlocked && styles.textLocked]}>
+            <ThemedText style={[styles.achievementTitle, { color: textColor }, !achievement.unlocked && styles.textLocked]}>
               {achievement.title}
             </ThemedText>
-            <ThemedText style={[styles.achievementDesc, !achievement.unlocked && styles.textLocked]}>
+            <ThemedText style={[styles.achievementDesc, { color: textColor }, !achievement.unlocked && styles.textLocked]}>
               {achievement.description}
             </ThemedText>
           </View>

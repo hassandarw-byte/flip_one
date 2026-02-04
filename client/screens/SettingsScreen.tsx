@@ -39,7 +39,7 @@ export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const [gameState, setGameState] = useState<GameState | null>(null);
-  const { isNightMode, toggleNightMode, backgroundGradient } = useNightMode();
+  const { isNightMode, toggleNightMode, backgroundGradient, textColor } = useNightMode();
 
   useEffect(() => {
     loadGameState();
@@ -179,7 +179,7 @@ export default function SettingsScreen() {
               style={styles.aboutCard}
             >
               <Image source={appIcon} style={styles.aboutLogo} />
-              <ThemedText style={styles.appName}>Flip One</ThemedText>
+              <ThemedText style={[styles.appName, { color: textColor }]}>Flip One</ThemedText>
               <ThemedText style={styles.appVersion}>Version 1.0.0</ThemedText>
               <ThemedText style={styles.developerText}>© 2026 HHD Apps</ThemedText>
             </LinearGradient>

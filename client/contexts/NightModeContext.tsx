@@ -5,12 +5,14 @@ interface NightModeContextType {
   isNightMode: boolean;
   toggleNightMode: (enabled: boolean) => Promise<void>;
   backgroundGradient: [string, string];
+  textColor: string;
 }
 
 const NightModeContext = createContext<NightModeContextType>({
   isNightMode: false,
   toggleNightMode: async () => {},
   backgroundGradient: ["#F5DEB3", "#D2B48C"],
+  textColor: "#000000",
 });
 
 const DAY_GRADIENT: [string, string] = ["#F5DEB3", "#D2B48C"];
@@ -34,9 +36,10 @@ export function NightModeProvider({ children }: { children: ReactNode }) {
   };
 
   const backgroundGradient = isNightMode ? NIGHT_GRADIENT : DAY_GRADIENT;
+  const textColor = isNightMode ? "#FFFFFF" : "#000000";
 
   return (
-    <NightModeContext.Provider value={{ isNightMode, toggleNightMode, backgroundGradient }}>
+    <NightModeContext.Provider value={{ isNightMode, toggleNightMode, backgroundGradient, textColor }}>
       {children}
     </NightModeContext.Provider>
   );

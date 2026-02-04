@@ -45,7 +45,7 @@ const WHEEL_SEGMENTS = [
 export default function LuckyWheelScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { backgroundGradient } = useNightMode();
+  const { backgroundGradient, textColor } = useNightMode();
   
   const [canSpin, setCanSpin] = useState(false);
   const [isSpinning, setIsSpinning] = useState(false);
@@ -181,7 +181,7 @@ export default function LuckyWheelScreen() {
         </Pressable>
         <ThemedText style={styles.title}>Lucky Wheel</ThemedText>
         <View style={styles.pointsBadge}>
-          <Feather name="star" size={16} color={GameColors.gold} />
+          <Feather name="star" size={16} color={textColor} />
           <ThemedText style={styles.pointsText}>{points}</ThemedText>
         </View>
       </View>
@@ -310,7 +310,7 @@ const styles = StyleSheet.create({
   pointsText: {
     fontSize: 16,
     fontWeight: "700",
-    color: GameColors.gold,
+    color: "#000000",
     textAlign: "center",
   },
   wheelContainer: {
@@ -323,8 +323,8 @@ const styles = StyleSheet.create({
     width: 340,
     height: 340,
     borderRadius: 170,
-    backgroundColor: "#FFD700",
-    shadowColor: "#FFD700",
+    backgroundColor: "#9C27B0",
+    shadowColor: "#7B1FA2",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 60,
@@ -335,9 +335,9 @@ const styles = StyleSheet.create({
     height: 310,
     borderRadius: 155,
     borderWidth: 8,
-    borderColor: "#FFD700",
+    borderColor: "#9C27B0",
     backgroundColor: "transparent",
-    shadowColor: "#FFD700",
+    shadowColor: "#7B1FA2",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 20,
