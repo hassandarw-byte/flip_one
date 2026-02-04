@@ -222,12 +222,12 @@ export default function HomeScreen() {
             testID="button-play"
           >
             <LinearGradient
-              colors={[GameColors.candy3, GameColors.player, "#E6B800"]}
+              colors={["#4CAF50", "#2E7D32"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.playButtonGradient}
             >
-              <Feather name="play" size={24} color={GameColors.background} style={styles.playIcon} />
+              <Feather name="play" size={24} color="#FFFFFF" style={styles.playIcon} />
               <ThemedText style={styles.playButtonText}>PLAY</ThemedText>
             </LinearGradient>
           </AnimatedPressable>
@@ -401,23 +401,14 @@ const styles = StyleSheet.create({
     width: 160,
     height: 160,
     borderRadius: 40,
-    backgroundColor: "#FFD700",
-    shadowColor: "#FFD700",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1,
-    shadowRadius: 50,
-    opacity: 0.5,
+    backgroundColor: "transparent",
   },
   logoWrapper: {
     width: 140,
     height: 140,
     borderRadius: 36,
     overflow: "hidden",
-    shadowColor: GameColors.gold,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.5,
-    shadowRadius: 20,
-    elevation: 20,
+    elevation: 4,
   },
   logo: {
     width: 140,
@@ -432,9 +423,6 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     color: "#1A1A1A",
     letterSpacing: 6,
-    textShadowColor: GameColors.gold,
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 8,
   },
   titleUnderline: {
     width: 100,
@@ -497,26 +485,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   playButtonGlow: {
-    position: "absolute",
-    width: width * 0.45,
-    height: 52,
-    backgroundColor: "#FF5722",
-    borderRadius: BorderRadius.md,
-    shadowColor: "#FF5722",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1,
-    shadowRadius: 30,
+    display: "none",
   },
   playButton: {
     width: width * 0.4,
     height: 44,
     borderRadius: BorderRadius.md,
     overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
-    elevation: 10,
+    elevation: 4,
   },
   playButtonGradient: {
     flex: 1,
@@ -531,7 +507,7 @@ const styles = StyleSheet.create({
   playButtonText: {
     fontSize: 22,
     fontWeight: "900",
-    color: "#1A1A2E",
+    color: "#FFFFFF",
     letterSpacing: 3,
     textAlign: "center",
   },
@@ -556,13 +532,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   menuButtonGlow: {
-    position: "absolute",
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1,
-    shadowRadius: 12,
+    display: "none",
   },
   menuButtonIcon: {
     width: 38,
@@ -570,11 +540,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    elevation: 8,
+    elevation: 4,
   },
   menuButtonLabel: {
     fontSize: 10,
