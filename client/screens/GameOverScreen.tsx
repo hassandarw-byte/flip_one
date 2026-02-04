@@ -223,7 +223,7 @@ export default function GameOverScreen() {
         style={styles.modal}
       >
         <LinearGradient
-          colors={[GameColors.surfaceLight, GameColors.surface]}
+          colors={["#FFFFFF", "#FFFFFF"]}
           style={styles.modalGradient}
         >
           <View style={styles.gameOverHeader}>
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
     padding: Spacing["2xl"],
     alignItems: "center",
     borderWidth: 3,
-    borderColor: "#FFFFFF",
+    borderColor: "#000000",
     borderRadius: BorderRadius["2xl"],
   },
   gameOverHeader: {
