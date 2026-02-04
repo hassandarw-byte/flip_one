@@ -545,7 +545,7 @@ export default function HomeScreen() {
             onPressOut={handlePressOut}
             testID="button-play"
           >
-            <Svg width={80} height={68} viewBox="0 0 140 120">
+            <Svg width={110} height={94} viewBox="0 0 140 120">
               {/* Shell body - fan shape */}
               <Path
                 d="M70 110 
@@ -571,8 +571,8 @@ export default function HomeScreen() {
               <SvgText
                 x="70"
                 y="70"
-                fontSize="22"
-                fontWeight="bold"
+                fontSize="28"
+                fontWeight="900"
                 fill="#1A1A1A"
                 textAnchor="middle"
                 fontFamily="Tajawal_700Bold"
