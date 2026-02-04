@@ -591,6 +591,37 @@ export default function HomeScreen() {
       >
         <View style={styles.menuRow}>
           <MenuButton
+            seaCreature="seahorse"
+            label="Wheel"
+            onPress={() => navigation.navigate("LuckyWheel")}
+            colors={["#FFD700", "#FFC107"]}
+            iconColor="#9C27B0"
+          />
+          <MenuButton
+            seaCreature="crab"
+            label="Settings"
+            onPress={() => navigation.navigate("Settings")}
+            colors={["#4CAF50", "#388E3C"]}
+            iconColor="#1A1A1A"
+          />
+          <MenuButton
+            seaCreature="starfish"
+            label="Awards"
+            onPress={() => navigation.navigate("Achievements")}
+            colors={["#FF1493", "#E91E8C"]}
+            iconColor="#2196F3"
+          />
+        </View>
+        
+        <View style={styles.menuRow}>
+          <MenuButton
+            seaCreature="turtle"
+            label="Ranks"
+            onPress={() => navigation.navigate("Leaderboard")}
+            colors={["#1A1A1A", "#000000"]}
+            iconColor="#4CAF50"
+          />
+          <MenuButton
             seaCreature="shell"
             label="Shop"
             onPress={() => navigation.navigate("Shop")}
@@ -604,37 +635,6 @@ export default function HomeScreen() {
             colors={["#2196F3", "#1976D2"]}
             iconColor="#FF1493"
             badge={gameState?.dailyMissions.filter((m) => m.completed && !m.claimed).length}
-          />
-          <MenuButton
-            seaCreature="turtle"
-            label="Ranks"
-            onPress={() => navigation.navigate("Leaderboard")}
-            colors={["#1A1A1A", "#000000"]}
-            iconColor="#4CAF50"
-          />
-        </View>
-        
-        <View style={styles.menuRow}>
-          <MenuButton
-            seaCreature="seahorse"
-            label="Wheel"
-            onPress={() => navigation.navigate("LuckyWheel")}
-            colors={["#FFD700", "#FFC107"]}
-            iconColor="#9C27B0"
-          />
-          <MenuButton
-            seaCreature="starfish"
-            label="Awards"
-            onPress={() => navigation.navigate("Achievements")}
-            colors={["#FF1493", "#E91E8C"]}
-            iconColor="#2196F3"
-          />
-          <MenuButton
-            seaCreature="crab"
-            label="Settings"
-            onPress={() => navigation.navigate("Settings")}
-            colors={["#4CAF50", "#388E3C"]}
-            iconColor="#1A1A1A"
           />
         </View>
 
@@ -1027,12 +1027,12 @@ function MenuButton({ seaCreature, label, onPress, colors, badge, iconColor = "#
           end={{ x: 1, y: 1 }}
           style={styles.menuButtonIcon}
         >
-          {seaCreature === 'seahorse' ? <SeahorseIcon size={26} color={iconColor} /> : null}
-          {seaCreature === 'fish' ? <FishIcon size={26} color={iconColor} /> : null}
-          {seaCreature === 'turtle' ? <TurtleIcon size={26} color={iconColor} /> : null}
-          {seaCreature === 'shell' ? <ShellButtonIcon size={26} color={iconColor} /> : null}
-          {seaCreature === 'crab' ? <CrabButtonIcon size={26} color={iconColor} /> : null}
-          {seaCreature === 'starfish' ? <StarfishButtonIcon size={26} color={iconColor} /> : null}
+          {seaCreature === 'seahorse' ? <SeahorseIcon size={32} color={iconColor} /> : null}
+          {seaCreature === 'fish' ? <FishIcon size={32} color={iconColor} /> : null}
+          {seaCreature === 'turtle' ? <TurtleIcon size={32} color={iconColor} /> : null}
+          {seaCreature === 'shell' ? <ShellButtonIcon size={32} color={iconColor} /> : null}
+          {seaCreature === 'crab' ? <CrabButtonIcon size={32} color={iconColor} /> : null}
+          {seaCreature === 'starfish' ? <StarfishButtonIcon size={32} color={iconColor} /> : null}
           {badge && badge > 0 ? (
             <View style={styles.badge}>
               <ThemedText style={styles.badgeText}>{badge}</ThemedText>
