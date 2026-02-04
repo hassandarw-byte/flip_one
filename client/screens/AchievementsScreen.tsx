@@ -155,10 +155,10 @@ function AchievementCard({ achievement, textColor }: { achievement: Achievement;
           </View>
           
           <View style={styles.achievementInfo}>
-            <ThemedText style={[styles.achievementTitle, { color: textColor }, !achievement.unlocked && styles.textLocked]}>
+            <ThemedText style={[styles.achievementTitle, !achievement.unlocked && styles.textLocked]}>
               {achievement.title}
             </ThemedText>
-            <ThemedText style={[styles.achievementDesc, { color: textColor }, !achievement.unlocked && styles.textLocked]}>
+            <ThemedText style={[styles.achievementDesc, !achievement.unlocked && styles.textLocked]}>
               {achievement.description}
             </ThemedText>
           </View>
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
     color: "#000000",
   },
   textLocked: {
-    color: "#444444",
+    color: "#666666",
   },
   rewardContainer: {
     flexDirection: "row",
