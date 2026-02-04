@@ -131,6 +131,15 @@ function generateDailyMissions(): DailyMission[] {
       completed: false,
       claimed: false,
     },
+    {
+      id: "distance_2000",
+      description: "Travel 2000m in one game",
+      target: 2000,
+      progress: 0,
+      reward: 150,
+      completed: false,
+      claimed: false,
+    },
   ];
 }
 

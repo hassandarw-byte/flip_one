@@ -631,6 +631,12 @@ export default function GameScreen() {
         if (currentScore >= 20) {
           await updateMissionProgress("score_20", currentScore);
         }
+        
+        // Update distance mission - distance traveled in this game
+        const distanceTraveled = Math.floor(distance);
+        if (distanceTraveled >= 2000) {
+          await updateMissionProgress("distance_2000", distanceTraveled);
+        }
 
         if (currentScore > gameState.bestScore) {
           await saveBestScore(currentScore);
