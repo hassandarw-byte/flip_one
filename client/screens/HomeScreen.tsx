@@ -591,14 +591,14 @@ export default function HomeScreen() {
       >
         <View style={styles.menuRow}>
           <MenuButton
-            seaCreature="seahorse"
+            seaCreature="fish"
             label="Wheel"
             onPress={() => navigation.navigate("LuckyWheel")}
             colors={["#FFD700", "#FFC107"]}
             iconColor="#9C27B0"
           />
           <MenuButton
-            seaCreature="crab"
+            seaCreature="seahorse"
             label="Settings"
             onPress={() => navigation.navigate("Settings")}
             colors={["#4CAF50", "#388E3C"]}
@@ -629,7 +629,7 @@ export default function HomeScreen() {
             iconColor="#FFD700"
           />
           <MenuButton
-            seaCreature="fish"
+            seaCreature="jellyfish"
             label="Missions"
             onPress={() => navigation.navigate("Missions")}
             colors={["#2196F3", "#1976D2"]}
@@ -976,6 +976,67 @@ function CrabButtonIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color
   );
 }
 
+function JellyfishIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?: string }) {
+  return (
+    <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
+      {/* Jellyfish dome/bell */}
+      <View style={{
+        width: size * 0.7,
+        height: size * 0.45,
+        backgroundColor: color,
+        borderTopLeftRadius: size * 0.35,
+        borderTopRightRadius: size * 0.35,
+        borderBottomLeftRadius: size * 0.1,
+        borderBottomRightRadius: size * 0.1,
+        borderWidth: 2,
+        borderColor: 'rgba(0,0,0,0.2)',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.4,
+        shadowRadius: 3,
+        elevation: 4,
+      }} />
+      {/* Tentacles */}
+      <View style={{
+        position: 'absolute',
+        bottom: size * 0.05,
+        left: size * 0.2,
+        width: size * 0.08,
+        height: size * 0.35,
+        backgroundColor: color,
+        borderRadius: size * 0.04,
+      }} />
+      <View style={{
+        position: 'absolute',
+        bottom: size * 0.08,
+        left: size * 0.35,
+        width: size * 0.08,
+        height: size * 0.4,
+        backgroundColor: color,
+        borderRadius: size * 0.04,
+      }} />
+      <View style={{
+        position: 'absolute',
+        bottom: size * 0.05,
+        right: size * 0.35,
+        width: size * 0.08,
+        height: size * 0.38,
+        backgroundColor: color,
+        borderRadius: size * 0.04,
+      }} />
+      <View style={{
+        position: 'absolute',
+        bottom: size * 0.08,
+        right: size * 0.2,
+        width: size * 0.08,
+        height: size * 0.32,
+        backgroundColor: color,
+        borderRadius: size * 0.04,
+      }} />
+    </View>
+  );
+}
+
 function StarfishButtonIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?: string }) {
   const armLength = size * 0.38;
   return (
@@ -1002,7 +1063,7 @@ function StarfishButtonIcon({ size = 24, color = "#FFFFFF" }: { size?: number; c
   );
 }
 
-type SeaCreatureType = 'seahorse' | 'fish' | 'turtle' | 'shell' | 'crab' | 'starfish';
+type SeaCreatureType = 'seahorse' | 'fish' | 'turtle' | 'shell' | 'crab' | 'starfish' | 'jellyfish';
 
 interface MenuButtonProps {
   seaCreature: SeaCreatureType;
@@ -1070,6 +1131,7 @@ function MenuButton({ seaCreature, label, onPress, colors, badge, iconColor = "#
           {seaCreature === 'shell' ? <ShellButtonIcon size={26} color={iconColor} /> : null}
           {seaCreature === 'crab' ? <CrabButtonIcon size={26} color={iconColor} /> : null}
           {seaCreature === 'starfish' ? <StarfishButtonIcon size={26} color={iconColor} /> : null}
+          {seaCreature === 'jellyfish' ? <JellyfishIcon size={26} color={iconColor} /> : null}
           {badge && badge > 0 ? (
             <View style={styles.badge}>
               <ThemedText style={styles.badgeText}>{badge}</ThemedText>
