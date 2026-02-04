@@ -101,7 +101,7 @@ interface Obstacle {
   id: number;
   x: number;
   track: "top" | "bottom";
-  type: "lightning" | "danger" | "skull";
+  type: "cone" | "barrel" | "rock";
   width: number;
   height: number;
   color: string;
@@ -946,9 +946,9 @@ export default function GameScreen() {
       if (isGameOverRef.current) return;
       
       const obstacleTypes: Array<{ type: Obstacle["type"]; color: string }> = [
-        { type: "lightning", color: "#FFD700" },
-        { type: "danger", color: "#FF4444" },
-        { type: "skull", color: "#8B0000" },
+        { type: "cone", color: "#FF6600" },
+        { type: "barrel", color: "#CC0000" },
+        { type: "rock", color: "#666666" },
       ];
       
       obstacleSpawnRef.current = setInterval(() => {
@@ -1806,83 +1806,103 @@ function SeaCreatureShape({ type }: { type: "crab" | "fish" | "lobster" }) {
 }
 
 function ObstacleShape({ obstacle, track }: { obstacle: Obstacle; track: "top" | "bottom" }) {
-  const { type, color, width: w, height: h } = obstacle;
+  const { type, width: w, height: h } = obstacle;
   const size = Math.min(w, h) * 0.9;
   const strokeWidth = 2;
   const rotation = track === "top" ? "180deg" : "0deg";
 
   switch (type) {
-    case "lightning":
-      return (
-        <View style={[suitStyles.container, { width: w, height: h }]}>
-          <Svg width={size} height={size} viewBox="0 0 100 100">
-            <Defs>
-              <SvgLinearGradient id="lightningGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-                <Stop offset="0%" stopColor="#FFD700" />
-                <Stop offset="100%" stopColor="#FFA500" />
-              </SvgLinearGradient>
-            </Defs>
-            <Path
-              d="M55 5 L25 45 L45 45 L35 95 L75 50 L52 50 L65 5 Z"
-              fill="url(#lightningGlow)"
-              stroke="#FFFFFF"
-              strokeWidth={strokeWidth}
-            />
-          </Svg>
-        </View>
-      );
-    case "danger":
+    case "cone":
+      // Traffic cone - orange with white stripes
       return (
         <View style={[suitStyles.container, { width: w, height: h, transform: [{ rotate: rotation }] }]}>
           <Svg width={size} height={size} viewBox="0 0 100 100">
+            <Defs>
+              <SvgLinearGradient id="coneGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <Stop offset="0%" stopColor="#FF6600" />
+                <Stop offset="50%" stopColor="#FF8833" />
+                <Stop offset="100%" stopColor="#FF6600" />
+              </SvgLinearGradient>
+            </Defs>
+            {/* Cone body */}
             <Path
-              d="M50 8 L95 85 L5 85 Z"
-              fill={color}
-              stroke="#FFFFFF"
+              d="M50 8 L80 85 L20 85 Z"
+              fill="url(#coneGradient)"
+              stroke="#CC4400"
               strokeWidth={strokeWidth}
             />
-            <SvgText
-              x="50"
-              y="72"
-              fontSize="40"
-              fontWeight="bold"
-              fill="#FFFFFF"
-              textAnchor="middle"
-            >!</SvgText>
+            {/* White stripes */}
+            <Path d="M35 55 L65 55" stroke="#FFFFFF" strokeWidth="6" />
+            <Path d="M30 70 L70 70" stroke="#FFFFFF" strokeWidth="6" />
+            {/* Base */}
+            <Rect x="15" y="85" width="70" height="10" rx="2" fill="#333333" stroke="#222222" strokeWidth={1} />
           </Svg>
         </View>
       );
-    case "skull":
+    case "barrel":
+      // Oil barrel - red with hazard symbol
       return (
         <View style={[suitStyles.container, { width: w, height: h }]}>
           <Svg width={size} height={size} viewBox="0 0 100 100">
             <Defs>
-              <SvgLinearGradient id="skullGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-                <Stop offset="0%" stopColor="#4A0000" />
-                <Stop offset="100%" stopColor="#8B0000" />
+              <SvgLinearGradient id="barrelGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <Stop offset="0%" stopColor="#AA0000" />
+                <Stop offset="30%" stopColor="#CC0000" />
+                <Stop offset="70%" stopColor="#CC0000" />
+                <Stop offset="100%" stopColor="#AA0000" />
               </SvgLinearGradient>
             </Defs>
-            <Circle cx="50" cy="40" r="35" fill="url(#skullGlow)" stroke="#FFFFFF" strokeWidth={strokeWidth} />
-            <Circle cx="35" cy="35" r="8" fill="#000000" />
-            <Circle cx="65" cy="35" r="8" fill="#000000" />
-            <Path d="M40 55 L45 65 L50 55 L55 65 L60 55" stroke="#000000" strokeWidth="3" fill="none" />
-            <Rect x="35" y="70" width="30" height="20" fill="url(#skullGlow)" stroke="#FFFFFF" strokeWidth={strokeWidth} />
-            <Line x1="42" y1="70" x2="42" y2="90" stroke="#000000" strokeWidth="2" />
-            <Line x1="50" y1="70" x2="50" y2="90" stroke="#000000" strokeWidth="2" />
-            <Line x1="58" y1="70" x2="58" y2="90" stroke="#000000" strokeWidth="2" />
+            {/* Barrel body */}
+            <Rect x="20" y="10" width="60" height="80" rx="8" fill="url(#barrelGradient)" stroke="#880000" strokeWidth={strokeWidth} />
+            {/* Metal rings */}
+            <Rect x="18" y="20" width="64" height="6" rx="2" fill="#444444" stroke="#333333" strokeWidth={1} />
+            <Rect x="18" y="74" width="64" height="6" rx="2" fill="#444444" stroke="#333333" strokeWidth={1} />
+            {/* Hazard symbol */}
+            <Circle cx="50" cy="50" r="18" fill="#FFCC00" stroke="#000000" strokeWidth={1} />
+            <Path d="M50 35 L60 55 L40 55 Z" fill="#000000" />
+            <Circle cx="50" cy="62" r="3" fill="#000000" />
+          </Svg>
+        </View>
+      );
+    case "rock":
+      // Large rock - gray boulder
+      return (
+        <View style={[suitStyles.container, { width: w, height: h }]}>
+          <Svg width={size} height={size} viewBox="0 0 100 100">
+            <Defs>
+              <SvgLinearGradient id="rockGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <Stop offset="0%" stopColor="#888888" />
+                <Stop offset="50%" stopColor="#666666" />
+                <Stop offset="100%" stopColor="#444444" />
+              </SvgLinearGradient>
+            </Defs>
+            {/* Main rock shape */}
+            <Path
+              d="M20 70 Q10 50, 25 35 Q35 15, 55 20 Q80 15, 85 40 Q95 60, 80 75 Q65 90, 45 85 Q20 85, 20 70 Z"
+              fill="url(#rockGradient)"
+              stroke="#333333"
+              strokeWidth={strokeWidth}
+            />
+            {/* Rock details/cracks */}
+            <Path d="M35 40 Q45 50, 40 60" stroke="#555555" strokeWidth="2" fill="none" />
+            <Path d="M55 35 Q60 45, 65 50" stroke="#555555" strokeWidth="2" fill="none" />
+            {/* Highlight */}
+            <Circle cx="40" cy="35" r="8" fill="#999999" opacity="0.5" />
           </Svg>
         </View>
       );
     default:
+      // Default to cone
       return (
         <View style={[suitStyles.container, { width: w, height: h }]}>
           <Svg width={size} height={size} viewBox="0 0 100 100">
             <Path
-              d="M55 5 L25 45 L45 45 L35 95 L75 50 L52 50 L65 5 Z"
-              fill="#FFD700"
-              stroke="#FFFFFF"
+              d="M50 8 L80 85 L20 85 Z"
+              fill="#FF6600"
+              stroke="#CC4400"
               strokeWidth={strokeWidth}
             />
+            <Rect x="15" y="85" width="70" height="10" rx="2" fill="#333333" />
           </Svg>
         </View>
       );
