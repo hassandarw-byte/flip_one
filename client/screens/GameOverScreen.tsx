@@ -388,8 +388,8 @@ const styles = StyleSheet.create({
   modalGradient: {
     padding: Spacing["2xl"],
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.1)",
+    borderWidth: 3,
+    borderColor: "#FFFFFF",
     borderRadius: BorderRadius["2xl"],
   },
   gameOverHeader: {
