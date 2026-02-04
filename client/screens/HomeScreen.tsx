@@ -35,14 +35,123 @@ const { width, height } = Dimensions.get("window");
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
-// Beach decoration images
-const BEACH_DECORATIONS = [
-  { image: require("../../assets/images/beach/seashell-spiral.png"), size: 45 },
-  { image: require("../../assets/images/beach/coral-pieces.png"), size: 50 },
-  { image: require("../../assets/images/beach/sea-glass.png"), size: 40 },
-  { image: require("../../assets/images/beach/polished-pebbles.png"), size: 45 },
-  { image: require("../../assets/images/beach/crab.png"), size: 55 },
-];
+// Arcade-style Seashell component
+function ArcadeShell({ size = 30, color = "#FF6B9D", rotation = 0, style }: any) {
+  return (
+    <View style={[{ width: size, height: size, transform: [{ rotate: `${rotation}deg` }] }, style]}>
+      <View style={{
+        width: size,
+        height: size * 0.8,
+        backgroundColor: color,
+        borderTopLeftRadius: size,
+        borderTopRightRadius: size,
+        borderBottomLeftRadius: size * 0.3,
+        borderBottomRightRadius: size * 0.3,
+        borderWidth: 2,
+        borderColor: "#FFFFFF",
+      }}>
+        {/* Shell ridges */}
+        <View style={{ position: 'absolute', top: size * 0.15, left: size * 0.2, width: 2, height: size * 0.5, backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: 1 }} />
+        <View style={{ position: 'absolute', top: size * 0.1, left: size * 0.4, width: 2, height: size * 0.55, backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: 1 }} />
+        <View style={{ position: 'absolute', top: size * 0.15, left: size * 0.6, width: 2, height: size * 0.5, backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: 1 }} />
+      </View>
+    </View>
+  );
+}
+
+// Arcade-style Starfish component
+function ArcadeStarfish({ size = 35, color = "#FFD93D", rotation = 0, style }: any) {
+  const armSize = size * 0.4;
+  return (
+    <View style={[{ width: size, height: size, alignItems: 'center', justifyContent: 'center', transform: [{ rotate: `${rotation}deg` }] }, style]}>
+      <View style={{ width: size * 0.4, height: size * 0.4, backgroundColor: color, borderRadius: size * 0.1, borderWidth: 2, borderColor: "#FFFFFF" }} />
+      {[0, 72, 144, 216, 288].map((angle, i) => (
+        <View key={i} style={{
+          position: 'absolute',
+          width: armSize * 0.4,
+          height: armSize,
+          backgroundColor: color,
+          borderRadius: armSize * 0.2,
+          borderWidth: 2,
+          borderColor: "#FFFFFF",
+          transform: [{ rotate: `${angle}deg` }, { translateY: -armSize * 0.6 }],
+        }} />
+      ))}
+    </View>
+  );
+}
+
+// Arcade-style Crab component
+function ArcadeCrab({ size = 40, style }: any) {
+  return (
+    <View style={[{ width: size, height: size * 0.7 }, style]}>
+      {/* Body */}
+      <View style={{
+        width: size * 0.7,
+        height: size * 0.5,
+        backgroundColor: "#FF5722",
+        borderRadius: size * 0.25,
+        alignSelf: 'center',
+        marginTop: size * 0.15,
+        borderWidth: 2,
+        borderColor: "#FFFFFF",
+      }}>
+        {/* Eyes */}
+        <View style={{ position: 'absolute', top: -size * 0.1, left: size * 0.1, width: size * 0.12, height: size * 0.12, backgroundColor: "#000", borderRadius: size * 0.06, borderWidth: 1, borderColor: "#FFF" }} />
+        <View style={{ position: 'absolute', top: -size * 0.1, right: size * 0.1, width: size * 0.12, height: size * 0.12, backgroundColor: "#000", borderRadius: size * 0.06, borderWidth: 1, borderColor: "#FFF" }} />
+      </View>
+      {/* Left Claw */}
+      <View style={{ position: 'absolute', left: 0, top: size * 0.2, width: size * 0.25, height: size * 0.2, backgroundColor: "#FF7043", borderRadius: size * 0.1, borderWidth: 2, borderColor: "#FFF" }} />
+      {/* Right Claw */}
+      <View style={{ position: 'absolute', right: 0, top: size * 0.2, width: size * 0.25, height: size * 0.2, backgroundColor: "#FF7043", borderRadius: size * 0.1, borderWidth: 2, borderColor: "#FFF" }} />
+    </View>
+  );
+}
+
+// Arcade-style Sea Glass component
+function ArcadeSeaGlass({ size = 25, color = "#4DD0E1", rotation = 0, style }: any) {
+  return (
+    <View style={[{
+      width: size,
+      height: size * 0.7,
+      backgroundColor: color,
+      borderRadius: size * 0.3,
+      borderWidth: 2,
+      borderColor: "#FFFFFF",
+      transform: [{ rotate: `${rotation}deg` }],
+      opacity: 0.9,
+    }, style]}>
+      <View style={{ position: 'absolute', top: size * 0.1, left: size * 0.15, width: size * 0.3, height: size * 0.15, backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: size * 0.1 }} />
+    </View>
+  );
+}
+
+// Arcade-style Coral component
+function ArcadeCoral({ size = 35, color = "#FF6B9D", style }: any) {
+  return (
+    <View style={[{ width: size, height: size }, style]}>
+      <View style={{ position: 'absolute', bottom: 0, left: size * 0.1, width: size * 0.2, height: size * 0.7, backgroundColor: color, borderRadius: size * 0.1, borderWidth: 2, borderColor: "#FFF" }} />
+      <View style={{ position: 'absolute', bottom: 0, left: size * 0.35, width: size * 0.25, height: size * 0.9, backgroundColor: color, borderRadius: size * 0.12, borderWidth: 2, borderColor: "#FFF" }} />
+      <View style={{ position: 'absolute', bottom: 0, right: size * 0.1, width: size * 0.2, height: size * 0.6, backgroundColor: color, borderRadius: size * 0.1, borderWidth: 2, borderColor: "#FFF" }} />
+    </View>
+  );
+}
+
+// Arcade-style Pebble component
+function ArcadePebble({ size = 20, color = "#9C27B0", style }: any) {
+  return (
+    <View style={[{
+      width: size,
+      height: size * 0.7,
+      backgroundColor: color,
+      borderRadius: size * 0.35,
+      borderWidth: 2,
+      borderColor: "#FFFFFF",
+    }, style]}>
+      <View style={{ position: 'absolute', top: size * 0.1, left: size * 0.2, width: size * 0.25, height: size * 0.12, backgroundColor: 'rgba(255,255,255,0.4)', borderRadius: size * 0.1 }} />
+    </View>
+  );
+}
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
@@ -161,22 +270,32 @@ export default function HomeScreen() {
       style={[styles.container, { paddingTop: insets.top + Spacing.xl }]}
     >
       <Animated.View style={[styles.beachDecorContainer, sparkleStyle]}>
-        {/* Seashell - top left */}
-        <Image source={BEACH_DECORATIONS[0].image} style={[styles.beachDecor, { left: 20, top: 80, width: 50, height: 50 }]} />
-        {/* Coral - top right */}
-        <Image source={BEACH_DECORATIONS[1].image} style={[styles.beachDecor, { right: 15, top: 120, width: 55, height: 55 }]} />
-        {/* Sea glass - middle left */}
-        <Image source={BEACH_DECORATIONS[2].image} style={[styles.beachDecor, { left: 10, top: height * 0.4, width: 45, height: 45 }]} />
-        {/* Pebbles - middle right */}
-        <Image source={BEACH_DECORATIONS[3].image} style={[styles.beachDecor, { right: 20, top: height * 0.35, width: 50, height: 50 }]} />
-        {/* Crab - bottom left */}
-        <Image source={BEACH_DECORATIONS[4].image} style={[styles.beachDecor, { left: 25, bottom: 150, width: 60, height: 60 }]} />
-        {/* Extra seashell - bottom right */}
-        <Image source={BEACH_DECORATIONS[0].image} style={[styles.beachDecor, { right: 30, bottom: 180, width: 40, height: 40, transform: [{ rotate: '45deg' }] }]} />
-        {/* Extra coral - bottom center */}
-        <Image source={BEACH_DECORATIONS[1].image} style={[styles.beachDecor, { left: width * 0.4, bottom: 100, width: 45, height: 45 }]} />
-        {/* Extra sea glass - top center */}
-        <Image source={BEACH_DECORATIONS[2].image} style={[styles.beachDecor, { left: width * 0.35, top: 60, width: 35, height: 35 }]} />
+        {/* Shells */}
+        <ArcadeShell size={35} color="#FF6B9D" rotation={-15} style={{ position: 'absolute', left: 20, top: 90 }} />
+        <ArcadeShell size={28} color="#4DD0E1" rotation={30} style={{ position: 'absolute', right: 25, top: 180 }} />
+        <ArcadeShell size={32} color="#FFD93D" rotation={-25} style={{ position: 'absolute', right: 15, bottom: 200 }} />
+        
+        {/* Starfish */}
+        <ArcadeStarfish size={40} color="#FFD93D" rotation={15} style={{ position: 'absolute', left: 15, top: height * 0.35 }} />
+        <ArcadeStarfish size={30} color="#FF9800" rotation={-20} style={{ position: 'absolute', right: 30, bottom: 280 }} />
+        
+        {/* Crab */}
+        <ArcadeCrab size={50} style={{ position: 'absolute', left: 20, bottom: 130 }} />
+        
+        {/* Coral */}
+        <ArcadeCoral size={40} color="#FF6B9D" style={{ position: 'absolute', right: 15, top: 100 }} />
+        <ArcadeCoral size={35} color="#E91E63" style={{ position: 'absolute', left: width * 0.4, bottom: 90 }} />
+        
+        {/* Sea Glass */}
+        <ArcadeSeaGlass size={25} color="#4DD0E1" rotation={45} style={{ position: 'absolute', left: 60, top: 150 }} />
+        <ArcadeSeaGlass size={20} color="#26C6DA" rotation={-30} style={{ position: 'absolute', right: 50, top: height * 0.45 }} />
+        <ArcadeSeaGlass size={22} color="#00BCD4" rotation={15} style={{ position: 'absolute', left: 40, bottom: 220 }} />
+        
+        {/* Pebbles */}
+        <ArcadePebble size={18} color="#9C27B0" style={{ position: 'absolute', left: 80, top: 70 }} />
+        <ArcadePebble size={15} color="#4CAF50" style={{ position: 'absolute', right: 70, top: 140 }} />
+        <ArcadePebble size={20} color="#FF5722" style={{ position: 'absolute', left: 50, bottom: 170 }} />
+        <ArcadePebble size={16} color="#2196F3" style={{ position: 'absolute', right: 40, bottom: 150 }} />
       </Animated.View>
 
       <Animated.View style={[styles.logoSection, logoAnimatedStyle]}>
@@ -392,10 +511,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     zIndex: 0,
-  },
-  beachDecor: {
-    position: "absolute",
-    resizeMode: "contain",
   },
   logoSection: {
     alignItems: "center",
