@@ -275,7 +275,7 @@ export default function GameOverScreen() {
                 icon="rotate-ccw"
                 label="Retry"
                 onPress={handleRetry}
-                colors={[GameColors.player, GameColors.playerGlow]}
+                colors={["#2196F3", "#1976D2"]}
               />
               <GameButton
                 icon="home"
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
   scoreValue: {
     fontSize: 56,
     fontWeight: "900",
-    color: GameColors.background,
+    color: "#9C27B0",
   },
   newBestBadge: {
     flexDirection: "row",
