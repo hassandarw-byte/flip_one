@@ -1556,7 +1556,7 @@ export default function GameScreen() {
       </Animated.View>
     </Pressable>
 
-    <View style={[styles.powerButtonsContainer, { bottom: insets.bottom + Spacing["2xl"] + 40 }]}>
+    <View style={[styles.powerButtonsContainer, { bottom: insets.bottom + Spacing["2xl"] + 80 }]}>
       <PowerButton 
         type="freeze" 
         icon="pause" 
@@ -2112,7 +2112,7 @@ const styles = StyleSheet.create({
   roadCenterDash: {
     width: 20,
     height: 4,
-    backgroundColor: "rgba(255,255,255,0.3)",
+    backgroundColor: "transparent",
     borderRadius: 2,
   },
   spikesContainer: {

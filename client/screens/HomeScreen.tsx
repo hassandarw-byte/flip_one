@@ -594,7 +594,7 @@ export default function HomeScreen() {
             seaCreature="shell"
             label="Shop"
             onPress={() => navigation.navigate("Shop")}
-            colors={["#9C27B0", "#7B1FA2"]}
+            colors={["#FFFFFF", "#F5F5F5"]}
           />
           <MenuButton
             seaCreature="fish"
@@ -1058,7 +1058,7 @@ const styles = StyleSheet.create({
   },
   statsSection: {
     alignItems: "center",
-    paddingTop: Spacing.md,
+    paddingTop: Spacing.xs,
   },
   titleText: {
     fontSize: 36,
@@ -1118,8 +1118,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: Spacing.sm,
-    paddingTop: Spacing.xs,
+    marginTop: 0,
+    paddingTop: 0,
   },
   playButtonContainer: {
     position: "relative",
@@ -1161,8 +1161,8 @@ const styles = StyleSheet.create({
   },
   menuGrid: {
     paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.xl,
-    marginTop: Spacing.lg,
+    paddingTop: Spacing["2xl"],
+    marginTop: Spacing["2xl"],
   },
   menuRow: {
     flexDirection: "row",
