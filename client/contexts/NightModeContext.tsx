@@ -10,10 +10,10 @@ interface NightModeContextType {
 const NightModeContext = createContext<NightModeContextType>({
   isNightMode: false,
   toggleNightMode: async () => {},
-  backgroundGradient: ["#1A0A2E", "#2D1B4E"],
+  backgroundGradient: ["#29B6F6", "#81D4FA"],
 });
 
-const DAY_GRADIENT: [string, string] = ["#1A0A2E", "#2D1B4E"];
+const DAY_GRADIENT: [string, string] = ["#29B6F6", "#81D4FA"];
 const NIGHT_GRADIENT: [string, string] = ["#0A0A0F", "#1A1A25"];
 
 export function NightModeProvider({ children }: { children: ReactNode }) {

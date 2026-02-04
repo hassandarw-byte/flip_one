@@ -90,7 +90,7 @@ interface ActivePower {
 const { width, height } = Dimensions.get("window");
 
 const PLAYER_SIZE = 32;
-const TRACK_HEIGHT = 80;
+const TRACK_HEIGHT = 50;
 const GAME_SPEED_BASE = 3;
 const SPAWN_INTERVAL = 1500; // Balanced obstacle frequency
 const DIFFICULTY_INCREASE_INTERVAL = 5;
@@ -758,13 +758,13 @@ export default function GameScreen() {
       // Update distance
       setDistance(d => d + gameSpeedRef.current * 0.1);
       
-      // Update superman position (flies across screen)
+      // Update superman position (flies across screen slowly)
       setSupermanX(prev => {
         if (prev > width + 100) {
           setShowSuperman(false);
           return -100;
         }
-        return prev + 8;
+        return prev + 3;
       });
 
       setObstacles((prev) => {
@@ -1190,8 +1190,16 @@ export default function GameScreen() {
         >
           <View style={styles.supermanBody}>
             <View style={styles.supermanCape} />
-            <View style={styles.supermanHead} />
-            <View style={styles.supermanArm} />
+            <View style={styles.supermanBelt} />
+            <View style={styles.supermanHead}>
+              <View style={styles.supermanHair} />
+              <View style={styles.supermanEyeLeft} />
+              <View style={styles.supermanEyeRight} />
+            </View>
+            <View style={styles.supermanArm}>
+              <View style={styles.supermanFist} />
+            </View>
+            <View style={styles.supermanLogo} />
           </View>
         </Animated.View>
       ) : null}
@@ -2124,39 +2132,108 @@ const styles = StyleSheet.create({
     zIndex: 100,
   },
   supermanBody: {
-    width: 28,
-    height: 16,
+    width: 36,
+    height: 20,
     backgroundColor: "#0066CC",
-    borderRadius: 8,
+    borderRadius: 10,
     position: "relative",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   supermanCape: {
     position: "absolute",
-    left: -8,
+    left: -12,
     top: 2,
-    width: 12,
-    height: 14,
+    width: 16,
+    height: 18,
     backgroundColor: "#CC0000",
-    borderTopLeftRadius: 6,
-    borderBottomLeftRadius: 8,
+    borderTopLeftRadius: 8,
+    borderBottomLeftRadius: 10,
+    shadowColor: "#CC0000",
+    shadowOffset: { width: -2, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
+  },
+  supermanBelt: {
+    position: "absolute",
+    bottom: 4,
+    left: 4,
+    right: 8,
+    height: 3,
+    backgroundColor: "#FFD700",
+    borderRadius: 1,
   },
   supermanHead: {
     position: "absolute",
-    right: -5,
-    top: 1,
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    right: -8,
+    top: 0,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
     backgroundColor: "#FFCC99",
+    borderWidth: 1,
+    borderColor: "#E5B98A",
+  },
+  supermanHair: {
+    position: "absolute",
+    top: -2,
+    left: 2,
+    right: 2,
+    height: 6,
+    backgroundColor: "#1A1A1A",
+    borderTopLeftRadius: 6,
+    borderTopRightRadius: 6,
+  },
+  supermanEyeLeft: {
+    position: "absolute",
+    top: 4,
+    left: 2,
+    width: 3,
+    height: 3,
+    borderRadius: 1.5,
+    backgroundColor: "#0066CC",
+  },
+  supermanEyeRight: {
+    position: "absolute",
+    top: 4,
+    right: 2,
+    width: 3,
+    height: 3,
+    borderRadius: 1.5,
+    backgroundColor: "#0066CC",
   },
   supermanArm: {
     position: "absolute",
-    right: -12,
-    top: 4,
-    width: 14,
-    height: 5,
+    right: -18,
+    top: 5,
+    width: 18,
+    height: 7,
     backgroundColor: "#0066CC",
+    borderRadius: 3,
+  },
+  supermanFist: {
+    position: "absolute",
+    right: -4,
+    top: 0,
+    width: 7,
+    height: 7,
+    borderRadius: 3.5,
+    backgroundColor: "#FFCC99",
+    borderWidth: 1,
+    borderColor: "#E5B98A",
+  },
+  supermanLogo: {
+    position: "absolute",
+    top: 3,
+    left: 12,
+    width: 8,
+    height: 6,
+    backgroundColor: "#FFD700",
     borderRadius: 2,
+    borderWidth: 1,
+    borderColor: "#CC0000",
   },
   collectParticle: {
     position: "absolute",
