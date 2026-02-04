@@ -594,13 +594,15 @@ export default function HomeScreen() {
             seaCreature="shell"
             label="Shop"
             onPress={() => navigation.navigate("Shop")}
-            colors={["#FFFFFF", "#F5F5F5"]}
+            colors={["#9C27B0", "#7B1FA2"]}
+            iconColor="#FFFFFF"
           />
           <MenuButton
             seaCreature="fish"
             label="Missions"
             onPress={() => navigation.navigate("Missions")}
             colors={["#2196F3", "#1976D2"]}
+            iconColor="#F8BBD9"
             badge={gameState?.dailyMissions.filter((m) => m.completed && !m.claimed).length}
           />
           <MenuButton
@@ -616,19 +618,22 @@ export default function HomeScreen() {
             seaCreature="seahorse"
             label="Wheel"
             onPress={() => navigation.navigate("LuckyWheel")}
-            colors={["#2196F3", "#1565C0"]}
+            colors={["#FFD700", "#FFC107"]}
+            iconColor="#9C27B0"
           />
           <MenuButton
             seaCreature="starfish"
             label="Awards"
             onPress={() => navigation.navigate("Achievements")}
-            colors={["#9C27B0", "#6A1B9A"]}
+            colors={["#F8BBD9", "#F48FB1"]}
+            iconColor="#2196F3"
           />
           <MenuButton
             seaCreature="crab"
             label="Settings"
             onPress={() => navigation.navigate("Settings")}
-            colors={["#1A1A1A", "#000000"]}
+            colors={["#4CAF50", "#388E3C"]}
+            iconColor="#1A1A1A"
           />
         </View>
 
@@ -967,9 +972,10 @@ interface MenuButtonProps {
   onPress: () => void;
   colors: readonly [string, string, ...string[]];
   badge?: number;
+  iconColor?: string;
 }
 
-function MenuButton({ seaCreature, label, onPress, colors, badge }: MenuButtonProps) {
+function MenuButton({ seaCreature, label, onPress, colors, badge, iconColor = "#FFFFFF" }: MenuButtonProps) {
   const scale = useSharedValue(1);
   const glowOpacity = useSharedValue(0.3);
   const shimmerPosition = useSharedValue(-100);
@@ -1020,12 +1026,12 @@ function MenuButton({ seaCreature, label, onPress, colors, badge }: MenuButtonPr
           end={{ x: 1, y: 1 }}
           style={styles.menuButtonIcon}
         >
-          {seaCreature === 'seahorse' ? <SeahorseIcon size={26} color="#4DD0E1" /> : null}
-          {seaCreature === 'fish' ? <FishIcon size={26} color="#FF7043" /> : null}
-          {seaCreature === 'turtle' ? <TurtleIcon size={26} color="#4CAF50" /> : null}
-          {seaCreature === 'shell' ? <ShellButtonIcon size={26} color="#FF6B9D" /> : null}
-          {seaCreature === 'crab' ? <CrabButtonIcon size={26} color="#E57373" /> : null}
-          {seaCreature === 'starfish' ? <StarfishButtonIcon size={26} color="#FFD93D" /> : null}
+          {seaCreature === 'seahorse' ? <SeahorseIcon size={26} color={iconColor} /> : null}
+          {seaCreature === 'fish' ? <FishIcon size={26} color={iconColor} /> : null}
+          {seaCreature === 'turtle' ? <TurtleIcon size={26} color={iconColor} /> : null}
+          {seaCreature === 'shell' ? <ShellButtonIcon size={26} color={iconColor} /> : null}
+          {seaCreature === 'crab' ? <CrabButtonIcon size={26} color={iconColor} /> : null}
+          {seaCreature === 'starfish' ? <StarfishButtonIcon size={26} color={iconColor} /> : null}
           {badge && badge > 0 ? (
             <View style={styles.badge}>
               <ThemedText style={styles.badgeText}>{badge}</ThemedText>
