@@ -168,7 +168,7 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
               <Feather name="check-circle" size={24} color={GameColors.success} />
             ) : (
               <>
-                <Feather name="star" size={14} color={GameColors.gold} />
+                <Feather name="star" size={14} color="#9C27B0" />
                 <ThemedText style={styles.rewardText}>{achievement.reward}</ThemedText>
               </>
             )}
@@ -244,11 +244,11 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: 24,
     fontWeight: "800",
-    color: GameColors.gold,
+    color: "#9C27B0",
   },
   statLabel: {
     fontSize: 12,
-    color: GameColors.textMuted,
+    color: "#000000",
     marginTop: Spacing.xs,
   },
   scrollView: {
@@ -290,12 +290,12 @@ const styles = StyleSheet.create({
   achievementTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#FFFFFF",
+    color: "#000000",
     marginBottom: 2,
   },
   achievementDesc: {
     fontSize: 12,
-    color: GameColors.textMuted,
+    color: "#333333",
   },
   textLocked: {
     color: "#666",
@@ -308,6 +308,6 @@ const styles = StyleSheet.create({
   rewardText: {
     fontSize: 14,
     fontWeight: "700",
-    color: GameColors.gold,
+    color: "#9C27B0",
   },
 });

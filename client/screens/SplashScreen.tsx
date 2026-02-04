@@ -279,6 +279,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     zIndex: 2,
+    marginTop: -40,
   },
   logoWrapper: {
     width: 160,
@@ -292,7 +293,7 @@ const styles = StyleSheet.create({
     height: 160,
   },
   titleContainer: {
-    marginTop: Spacing["3xl"],
+    marginTop: Spacing.lg,
     alignItems: "center",
     zIndex: 2,
   },
@@ -306,7 +307,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "Tajawal_500Medium",
     color: "#333333",
-    marginTop: Spacing.sm,
+    marginTop: Spacing.xs,
     letterSpacing: 4,
   },
 });

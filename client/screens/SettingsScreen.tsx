@@ -426,7 +426,7 @@ const styles = StyleSheet.create({
   appName: {
     fontSize: 22,
     fontWeight: "800",
-    color: GameColors.player,
+    color: "#000000",
   },
   appVersion: {
     fontSize: 13,

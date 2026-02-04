@@ -606,7 +606,7 @@ export default function HomeScreen() {
           />
           <MenuButton
             seaCreature="starfish"
-            label="Awards"
+            label="Achievements"
             onPress={() => navigation.navigate("Achievements")}
             colors={["#FF1493", "#E91E8C"]}
             iconColor="#2196F3"
@@ -866,13 +866,13 @@ function MenuButton({ seaCreature, label, onPress, colors, badge, iconColor = "#
           end={{ x: 1, y: 1 }}
           style={styles.menuButtonIcon}
         >
-          {seaCreature === 'seahorse' ? <SeahorseIcon size={26} color={iconColor} /> : null}
-          {seaCreature === 'fish' ? <FishIcon size={26} color={iconColor} /> : null}
-          {seaCreature === 'turtle' ? <TurtleIcon size={26} color={iconColor} /> : null}
-          {seaCreature === 'shell' ? <ShellButtonIcon size={26} color={iconColor} /> : null}
-          {seaCreature === 'crab' ? <CrabButtonIcon size={26} color={iconColor} /> : null}
-          {seaCreature === 'starfish' ? <StarfishButtonIcon size={26} color={iconColor} /> : null}
-          {seaCreature === 'jellyfish' ? <JellyfishIcon size={26} color={iconColor} /> : null}
+          {seaCreature === 'seahorse' ? <SeahorseIcon size={34} color={iconColor} /> : null}
+          {seaCreature === 'fish' ? <FishIcon size={34} color={iconColor} /> : null}
+          {seaCreature === 'turtle' ? <TurtleIcon size={34} color={iconColor} /> : null}
+          {seaCreature === 'shell' ? <ShellButtonIcon size={34} color={iconColor} /> : null}
+          {seaCreature === 'crab' ? <CrabButtonIcon size={34} color={iconColor} /> : null}
+          {seaCreature === 'starfish' ? <StarfishButtonIcon size={34} color={iconColor} /> : null}
+          {seaCreature === 'jellyfish' ? <JellyfishIcon size={34} color={iconColor} /> : null}
           {badge && badge > 0 ? (
             <View style={styles.badge}>
               <ThemedText style={styles.badgeText}>{badge}</ThemedText>
