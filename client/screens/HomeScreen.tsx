@@ -598,7 +598,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 36,
-    fontWeight: "900",
+    fontFamily: "Tajawal_800ExtraBold",
     color: "#1A1A1A",
     letterSpacing: 6,
   },

@@ -298,13 +298,13 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 36,
-    fontWeight: "900",
+    fontFamily: "Tajawal_800ExtraBold",
     color: "#1A1A1A",
     letterSpacing: 10,
   },
   subtitleText: {
     fontSize: 14,
-    fontWeight: "600",
+    fontFamily: "Tajawal_500Medium",
     color: "#333333",
     marginTop: Spacing.sm,
     letterSpacing: 4,
