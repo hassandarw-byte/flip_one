@@ -426,7 +426,7 @@ export default function HomeScreen() {
             testID="button-play"
           >
             <LinearGradient
-              colors={["#4CAF50", "#2E7D32"]}
+              colors={["#2196F3", "#1565C0"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.playButtonGradient}
@@ -450,20 +450,20 @@ export default function HomeScreen() {
             icon="shopping-bag"
             label="Shop"
             onPress={() => navigation.navigate("Shop")}
-            colors={["#FF6B9D", "#C44569"]}
+            colors={["#9C27B0", "#7B1FA2"]}
           />
           <MenuButton
             icon="target"
             label="Missions"
             onPress={() => navigation.navigate("Missions")}
-            colors={["#4ECDC4", "#26A69A"]}
+            colors={["#2196F3", "#1976D2"]}
             badge={gameState?.dailyMissions.filter((m) => m.completed && !m.claimed).length}
           />
           <MenuButton
             icon="award"
             label="Ranks"
             onPress={() => navigation.navigate("Leaderboard")}
-            colors={["#FFD93D", "#F4A020"]}
+            colors={["#1A1A1A", "#000000"]}
           />
         </View>
         
@@ -472,19 +472,19 @@ export default function HomeScreen() {
             icon="gift"
             label="Wheel"
             onPress={() => navigation.navigate("LuckyWheel")}
-            colors={["#FF9F43", "#E67E22"]}
+            colors={["#2196F3", "#1565C0"]}
           />
           <MenuButton
             icon="star"
             label="Awards"
             onPress={() => navigation.navigate("Achievements")}
-            colors={["#A66CFF", "#7B4FD0"]}
+            colors={["#9C27B0", "#6A1B9A"]}
           />
           <MenuButton
             icon="settings"
             label="Settings"
             onPress={() => navigation.navigate("Settings")}
-            colors={["#74B9FF", "#4A90D9"]}
+            colors={["#1A1A1A", "#000000"]}
           />
         </View>
 
