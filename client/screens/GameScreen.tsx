@@ -759,7 +759,7 @@ export default function GameScreen() {
       "#AA96DA", "#FCBAD3", "#A8D8EA", "#FF9F43", "#00D2D3",
       "#5F27CD", "#10AC84", "#EE5A24", "#EA2027", "#FFC312",
     ];
-    const initialParticles: FloatingParticle[] = Array.from({ length: 20 }).map((_, i) => ({
+    const initialParticles: FloatingParticle[] = Array.from({ length: 0 }).map((_, i) => ({
       id: i,
       x: Math.random() * width,
       y: trackTopY + TRACK_HEIGHT + Math.random() * (trackBottomY - trackTopY - TRACK_HEIGHT - 40) + 20,
