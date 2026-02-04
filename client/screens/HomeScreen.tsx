@@ -595,7 +595,7 @@ export default function HomeScreen() {
             label="Shop"
             onPress={() => navigation.navigate("Shop")}
             colors={["#9C27B0", "#7B1FA2"]}
-            iconColor="#FFFFFF"
+            iconColor="#FFD700"
           />
           <MenuButton
             seaCreature="fish"
