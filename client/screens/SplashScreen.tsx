@@ -9,6 +9,7 @@ import Animated, {
   withDelay,
   Easing,
   runOnJS,
+  ReduceMotion,
 } from "react-native-reanimated";
 import { Spacing } from "@/constants/theme";
 import { useNightMode } from "@/contexts/NightModeContext";
@@ -161,24 +162,24 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
 
   useEffect(() => {
     // Decorations fade in
-    decorOpacity.value = withTiming(1, { duration: 800 });
+    decorOpacity.value = withTiming(1, { duration: 800, reduceMotion: ReduceMotion.Never });
     
     // Logo appears immediately
-    logoOpacity.value = withTiming(1, { duration: 500, easing: Easing.out(Easing.cubic) });
+    logoOpacity.value = withTiming(1, { duration: 500, easing: Easing.out(Easing.cubic), reduceMotion: ReduceMotion.Never });
     
     // Logo: starts very small (0.2) -> grows slowly to 1.5 over 2.5s -> shrinks to 1.0 over 1s and settles
     logoScale.value = withSequence(
-      withTiming(1.5, { duration: 2500, easing: Easing.out(Easing.quad) }),
-      withTiming(1.0, { duration: 1000, easing: Easing.inOut(Easing.bounce) })
+      withTiming(1.5, { duration: 2500, easing: Easing.out(Easing.quad), reduceMotion: ReduceMotion.Never }),
+      withTiming(1.0, { duration: 1000, easing: Easing.inOut(Easing.bounce), reduceMotion: ReduceMotion.Never })
     );
 
     // Title appears after logo starts growing
-    titleOpacity.value = withDelay(800, withTiming(1, { duration: 1200, easing: Easing.out(Easing.cubic) }));
+    titleOpacity.value = withDelay(800, withTiming(1, { duration: 1200, easing: Easing.out(Easing.cubic), reduceMotion: ReduceMotion.Never }));
 
     // Transition to home after 4 seconds total
     const timer = setTimeout(() => {
-      logoOpacity.value = withTiming(0, { duration: 400 });
-      titleOpacity.value = withTiming(0, { duration: 400 }, () => {
+      logoOpacity.value = withTiming(0, { duration: 400, reduceMotion: ReduceMotion.Never });
+      titleOpacity.value = withTiming(0, { duration: 400, reduceMotion: ReduceMotion.Never }, () => {
         runOnJS(onComplete)();
       });
     }, 4000);
