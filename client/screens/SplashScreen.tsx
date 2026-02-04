@@ -156,33 +156,33 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
   const { backgroundGradient } = useNightMode();
   
   const logoOpacity = useSharedValue(0);
-  const logoScale = useSharedValue(0.2);
+  const logoScale = useSharedValue(0.15);
   const titleOpacity = useSharedValue(0);
   const decorOpacity = useSharedValue(0);
 
   useEffect(() => {
-    // Decorations fade in
-    decorOpacity.value = withTiming(1, { duration: 800, reduceMotion: ReduceMotion.Never });
+    // Decorations fade in slowly
+    decorOpacity.value = withTiming(1, { duration: 1200, reduceMotion: ReduceMotion.Never });
     
-    // Logo appears immediately
-    logoOpacity.value = withTiming(1, { duration: 500, easing: Easing.out(Easing.cubic), reduceMotion: ReduceMotion.Never });
+    // Logo appears very slowly and gradually
+    logoOpacity.value = withTiming(1, { duration: 1500, easing: Easing.out(Easing.cubic), reduceMotion: ReduceMotion.Never });
     
-    // Logo: starts very small (0.2) -> grows slowly to 1.5 over 2.5s -> shrinks to 1.0 over 1s and settles
+    // Logo: starts very small (0.15) -> grows slowly to 1.3 over 2.5s -> shrinks slightly to 1.0 over 1s and settles
     logoScale.value = withSequence(
-      withTiming(1.5, { duration: 2500, easing: Easing.out(Easing.quad), reduceMotion: ReduceMotion.Never }),
-      withTiming(1.0, { duration: 1000, easing: Easing.inOut(Easing.bounce), reduceMotion: ReduceMotion.Never })
+      withTiming(1.3, { duration: 2500, easing: Easing.out(Easing.cubic), reduceMotion: ReduceMotion.Never }),
+      withTiming(1.0, { duration: 1000, easing: Easing.out(Easing.cubic), reduceMotion: ReduceMotion.Never })
     );
 
-    // Title appears after logo starts growing
-    titleOpacity.value = withDelay(800, withTiming(1, { duration: 1200, easing: Easing.out(Easing.cubic), reduceMotion: ReduceMotion.Never }));
+    // Title appears after logo is more visible
+    titleOpacity.value = withDelay(1200, withTiming(1, { duration: 1500, easing: Easing.out(Easing.cubic), reduceMotion: ReduceMotion.Never }));
 
-    // Transition to home after 4 seconds total
+    // Transition to home after 4.5 seconds total
     const timer = setTimeout(() => {
-      logoOpacity.value = withTiming(0, { duration: 400, reduceMotion: ReduceMotion.Never });
-      titleOpacity.value = withTiming(0, { duration: 400, reduceMotion: ReduceMotion.Never }, () => {
+      logoOpacity.value = withTiming(0, { duration: 500, reduceMotion: ReduceMotion.Never });
+      titleOpacity.value = withTiming(0, { duration: 500, reduceMotion: ReduceMotion.Never }, () => {
         runOnJS(onComplete)();
       });
-    }, 4000);
+    }, 4500);
 
     return () => clearTimeout(timer);
   }, []);
@@ -200,50 +200,33 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
     opacity: decorOpacity.value,
   }));
 
+  // Sand beach gradient colors
+  const sandGradient: readonly [string, string, ...string[]] = ["#F5DEB3", "#DEB887", "#D2B48C"];
+
   return (
     <LinearGradient
-      colors={backgroundGradient}
+      colors={sandGradient}
       style={styles.container}
     >
       <Animated.View style={[styles.decorContainer, decorStyle]}>
-        {/* Shells */}
-        <ArcadeShell size={50} color="#E91E63" rotation={-20} style={{ position: 'absolute', left: 20, top: 100 }} />
-        <ArcadeShell size={40} color="#00BCD4" rotation={25} style={{ position: 'absolute', right: 25, top: 150 }} />
-        <ArcadeShell size={35} color="#FFEB3B" rotation={-10} style={{ position: 'absolute', left: width * 0.4, top: 60 }} />
-        <ArcadeShell size={38} color="#FF5722" rotation={15} style={{ position: 'absolute', right: 15, bottom: 250 }} />
-        <ArcadeShell size={42} color="#9C27B0" rotation={-30} style={{ position: 'absolute', left: 60, bottom: 280 }} />
+        {/* Decorations only at edges - not in center where logo appears */}
+        {/* Top left corner */}
+        <ArcadeShell size={45} color="#E91E63" rotation={-20} style={{ position: 'absolute', left: 15, top: 50 }} />
+        <ArcadePebble size={22} color="#9C27B0" style={{ position: 'absolute', left: 70, top: 80 }} />
         
-        {/* Starfish */}
-        <ArcadeStarfish size={55} color="#FFEB3B" rotation={10} style={{ position: 'absolute', left: 15, bottom: 180 }} />
-        <ArcadeStarfish size={45} color="#FF5722" rotation={-15} style={{ position: 'absolute', right: 20, bottom: 220 }} />
-        <ArcadeStarfish size={40} color="#E91E63" rotation={25} style={{ position: 'absolute', right: 80, top: 80 }} />
-        <ArcadeStarfish size={35} color="#00BCD4" rotation={-35} style={{ position: 'absolute', left: 70, top: height * 0.48 }} />
+        {/* Top right corner */}
+        <ArcadeStarfish size={40} color="#FF5722" rotation={25} style={{ position: 'absolute', right: 20, top: 60 }} />
+        <ArcadeSeaGlass size={28} color="#00BCD4" rotation={40} style={{ position: 'absolute', right: 80, top: 45 }} />
         
-        {/* Crabs */}
-        <ArcadeCrab size={65} style={{ position: 'absolute', left: width * 0.35, bottom: 70 }} />
-        <ArcadeCrab size={50} style={{ position: 'absolute', right: 10, top: height * 0.45 }} />
+        {/* Bottom left corner */}
+        <ArcadeCrab size={55} style={{ position: 'absolute', left: 20, bottom: 80 }} />
+        <ArcadeShell size={35} color="#FFEB3B" rotation={15} style={{ position: 'absolute', left: 85, bottom: 60 }} />
+        <ArcadePebble size={20} color="#4CAF50" style={{ position: 'absolute', left: 40, bottom: 140 }} />
         
-        {/* Coral */}
-        <ArcadeCoral size={55} color="#E91E63" style={{ position: 'absolute', right: 15, top: 85 }} />
-        <ArcadeCoral size={45} color="#9C27B0" style={{ position: 'absolute', left: 10, top: height * 0.38 }} />
-        <ArcadeCoral size={40} color="#FF5722" style={{ position: 'absolute', left: width * 0.55, bottom: 130 }} />
-        <ArcadeCoral size={35} color="#4CAF50" style={{ position: 'absolute', right: 70, top: height * 0.28 }} />
-        
-        {/* Sea Glass */}
-        <ArcadeSeaGlass size={35} color="#00BCD4" rotation={40} style={{ position: 'absolute', left: 80, top: 65 }} />
-        <ArcadeSeaGlass size={30} color="#26C6DA" rotation={-25} style={{ position: 'absolute', right: 55, top: height * 0.32 }} />
-        <ArcadeSeaGlass size={28} color="#4DD0E1" rotation={15} style={{ position: 'absolute', left: 15, bottom: 320 }} />
-        <ArcadeSeaGlass size={25} color="#80DEEA" rotation={-40} style={{ position: 'absolute', right: 30, bottom: 160 }} />
-        
-        {/* Pebbles */}
-        <ArcadePebble size={28} color="#9C27B0" style={{ position: 'absolute', left: 90, top: 130 }} />
-        <ArcadePebble size={24} color="#4CAF50" style={{ position: 'absolute', right: 75, top: 200 }} />
-        <ArcadePebble size={26} color="#2196F3" style={{ position: 'absolute', right: 45, bottom: 140 }} />
-        <ArcadePebble size={22} color="#E91E63" style={{ position: 'absolute', left: 30, top: height * 0.55 }} />
-        <ArcadePebble size={20} color="#FFEB3B" style={{ position: 'absolute', right: 90, top: height * 0.42 }} />
-        <ArcadePebble size={25} color="#FF9800" style={{ position: 'absolute', left: width * 0.5, top: 120 }} />
-        <ArcadePebble size={21} color="#673AB7" style={{ position: 'absolute', left: 50, bottom: 200 }} />
-        <ArcadePebble size={23} color="#00BCD4" style={{ position: 'absolute', right: 20, top: height * 0.58 }} />
+        {/* Bottom right corner */}
+        <ArcadeStarfish size={50} color="#FFEB3B" rotation={-15} style={{ position: 'absolute', right: 25, bottom: 70 }} />
+        <ArcadeCoral size={40} color="#E91E63" style={{ position: 'absolute', right: 90, bottom: 50 }} />
+        <ArcadePebble size={18} color="#2196F3" style={{ position: 'absolute', right: 50, bottom: 130 }} />
       </Animated.View>
 
       <Animated.View style={[styles.logoContainer, logoAnimatedStyle]}>
