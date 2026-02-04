@@ -375,11 +375,8 @@ const styles = StyleSheet.create({
   segmentText: {
     fontSize: 15,
     fontWeight: "900",
-    color: "#FFFFFF",
+    color: "#1A1A1A",
     textAlign: "center",
-    textShadowColor: "rgba(0,0,0,0.7)",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
   },
   wheelCenter: {
     position: "absolute",
@@ -423,10 +420,7 @@ const styles = StyleSheet.create({
   rewardText: {
     fontSize: 28,
     fontWeight: "900",
-    color: "#FFFFFF",
-    textShadowColor: "rgba(0,0,0,0.5)",
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 4,
+    color: "#1A1A1A",
   },
   spinButton: {
     marginHorizontal: Spacing.xl,

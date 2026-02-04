@@ -237,12 +237,12 @@ export default function GameScreen() {
   const obstacleScale = useSharedValue(1);
   
   const DAY_GRADIENTS: [string, string][] = [
-    ["#1565C0", "#1E88E5"],  // Royal blue (matching app icon)
-    ["#1976D2", "#2196F3"],  // Medium blue
-    ["#1565C0", "#1976D2"],  // Deep royal blue
-    ["#0D47A1", "#1565C0"],  // Dark royal blue
-    ["#1976D2", "#42A5F5"],  // Lighter blue
-    ["#0D47A1", "#1976D2"],  // Navy to blue
+    ["#E8F5E9", "#C8E6C9"],  // Light green (Mario style)
+    ["#C8E6C9", "#A5D6A7"],  // Medium green
+    ["#E8F5E9", "#A5D6A7"],  // Soft green
+    ["#C8E6C9", "#81C784"],  // Fresh green
+    ["#A5D6A7", "#66BB6A"],  // Bright green
+    ["#E8F5E9", "#81C784"],  // Light to medium green
   ];
   
   const NIGHT_GRADIENTS: [string, string][] = [
@@ -2049,10 +2049,7 @@ const styles = StyleSheet.create({
   comboText: {
     fontSize: 24,
     fontWeight: "900",
-    color: "#FFFFFF",
-    textShadowColor: "rgba(0,0,0,0.5)",
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 4,
+    color: "#1A1A1A",
   },
   collectExplosion: {
     position: "absolute",
@@ -2263,10 +2260,7 @@ const styles = StyleSheet.create({
   encourageText: {
     fontSize: 32,
     fontWeight: "900",
-    color: "#FFFFFF",
-    textShadowColor: "rgba(0,0,0,0.5)",
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 4,
+    color: "#1A1A1A",
     letterSpacing: 2,
   },
   flipParticle: {

@@ -1,13 +1,16 @@
 import { Platform } from "react-native";
 
 export const GameColors = {
-  // Royal blue background (matching app icon)
-  background: "#1565C0",
-  backgroundGradientStart: "#1565C0",
-  backgroundGradientEnd: "#1E88E5",
-  surface: "#1976D2",
-  surfaceLight: "#2196F3",
-  surfaceGlass: "rgba(255, 255, 255, 0.2)",
+  // Light green background (Mario style)
+  background: "#E8F5E9",
+  backgroundGradientStart: "#E8F5E9",
+  backgroundGradientEnd: "#C8E6C9",
+  surface: "#A5D6A7",
+  surfaceLight: "#C8E6C9",
+  surfaceGlass: "rgba(255, 255, 255, 0.4)",
+  
+  // Mario green for buttons
+  marioGreenDark: "#2E7D32",
   
   // Bright golden player (Sonic rings style)
   player: "#FFD700",
@@ -33,7 +36,7 @@ export const GameColors = {
   marioRed: "#E52521",
   marioBlue: "#049CD8",
   marioYellow: "#FBD000",
-  marioGreen: "#43B047",
+  marioGreen: "#4CAF50",
   marioBrown: "#8B4513",
   marioOrange: "#FF9800",
   

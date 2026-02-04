@@ -405,9 +405,6 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     color: GameColors.danger,
     letterSpacing: 4,
-    textShadowColor: GameColors.danger,
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 15,
   },
   gameOverLine: {
     width: 80,
