@@ -95,10 +95,6 @@ export default function AchievementsScreen() {
         </Pressable>
         <View style={styles.headerCenter}>
           <ThemedText style={styles.title}>Achievements</ThemedText>
-          <View style={styles.pointsBadge}>
-            <Feather name="star" size={16} color="#FFD700" />
-            <ThemedText style={styles.pointsText}>{points}</ThemedText>
-          </View>
         </View>
         <View style={{ width: 40 }} />
       </View>
@@ -107,6 +103,10 @@ export default function AchievementsScreen() {
         <View style={styles.statBadge}>
           <ThemedText style={styles.statNumber}>{unlockedCount}/{achievements.length}</ThemedText>
           <ThemedText style={[styles.statLabel, { color: textColor }]}>Unlocked</ThemedText>
+        </View>
+        <View style={styles.pointsBadge}>
+          <Feather name="star" size={16} color="#FFD700" />
+          <ThemedText style={styles.pointsText}>{points}</ThemedText>
         </View>
         <View style={styles.statBadge}>
           <ThemedText style={styles.statNumber}>{totalRewards}</ThemedText>
@@ -226,9 +226,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: Spacing.xs,
+    paddingHorizontal: Spacing.md,
   },
   pointsText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "700",
     color: "#000000",
   },
