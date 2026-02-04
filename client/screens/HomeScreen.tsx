@@ -47,13 +47,18 @@ function ArcadeShell({ size = 30, color = "#FF6B9D", rotation = 0, style }: any)
         borderTopRightRadius: size,
         borderBottomLeftRadius: size * 0.3,
         borderBottomRightRadius: size * 0.3,
-        borderWidth: 2,
+        borderWidth: 3,
         borderColor: "#FFFFFF",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 3,
+        elevation: 5,
       }}>
         {/* Shell ridges */}
-        <View style={{ position: 'absolute', top: size * 0.15, left: size * 0.2, width: 2, height: size * 0.5, backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: 1 }} />
-        <View style={{ position: 'absolute', top: size * 0.1, left: size * 0.4, width: 2, height: size * 0.55, backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: 1 }} />
-        <View style={{ position: 'absolute', top: size * 0.15, left: size * 0.6, width: 2, height: size * 0.5, backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: 1 }} />
+        <View style={{ position: 'absolute', top: size * 0.15, left: size * 0.2, width: 3, height: size * 0.5, backgroundColor: 'rgba(255,255,255,0.7)', borderRadius: 2 }} />
+        <View style={{ position: 'absolute', top: size * 0.1, left: size * 0.4, width: 3, height: size * 0.55, backgroundColor: 'rgba(255,255,255,0.7)', borderRadius: 2 }} />
+        <View style={{ position: 'absolute', top: size * 0.15, left: size * 0.6, width: 3, height: size * 0.5, backgroundColor: 'rgba(255,255,255,0.7)', borderRadius: 2 }} />
       </View>
     </View>
   );
@@ -61,20 +66,20 @@ function ArcadeShell({ size = 30, color = "#FF6B9D", rotation = 0, style }: any)
 
 // Arcade-style Starfish component
 function ArcadeStarfish({ size = 35, color = "#FFD93D", rotation = 0, style }: any) {
-  const armSize = size * 0.4;
+  const armSize = size * 0.45;
   return (
     <View style={[{ width: size, height: size, alignItems: 'center', justifyContent: 'center', transform: [{ rotate: `${rotation}deg` }] }, style]}>
-      <View style={{ width: size * 0.4, height: size * 0.4, backgroundColor: color, borderRadius: size * 0.1, borderWidth: 2, borderColor: "#FFFFFF" }} />
+      <View style={{ width: size * 0.45, height: size * 0.45, backgroundColor: color, borderRadius: size * 0.12, borderWidth: 3, borderColor: "#FFFFFF", shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.3, shadowRadius: 3, elevation: 5 }} />
       {[0, 72, 144, 216, 288].map((angle, i) => (
         <View key={i} style={{
           position: 'absolute',
-          width: armSize * 0.4,
+          width: armSize * 0.45,
           height: armSize,
           backgroundColor: color,
-          borderRadius: armSize * 0.2,
-          borderWidth: 2,
+          borderRadius: armSize * 0.22,
+          borderWidth: 3,
           borderColor: "#FFFFFF",
-          transform: [{ rotate: `${angle}deg` }, { translateY: -armSize * 0.6 }],
+          transform: [{ rotate: `${angle}deg` }, { translateY: -armSize * 0.55 }],
         }} />
       ))}
     </View>
@@ -89,21 +94,26 @@ function ArcadeCrab({ size = 40, style }: any) {
       <View style={{
         width: size * 0.7,
         height: size * 0.5,
-        backgroundColor: "#FF5722",
+        backgroundColor: "#E53935",
         borderRadius: size * 0.25,
         alignSelf: 'center',
         marginTop: size * 0.15,
-        borderWidth: 2,
+        borderWidth: 3,
         borderColor: "#FFFFFF",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 3,
+        elevation: 5,
       }}>
         {/* Eyes */}
-        <View style={{ position: 'absolute', top: -size * 0.1, left: size * 0.1, width: size * 0.12, height: size * 0.12, backgroundColor: "#000", borderRadius: size * 0.06, borderWidth: 1, borderColor: "#FFF" }} />
-        <View style={{ position: 'absolute', top: -size * 0.1, right: size * 0.1, width: size * 0.12, height: size * 0.12, backgroundColor: "#000", borderRadius: size * 0.06, borderWidth: 1, borderColor: "#FFF" }} />
+        <View style={{ position: 'absolute', top: -size * 0.12, left: size * 0.08, width: size * 0.15, height: size * 0.15, backgroundColor: "#000", borderRadius: size * 0.08, borderWidth: 2, borderColor: "#FFF" }} />
+        <View style={{ position: 'absolute', top: -size * 0.12, right: size * 0.08, width: size * 0.15, height: size * 0.15, backgroundColor: "#000", borderRadius: size * 0.08, borderWidth: 2, borderColor: "#FFF" }} />
       </View>
       {/* Left Claw */}
-      <View style={{ position: 'absolute', left: 0, top: size * 0.2, width: size * 0.25, height: size * 0.2, backgroundColor: "#FF7043", borderRadius: size * 0.1, borderWidth: 2, borderColor: "#FFF" }} />
+      <View style={{ position: 'absolute', left: 0, top: size * 0.18, width: size * 0.28, height: size * 0.22, backgroundColor: "#EF5350", borderRadius: size * 0.11, borderWidth: 3, borderColor: "#FFF" }} />
       {/* Right Claw */}
-      <View style={{ position: 'absolute', right: 0, top: size * 0.2, width: size * 0.25, height: size * 0.2, backgroundColor: "#FF7043", borderRadius: size * 0.1, borderWidth: 2, borderColor: "#FFF" }} />
+      <View style={{ position: 'absolute', right: 0, top: size * 0.18, width: size * 0.28, height: size * 0.22, backgroundColor: "#EF5350", borderRadius: size * 0.11, borderWidth: 3, borderColor: "#FFF" }} />
     </View>
   );
 }
@@ -116,12 +126,16 @@ function ArcadeSeaGlass({ size = 25, color = "#4DD0E1", rotation = 0, style }: a
       height: size * 0.7,
       backgroundColor: color,
       borderRadius: size * 0.3,
-      borderWidth: 2,
+      borderWidth: 3,
       borderColor: "#FFFFFF",
       transform: [{ rotate: `${rotation}deg` }],
-      opacity: 0.9,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.3,
+      shadowRadius: 3,
+      elevation: 5,
     }, style]}>
-      <View style={{ position: 'absolute', top: size * 0.1, left: size * 0.15, width: size * 0.3, height: size * 0.15, backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: size * 0.1 }} />
+      <View style={{ position: 'absolute', top: size * 0.08, left: size * 0.12, width: size * 0.35, height: size * 0.18, backgroundColor: 'rgba(255,255,255,0.7)', borderRadius: size * 0.1 }} />
     </View>
   );
 }
@@ -130,9 +144,9 @@ function ArcadeSeaGlass({ size = 25, color = "#4DD0E1", rotation = 0, style }: a
 function ArcadeCoral({ size = 35, color = "#FF6B9D", style }: any) {
   return (
     <View style={[{ width: size, height: size }, style]}>
-      <View style={{ position: 'absolute', bottom: 0, left: size * 0.1, width: size * 0.2, height: size * 0.7, backgroundColor: color, borderRadius: size * 0.1, borderWidth: 2, borderColor: "#FFF" }} />
-      <View style={{ position: 'absolute', bottom: 0, left: size * 0.35, width: size * 0.25, height: size * 0.9, backgroundColor: color, borderRadius: size * 0.12, borderWidth: 2, borderColor: "#FFF" }} />
-      <View style={{ position: 'absolute', bottom: 0, right: size * 0.1, width: size * 0.2, height: size * 0.6, backgroundColor: color, borderRadius: size * 0.1, borderWidth: 2, borderColor: "#FFF" }} />
+      <View style={{ position: 'absolute', bottom: 0, left: size * 0.08, width: size * 0.24, height: size * 0.75, backgroundColor: color, borderRadius: size * 0.12, borderWidth: 3, borderColor: "#FFF", shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.3, shadowRadius: 3, elevation: 5 }} />
+      <View style={{ position: 'absolute', bottom: 0, left: size * 0.35, width: size * 0.28, height: size * 0.95, backgroundColor: color, borderRadius: size * 0.14, borderWidth: 3, borderColor: "#FFF" }} />
+      <View style={{ position: 'absolute', bottom: 0, right: size * 0.08, width: size * 0.24, height: size * 0.65, backgroundColor: color, borderRadius: size * 0.12, borderWidth: 3, borderColor: "#FFF" }} />
     </View>
   );
 }
@@ -145,10 +159,15 @@ function ArcadePebble({ size = 20, color = "#9C27B0", style }: any) {
       height: size * 0.7,
       backgroundColor: color,
       borderRadius: size * 0.35,
-      borderWidth: 2,
+      borderWidth: 3,
       borderColor: "#FFFFFF",
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.3,
+      shadowRadius: 3,
+      elevation: 5,
     }, style]}>
-      <View style={{ position: 'absolute', top: size * 0.1, left: size * 0.2, width: size * 0.25, height: size * 0.12, backgroundColor: 'rgba(255,255,255,0.4)', borderRadius: size * 0.1 }} />
+      <View style={{ position: 'absolute', top: size * 0.08, left: size * 0.15, width: size * 0.3, height: size * 0.15, backgroundColor: 'rgba(255,255,255,0.6)', borderRadius: size * 0.1 }} />
     </View>
   );
 }
@@ -270,32 +289,32 @@ export default function HomeScreen() {
       style={[styles.container, { paddingTop: insets.top + Spacing.xl }]}
     >
       <Animated.View style={[styles.beachDecorContainer, sparkleStyle]}>
-        {/* Shells */}
-        <ArcadeShell size={35} color="#FF6B9D" rotation={-15} style={{ position: 'absolute', left: 20, top: 90 }} />
-        <ArcadeShell size={28} color="#4DD0E1" rotation={30} style={{ position: 'absolute', right: 25, top: 180 }} />
-        <ArcadeShell size={32} color="#FFD93D" rotation={-25} style={{ position: 'absolute', right: 15, bottom: 200 }} />
+        {/* Shells - larger and bolder colors */}
+        <ArcadeShell size={48} color="#E91E63" rotation={-15} style={{ position: 'absolute', left: 15, top: 85 }} />
+        <ArcadeShell size={38} color="#00BCD4" rotation={30} style={{ position: 'absolute', right: 20, top: 175 }} />
+        <ArcadeShell size={42} color="#FFEB3B" rotation={-25} style={{ position: 'absolute', right: 10, bottom: 195 }} />
         
-        {/* Starfish */}
-        <ArcadeStarfish size={40} color="#FFD93D" rotation={15} style={{ position: 'absolute', left: 15, top: height * 0.35 }} />
-        <ArcadeStarfish size={30} color="#FF9800" rotation={-20} style={{ position: 'absolute', right: 30, bottom: 280 }} />
+        {/* Starfish - larger */}
+        <ArcadeStarfish size={55} color="#FFEB3B" rotation={15} style={{ position: 'absolute', left: 10, top: height * 0.33 }} />
+        <ArcadeStarfish size={45} color="#FF5722" rotation={-20} style={{ position: 'absolute', right: 25, bottom: 275 }} />
         
-        {/* Crab */}
-        <ArcadeCrab size={50} style={{ position: 'absolute', left: 20, bottom: 130 }} />
+        {/* Crab - larger */}
+        <ArcadeCrab size={60} style={{ position: 'absolute', left: 15, bottom: 125 }} />
         
-        {/* Coral */}
-        <ArcadeCoral size={40} color="#FF6B9D" style={{ position: 'absolute', right: 15, top: 100 }} />
-        <ArcadeCoral size={35} color="#E91E63" style={{ position: 'absolute', left: width * 0.4, bottom: 90 }} />
+        {/* Coral - larger */}
+        <ArcadeCoral size={50} color="#E91E63" style={{ position: 'absolute', right: 10, top: 95 }} />
+        <ArcadeCoral size={45} color="#9C27B0" style={{ position: 'absolute', left: width * 0.38, bottom: 85 }} />
         
-        {/* Sea Glass */}
-        <ArcadeSeaGlass size={25} color="#4DD0E1" rotation={45} style={{ position: 'absolute', left: 60, top: 150 }} />
-        <ArcadeSeaGlass size={20} color="#26C6DA" rotation={-30} style={{ position: 'absolute', right: 50, top: height * 0.45 }} />
-        <ArcadeSeaGlass size={22} color="#00BCD4" rotation={15} style={{ position: 'absolute', left: 40, bottom: 220 }} />
+        {/* Sea Glass - larger */}
+        <ArcadeSeaGlass size={32} color="#00BCD4" rotation={45} style={{ position: 'absolute', left: 55, top: 145 }} />
+        <ArcadeSeaGlass size={28} color="#26C6DA" rotation={-30} style={{ position: 'absolute', right: 45, top: height * 0.43 }} />
+        <ArcadeSeaGlass size={30} color="#00ACC1" rotation={15} style={{ position: 'absolute', left: 35, bottom: 215 }} />
         
-        {/* Pebbles */}
-        <ArcadePebble size={18} color="#9C27B0" style={{ position: 'absolute', left: 80, top: 70 }} />
-        <ArcadePebble size={15} color="#4CAF50" style={{ position: 'absolute', right: 70, top: 140 }} />
-        <ArcadePebble size={20} color="#FF5722" style={{ position: 'absolute', left: 50, bottom: 170 }} />
-        <ArcadePebble size={16} color="#2196F3" style={{ position: 'absolute', right: 40, bottom: 150 }} />
+        {/* Pebbles - larger */}
+        <ArcadePebble size={26} color="#9C27B0" style={{ position: 'absolute', left: 75, top: 65 }} />
+        <ArcadePebble size={22} color="#4CAF50" style={{ position: 'absolute', right: 65, top: 135 }} />
+        <ArcadePebble size={28} color="#FF5722" style={{ position: 'absolute', left: 45, bottom: 165 }} />
+        <ArcadePebble size={24} color="#2196F3" style={{ position: 'absolute', right: 35, bottom: 145 }} />
       </Animated.View>
 
       <Animated.View style={[styles.logoSection, logoAnimatedStyle]}>
