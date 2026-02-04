@@ -198,29 +198,44 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
       style={styles.container}
     >
       <Animated.View style={[styles.decorContainer, decorStyle]}>
-        {/* Shells - larger and bolder */}
+        {/* Shells - many more */}
         <ArcadeShell size={50} color="#E91E63" rotation={-20} style={{ position: 'absolute', left: 20, top: 100 }} />
         <ArcadeShell size={40} color="#00BCD4" rotation={25} style={{ position: 'absolute', right: 25, top: 150 }} />
+        <ArcadeShell size={35} color="#FFEB3B" rotation={-10} style={{ position: 'absolute', left: width * 0.4, top: 60 }} />
+        <ArcadeShell size={38} color="#FF5722" rotation={15} style={{ position: 'absolute', right: 15, bottom: 250 }} />
+        <ArcadeShell size={42} color="#9C27B0" rotation={-30} style={{ position: 'absolute', left: 60, bottom: 280 }} />
         
-        {/* Starfish - larger */}
+        {/* Starfish - many more */}
         <ArcadeStarfish size={55} color="#FFEB3B" rotation={10} style={{ position: 'absolute', left: 15, bottom: 180 }} />
         <ArcadeStarfish size={45} color="#FF5722" rotation={-15} style={{ position: 'absolute', right: 20, bottom: 220 }} />
+        <ArcadeStarfish size={40} color="#E91E63" rotation={25} style={{ position: 'absolute', right: 80, top: 80 }} />
+        <ArcadeStarfish size={35} color="#00BCD4" rotation={-35} style={{ position: 'absolute', left: 70, top: height * 0.48 }} />
         
-        {/* Crab - larger */}
+        {/* Crabs - more */}
         <ArcadeCrab size={65} style={{ position: 'absolute', left: width * 0.35, bottom: 70 }} />
+        <ArcadeCrab size={50} style={{ position: 'absolute', right: 10, top: height * 0.45 }} />
         
-        {/* Coral - larger */}
+        {/* Coral - more */}
         <ArcadeCoral size={55} color="#E91E63" style={{ position: 'absolute', right: 15, top: 85 }} />
         <ArcadeCoral size={45} color="#9C27B0" style={{ position: 'absolute', left: 10, top: height * 0.38 }} />
+        <ArcadeCoral size={40} color="#FF5722" style={{ position: 'absolute', left: width * 0.55, bottom: 130 }} />
+        <ArcadeCoral size={35} color="#4CAF50" style={{ position: 'absolute', right: 70, top: height * 0.28 }} />
         
-        {/* Sea Glass - larger */}
+        {/* Sea Glass - more */}
         <ArcadeSeaGlass size={35} color="#00BCD4" rotation={40} style={{ position: 'absolute', left: 80, top: 65 }} />
         <ArcadeSeaGlass size={30} color="#26C6DA" rotation={-25} style={{ position: 'absolute', right: 55, top: height * 0.32 }} />
+        <ArcadeSeaGlass size={28} color="#4DD0E1" rotation={15} style={{ position: 'absolute', left: 15, bottom: 320 }} />
+        <ArcadeSeaGlass size={25} color="#80DEEA" rotation={-40} style={{ position: 'absolute', right: 30, bottom: 160 }} />
         
-        {/* Pebbles - larger */}
+        {/* Pebbles - many more */}
         <ArcadePebble size={28} color="#9C27B0" style={{ position: 'absolute', left: 90, top: 130 }} />
         <ArcadePebble size={24} color="#4CAF50" style={{ position: 'absolute', right: 75, top: 200 }} />
         <ArcadePebble size={26} color="#2196F3" style={{ position: 'absolute', right: 45, bottom: 140 }} />
+        <ArcadePebble size={22} color="#E91E63" style={{ position: 'absolute', left: 30, top: height * 0.55 }} />
+        <ArcadePebble size={20} color="#FFEB3B" style={{ position: 'absolute', right: 90, top: height * 0.42 }} />
+        <ArcadePebble size={25} color="#FF9800" style={{ position: 'absolute', left: width * 0.5, top: 120 }} />
+        <ArcadePebble size={21} color="#673AB7" style={{ position: 'absolute', left: 50, bottom: 200 }} />
+        <ArcadePebble size={23} color="#00BCD4" style={{ position: 'absolute', right: 20, top: height * 0.58 }} />
       </Animated.View>
 
       <Animated.View style={[styles.logoContainer, logoAnimatedStyle]}>
