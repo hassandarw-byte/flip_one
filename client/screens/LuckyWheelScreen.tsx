@@ -180,7 +180,7 @@ export default function LuckyWheelScreen() {
       
       <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
         <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Feather name="arrow-left" size={24} color="#FFFFFF" />
+          <Feather name="arrow-left" size={24} color="#000000" />
         </Pressable>
         <ThemedText style={styles.title}>Lucky Wheel</ThemedText>
         <View style={styles.pointsBadge}>
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: "#FFFFFF",
     justifyContent: "center",
     alignItems: "center",
   },
