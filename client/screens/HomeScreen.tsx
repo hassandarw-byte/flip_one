@@ -24,7 +24,7 @@ import Animated, {
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 
-import Svg, { Path, Ellipse, Text as SvgText } from "react-native-svg";
+import Svg, { Path, Ellipse, Text as SvgText, Circle, Defs, LinearGradient as SvgLinearGradient, Stop, Rect } from "react-native-svg";
 import { ThemedText } from "@/components/ThemedText";
 import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import { getGameState, GameState } from "@/lib/storage";
@@ -40,127 +40,114 @@ const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 function ArcadeShell({ size = 30, color = "#FF6B9D", rotation = 0, style }: any) {
   return (
     <View style={[{ width: size, height: size, transform: [{ rotate: `${rotation}deg` }] }, style]}>
-      <View style={{
-        width: size,
-        height: size * 0.8,
-        backgroundColor: color,
-        borderTopLeftRadius: size,
-        borderTopRightRadius: size,
-        borderBottomLeftRadius: size * 0.3,
-        borderBottomRightRadius: size * 0.3,
-        borderWidth: 3,
-        borderColor: "#FFFFFF",
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 3,
-        elevation: 5,
-      }}>
-        {/* Shell ridges */}
-        <View style={{ position: 'absolute', top: size * 0.15, left: size * 0.2, width: 3, height: size * 0.5, backgroundColor: 'rgba(255,255,255,0.7)', borderRadius: 2 }} />
-        <View style={{ position: 'absolute', top: size * 0.1, left: size * 0.4, width: 3, height: size * 0.55, backgroundColor: 'rgba(255,255,255,0.7)', borderRadius: 2 }} />
-        <View style={{ position: 'absolute', top: size * 0.15, left: size * 0.6, width: 3, height: size * 0.5, backgroundColor: 'rgba(255,255,255,0.7)', borderRadius: 2 }} />
-      </View>
+      <Svg width={size} height={size} viewBox="0 0 100 100">
+        <Defs>
+          <SvgLinearGradient id="shellGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <Stop offset="0%" stopColor={color} />
+            <Stop offset="100%" stopColor="#C2185B" />
+          </SvgLinearGradient>
+        </Defs>
+        <Path
+          d="M50 10 Q80 20, 85 50 Q85 80, 50 90 Q15 80, 15 50 Q20 20, 50 10 Z"
+          fill="url(#shellGradient)"
+          stroke="#FFFFFF"
+          strokeWidth={2}
+        />
+        <Path d="M50 15 Q50 50, 50 85" stroke="rgba(255,255,255,0.5)" strokeWidth={2} fill="none" />
+        <Path d="M30 25 Q40 50, 35 80" stroke="rgba(255,255,255,0.4)" strokeWidth={2} fill="none" />
+        <Path d="M70 25 Q60 50, 65 80" stroke="rgba(255,255,255,0.4)" strokeWidth={2} fill="none" />
+      </Svg>
     </View>
   );
 }
 
-// Arcade-style Starfish component
 function ArcadeStarfish({ size = 35, color = "#FFD93D", rotation = 0, style }: any) {
-  const armSize = size * 0.45;
   return (
-    <View style={[{ width: size, height: size, alignItems: 'center', justifyContent: 'center', transform: [{ rotate: `${rotation}deg` }] }, style]}>
-      <View style={{ width: size * 0.45, height: size * 0.45, backgroundColor: color, borderRadius: size * 0.12, borderWidth: 3, borderColor: "#FFFFFF", shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.3, shadowRadius: 3, elevation: 5 }} />
-      {[0, 72, 144, 216, 288].map((angle, i) => (
-        <View key={i} style={{
-          position: 'absolute',
-          width: armSize * 0.45,
-          height: armSize,
-          backgroundColor: color,
-          borderRadius: armSize * 0.22,
-          borderWidth: 3,
-          borderColor: "#FFFFFF",
-          transform: [{ rotate: `${angle}deg` }, { translateY: -armSize * 0.55 }],
-        }} />
-      ))}
+    <View style={[{ width: size, height: size, transform: [{ rotate: `${rotation}deg` }] }, style]}>
+      <Svg width={size} height={size} viewBox="0 0 100 100">
+        <Defs>
+          <SvgLinearGradient id="starfishGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <Stop offset="0%" stopColor={color} />
+            <Stop offset="100%" stopColor="#FF9800" />
+          </SvgLinearGradient>
+        </Defs>
+        <Path
+          d="M50 5 L58 35 L90 35 L65 55 L75 90 L50 70 L25 90 L35 55 L10 35 L42 35 Z"
+          fill="url(#starfishGradient)"
+          stroke="#FFFFFF"
+          strokeWidth={2}
+        />
+        <Circle cx="50" cy="50" r="8" fill="#FF5722" />
+        <Circle cx="35" cy="40" r="3" fill="rgba(255,255,255,0.5)" />
+        <Circle cx="65" cy="40" r="3" fill="rgba(255,255,255,0.5)" />
+        <Circle cx="40" cy="60" r="3" fill="rgba(255,255,255,0.5)" />
+        <Circle cx="60" cy="60" r="3" fill="rgba(255,255,255,0.5)" />
+      </Svg>
     </View>
   );
 }
 
-// Arcade-style Fish component
 function ArcadeFish({ size = 40, color = "#64B5F6", style }: any) {
   return (
-    <View style={[{ width: size, height: size * 0.6 }, style]}>
-      {/* Body */}
-      <View style={{
-        width: size * 0.7,
-        height: size * 0.5,
-        backgroundColor: color,
-        borderRadius: size * 0.25,
-        alignSelf: 'center',
-        marginTop: size * 0.05,
-        borderWidth: 3,
-        borderColor: "#FFFFFF",
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 3,
-        elevation: 5,
-      }}>
-        {/* Eye */}
-        <View style={{ position: 'absolute', top: size * 0.08, right: size * 0.12, width: size * 0.12, height: size * 0.12, backgroundColor: "#FFF", borderRadius: size * 0.06, borderWidth: 1, borderColor: "#000" }}>
-          <View style={{ position: 'absolute', top: 2, right: 2, width: size * 0.05, height: size * 0.05, backgroundColor: "#000", borderRadius: size * 0.025 }} />
-        </View>
-      </View>
-      {/* Tail */}
-      <View style={{ 
-        position: 'absolute', 
-        left: 0, 
-        top: size * 0.12, 
-        width: 0, 
-        height: 0, 
-        borderTopWidth: size * 0.15,
-        borderBottomWidth: size * 0.15,
-        borderRightWidth: size * 0.2,
-        borderTopColor: 'transparent',
-        borderBottomColor: 'transparent',
-        borderRightColor: color,
-      }} />
+    <View style={[{ width: size, height: size }, style]}>
+      <Svg width={size} height={size} viewBox="0 0 100 100">
+        <Path
+          d="M80 50 Q60 25, 30 40 Q10 50, 30 60 Q60 75, 80 50 Z"
+          fill={color}
+          stroke="#1976D2"
+          strokeWidth={2}
+        />
+        <Path d="M15 50 L5 35 L5 65 Z" fill={color} stroke="#1976D2" strokeWidth={2} />
+        <Circle cx="65" cy="48" r="6" fill="#FFFFFF" />
+        <Circle cx="66" cy="48" r="3" fill="#000000" />
+        <Path d="M45 35 Q50 20, 55 35" fill="#42A5F5" stroke="#1976D2" strokeWidth={1} />
+        <Path d="M45 65 Q50 80, 55 65" fill="#42A5F5" stroke="#1976D2" strokeWidth={1} />
+      </Svg>
     </View>
   );
 }
 
-// Arcade-style Crab component
 function ArcadeCrab({ size = 40, style }: any) {
   return (
-    <View style={[{ width: size, height: size * 0.7 }, style]}>
-      {/* Body */}
-      <View style={{
-        width: size * 0.7,
-        height: size * 0.5,
-        backgroundColor: "#E53935",
-        borderRadius: size * 0.25,
-        alignSelf: 'center',
-        marginTop: size * 0.15,
-        borderWidth: 3,
-        borderColor: "#FFFFFF",
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 3,
-        elevation: 5,
-      }}>
-        {/* Eyes */}
-        <View style={{ position: 'absolute', top: -size * 0.12, left: size * 0.08, width: size * 0.15, height: size * 0.15, backgroundColor: "#000", borderRadius: size * 0.08, borderWidth: 2, borderColor: "#FFF" }} />
-        <View style={{ position: 'absolute', top: -size * 0.12, right: size * 0.08, width: size * 0.15, height: size * 0.15, backgroundColor: "#000", borderRadius: size * 0.08, borderWidth: 2, borderColor: "#FFF" }} />
-      </View>
-      {/* Left Claw */}
-      <View style={{ position: 'absolute', left: 0, top: size * 0.18, width: size * 0.28, height: size * 0.22, backgroundColor: "#EF5350", borderRadius: size * 0.11, borderWidth: 3, borderColor: "#FFF" }} />
-      {/* Right Claw */}
-      <View style={{ position: 'absolute', right: 0, top: size * 0.18, width: size * 0.28, height: size * 0.22, backgroundColor: "#EF5350", borderRadius: size * 0.11, borderWidth: 3, borderColor: "#FFF" }} />
+    <View style={[{ width: size, height: size }, style]}>
+      <Svg width={size} height={size} viewBox="0 0 100 100">
+        <Circle cx="50" cy="55" r="25" fill="#E57373" stroke="#C62828" strokeWidth={2} />
+        <Circle cx="40" cy="40" r="8" fill="#FFFFFF" />
+        <Circle cx="60" cy="40" r="8" fill="#FFFFFF" />
+        <Circle cx="40" cy="40" r="4" fill="#000000" />
+        <Circle cx="60" cy="40" r="4" fill="#000000" />
+        <Path d="M15 50 Q5 45, 10 35 Q15 25, 25 40" fill="#E57373" stroke="#C62828" strokeWidth={2} />
+        <Path d="M85 50 Q95 45, 90 35 Q85 25, 75 40" fill="#E57373" stroke="#C62828" strokeWidth={2} />
+        <Path d="M30 70 L20 85" stroke="#C62828" strokeWidth={3} />
+        <Path d="M40 75 L35 90" stroke="#C62828" strokeWidth={3} />
+        <Path d="M60 75 L65 90" stroke="#C62828" strokeWidth={3} />
+        <Path d="M70 70 L80 85" stroke="#C62828" strokeWidth={3} />
+      </Svg>
     </View>
   );
 }
+
+function ArcadeLobster({ size = 40, style }: any) {
+  return (
+    <View style={[{ width: size, height: size }, style]}>
+      <Svg width={size} height={size} viewBox="0 0 100 100">
+        <Rect x="35" y="35" width="30" height="45" rx="10" fill="#D32F2F" stroke="#B71C1C" strokeWidth={2} />
+        <Circle cx="50" cy="30" r="15" fill="#D32F2F" stroke="#B71C1C" strokeWidth={2} />
+        <Path d="M40 25 L35 15" stroke="#B71C1C" strokeWidth={3} />
+        <Path d="M60 25 L65 15" stroke="#B71C1C" strokeWidth={3} />
+        <Circle cx="35" cy="13" r="5" fill="#FFFFFF" />
+        <Circle cx="65" cy="13" r="5" fill="#FFFFFF" />
+        <Circle cx="35" cy="13" r="2" fill="#000000" />
+        <Circle cx="65" cy="13" r="2" fill="#000000" />
+        <Path d="M25 40 Q10 35, 15 25 Q20 15, 30 30" fill="#D32F2F" stroke="#B71C1C" strokeWidth={2} />
+        <Path d="M75 40 Q90 35, 85 25 Q80 15, 70 30" fill="#D32F2F" stroke="#B71C1C" strokeWidth={2} />
+        <Rect x="40" y="80" width="20" height="8" rx="3" fill="#D32F2F" stroke="#B71C1C" strokeWidth={1} />
+        <Path d="M45 88 L40 98 L50 95 L60 98 L55 88" fill="#D32F2F" stroke="#B71C1C" strokeWidth={1} />
+      </Svg>
+    </View>
+  );
+}
+
 
 // Arcade-style Sea Glass component
 function ArcadeSeaGlass({ size = 25, color = "#4DD0E1", rotation = 0, style }: any) {
