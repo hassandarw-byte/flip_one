@@ -180,11 +180,14 @@ export default function HomeScreen() {
 
   const playButtonScale = useSharedValue(1);
   const playButtonGlow = useSharedValue(0.6);
-  const logoOpacity = useSharedValue(0);
-  const logoTranslateY = useSharedValue(-30);
-  const logoRotate = useSharedValue(0);
   const buttonsOpacity = useSharedValue(0);
   const sparkleOpacity = useSharedValue(0.3);
+  
+  // Moving crabs
+  const crab1X = useSharedValue(-60);
+  const crab2X = useSharedValue(width + 60);
+  const crab3X = useSharedValue(-60);
+  const crab4X = useSharedValue(width + 60);
 
   useEffect(() => {
     loadGameState();
@@ -198,9 +201,7 @@ export default function HomeScreen() {
   };
 
   const animateEntrance = () => {
-    logoOpacity.value = withDelay(100, withTiming(1, { duration: 800 }));
-    logoTranslateY.value = withDelay(100, withSpring(0, { damping: 12, stiffness: 100 }));
-    buttonsOpacity.value = withDelay(500, withTiming(1, { duration: 600 }));
+    buttonsOpacity.value = withDelay(300, withTiming(1, { duration: 600 }));
   };
 
   const startContinuousAnimations = () => {
@@ -222,22 +223,59 @@ export default function HomeScreen() {
       true
     );
 
-    logoRotate.value = withRepeat(
+    // Animate crabs moving horizontally
+    crab1X.value = withRepeat(
       withSequence(
-        withTiming(3, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
-        withTiming(-3, { duration: 2000, easing: Easing.inOut(Easing.ease) })
+        withTiming(width + 60, { duration: 6000, easing: Easing.linear }),
+        withTiming(-60, { duration: 0 })
       ),
       -1,
-      true
+      false
     );
+    
+    crab2X.value = withRepeat(
+      withSequence(
+        withTiming(-60, { duration: 5000, easing: Easing.linear }),
+        withTiming(width + 60, { duration: 0 })
+      ),
+      -1,
+      false
+    );
+    
+    crab3X.value = withDelay(2000, withRepeat(
+      withSequence(
+        withTiming(width + 60, { duration: 7000, easing: Easing.linear }),
+        withTiming(-60, { duration: 0 })
+      ),
+      -1,
+      false
+    ));
+    
+    crab4X.value = withDelay(1500, withRepeat(
+      withSequence(
+        withTiming(-60, { duration: 5500, easing: Easing.linear }),
+        withTiming(width + 60, { duration: 0 })
+      ),
+      -1,
+      false
+    ));
   };
 
-  const logoAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: logoOpacity.value,
-    transform: [
-      { translateY: logoTranslateY.value },
-      { rotate: `${logoRotate.value}deg` },
-    ],
+  // Animated styles for moving crabs
+  const crab1Style = useAnimatedStyle(() => ({
+    transform: [{ translateX: crab1X.value }],
+  }));
+  
+  const crab2Style = useAnimatedStyle(() => ({
+    transform: [{ translateX: crab2X.value }, { scaleX: -1 }],
+  }));
+  
+  const crab3Style = useAnimatedStyle(() => ({
+    transform: [{ translateX: crab3X.value }],
+  }));
+  
+  const crab4Style = useAnimatedStyle(() => ({
+    transform: [{ translateX: crab4X.value }, { scaleX: -1 }],
   }));
 
   const buttonsAnimatedStyle = useAnimatedStyle(() => ({
@@ -337,23 +375,22 @@ export default function HomeScreen() {
         <ArcadePebble size={21} color="#673AB7" style={{ position: 'absolute', right: 50, bottom: 230 }} />
       </Animated.View>
 
-      <Animated.View style={[styles.logoSection, logoAnimatedStyle]}>
-        <View style={styles.logoContainer}>
-          <View style={styles.logoShadow} />
-          <View style={styles.logoWrapper}>
-            <Image
-              source={require("../../assets/images/icon.png")}
-              style={styles.logo}
-              resizeMode="cover"
-            />
-          </View>
-        </View>
+      {/* Moving crabs - 4 crabs moving horizontally */}
+      <Animated.View style={[styles.movingCrab, { top: height * 0.18 }, crab1Style]}>
+        <ArcadeCrab size={55} />
+      </Animated.View>
+      <Animated.View style={[styles.movingCrab, { top: height * 0.32 }, crab2Style]}>
+        <ArcadeCrab size={50} />
+      </Animated.View>
+      <Animated.View style={[styles.movingCrab, { top: height * 0.68 }, crab3Style]}>
+        <ArcadeCrab size={48} />
+      </Animated.View>
+      <Animated.View style={[styles.movingCrab, { top: height * 0.82 }, crab4Style]}>
+        <ArcadeCrab size={52} />
+      </Animated.View>
 
-        <View style={styles.titleContainer}>
-          <ThemedText style={styles.titleText}>FLIP ONE</ThemedText>
-          <View style={styles.titleUnderline} />
-        </View>
-        
+      {/* Stats section without logo */}
+      <View style={styles.statsSection}>
         <LinearGradient
           colors={[GameColors.surfaceGlass, "rgba(255,255,255,0.05)"]}
           style={styles.statsRow}
@@ -376,7 +413,7 @@ export default function HomeScreen() {
             </ThemedText>
           </View>
         </LinearGradient>
-      </Animated.View>
+      </View>
 
       <Animated.View style={[styles.centerSection, buttonsAnimatedStyle]}>
         <View style={styles.playButtonContainer}>
@@ -551,35 +588,13 @@ const styles = StyleSheet.create({
     height: "100%",
     zIndex: 0,
   },
-  logoSection: {
+  movingCrab: {
+    position: "absolute",
+    zIndex: 1,
+  },
+  statsSection: {
     alignItems: "center",
     paddingTop: Spacing["2xl"],
-  },
-  logoContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  logoShadow: {
-    position: "absolute",
-    width: 160,
-    height: 160,
-    borderRadius: 40,
-    backgroundColor: "transparent",
-  },
-  logoWrapper: {
-    width: 140,
-    height: 140,
-    borderRadius: 36,
-    overflow: "hidden",
-    elevation: 4,
-  },
-  logo: {
-    width: 140,
-    height: 140,
-  },
-  titleContainer: {
-    alignItems: "center",
-    marginTop: Spacing.lg,
   },
   titleText: {
     fontSize: 36,
