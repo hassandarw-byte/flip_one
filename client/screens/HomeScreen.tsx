@@ -368,7 +368,6 @@ export default function HomeScreen() {
 
       <Animated.View style={[styles.centerSection, buttonsAnimatedStyle]}>
         <View style={styles.playButtonContainer}>
-          <Animated.View style={[styles.playButtonGlow, playButtonGlowStyle]} />
           <AnimatedPressable
             style={[styles.playButton, playButtonAnimatedStyle]}
             onPress={handlePlayPress}
@@ -376,15 +375,14 @@ export default function HomeScreen() {
             onPressOut={handlePressOut}
             testID="button-play"
           >
-            <LinearGradient
-              colors={["#E91E63", "#C2185B"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.playButtonGradient}
-            >
-              <Feather name="play" size={28} color="#FFFFFF" style={styles.playIcon} />
-              <ThemedText style={styles.playButtonText}>PLAY</ThemedText>
-            </LinearGradient>
+            <Image
+              source={require("../../assets/images/shell-button.png")}
+              style={styles.shellImage}
+              resizeMode="contain"
+            />
+            <View style={styles.playIconOverlay}>
+              <Feather name="play" size={32} color="#1A1A1A" />
+            </View>
           </AnimatedPressable>
         </View>
       </Animated.View>
@@ -933,24 +931,27 @@ const styles = StyleSheet.create({
     display: "none",
   },
   playButton: {
-    width: 100,
-    height: 80,
-    overflow: "hidden",
-    elevation: 6,
+    width: 120,
+    height: 120,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  playButtonGradient: {
-    flex: 1,
+  shellImage: {
+    width: 120,
+    height: 120,
+  },
+  playIconOverlay: {
+    position: "absolute",
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "rgba(255,255,255,0.85)",
     justifyContent: "center",
     alignItems: "center",
-    borderTopLeftRadius: 50,
-    borderTopRightRadius: 50,
-    borderBottomLeftRadius: 15,
-    borderBottomRightRadius: 15,
-    borderWidth: 4,
-    borderColor: "#FFFFFF",
+    elevation: 4,
   },
   playIcon: {
-    marginBottom: 2,
+    marginLeft: 4,
   },
   playButtonText: {
     fontSize: 14,
