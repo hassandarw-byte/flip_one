@@ -237,12 +237,12 @@ export default function GameScreen() {
   const obstacleScale = useSharedValue(1);
   
   const DAY_GRADIENTS: [string, string][] = [
-    ["#1A0A2E", "#2D1B4E"],
-    ["#0D1B2A", "#1B263B"],
-    ["#2C1654", "#3D2066"],
-    ["#1A1A2E", "#16213E"],
-    ["#0F0F23", "#1A1A3E"],
-    ["#2E1A4A", "#3D1B5E"],
+    ["#29B6F6", "#81D4FA"],  // Bright blue sky (Sonic/Mario)
+    ["#4FC3F7", "#B3E5FC"],  // Light blue sky
+    ["#03A9F4", "#4FC3F7"],  // Deep blue sky
+    ["#00BCD4", "#80DEEA"],  // Cyan sky
+    ["#26C6DA", "#B2EBF2"],  // Turquoise sky
+    ["#0288D1", "#4FC3F7"],  // Ocean blue sky
   ];
   
   const NIGHT_GRADIENTS: [string, string][] = [
