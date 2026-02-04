@@ -469,9 +469,10 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: 11,
-    color: GameColors.textMuted,
+    color: "#FFFFFF",
     letterSpacing: 1,
     marginTop: Spacing.xs,
+    fontWeight: "600",
   },
   statValue: {
     fontSize: 24,
@@ -530,7 +531,7 @@ const styles = StyleSheet.create({
   playButtonText: {
     fontSize: 22,
     fontWeight: "900",
-    color: GameColors.background,
+    color: "#1A1A2E",
     letterSpacing: 3,
     textAlign: "center",
   },
@@ -577,10 +578,13 @@ const styles = StyleSheet.create({
   },
   menuButtonLabel: {
     fontSize: 10,
-    color: GameColors.textSecondary,
+    color: "#FFFFFF",
     marginTop: 4,
     fontWeight: "700",
     textAlign: "center",
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
   badge: {
     position: "absolute",
@@ -611,10 +615,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: Spacing.md,
     gap: Spacing.sm,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    borderRadius: BorderRadius.lg,
   },
   shareButtonText: {
     fontSize: 14,
-    color: GameColors.textSecondary,
-    fontWeight: "500",
+    color: "#FFFFFF",
+    fontWeight: "600",
   },
 });
