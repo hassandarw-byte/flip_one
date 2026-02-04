@@ -152,6 +152,12 @@ function MissionCard({ mission, onClaim }: MissionCardProps) {
             <ThemedText style={styles.missionDescription}>
               {mission.description}
             </ThemedText>
+            
+            <View style={styles.rewardCenter}>
+              <Feather name="star" size={16} color="#FFD700" />
+              <ThemedText style={styles.rewardText}>{mission.reward}</ThemedText>
+            </View>
+            
             <View style={styles.progressContainer}>
               <View style={styles.progressBar}>
                 <LinearGradient
@@ -166,13 +172,6 @@ function MissionCard({ mission, onClaim }: MissionCardProps) {
           </View>
 
           <View style={styles.rewardSection}>
-            <LinearGradient
-              colors={["#9C27B0" + "30", "#9C27B0" + "15"]}
-              style={styles.rewardBadge}
-            >
-              <Feather name="star" size={14} color="#9C27B0" />
-              <ThemedText style={styles.rewardText}>{mission.reward}</ThemedText>
-            </LinearGradient>
 
             {mission.completed && !mission.claimed ? (
               <AnimatedPressable
@@ -289,20 +288,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: Spacing.sm,
   },
-  rewardBadge: {
+  rewardCenter: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     gap: Spacing.xs,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.full,
-    borderWidth: 1,
-    borderColor: "#9C27B0" + "40",
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.sm,
   },
   rewardText: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "700",
-    color: "#9C27B0",
+    color: "#000000",
   },
   claimButton: {
     borderRadius: BorderRadius.md,
