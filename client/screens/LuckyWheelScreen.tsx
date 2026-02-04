@@ -184,7 +184,7 @@ export default function LuckyWheelScreen() {
         </Pressable>
         <ThemedText style={styles.title}>Lucky Wheel</ThemedText>
         <View style={styles.pointsBadge}>
-          <Feather name="star" size={16} color={textColor} />
+          <Feather name="star" size={16} color="#9C27B0" />
           <ThemedText style={styles.pointsText}>{points}</ThemedText>
         </View>
       </View>
@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
   pointsText: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#000000",
+    color: "#9C27B0",
     textAlign: "center",
   },
   wheelContainer: {

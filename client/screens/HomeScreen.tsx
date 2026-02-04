@@ -630,7 +630,7 @@ export default function HomeScreen() {
           />
           <MenuButton
             seaCreature="jellyfish"
-            label="Missions"
+            label="(Missions)"
             onPress={() => navigation.navigate("Missions")}
             colors={["#2196F3", "#1976D2"]}
             iconColor="#FF1493"
