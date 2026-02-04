@@ -25,7 +25,7 @@ import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import { canSpinWheel, spinWheel, getGameState } from "@/lib/storage";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useNightMode } from "@/contexts/NightModeContext";
-import { triggerFlipHaptic } from "@/lib/sounds";
+import { triggerFlipHaptic, playWheelSpinSound } from "@/lib/sounds";
 
 const { width, height } = Dimensions.get("window");
 
@@ -51,6 +51,7 @@ export default function LuckyWheelScreen() {
   const [isSpinning, setIsSpinning] = useState(false);
   const [reward, setReward] = useState<{ reward: number; type: string } | null>(null);
   const [points, setPoints] = useState(0);
+  const [soundEnabled, setSoundEnabled] = useState(true);
   
   const wheelRotation = useSharedValue(0);
   const rewardScale = useSharedValue(0);
@@ -88,6 +89,7 @@ export default function LuckyWheelScreen() {
     
     const state = await getGameState();
     setPoints(state.points);
+    setSoundEnabled(state.soundEnabled);
   };
 
   const handleSpin = async () => {
@@ -96,6 +98,7 @@ export default function LuckyWheelScreen() {
     setIsSpinning(true);
     setReward(null);
     triggerFlipHaptic(true);
+    playWheelSpinSound(soundEnabled);
     
     // Pick a random segment first
     const segmentCount = WHEEL_SEGMENTS.length;

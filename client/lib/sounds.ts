@@ -12,6 +12,7 @@ let carEnginePlayer: AudioPlayer | null = null;
 let thunderPlayer: AudioPlayer | null = null;
 let carStartupPlayer: AudioPlayer | null = null;
 let gasPedalPlayer: AudioPlayer | null = null;
+let wheelSpinPlayer: AudioPlayer | null = null;
 
 let gasPedalInterval: ReturnType<typeof setInterval> | null = null;
 
@@ -31,6 +32,8 @@ const THUNDER_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/1155/1155
 const CAR_STARTUP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/553/553-preview.mp3";
 // Luxury car acceleration sound
 const GAS_PEDAL_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/561/561-preview.mp3";
+// Casino wheel spinning sound
+const WHEEL_SPIN_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/1653/1653-preview.mp3";
 
 let soundsLoaded = false;
 let heartbeatInterval: ReturnType<typeof setInterval> | null = null;
@@ -54,6 +57,7 @@ export async function initializeSounds(): Promise<void> {
     thunderPlayer = createAudioPlayer({ uri: THUNDER_SOUND_URI });
     carStartupPlayer = createAudioPlayer({ uri: CAR_STARTUP_SOUND_URI });
     gasPedalPlayer = createAudioPlayer({ uri: GAS_PEDAL_SOUND_URI });
+    wheelSpinPlayer = createAudioPlayer({ uri: WHEEL_SPIN_SOUND_URI });
     
     soundsLoaded = true;
   } catch (error) {
@@ -240,6 +244,20 @@ export function stopHeartbeat(): void {
   if (heartbeatInterval) {
     clearInterval(heartbeatInterval);
     heartbeatInterval = null;
+  }
+}
+
+export async function playWheelSpinSound(soundEnabled: boolean): Promise<void> {
+  if (!soundEnabled) return;
+  
+  try {
+    if (wheelSpinPlayer) {
+      wheelSpinPlayer.volume = 0.5;
+      wheelSpinPlayer.seekTo(0);
+      wheelSpinPlayer.play();
+    }
+  } catch (error) {
+    // Sound not available
   }
 }
 

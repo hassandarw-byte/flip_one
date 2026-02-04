@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
     height: 160,
   },
   titleContainer: {
-    marginTop: Spacing.lg,
+    marginTop: Spacing.xl + 20,
     alignItems: "center",
     zIndex: 2,
   },
