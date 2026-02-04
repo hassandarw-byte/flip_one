@@ -660,15 +660,41 @@ export default function HomeScreen() {
 function SeahorseIcon({ size = 24, color = "#FFFFFF" }: { size?: number; color?: string }) {
   return (
     <Svg width={size} height={size} viewBox="0 0 100 100">
+      {/* Head */}
+      <Ellipse cx="50" cy="22" rx="18" ry="14" fill={color} stroke="rgba(0,0,0,0.4)" strokeWidth={2} />
+      {/* Snout */}
+      <Path d="M32 22 L18 20 L20 25 L32 24" fill={color} stroke="rgba(0,0,0,0.4)" strokeWidth={2} />
+      {/* Eye */}
+      <Circle cx="45" cy="20" r="5" fill="#FFFFFF" />
+      <Circle cx="44" cy="19" r="2.5" fill="#000000" />
+      {/* Crown/Crest */}
+      <Path d="M55 10 Q60 5, 58 12 Q65 8, 62 15 Q68 12, 64 18" fill={color} stroke="rgba(0,0,0,0.3)" strokeWidth={1.5} />
+      {/* Curved Body */}
       <Path
-        d="M55 15 Q70 20, 70 35 Q70 50, 60 60 Q55 65, 55 75 Q55 85, 45 90 Q35 85, 40 75"
+        d="M50 35 Q65 45, 60 60 Q55 75, 45 80 Q35 85, 38 75 Q42 65, 48 55 Q52 48, 50 35"
         fill={color}
-        stroke="rgba(0,0,0,0.3)"
-        strokeWidth={3}
+        stroke="rgba(0,0,0,0.4)"
+        strokeWidth={2}
       />
-      <Path d="M55 15 Q45 10, 35 20 L45 25" fill={color} stroke="rgba(0,0,0,0.3)" strokeWidth={2} />
-      <Circle cx="48" cy="28" r="4" fill="rgba(0,0,0,0.4)" />
-      <Path d="M70 40 Q80 35, 75 45 Q80 50, 70 50" fill={color} stroke="rgba(0,0,0,0.2)" strokeWidth={2} />
+      {/* Belly segments */}
+      <Path d="M48 42 Q42 44, 48 46" stroke="rgba(0,0,0,0.25)" strokeWidth={1.5} fill="none" />
+      <Path d="M52 50 Q45 52, 50 55" stroke="rgba(0,0,0,0.25)" strokeWidth={1.5} fill="none" />
+      <Path d="M50 60 Q43 62, 46 66" stroke="rgba(0,0,0,0.25)" strokeWidth={1.5} fill="none" />
+      {/* Curled Tail */}
+      <Path
+        d="M38 75 Q30 80, 35 88 Q42 95, 50 90 Q55 85, 50 82 Q45 80, 42 83"
+        fill="none"
+        stroke={color}
+        strokeWidth={6}
+      />
+      <Path
+        d="M38 75 Q30 80, 35 88 Q42 95, 50 90 Q55 85, 50 82 Q45 80, 42 83"
+        fill="none"
+        stroke="rgba(0,0,0,0.3)"
+        strokeWidth={2}
+      />
+      {/* Dorsal Fin */}
+      <Path d="M62 50 Q72 45, 70 55 Q72 62, 62 58" fill={color} stroke="rgba(0,0,0,0.3)" strokeWidth={1.5} />
     </Svg>
   );
 }
