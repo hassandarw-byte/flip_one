@@ -430,11 +430,11 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 36,
     fontWeight: "900",
-    color: "#FFFFFF",
+    color: "#1A1A1A",
     letterSpacing: 6,
-    textShadowColor: "#FF5722",
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 10,
+    textShadowColor: GameColors.gold,
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 8,
   },
   titleUnderline: {
     width: 100,
@@ -469,7 +469,7 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: 11,
-    color: "#FFFFFF",
+    color: "#333333",
     letterSpacing: 1,
     marginTop: Spacing.xs,
     fontWeight: "600",
@@ -477,7 +477,7 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 24,
     fontWeight: "800",
-    color: GameColors.textPrimary,
+    color: "#1A1A1A",
   },
   statDivider: {
     width: 1,
@@ -578,13 +578,10 @@ const styles = StyleSheet.create({
   },
   menuButtonLabel: {
     fontSize: 10,
-    color: "#FFFFFF",
+    color: "#1A1A1A",
     marginTop: 4,
     fontWeight: "700",
     textAlign: "center",
-    textShadowColor: "rgba(0, 0, 0, 0.3)",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
   },
   badge: {
     position: "absolute",
@@ -620,7 +617,7 @@ const styles = StyleSheet.create({
   },
   shareButtonText: {
     fontSize: 14,
-    color: "#FFFFFF",
+    color: "#1A1A1A",
     fontWeight: "600",
   },
 });

@@ -1,13 +1,13 @@
 import { Platform } from "react-native";
 
 export const GameColors = {
-  // Cheerful bright sky background (Sonic/Mario style)
-  background: "#4FC3F7",
-  backgroundGradientStart: "#29B6F6",
-  backgroundGradientEnd: "#81D4FA",
-  surface: "#03A9F4",
-  surfaceLight: "#4FC3F7",
-  surfaceGlass: "rgba(255, 255, 255, 0.3)",
+  // Royal blue background (matching app icon)
+  background: "#1565C0",
+  backgroundGradientStart: "#1565C0",
+  backgroundGradientEnd: "#1E88E5",
+  surface: "#1976D2",
+  surfaceLight: "#2196F3",
+  surfaceGlass: "rgba(255, 255, 255, 0.2)",
   
   // Bright golden player (Sonic rings style)
   player: "#FFD700",
@@ -64,9 +64,9 @@ export const GameColors = {
   gold: "#FFD700",
   goldGlow: "#FFCA28",
   
-  textPrimary: "#FFFFFF",
-  textSecondary: "#FFF9C4",
-  textMuted: "#BBDEFB",
+  textPrimary: "#1A1A1A",
+  textSecondary: "#333333",
+  textMuted: "#555555",
   
   // Road colors
   trackTop: "#424242",
