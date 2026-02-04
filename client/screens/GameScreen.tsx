@@ -695,11 +695,11 @@ export default function GameScreen() {
     const creatureTypes: ("crab" | "fish" | "lobster")[] = ["crab", "fish", "lobster"];
     const creatures: SeaCreature[] = [];
     // Top stream creatures (above top track)
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 8; i++) {
       creatures.push({
         id: i,
         x: Math.random() * width,
-        y: trackTopY - 30 - Math.random() * 20,
+        y: trackTopY - 20 - Math.random() * 50,
         type: creatureTypes[i % 3],
         speed: 1.5 + Math.random() * 1.5,
         direction: Math.random() > 0.5 ? 1 : -1,
@@ -707,11 +707,11 @@ export default function GameScreen() {
       });
     }
     // Bottom stream creatures (below bottom track)
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 8; i++) {
       creatures.push({
-        id: i + 4,
+        id: i + 8,
         x: Math.random() * width,
-        y: trackBottomY + TRACK_HEIGHT + 10 + Math.random() * 20,
+        y: trackBottomY + TRACK_HEIGHT + 10 + Math.random() * 50,
         type: creatureTypes[i % 3],
         speed: 1.5 + Math.random() * 1.5,
         direction: Math.random() > 0.5 ? 1 : -1,
@@ -1309,7 +1309,7 @@ export default function GameScreen() {
 
       <Animated.View style={[styles.gameWorld, worldAnimatedStyle]}>
         {/* Top Water Stream */}
-        <View style={[styles.waterStream, { top: trackTopY - 50, height: 50 }]}>
+        <View style={[styles.waterStream, { top: trackTopY - 80, height: 80 }]}>
           <LinearGradient
             colors={["#87CEEB", "#4FC3F7", "#29B6F6"]}
             style={styles.waterGradient}
@@ -1359,7 +1359,7 @@ export default function GameScreen() {
         </View>
 
         {/* Bottom Water Stream */}
-        <View style={[styles.waterStream, { top: trackBottomY + TRACK_HEIGHT, height: 50 }]}>
+        <View style={[styles.waterStream, { top: trackBottomY + TRACK_HEIGHT, height: 80 }]}>
           <LinearGradient
             colors={["#29B6F6", "#4FC3F7", "#87CEEB"]}
             style={styles.waterGradient}
@@ -1556,7 +1556,7 @@ export default function GameScreen() {
       </Animated.View>
     </Pressable>
 
-    <View style={[styles.powerButtonsContainer, { bottom: insets.bottom + Spacing["2xl"] + 80 }]}>
+    <View style={[styles.powerButtonsContainer, { bottom: insets.bottom + Spacing["2xl"] + 120 }]}>
       <PowerButton 
         type="freeze" 
         icon="pause" 
