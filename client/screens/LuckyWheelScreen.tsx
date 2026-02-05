@@ -26,6 +26,7 @@ import { canSpinWheel, spinWheel, getGameState } from "@/lib/storage";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useNightMode } from "@/contexts/NightModeContext";
 import { triggerFlipHaptic, playWheelSpinSound } from "@/lib/sounds";
+import AdModal from "@/components/AdModal";
 
 const { width, height } = Dimensions.get("window");
 
@@ -52,6 +53,8 @@ export default function LuckyWheelScreen() {
   const [reward, setReward] = useState<{ reward: number; type: string } | null>(null);
   const [points, setPoints] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [hasSpun, setHasSpun] = useState(false);
+  const [adModalVisible, setAdModalVisible] = useState(false);
   
   const wheelRotation = useSharedValue(0);
   const rewardScale = useSharedValue(0);
@@ -120,6 +123,7 @@ export default function LuckyWheelScreen() {
       setReward(result);
       setCanSpin(false);
       setIsSpinning(false);
+      setHasSpun(true);
       
       const state = await getGameState();
       setPoints(state.points);
@@ -129,6 +133,20 @@ export default function LuckyWheelScreen() {
       
       triggerFlipHaptic(true);
     }, 4000);
+  };
+
+  const handleWatchAd = () => {
+    setAdModalVisible(true);
+  };
+
+  const handleAdComplete = () => {
+    setAdModalVisible(false);
+    setCanSpin(true);
+    setHasSpun(false);
+    setReward(null);
+    wheelRotation.value = 0;
+    rewardScale.value = 0;
+    rewardOpacity.value = 0;
   };
 
   const wheelAnimatedStyle = useAnimatedStyle(() => ({
@@ -244,24 +262,44 @@ export default function LuckyWheelScreen() {
         </Animated.View>
       ) : null}
 
-      <Pressable
-        style={[
-          styles.spinButton,
-          (!canSpin || isSpinning) && styles.spinButtonDisabled,
-          { marginBottom: insets.bottom + Spacing.xl },
-        ]}
-        onPress={handleSpin}
-        disabled={!canSpin || isSpinning}
-      >
-        <LinearGradient
-          colors={canSpin && !isSpinning ? [GameColors.success, GameColors.successGlow] : ["#666", "#444"]}
-          style={styles.spinButtonGradient}
+      <View style={[styles.buttonsContainer, { marginBottom: insets.bottom + Spacing.xl }]}>
+        <Pressable
+          style={[
+            styles.spinButton,
+            (!canSpin || isSpinning) && styles.spinButtonDisabled,
+          ]}
+          onPress={handleSpin}
+          disabled={!canSpin || isSpinning}
         >
-          <ThemedText style={styles.spinButtonText}>
-            {isSpinning ? "Spinning..." : canSpin ? "SPIN!" : "Come Back Tomorrow!"}
-          </ThemedText>
-        </LinearGradient>
-      </Pressable>
+          <LinearGradient
+            colors={canSpin && !isSpinning ? [GameColors.success, GameColors.successGlow] : ["#666", "#444"]}
+            style={styles.spinButtonGradient}
+          >
+            <ThemedText style={styles.spinButtonText}>
+              {isSpinning ? "Spinning..." : canSpin ? "SPIN!" : "Come Back Tomorrow!"}
+            </ThemedText>
+          </LinearGradient>
+        </Pressable>
+
+        {hasSpun && !canSpin ? (
+          <Pressable style={styles.watchAdButton} onPress={handleWatchAd}>
+            <LinearGradient
+              colors={["#9C27B0", "#7B1FA2"]}
+              style={styles.watchAdButtonGradient}
+            >
+              <Feather name="play-circle" size={20} color="#FFFFFF" />
+              <ThemedText style={styles.watchAdButtonText}>Watch Ad for Extra Spin</ThemedText>
+            </LinearGradient>
+          </Pressable>
+        ) : null}
+      </View>
+
+      <AdModal
+        visible={adModalVisible}
+        onClose={() => setAdModalVisible(false)}
+        onComplete={handleAdComplete}
+        rewardName="Extra Spin"
+      />
     </View>
   );
 }
@@ -446,6 +484,32 @@ const styles = StyleSheet.create({
   spinButtonText: {
     fontSize: 20,
     fontWeight: "800",
+    color: "#FFFFFF",
+    textAlign: "center",
+  },
+  buttonsContainer: {
+    gap: Spacing.md,
+  },
+  watchAdButton: {
+    marginHorizontal: Spacing.xl,
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+    shadowColor: "#9C27B0",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 15,
+  },
+  watchAdButtonGradient: {
+    flexDirection: "row",
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.xl,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+  },
+  watchAdButtonText: {
+    fontSize: 16,
+    fontWeight: "700",
     color: "#FFFFFF",
     textAlign: "center",
   },
