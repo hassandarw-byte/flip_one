@@ -8,7 +8,7 @@ import {
   Image,
 } from "react-native";
 
-import appIcon from "../../assets/store/app-icon-512.png";
+import appIcon from "../../assets/images/icon.png";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { Feather } from "@expo/vector-icons";
