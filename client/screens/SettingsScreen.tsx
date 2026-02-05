@@ -431,12 +431,12 @@ const styles = StyleSheet.create({
   appVersion: {
     fontSize: 13,
     color: GameColors.textMuted,
-    marginTop: Spacing.xs,
+    marginTop: 2,
   },
   developerText: {
     fontSize: 12,
     color: GameColors.textSecondary,
-    marginTop: Spacing.sm,
+    marginTop: 2,
     fontWeight: "600",
   },
 });
