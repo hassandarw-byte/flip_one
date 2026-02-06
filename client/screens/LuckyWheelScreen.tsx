@@ -200,7 +200,7 @@ export default function LuckyWheelScreen() {
         <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
           <Feather name="arrow-left" size={24} color="#000000" />
         </Pressable>
-        <ThemedText style={styles.title}>Lucky Wheel</ThemedText>
+        <ThemedText style={styles.title}>Wheel</ThemedText>
         <LinearGradient colors={["#1A1A1A", "#000000"]} style={styles.pointsBadge}>
           <Feather name="star" size={16} color="#FFD700" />
           <ThemedText style={styles.pointsText}>{points}</ThemedText>
