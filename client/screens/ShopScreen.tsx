@@ -280,7 +280,7 @@ export default function ShopScreen() {
           colors={["#1A1A1A", "#000000"]}
           style={styles.pointsContainer}
         >
-          <Feather name="star" size={18} color="#FFD700" />
+          <Feather name="star" size={18} color="#FFFFFF" />
           <ThemedText style={styles.pointsText}>
             {gameState?.points || 0}
           </ThemedText>
@@ -462,7 +462,7 @@ function SkinCard({
           </View>
         ) : (
           <View style={[styles.priceTag, !canAfford && styles.priceTagDisabled]}>
-            <Feather name="star" size={12} color={GameColors.gold} />
+            <Feather name="star" size={12} color="#000000" />
             <ThemedText style={styles.priceText}>{skin.price}</ThemedText>
           </View>
         )}
@@ -567,7 +567,7 @@ function PremiumSkinCard({ skin, isOwned, isEquipped, canAfford, onPress }: Prem
             colors={canAfford ? [GameColors.gold, GameColors.goldGlow] : ["#666", "#444"]}
             style={styles.premiumPriceTag}
           >
-            <Feather name="star" size={12} color={canAfford ? GameColors.background : "#999"} />
+            <Feather name="star" size={12} color={canAfford ? "#000000" : "#999"} />
             <ThemedText style={[styles.premiumPriceText, !canAfford && { color: "#999" }]}>{skin.price}</ThemedText>
           </LinearGradient>
         )}
@@ -670,7 +670,7 @@ const styles = StyleSheet.create({
   pointsText: {
     fontSize: 18,
     fontWeight: "800",
-    color: "#FFD700",
+    color: "#FFFFFF",
   },
   tabs: {
     flexDirection: "row",
@@ -834,7 +834,7 @@ const styles = StyleSheet.create({
   priceText: {
     fontSize: 13,
     fontWeight: "700",
-    color: GameColors.gold,
+    color: "#000000",
   },
   premiumPriceTag: {
     flexDirection: "row",
