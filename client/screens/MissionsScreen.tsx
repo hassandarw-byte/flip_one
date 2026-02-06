@@ -79,7 +79,7 @@ export default function MissionsScreen() {
           >
             <Feather name="calendar" size={20} color="#FFFFFF" />
           </LinearGradient>
-          <ThemedText style={styles.title}>
+          <ThemedText style={styles.subtitle}>
             Complete missions to earn points
           </ThemedText>
         </View>
