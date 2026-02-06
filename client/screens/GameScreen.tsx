@@ -636,18 +636,14 @@ export default function GameScreen() {
       const currentScore = score;
       
       if (gameState) {
-        await updateMissionProgress("play_5", (gameState.totalGames || 0) + 1);
-        await updateMissionProgress("flip_50", (gameState.totalFlips || 0) + flipCountRef.current);
-        
-        if (currentScore >= 20) {
-          await updateMissionProgress("score_20", currentScore);
-        }
-        
-        // Update distance mission - distance traveled in this game
+        await updateMissionProgress("play", (gameState.totalGames || 0) + 1);
+        await updateMissionProgress("flip", (gameState.totalFlips || 0) + flipCountRef.current);
+        await updateMissionProgress("score", currentScore);
         const distanceTraveled = Math.floor(distance);
-        if (distanceTraveled >= 2000) {
-          await updateMissionProgress("distance_2000", distanceTraveled);
-        }
+        await updateMissionProgress("distance", distanceTraveled);
+        const currentLevel = Math.floor(currentScore / 10) + 1;
+        await updateMissionProgress("level", currentLevel);
+        await updateMissionProgress("collect", bonusPointsRef.current > 0 ? Math.floor(bonusPointsRef.current / 3) : 0);
 
         if (currentScore > gameState.bestScore) {
           await saveBestScore(currentScore);

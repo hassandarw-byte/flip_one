@@ -31,6 +31,7 @@ const KEYS = {
 
 export interface DailyMission {
   id: string;
+  type: "play" | "score" | "flip" | "distance" | "collect" | "level";
   description: string;
   target: number;
   progress: number;
@@ -102,45 +103,71 @@ function generateDefaultAchievements(): Achievement[] {
   ];
 }
 
+const MISSION_POOL: Omit<DailyMission, "progress" | "completed" | "claimed">[] = [
+  { id: "play_3", type: "play", description: "Play 3 games", target: 3, reward: 30 },
+  { id: "play_5", type: "play", description: "Play 5 games", target: 5, reward: 50 },
+  { id: "play_10", type: "play", description: "Play 10 games", target: 10, reward: 100 },
+  { id: "play_15", type: "play", description: "Play 15 games", target: 15, reward: 150 },
+
+  { id: "score_10", type: "score", description: "Score 10 points in one game", target: 10, reward: 50 },
+  { id: "score_20", type: "score", description: "Score 20 points in one game", target: 20, reward: 100 },
+  { id: "score_30", type: "score", description: "Score 30 points in one game", target: 30, reward: 150 },
+  { id: "score_50", type: "score", description: "Score 50 points in one game", target: 50, reward: 250 },
+
+  { id: "flip_20", type: "flip", description: "Flip 20 times", target: 20, reward: 30 },
+  { id: "flip_50", type: "flip", description: "Flip 50 times", target: 50, reward: 75 },
+  { id: "flip_100", type: "flip", description: "Flip 100 times", target: 100, reward: 125 },
+  { id: "flip_200", type: "flip", description: "Flip 200 times", target: 200, reward: 200 },
+
+  { id: "distance_500", type: "distance", description: "Travel 500m in one game", target: 500, reward: 40 },
+  { id: "distance_1000", type: "distance", description: "Travel 1000m in one game", target: 1000, reward: 80 },
+  { id: "distance_2000", type: "distance", description: "Travel 2000m in one game", target: 2000, reward: 150 },
+  { id: "distance_3000", type: "distance", description: "Travel 3000m in one game", target: 3000, reward: 250 },
+
+  { id: "collect_5", type: "collect", description: "Collect 5 items", target: 5, reward: 60 },
+  { id: "collect_10", type: "collect", description: "Collect 10 items", target: 10, reward: 120 },
+
+  { id: "level_3", type: "level", description: "Reach level 3 in one game", target: 3, reward: 50 },
+  { id: "level_5", type: "level", description: "Reach level 5 in one game", target: 5, reward: 100 },
+  { id: "level_8", type: "level", description: "Reach level 8 in one game", target: 8, reward: 175 },
+];
+
+function seededRandom(seed: number): () => number {
+  let s = seed;
+  return () => {
+    s = (s * 16807 + 0) % 2147483647;
+    return s / 2147483647;
+  };
+}
+
 function generateDailyMissions(): DailyMission[] {
-  return [
-    {
-      id: "play_5",
-      description: "Play 5 games",
-      target: 5,
+  const today = new Date().toISOString().split("T")[0];
+  const seed = today.split("-").join("").length > 0
+    ? parseInt(today.replace(/-/g, ""), 10)
+    : Date.now();
+  const rng = seededRandom(seed);
+
+  const types: DailyMission["type"][] = ["play", "score", "flip", "distance", "collect", "level"];
+  const selectedTypes: DailyMission["type"][] = [];
+
+  const shuffledTypes = [...types].sort(() => rng() - 0.5);
+  for (let i = 0; i < 4; i++) {
+    selectedTypes.push(shuffledTypes[i]);
+  }
+
+  const missions: DailyMission[] = [];
+  for (const type of selectedTypes) {
+    const candidates = MISSION_POOL.filter((m) => m.type === type);
+    const pick = candidates[Math.floor(rng() * candidates.length)];
+    missions.push({
+      ...pick,
       progress: 0,
-      reward: 50,
       completed: false,
       claimed: false,
-    },
-    {
-      id: "score_20",
-      description: "Score 20 points in one game",
-      target: 20,
-      progress: 0,
-      reward: 100,
-      completed: false,
-      claimed: false,
-    },
-    {
-      id: "flip_50",
-      description: "Flip 50 times",
-      target: 50,
-      progress: 0,
-      reward: 75,
-      completed: false,
-      claimed: false,
-    },
-    {
-      id: "distance_2000",
-      description: "Travel 2000m in one game",
-      target: 2000,
-      progress: 0,
-      reward: 150,
-      completed: false,
-      claimed: false,
-    },
-  ];
+    });
+  }
+
+  return missions;
 }
 
 export async function getGameState(): Promise<GameState> {
@@ -197,7 +224,14 @@ export async function getGameState(): Promise<GameState> {
       await AsyncStorage.setItem(KEYS.DAILY_MISSIONS, JSON.stringify(missions));
       await AsyncStorage.setItem(KEYS.LAST_MISSION_DATE, today);
     } else {
-      missions = dailyMissions ? JSON.parse(dailyMissions) : generateDailyMissions();
+      const parsed = dailyMissions ? JSON.parse(dailyMissions) : null;
+      if (parsed && parsed.length > 0 && parsed[0].type) {
+        missions = parsed;
+      } else {
+        missions = generateDailyMissions();
+        await AsyncStorage.setItem(KEYS.DAILY_MISSIONS, JSON.stringify(missions));
+        await AsyncStorage.setItem(KEYS.LAST_MISSION_DATE, today);
+      }
     }
 
     let usedPowers: string[] = [];
@@ -407,7 +441,7 @@ export async function incrementTotalGames(): Promise<number> {
 }
 
 export async function updateMissionProgress(
-  missionId: string,
+  missionType: DailyMission["type"],
   progress: number
 ): Promise<DailyMission[]> {
   try {
@@ -416,7 +450,7 @@ export async function updateMissionProgress(
 
     const missions: DailyMission[] = JSON.parse(missionsStr);
     const updatedMissions = missions.map((m) => {
-      if (m.id === missionId) {
+      if (m.type === missionType) {
         const newProgress = Math.min(progress, m.target);
         return {
           ...m,
