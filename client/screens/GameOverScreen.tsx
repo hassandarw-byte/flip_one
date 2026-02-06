@@ -501,13 +501,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   buttonLabel: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: "700",
     color: "#FFFFFF",
     textAlign: "center",
   },
   buttonSubtitle: {
-    fontSize: 14,
+    fontSize: 18,
     color: "rgba(255,255,255,0.7)",
     textAlign: "center",
   },
