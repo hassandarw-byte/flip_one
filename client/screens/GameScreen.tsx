@@ -2139,12 +2139,12 @@ const styles = StyleSheet.create({
   },
   playerGlow: {
     position: "absolute",
-    top: -4,
-    left: -4,
-    right: -4,
-    bottom: -4,
-    backgroundColor: GameColors.player,
-    borderRadius: 8,
+    top: -2,
+    left: -2,
+    right: -2,
+    bottom: -2,
+    backgroundColor: "#000000",
+    borderRadius: 7,
   },
   player: {
     width: PLAYER_SIZE,
