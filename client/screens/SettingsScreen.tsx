@@ -277,7 +277,7 @@ function PurchaseRow({
           </View>
         ) : (
           <LinearGradient
-            colors={[GameColors.player, GameColors.playerGlow]}
+            colors={["#1A1A1A", "#000000"]}
             style={styles.priceButton}
           >
             <ThemedText style={styles.priceText}>{price}</ThemedText>
@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
   priceText: {
     fontSize: 14,
     fontWeight: "700",
-    color: GameColors.background,
+    color: "#FFD700",
   },
   settingButton: {
     flexDirection: "row",
