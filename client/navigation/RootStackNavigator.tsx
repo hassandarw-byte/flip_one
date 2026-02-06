@@ -105,7 +105,7 @@ export default function RootStackNavigator() {
           headerTitle: "Shop",
           headerTransparent: true,
           animation: "slide_from_right",
-          headerTitleStyle: { fontSize: 24, fontWeight: "800", color: "#9C27B0" },
+          headerTitleStyle: { fontSize: 24, fontWeight: "400", color: "#9C27B0" },
         }}
       />
       <Stack.Screen
@@ -115,7 +115,7 @@ export default function RootStackNavigator() {
           headerTitle: "Missions",
           headerTransparent: true,
           animation: "slide_from_right",
-          headerTitleStyle: { fontSize: 24, fontWeight: "800", color: "#9C27B0" },
+          headerTitleStyle: { fontSize: 24, fontWeight: "400", color: "#9C27B0" },
         }}
       />
       <Stack.Screen
@@ -125,7 +125,7 @@ export default function RootStackNavigator() {
           headerTitle: "Leaderboard",
           headerTransparent: true,
           animation: "slide_from_right",
-          headerTitleStyle: { fontSize: 24, fontWeight: "800", color: "#9C27B0" },
+          headerTitleStyle: { fontSize: 24, fontWeight: "400", color: "#9C27B0" },
         }}
       />
       <Stack.Screen
@@ -135,7 +135,7 @@ export default function RootStackNavigator() {
           headerTitle: "Settings",
           headerTransparent: true,
           animation: "slide_from_right",
-          headerTitleStyle: { fontSize: 24, fontWeight: "800", color: "#9C27B0" },
+          headerTitleStyle: { fontSize: 24, fontWeight: "400", color: "#9C27B0" },
         }}
       />
       <Stack.Screen
