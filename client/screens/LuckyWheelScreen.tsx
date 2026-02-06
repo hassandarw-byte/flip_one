@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "800",
-    color: "#FFFFFF",
+    color: "#9C27B0",
   },
   pointsBadge: {
     flexDirection: "row",

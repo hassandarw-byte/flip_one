@@ -226,8 +226,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: "700",
-    color: GameColors.textPrimary,
+    fontWeight: "800",
+    color: "#9C27B0",
   },
   subtitle: {
     fontSize: 13,

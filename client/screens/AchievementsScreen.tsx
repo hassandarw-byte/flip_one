@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "800",
-    color: "#000000",
+    color: "#9C27B0",
     textAlign: "center",
   },
   pointsBadge: {
