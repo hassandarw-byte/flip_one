@@ -343,9 +343,9 @@ function GameButton({
         end={{ x: 1, y: 1 }}
         style={styles.buttonGradient}
       >
-        <Feather name={icon} size={isPrimary ? 24 : 20} color="#FFFFFF" />
+        <Feather name={icon} size={isPrimary ? 24 : 18} color="#FFFFFF" />
         <View style={styles.buttonTextContainer}>
-          <ThemedText style={styles.buttonLabel}>{label}</ThemedText>
+          <ThemedText style={isPrimary ? styles.buttonLabel : styles.buttonLabelSmall}>{label}</ThemedText>
           {subtitle ? (
             <ThemedText style={styles.buttonSubtitle}>{subtitle}</ThemedText>
           ) : null}
@@ -502,6 +502,12 @@ const styles = StyleSheet.create({
   },
   buttonLabel: {
     fontSize: 24,
+    fontWeight: "700",
+    color: "#FFFFFF",
+    textAlign: "center",
+  },
+  buttonLabelSmall: {
+    fontSize: 15,
     fontWeight: "700",
     color: "#FFFFFF",
     textAlign: "center",
