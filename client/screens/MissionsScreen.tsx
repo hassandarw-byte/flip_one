@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
     color: "#9C27B0",
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: 15,
     color: GameColors.textMuted,
     marginTop: 2,
   },
