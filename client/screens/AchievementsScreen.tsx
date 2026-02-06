@@ -104,10 +104,10 @@ export default function AchievementsScreen() {
           <ThemedText style={styles.statNumber}>{unlockedCount}/{achievements.length}</ThemedText>
           <ThemedText style={[styles.statLabel, { color: textColor }]}>Unlocked</ThemedText>
         </View>
-        <View style={styles.pointsBadge}>
-          <Feather name="star" size={16} color="#9C27B0" />
+        <LinearGradient colors={["#1A1A1A", "#000000"]} style={styles.pointsBadge}>
+          <Feather name="star" size={16} color="#FFD700" />
           <ThemedText style={styles.pointsText}>{points}</ThemedText>
-        </View>
+        </LinearGradient>
         <View style={styles.statBadge}>
           <ThemedText style={styles.statNumber}>{totalRewards}</ThemedText>
           <ThemedText style={[styles.statLabel, { color: textColor }]}>Points Earned</ThemedText>
@@ -227,11 +227,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: Spacing.xs,
     paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.full,
   },
   pointsText: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#000000",
+    color: "#FFD700",
   },
   statsRow: {
     flexDirection: "row",

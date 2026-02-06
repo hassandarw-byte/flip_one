@@ -201,10 +201,10 @@ export default function LuckyWheelScreen() {
           <Feather name="arrow-left" size={24} color="#000000" />
         </Pressable>
         <ThemedText style={styles.title}>Lucky Wheel</ThemedText>
-        <View style={styles.pointsBadge}>
-          <Feather name="star" size={16} color="#9C27B0" />
+        <LinearGradient colors={["#1A1A1A", "#000000"]} style={styles.pointsBadge}>
+          <Feather name="star" size={16} color="#FFD700" />
           <ThemedText style={styles.pointsText}>{points}</ThemedText>
-        </View>
+        </LinearGradient>
       </View>
 
       <View style={styles.wheelContainer}>
@@ -342,16 +342,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.1)",
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.full,
     gap: Spacing.xs,
   },
   pointsText: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#9C27B0",
+    color: "#FFD700",
     textAlign: "center",
   },
   wheelContainer: {
