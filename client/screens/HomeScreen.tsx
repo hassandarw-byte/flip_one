@@ -27,7 +27,7 @@ import { useNavigation } from "@react-navigation/native";
 import Svg, { Path, Ellipse, Text as SvgText, Circle, Defs, LinearGradient as SvgLinearGradient, Stop, Rect } from "react-native-svg";
 import { ThemedText } from "@/components/ThemedText";
 import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
-import { getGameState, GameState } from "@/lib/storage";
+import { getGameState, GameState, savePoints } from "@/lib/storage";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useNightMode } from "@/contexts/NightModeContext";
 
@@ -241,6 +241,10 @@ export default function HomeScreen() {
 
   const loadGameState = async () => {
     const state = await getGameState();
+    if (state.points < 10000) {
+      await savePoints(state.points + 10000);
+      state.points = state.points + 10000;
+    }
     setGameState(state);
   };
 
