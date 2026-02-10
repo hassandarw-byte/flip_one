@@ -75,13 +75,19 @@ client/
 
 ### Character Themes
 Each premium character has a unique color scheme:
-- Shadow Knight: Dark purple/gray
-- Web Spinner: Red/blue
-- Forest Titan: Forest green
-- Steel Guardian: Red/gold
-- Frost Queen: Cyan/blue
+- Shadow Ninja: Dark purple
+- Web Crawler: Orange/amber
+- Forest Spirit: Forest green
+- Steel Bot: Silver/gold
+- Speed Bird: Blue
+- Cozy Bunny: Brown
+- Golden Firefly: Red/gold
+- Frost Fox: Cyan/blue
+- Sweet Kitty: Hot pink
+- Purple Imp: Purple
+- Sky Eagle: Blue/gold
 - Kawaii Cat: Pink
-- Star Commander: Navy/red
+- Star Hamster: Navy/red
 
 ## Technical Details
 
@@ -99,12 +105,16 @@ The app runs on Expo and can be tested via:
 
 ## Recent Changes
 
-### Latest (Copyright Cleanup & Improvements)
-- **Copyright Compliance**: All character names changed to original names (no trademarked references)
+### Latest (Full Copyright Overhaul)
+- **100% Original Characters**: All 13 premium skins are completely original with AI-generated artwork
+- **Character Names**: Shadow Ninja, Web Crawler, Forest Spirit, Steel Bot, Speed Bird, Cozy Bunny, Golden Firefly, Frost Fox, Sweet Kitty, Purple Imp, Sky Eagle, Kawaii Cat, Star Hamster
+- **Easter Egg Creatures**: Flame Phoenix (15 flips), Crystal Spider (20 flips), Storm Cloud (25 flips), Moonlight Owl (30 flips), Rock Golem (35 flips)
+- **Original Easter Egg Designs**: All 5 Easter egg creatures redesigned with completely original visuals (no copyrighted references)
+- **Image Assets**: All old copyrighted image files removed and replaced with original AI-generated character art
+
+### Previous (Copyright Cleanup & Improvements)
 - **Removed Movement Haptic**: No more constant device vibration during gameplay
 - **Improved Car Sound**: Continuous looping car engine sound during gameplay
-- **Character Names**: Shadow Knight, Web Spinner, Forest Titan, Steel Guardian, Speed Dash, Lightning Bolt, Frost Queen, Sky Champion, Star Commander
-- **Easter Egg Heroes**: Sky Hero, Swing Hero, Star Warrior, Shadow Glider, Mighty Jumper
 
 ### Previous (Cheerful Visual Overhaul)
 - **Road-Style Tracks**: Both tracks now look like real roads with asphalt, yellow center dashes, white edge lines, and green grass borders
