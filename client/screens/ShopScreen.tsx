@@ -563,13 +563,12 @@ function PremiumSkinCard({ skin, isOwned, isEquipped, canAfford, onPress }: Prem
             <ThemedText style={styles.premiumPriceText}>Select</ThemedText>
           </LinearGradient>
         ) : (
-          <LinearGradient
-            colors={canAfford ? [GameColors.gold, GameColors.goldGlow] : ["#666", "#444"]}
-            style={styles.premiumPriceTag}
+          <View
+            style={[styles.premiumPriceTag, !canAfford && { opacity: 0.5 }]}
           >
-            <Feather name="star" size={12} color={canAfford ? "#000000" : "#999"} />
-            <ThemedText style={[styles.premiumPriceText, !canAfford && { color: "#999" }]}>{skin.price}</ThemedText>
-          </LinearGradient>
+            <Feather name="star" size={12} color="#FFD700" />
+            <ThemedText style={styles.premiumPriceText}>{skin.price}</ThemedText>
+          </View>
         )}
       </LinearGradient>
     </AnimatedPressable>
@@ -841,14 +840,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: Spacing.xs,
+    backgroundColor: "#1A1A1A",
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.full,
+    borderWidth: 1,
+    borderColor: "#000000",
   },
   premiumPriceText: {
     fontSize: 12,
     fontWeight: "700",
-    color: GameColors.background,
+    color: "#FFD700",
   },
   powerCard: {
     marginBottom: Spacing.md,
