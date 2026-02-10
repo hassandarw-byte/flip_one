@@ -22,6 +22,7 @@ import Animated, {
 import * as Haptics from "expo-haptics";
 
 import { ThemedText } from "@/components/ThemedText";
+import PointsBadge from "@/components/PointsBadge";
 import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import {
   getGameState,
@@ -84,12 +85,7 @@ export default function SettingsScreen() {
       colors={backgroundGradient}
       style={[styles.container, { paddingTop: headerHeight + Spacing.lg }]}
     >
-      <View style={styles.pointsRow}>
-        <LinearGradient colors={["#1A1A1A", "#000000"]} style={styles.pointsBadge}>
-          <Feather name="star" size={16} color="#FFD700" />
-          <ThemedText style={styles.pointsText}>{gameState?.points || 0}</ThemedText>
-        </LinearGradient>
-      </View>
+      <PointsBadge points={gameState?.points || 0} />
 
       <ScrollView
         contentContainerStyle={{ paddingBottom: insets.bottom + Spacing.xl }}
@@ -340,25 +336,6 @@ function SettingButton({ icon, title, colors, onPress }: SettingButtonProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  pointsRow: {
-    alignItems: "center",
-    marginBottom: Spacing.md,
-    paddingHorizontal: Spacing.xl,
-  },
-  pointsBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: Spacing.xs,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.md,
-  },
-  pointsText: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#FFD700",
   },
   section: {
     marginBottom: Spacing.xl,

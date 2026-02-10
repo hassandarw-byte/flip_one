@@ -18,6 +18,7 @@ import Animated, {
 import * as Haptics from "expo-haptics";
 
 import { ThemedText } from "@/components/ThemedText";
+import PointsBadge from "@/components/PointsBadge";
 import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import {
   getGameState,
@@ -71,6 +72,7 @@ export default function MissionsScreen() {
       colors={backgroundGradient}
       style={[styles.container, { paddingTop: headerHeight + Spacing.lg }]}
     >
+      <PointsBadge points={gameState?.points || 0} />
       <View style={styles.header}>
         <View style={styles.titleRow}>
           <LinearGradient
@@ -83,10 +85,6 @@ export default function MissionsScreen() {
             Complete missions to earn points
           </ThemedText>
         </View>
-        <LinearGradient colors={["#1A1A1A", "#000000"]} style={styles.pointsBadge}>
-          <Feather name="star" size={16} color="#FFD700" />
-          <ThemedText style={styles.pointsText}>{gameState?.points || 0}</ThemedText>
-        </LinearGradient>
       </View>
 
       <FlatList
@@ -221,20 +219,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: Spacing.md,
     flex: 1,
-  },
-  pointsBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: Spacing.xs,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.md,
-  },
-  pointsText: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#FFD700",
   },
   titleIcon: {
     width: 44,

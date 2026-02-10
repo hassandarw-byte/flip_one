@@ -21,6 +21,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 
 import { ThemedText } from "@/components/ThemedText";
+import PointsBadge from "@/components/PointsBadge";
 import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import { getGameState, Achievement } from "@/lib/storage";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
@@ -98,16 +99,13 @@ export default function AchievementsScreen() {
         </View>
         <View style={{ width: 40 }} />
       </View>
+      <PointsBadge points={points} />
 
       <View style={styles.statsRow}>
         <View style={styles.statBadge}>
           <ThemedText style={styles.statNumber}>{unlockedCount}/{achievements.length}</ThemedText>
           <ThemedText style={[styles.statLabel, { color: textColor }]}>Unlocked</ThemedText>
         </View>
-        <LinearGradient colors={["#1A1A1A", "#000000"]} style={styles.pointsBadge}>
-          <Feather name="star" size={16} color="#FFD700" />
-          <ThemedText style={styles.pointsText}>{points}</ThemedText>
-        </LinearGradient>
         <View style={styles.statBadge}>
           <ThemedText style={styles.statNumber}>{totalRewards}</ThemedText>
           <ThemedText style={[styles.statLabel, { color: textColor }]}>Points Earned</ThemedText>
@@ -223,20 +221,6 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     color: "#9C27B0",
     textAlign: "center",
-  },
-  pointsBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: Spacing.xs,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.md,
-  },
-  pointsText: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#FFD700",
   },
   statsRow: {
     flexDirection: "row",

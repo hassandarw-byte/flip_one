@@ -14,6 +14,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeInDown } from "react-native-reanimated";
 
 import { ThemedText } from "@/components/ThemedText";
+import PointsBadge from "@/components/PointsBadge";
 import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import { getGameState, GameState, getDeviceId, getUsername, setUsername } from "@/lib/storage";
 import { useNightMode } from "@/contexts/NightModeContext";
@@ -142,6 +143,7 @@ export default function LeaderboardScreen() {
       colors={backgroundGradient}
       style={styles.container}
     >
+      <PointsBadge points={gameState?.points || 0} />
       <View
         style={[
           styles.content,
@@ -214,13 +216,6 @@ export default function LeaderboardScreen() {
                 </View>
               </View>
             </View>
-          </LinearGradient>
-        </View>
-
-        <View style={styles.pointsRow}>
-          <LinearGradient colors={["#1A1A1A", "#000000"]} style={styles.pointsBadge}>
-            <Feather name="star" size={16} color="#FFD700" />
-            <ThemedText style={styles.pointsBadgeText}>{gameState?.points || 0}</ThemedText>
           </LinearGradient>
         </View>
 
@@ -350,24 +345,6 @@ const styles = StyleSheet.create({
     marginTop: Spacing.lg,
     color: GameColors.textSecondary,
     fontSize: 16,
-  },
-  pointsRow: {
-    alignItems: "center",
-    marginBottom: Spacing.md,
-  },
-  pointsBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: Spacing.xs,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.md,
-  },
-  pointsBadgeText: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#FFD700",
   },
   headerCard: {
     marginBottom: Spacing.lg,

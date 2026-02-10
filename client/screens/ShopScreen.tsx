@@ -25,6 +25,7 @@ import Animated, {
 import * as Haptics from "expo-haptics";
 
 import { ThemedText } from "@/components/ThemedText";
+import PointsBadge from "@/components/PointsBadge";
 import AdModal from "@/components/AdModal";
 import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import {
@@ -275,17 +276,7 @@ export default function ShopScreen() {
       colors={backgroundGradient}
       style={[styles.container, { paddingTop: headerHeight + Spacing.lg }]}
     >
-      <View style={styles.header}>
-        <LinearGradient
-          colors={["#1A1A1A", "#000000"]}
-          style={styles.pointsContainer}
-        >
-          <Feather name="star" size={18} color="#FFD700" />
-          <ThemedText style={styles.pointsText}>
-            {gameState?.points || 0}
-          </ThemedText>
-        </LinearGradient>
-      </View>
+      <PointsBadge points={gameState?.points || 0} />
 
       <View style={styles.tabs}>
         <TabButton
@@ -651,25 +642,6 @@ function PowerCard({ power, usedToday, onWatchAd }: PowerCardProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    paddingHorizontal: Spacing.xl,
-    marginBottom: Spacing.lg,
-  },
-  pointsContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.md,
-    gap: Spacing.sm,
-  },
-  pointsText: {
-    fontSize: 18,
-    fontWeight: "800",
-    color: "#FFD700",
   },
   tabs: {
     flexDirection: "row",

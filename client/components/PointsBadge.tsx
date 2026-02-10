@@ -21,10 +21,9 @@ export default function PointsBadge({ points }: PointsBadgeProps) {
 
 const styles = StyleSheet.create({
   container: {
-    position: "absolute",
-    top: 0,
-    right: Spacing.xl,
-    zIndex: 10,
+    alignItems: "flex-end",
+    paddingHorizontal: Spacing.xl,
+    marginBottom: Spacing.sm,
   },
   badge: {
     flexDirection: "row",
