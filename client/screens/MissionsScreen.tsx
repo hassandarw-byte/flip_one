@@ -327,11 +327,14 @@ const styles = StyleSheet.create({
   claimButtonGradient: {
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
+    alignItems: "center",
+    justifyContent: "center",
   },
   claimButtonText: {
     fontSize: 13,
     fontWeight: "700",
     color: "#FFFFFF",
+    textAlign: "center",
   },
   claimedBadge: {
     width: 32,

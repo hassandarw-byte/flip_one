@@ -322,6 +322,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
     color: "#FFFFFF",
+    textAlign: "center",
   },
   disclaimerText: {
     fontSize: 11,
@@ -333,5 +334,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: GameColors.textSecondary,
     marginTop: Spacing.md,
+    textAlign: "center",
   },
 });

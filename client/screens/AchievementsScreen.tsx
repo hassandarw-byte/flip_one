@@ -212,8 +212,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   headerCenter: {
+    position: "absolute",
+    left: 0,
+    right: 0,
     alignItems: "center",
-    gap: Spacing.sm,
+    justifyContent: "center",
   },
   title: {
     fontSize: 24,

@@ -410,6 +410,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     borderWidth: 1,
     borderColor: GameColors.primary,
+    textAlign: "center",
   },
   saveButton: {
     padding: Spacing.sm,

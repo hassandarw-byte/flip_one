@@ -69,6 +69,7 @@ export default function RootStackNavigator() {
           backgroundColor: GameColors.background,
         },
         headerTintColor: GameColors.textPrimary,
+        headerTitleAlign: "center",
         contentStyle: {
           backgroundColor: GameColors.background,
         },

@@ -200,7 +200,9 @@ export default function LuckyWheelScreen() {
         <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
           <Feather name="arrow-left" size={24} color="#000000" />
         </Pressable>
-        <ThemedText style={styles.title}>Wheel</ThemedText>
+        <View style={styles.headerCenter}>
+          <ThemedText style={styles.title}>Wheel</ThemedText>
+        </View>
         <LinearGradient colors={["#1A1A1A", "#000000"]} style={styles.pointsBadge}>
           <Feather name="star" size={16} color="#FFD700" />
           <ThemedText style={styles.pointsText}>{points}</ThemedText>
@@ -333,10 +335,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  headerCenter: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   title: {
     fontSize: 24,
     fontWeight: "400",
     color: "#9C27B0",
+    textAlign: "center",
   },
   pointsBadge: {
     flexDirection: "row",

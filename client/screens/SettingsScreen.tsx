@@ -416,11 +416,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.md,
+    alignItems: "center",
+    justifyContent: "center",
   },
   priceText: {
     fontSize: 14,
     fontWeight: "700",
     color: "#FFD700",
+    textAlign: "center",
   },
   settingButton: {
     flexDirection: "row",

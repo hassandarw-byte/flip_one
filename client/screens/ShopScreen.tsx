@@ -701,6 +701,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "700",
     color: "#FFFFFF",
+    textAlign: "center",
   },
   listContent: {
     paddingHorizontal: Spacing.xl,
@@ -814,6 +815,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: GameColors.success,
     fontWeight: "700",
+    textAlign: "center",
   },
   priceTag: {
     flexDirection: "row",
@@ -834,6 +836,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "700",
     color: "#FFD700",
+    textAlign: "center",
   },
   premiumPriceTag: {
     flexDirection: "row",
@@ -851,6 +854,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "700",
     color: "#FFD700",
+    textAlign: "center",
   },
   powerCard: {
     marginBottom: Spacing.md,
@@ -899,6 +903,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "700",
     color: "#FFFFFF",
+    textAlign: "center",
   },
   powerCardUsed: {
     opacity: 0.6,
@@ -916,5 +921,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "600",
     color: GameColors.textMuted,
+    textAlign: "center",
   },
 });

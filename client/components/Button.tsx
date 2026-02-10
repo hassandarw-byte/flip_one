@@ -88,5 +88,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontWeight: "600",
+    textAlign: "center",
   },
 });
