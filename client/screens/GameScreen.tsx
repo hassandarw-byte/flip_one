@@ -56,8 +56,6 @@ import {
   startGasPedalSound,
   stopGasPedalSound,
   initializeSounds,
-  startHeartbeat,
-  stopHeartbeat,
 } from "@/lib/sounds";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useNightMode } from "@/contexts/NightModeContext";
@@ -558,7 +556,6 @@ export default function GameScreen() {
   };
 
   const cleanupGame = useCallback(() => {
-    stopHeartbeat();
     stopGasPedalSound();
     if (gameLoopRef.current) {
       clearInterval(gameLoopRef.current);
@@ -605,8 +602,6 @@ export default function GameScreen() {
     
     isDyingRef.current = true;
     
-    // Stop heartbeat and gas pedal sounds
-    stopHeartbeat();
     stopGasPedalSound();
     
     // Slow motion effect before death
@@ -790,11 +785,6 @@ export default function GameScreen() {
       opacity: Math.random() * 0.5 + 0.3,
     }));
     setFloatingParticles(initialParticles);
-    
-    // Start heartbeat sound for tension
-    if (gameState?.soundEnabled) {
-      startHeartbeat(true);
-    }
     
     gameLoopRef.current = setInterval(() => {
       if (isGameOverRef.current) return;

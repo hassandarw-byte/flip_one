@@ -8,7 +8,6 @@ let flipUpPlayer: AudioPlayer | null = null;
 let flipDownPlayer: AudioPlayer | null = null;
 let gameOverPlayer: AudioPlayer | null = null;
 let scorePlayer: AudioPlayer | null = null;
-let sirenPlayer: AudioPlayer | null = null;
 let powerUpPlayer: AudioPlayer | null = null;
 let collectPlayer: AudioPlayer | null = null;
 let thunderPlayer: AudioPlayer | null = null;
@@ -22,7 +21,6 @@ const FLIP_UP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2568/2568
 const FLIP_DOWN_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3";
 const GAME_OVER_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2656/2656-preview.mp3";
 const SCORE_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3";
-const TENSION_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2457/2457-preview.mp3";
 const POWER_UP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3";
 // Classic arcade coin collection sound
 const COLLECT_RING_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3";
@@ -34,7 +32,6 @@ const THUNDER_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/1155/1155
 const WHEEL_SPIN_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/1653/1653-preview.mp3";
 
 let soundsLoaded = false;
-let heartbeatInterval: ReturnType<typeof setInterval> | null = null;
 
 export async function initializeSounds(): Promise<void> {
   if (soundsLoaded) return;
@@ -48,7 +45,6 @@ export async function initializeSounds(): Promise<void> {
     flipDownPlayer = createAudioPlayer({ uri: FLIP_DOWN_SOUND_URI });
     gameOverPlayer = createAudioPlayer({ uri: GAME_OVER_SOUND_URI });
     scorePlayer = createAudioPlayer({ uri: SCORE_SOUND_URI });
-    sirenPlayer = createAudioPlayer({ uri: TENSION_SOUND_URI });
     powerUpPlayer = createAudioPlayer({ uri: POWER_UP_SOUND_URI });
     collectPlayer = createAudioPlayer({ uri: COLLECT_RING_SOUND_URI });
     thunderPlayer = createAudioPlayer({ uri: THUNDER_SOUND_URI });
@@ -204,33 +200,6 @@ export function stopGasPedalSound(): void {
     }
   } catch (error) {
     // Sound not available
-  }
-}
-
-export function startHeartbeat(soundEnabled: boolean): void {
-  if (!soundEnabled) return;
-  stopHeartbeat();
-  
-  const playHeartbeat = () => {
-    try {
-      if (sirenPlayer) {
-        sirenPlayer.volume = 0.12;
-        sirenPlayer.seekTo(0);
-        sirenPlayer.play();
-      }
-    } catch (error) {
-      // Sound not available
-    }
-  };
-  
-  playHeartbeat();
-  heartbeatInterval = setInterval(playHeartbeat, 1000);
-}
-
-export function stopHeartbeat(): void {
-  if (heartbeatInterval) {
-    clearInterval(heartbeatInterval);
-    heartbeatInterval = null;
   }
 }
 
@@ -406,7 +375,6 @@ export async function triggerMovementHaptic(hapticsEnabled: boolean): Promise<vo
 }
 
 export async function cleanupSounds(): Promise<void> {
-  stopHeartbeat();
   stopGasPedalSound();
   
   try {
@@ -414,7 +382,6 @@ export async function cleanupSounds(): Promise<void> {
     if (flipDownPlayer) flipDownPlayer.release();
     if (gameOverPlayer) gameOverPlayer.release();
     if (scorePlayer) scorePlayer.release();
-    if (sirenPlayer) sirenPlayer.release();
     if (powerUpPlayer) powerUpPlayer.release();
     if (collectPlayer) collectPlayer.release();
     if (thunderPlayer) thunderPlayer.release();
@@ -425,7 +392,6 @@ export async function cleanupSounds(): Promise<void> {
     flipDownPlayer = null;
     gameOverPlayer = null;
     scorePlayer = null;
-    sirenPlayer = null;
     powerUpPlayer = null;
     collectPlayer = null;
     thunderPlayer = null;
