@@ -74,19 +74,19 @@ const SKINS: SkinItem[] = [
 ];
 
 const PREMIUM_SKINS: SkinItem[] = [
-  { id: "dark_knight", name: "Shadow Knight", colors: ["#1a1a2e", "#16213e"], price: 1000, isPremium: true, icon: "shield", image: require("@/assets/images/dark-knight.png") },
-  { id: "web_hero", name: "Web Spinner", colors: ["#e63946", "#1d3557"], price: 1500, isPremium: true, icon: "target", image: require("@/assets/images/web-hero.png") },
-  { id: "green_giant", name: "Forest Titan", colors: ["#2d6a4f", "#40916c"], price: 2000, isPremium: true, icon: "zap", image: require("@/assets/images/green-giant.png") },
-  { id: "iron_armor", name: "Steel Guardian", colors: ["#c1121f", "#ffd60a"], price: 2500, isPremium: true, icon: "cpu", image: require("@/assets/images/iron-armor.png") },
-  { id: "sonic", name: "Speed Dash", colors: ["#1E90FF", "#4169E1"], price: 3000, isPremium: true, icon: "zap", image: require("@/assets/images/sonic.jpg") },
-  { id: "cozy_bunny", name: "Cozy Bunny", colors: ["#8B4513", "#D2691E"], price: 3500, isPremium: true, icon: "smile", image: require("@/assets/images/cozy-bunny.webp") },
-  { id: "flash", name: "Lightning Bolt", colors: ["#DC143C", "#FFD700"], price: 4000, isPremium: true, icon: "zap", image: require("@/assets/images/flash.jpg") },
-  { id: "ice_queen", name: "Frost Queen", colors: ["#90e0ef", "#48cae4"], price: 4500, isPremium: true, icon: "star", image: require("@/assets/images/ice-queen.png") },
+  { id: "shadow_ninja", name: "Shadow Ninja", colors: ["#1a1a2e", "#2d1b69"], price: 1000, isPremium: true, icon: "shield", image: require("@/assets/images/shadow-ninja.png") },
+  { id: "web_crawler", name: "Web Crawler", colors: ["#e67e22", "#f39c12"], price: 1500, isPremium: true, icon: "target", image: require("@/assets/images/web-crawler.png") },
+  { id: "forest_spirit", name: "Forest Spirit", colors: ["#2d6a4f", "#40916c"], price: 2000, isPremium: true, icon: "zap", image: require("@/assets/images/forest-spirit.png") },
+  { id: "steel_bot", name: "Steel Bot", colors: ["#b0bec5", "#ffd60a"], price: 2500, isPremium: true, icon: "cpu", image: require("@/assets/images/steel-bot.png") },
+  { id: "speed_bird", name: "Speed Bird", colors: ["#1E90FF", "#4169E1"], price: 3000, isPremium: true, icon: "zap", image: require("@/assets/images/speed-bird.png") },
+  { id: "cozy_bunny", name: "Cozy Bunny", colors: ["#8B4513", "#D2691E"], price: 3500, isPremium: true, icon: "smile", image: require("@/assets/images/cozy-bunny.png") },
+  { id: "golden_firefly", name: "Golden Firefly", colors: ["#DC143C", "#FFD700"], price: 4000, isPremium: true, icon: "zap", image: require("@/assets/images/golden-firefly.png") },
+  { id: "frost_fox", name: "Frost Fox", colors: ["#90e0ef", "#48cae4"], price: 4500, isPremium: true, icon: "star", image: require("@/assets/images/frost-fox.png") },
   { id: "sweet_kitty", name: "Sweet Kitty", colors: ["#FF69B4", "#FF1493"], price: 5000, isPremium: true, icon: "heart", image: require("@/assets/images/sweet-kitty.png") },
-  { id: "purple_devil", name: "Purple Devil", colors: ["#9370DB", "#8B008B"], price: 5500, isPremium: true, icon: "zap", image: require("@/assets/images/purple-devil.jpg") },
-  { id: "superman", name: "Sky Champion", colors: ["#0057B8", "#DC143C"], price: 6000, isPremium: true, icon: "shield", image: require("@/assets/images/superman.png") },
+  { id: "purple_imp", name: "Purple Imp", colors: ["#9370DB", "#8B008B"], price: 5500, isPremium: true, icon: "zap", image: require("@/assets/images/purple-imp.png") },
+  { id: "sky_eagle", name: "Sky Eagle", colors: ["#0057B8", "#FFD700"], price: 6000, isPremium: true, icon: "shield", image: require("@/assets/images/sky-eagle.png") },
   { id: "kawaii_cat", name: "Kawaii Cat", colors: ["#ffb6c1", "#ff69b4"], price: 6500, isPremium: true, icon: "heart", image: require("@/assets/images/kawaii-cat.png") },
-  { id: "captain_star", name: "Star Commander", colors: ["#002855", "#bf0a30"], price: 7000, isPremium: true, icon: "award", image: require("@/assets/images/captain-star.png") },
+  { id: "star_hamster", name: "Star Hamster", colors: ["#002855", "#bf0a30"], price: 7000, isPremium: true, icon: "award", image: require("@/assets/images/star-hamster.png") },
 ];
 
 const SPECIAL_POWERS: PowerItem[] = [

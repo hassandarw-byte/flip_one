@@ -106,45 +106,45 @@ export const SkinColors: Record<string, [string, string, string]> = {
   red: ["#FFA6A6", GameColors.candy1, GameColors.spikeGlow],
   green: ["#8CF07F", GameColors.candy6, GameColors.successGlow],
   gold: ["#FFF4C4", "#FFD700", "#B8860B"],
-  dark_knight: ["#3D3D5C", "#1a1a2e", "#16213e"],
-  web_hero: ["#FF7A85", "#e63946", "#1d3557"],
-  green_giant: ["#5CAB85", "#2d6a4f", "#40916c"],
-  iron_armor: ["#FF6B6B", "#c1121f", "#ffd60a"],
-  ice_queen: ["#C4F5FF", "#90e0ef", "#48cae4"],
+  shadow_ninja: ["#3D3D5C", "#1a1a2e", "#2d1b69"],
+  web_crawler: ["#F0A050", "#e67e22", "#f39c12"],
+  forest_spirit: ["#5CAB85", "#2d6a4f", "#40916c"],
+  steel_bot: ["#D0D8E0", "#b0bec5", "#ffd60a"],
+  frost_fox: ["#C4F5FF", "#90e0ef", "#48cae4"],
   kawaii_cat: ["#FFE4E9", "#ffb6c1", "#ff69b4"],
-  captain_star: ["#4D7CC3", "#002855", "#bf0a30"],
+  star_hamster: ["#4D7CC3", "#002855", "#bf0a30"],
 };
 
 export const CharacterThemes: Record<string, { primary: string; secondary: string; accent: string; gradientStart: string; gradientEnd: string }> = {
-  dark_knight: {
+  shadow_ninja: {
     primary: "#1a1a2e",
-    secondary: "#16213e",
-    accent: "#e94560",
+    secondary: "#2d1b69",
+    accent: "#7c3aed",
     gradientStart: "#0f0f1a",
     gradientEnd: "#1a1a2e",
   },
-  web_hero: {
-    primary: "#e63946",
-    secondary: "#1d3557",
-    accent: "#457b9d",
-    gradientStart: "#1d3557",
-    gradientEnd: "#2a4a6d",
+  web_crawler: {
+    primary: "#e67e22",
+    secondary: "#f39c12",
+    accent: "#f1c40f",
+    gradientStart: "#7f4510",
+    gradientEnd: "#c0690a",
   },
-  green_giant: {
+  forest_spirit: {
     primary: "#2d6a4f",
     secondary: "#40916c",
     accent: "#95d5b2",
     gradientStart: "#1b4332",
     gradientEnd: "#2d6a4f",
   },
-  iron_armor: {
-    primary: "#c1121f",
+  steel_bot: {
+    primary: "#b0bec5",
     secondary: "#ffd60a",
-    accent: "#780000",
-    gradientStart: "#3d0000",
-    gradientEnd: "#780000",
+    accent: "#78909c",
+    gradientStart: "#546e7a",
+    gradientEnd: "#78909c",
   },
-  ice_queen: {
+  frost_fox: {
     primary: "#90e0ef",
     secondary: "#48cae4",
     accent: "#caf0f8",
@@ -158,7 +158,7 @@ export const CharacterThemes: Record<string, { primary: string; secondary: strin
     gradientStart: "#ff85a2",
     gradientEnd: "#ffa6c1",
   },
-  captain_star: {
+  star_hamster: {
     primary: "#002855",
     secondary: "#bf0a30",
     accent: "#f0f0f0",
