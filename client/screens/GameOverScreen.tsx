@@ -199,7 +199,7 @@ export default function GameOverScreen() {
         </View>
       ) : null}
 
-      <View style={styles.sparklesContainer}>
+      <View style={styles.sparklesContainer} pointerEvents="none">
         {Array.from({ length: 20 }).map((_, i) => (
           <Animated.View
             key={i}
