@@ -199,6 +199,20 @@ export default function GameScreen() {
   const [successfulFlips, setSuccessfulFlips] = useState(0);
   const [showSuperman, setShowSuperman] = useState(false);
   const [supermanX, setSupermanX] = useState(-100);
+  const [showSpiderman, setShowSpiderman] = useState(false);
+  const [spidermanX, setSpidermanX] = useState(width / 2);
+  const [spidermanY, setSpidermanY] = useState(-100);
+  const [spidermanSwing, setSpidermanSwing] = useState(0);
+  const [showCaptain, setShowCaptain] = useState(false);
+  const [captainX, setCaptainX] = useState(-100);
+  const [showBatman, setShowBatman] = useState(false);
+  const [batmanX, setBatmanX] = useState(width + 100);
+  const [batmanY, setBatmanY] = useState(height * 0.2);
+  const [batmanRopeY, setBatmanRopeY] = useState(0);
+  const [showHulk, setShowHulk] = useState(false);
+  const [hulkX, setHulkX] = useState(-80);
+  const [hulkY, setHulkY] = useState(height * 0.7);
+  const [hulkJumpPhase, setHulkJumpPhase] = useState(0);
   const [seaCreatures, setSeaCreatures] = useState<SeaCreature[]>([]);
   
   const currentTrackRef = useRef<"top" | "bottom">("bottom");
@@ -573,6 +587,20 @@ export default function GameScreen() {
     setSuccessfulFlips(0);
     setShowSuperman(false);
     setSupermanX(-100);
+    setShowSpiderman(false);
+    setSpidermanX(width / 2);
+    setSpidermanY(-100);
+    setSpidermanSwing(0);
+    setShowCaptain(false);
+    setCaptainX(-100);
+    setShowBatman(false);
+    setBatmanX(width + 100);
+    setBatmanY(height * 0.2);
+    setBatmanRopeY(0);
+    setShowHulk(false);
+    setHulkX(-80);
+    setHulkY(height * 0.7);
+    setHulkJumpPhase(0);
   }, []);
 
   const handleGameOver = useCallback(async () => {
@@ -811,7 +839,6 @@ export default function GameScreen() {
         })
       );
       
-      // Update superman position (flies across screen slowly)
       setSupermanX(prev => {
         if (prev > width + 100) {
           setShowSuperman(false);
@@ -819,6 +846,76 @@ export default function GameScreen() {
         }
         return prev + 3;
       });
+
+      if (showSpiderman) {
+        setSpidermanSwing(prev => prev + 0.06);
+        setSpidermanY(prev => {
+          const target = height * 0.35;
+          if (prev < target) return prev + 4;
+          return target + Math.sin(spidermanSwing * 3) * 40;
+        });
+        setSpidermanX(prev => {
+          const swingAmount = Math.sin(spidermanSwing) * 80;
+          const newX = width * 0.5 + swingAmount;
+          if (spidermanSwing > Math.PI * 6) {
+            setSpidermanY(p => p + 8);
+            if (spidermanY > height + 100) {
+              setShowSpiderman(false);
+            }
+          }
+          return newX;
+        });
+      }
+
+      if (showCaptain) {
+        setCaptainX(prev => {
+          if (prev > width + 100) {
+            setShowCaptain(false);
+            return -100;
+          }
+          return prev + 4;
+        });
+      }
+
+      if (showBatman) {
+        setBatmanRopeY(prev => {
+          if (prev < height * 0.5) return prev + 5;
+          return prev;
+        });
+        setBatmanX(prev => {
+          if (batmanRopeY >= height * 0.5) {
+            const newX = prev - 4;
+            if (newX < -100) {
+              setShowBatman(false);
+              return width + 100;
+            }
+            return newX;
+          }
+          return prev;
+        });
+        setBatmanY(prev => {
+          if (batmanRopeY < height * 0.5) {
+            return height * 0.15 + batmanRopeY;
+          }
+          return prev;
+        });
+      }
+
+      if (showHulk) {
+        setHulkJumpPhase(prev => prev + 0.08);
+        setHulkX(prev => {
+          const newX = prev + 5;
+          if (newX > width + 100) {
+            setShowHulk(false);
+            return -80;
+          }
+          return newX;
+        });
+        setHulkY(prev => {
+          const jumpHeight = Math.abs(Math.sin(hulkJumpPhase)) * 200;
+          return height * 0.7 - jumpHeight;
+        });
+      }
 
       setObstacles((prev) => {
         if (freezeActiveRef.current) {
@@ -1067,13 +1164,33 @@ export default function GameScreen() {
     currentTrackRef.current = newTrack;
     flipCountRef.current += 1;
     
-    // Track successful flips for superman trigger
     setSuccessfulFlips(prev => {
       const newCount = prev + 1;
-      // Trigger superman after 15 successful flips
       if (newCount === 15 && !showSuperman) {
         setShowSuperman(true);
         setSupermanX(-100);
+      }
+      if (newCount === 20 && !showSpiderman) {
+        setShowSpiderman(true);
+        setSpidermanX(width * 0.6);
+        setSpidermanY(-60);
+        setSpidermanSwing(0);
+      }
+      if (newCount === 25 && !showCaptain) {
+        setShowCaptain(true);
+        setCaptainX(-100);
+      }
+      if (newCount === 30 && !showBatman) {
+        setShowBatman(true);
+        setBatmanX(width + 80);
+        setBatmanY(height * 0.15);
+        setBatmanRopeY(0);
+      }
+      if (newCount === 35 && !showHulk) {
+        setShowHulk(true);
+        setHulkX(-80);
+        setHulkY(height * 0.7);
+        setHulkJumpPhase(0);
       }
       return newCount;
     });
@@ -1259,6 +1376,100 @@ export default function GameScreen() {
             <View style={styles.supermanLogo} />
           </View>
         </Animated.View>
+      ) : null}
+
+      {showSpiderman ? (
+        <View style={[styles.supermanContainer, { left: spidermanX - 18, top: spidermanY }]}>
+          <View style={{ position: "absolute", top: -spidermanY, left: 18, width: 2, backgroundColor: "#CCCCCC", height: spidermanY, zIndex: 90 }} />
+          <View style={{ position: "absolute", top: -20, left: 8, width: 1, backgroundColor: "#CCCCCC", height: 25, transform: [{ rotate: "-30deg" }], zIndex: 90 }} />
+          <View style={{ position: "absolute", top: -20, left: 28, width: 1, backgroundColor: "#CCCCCC", height: 25, transform: [{ rotate: "30deg" }], zIndex: 90 }} />
+          <View style={{ width: 36, height: 22, backgroundColor: "#CC0000", borderRadius: 11, position: "relative" }}>
+            <View style={{ position: "absolute", right: -6, top: 1, width: 14, height: 14, borderRadius: 7, backgroundColor: "#CC0000", borderWidth: 1, borderColor: "#990000" }}>
+              <View style={{ position: "absolute", top: 4, left: 2, width: 4, height: 3, borderRadius: 2, backgroundColor: "#FFFFFF", borderWidth: 1, borderColor: "#1A1A1A" }} />
+              <View style={{ position: "absolute", top: 4, right: 2, width: 4, height: 3, borderRadius: 2, backgroundColor: "#FFFFFF", borderWidth: 1, borderColor: "#1A1A1A" }} />
+            </View>
+            <View style={{ position: "absolute", top: 6, left: 4, right: 12, height: 2, backgroundColor: "#1A1A2E" }} />
+            <View style={{ position: "absolute", top: 10, left: 4, right: 12, height: 2, backgroundColor: "#0000CC" }} />
+            <View style={{ position: "absolute", bottom: 0, left: 4, right: 12, height: 8, backgroundColor: "#0000CC", borderBottomLeftRadius: 8, borderBottomRightRadius: 8 }} />
+            <View style={{ position: "absolute", right: -16, top: 7, width: 16, height: 6, backgroundColor: "#CC0000", borderRadius: 3 }}>
+              <View style={{ position: "absolute", right: -3, top: 0, width: 6, height: 6, borderRadius: 3, backgroundColor: "#CC0000" }} />
+            </View>
+          </View>
+        </View>
+      ) : null}
+
+      {showCaptain ? (
+        <View style={[styles.supermanContainer, { left: captainX, top: height * 0.25 }]}>
+          <View style={{ width: 36, height: 20, backgroundColor: "#002868", borderRadius: 10, position: "relative" }}>
+            <View style={{ position: "absolute", top: 0, left: 4, right: 12, height: 4, backgroundColor: "#BF0A30" }} />
+            <View style={{ position: "absolute", top: 8, left: 4, right: 12, height: 4, backgroundColor: "#FFFFFF" }} />
+            <View style={{ position: "absolute", top: 16, left: 4, right: 12, height: 4, backgroundColor: "#BF0A30" }} />
+            <View style={{ position: "absolute", right: -8, top: 0, width: 14, height: 14, borderRadius: 7, backgroundColor: "#FFCC99", borderWidth: 1, borderColor: "#E5B98A" }}>
+              <View style={{ position: "absolute", top: -3, left: 1, right: 1, height: 8, backgroundColor: "#002868", borderTopLeftRadius: 7, borderTopRightRadius: 7 }}>
+                <View style={{ position: "absolute", top: 3, left: 3, width: 5, height: 3, backgroundColor: "#FFFFFF" }}>
+                  <ThemedText style={{ fontSize: 3, color: "#002868", fontWeight: "bold", textAlign: "center" }}>A</ThemedText>
+                </View>
+              </View>
+              <View style={{ position: "absolute", top: 5, left: 3, width: 3, height: 3, borderRadius: 1.5, backgroundColor: "#0066CC" }} />
+              <View style={{ position: "absolute", top: 5, right: 3, width: 3, height: 3, borderRadius: 1.5, backgroundColor: "#0066CC" }} />
+            </View>
+            <View style={{ position: "absolute", right: -18, top: 5, width: 18, height: 7, backgroundColor: "#002868", borderRadius: 3 }}>
+              <View style={{ position: "absolute", right: -3, top: 0, width: 7, height: 7, borderRadius: 3.5, backgroundColor: "#FFCC99" }} />
+            </View>
+            <View style={{ position: "absolute", left: -14, top: -2, width: 16, height: 16, borderRadius: 8, backgroundColor: "#C0C0C0", borderWidth: 2, borderColor: "#BF0A30" }}>
+              <View style={{ position: "absolute", top: 4, left: 4, width: 8, height: 6, backgroundColor: "#FFFFFF" }}>
+                <View style={{ width: 0, height: 0, borderLeftWidth: 4, borderRightWidth: 4, borderBottomWidth: 6, borderLeftColor: "transparent", borderRightColor: "transparent", borderBottomColor: "#002868", alignSelf: "center" }} />
+              </View>
+            </View>
+          </View>
+        </View>
+      ) : null}
+
+      {showBatman ? (
+        <View style={[styles.supermanContainer, { left: batmanX, top: batmanY }]}>
+          <View style={{ position: "absolute", top: -batmanRopeY, left: 18, width: 2, backgroundColor: "#555555", height: batmanRopeY, zIndex: 90 }} />
+          <View style={{ width: 36, height: 20, backgroundColor: "#1A1A2E", borderRadius: 10, position: "relative" }}>
+            <View style={{ position: "absolute", left: -10, top: 2, width: 14, height: 16, backgroundColor: "#1A1A2E", borderTopLeftRadius: 6, borderBottomLeftRadius: 8 }} />
+            <View style={{ position: "absolute", right: -8, top: 0, width: 14, height: 14, borderRadius: 7, backgroundColor: "#2D2D44" }}>
+              <View style={{ position: "absolute", top: -6, left: -2, width: 6, height: 8, backgroundColor: "#1A1A2E", transform: [{ rotate: "-15deg" }], borderTopLeftRadius: 3, borderTopRightRadius: 1 }} />
+              <View style={{ position: "absolute", top: -6, right: -2, width: 6, height: 8, backgroundColor: "#1A1A2E", transform: [{ rotate: "15deg" }], borderTopLeftRadius: 1, borderTopRightRadius: 3 }} />
+              <View style={{ position: "absolute", top: 4, left: 2, width: 4, height: 2, borderRadius: 1, backgroundColor: "#FFFFFF" }} />
+              <View style={{ position: "absolute", top: 4, right: 2, width: 4, height: 2, borderRadius: 1, backgroundColor: "#FFFFFF" }} />
+            </View>
+            <View style={{ position: "absolute", top: 5, left: 10, width: 10, height: 6, backgroundColor: "#FFD700" }}>
+              <View style={{ width: 0, height: 0, borderLeftWidth: 5, borderRightWidth: 5, borderBottomWidth: 4, borderLeftColor: "transparent", borderRightColor: "transparent", borderBottomColor: "#1A1A2E", alignSelf: "center", position: "absolute", top: 1 }} />
+            </View>
+            <View style={{ position: "absolute", right: -16, top: 7, width: 16, height: 6, backgroundColor: "#1A1A2E", borderRadius: 3 }} />
+          </View>
+        </View>
+      ) : null}
+
+      {showHulk ? (
+        <View style={[styles.supermanContainer, { left: hulkX, top: hulkY }]}>
+          {hulkY < height * 0.65 ? (
+            <View style={{ position: "absolute", bottom: -8, left: 10, width: 16, height: 8, backgroundColor: "rgba(0,0,0,0.2)", borderRadius: 8 }} />
+          ) : null}
+          <View style={{ width: 44, height: 32, backgroundColor: "#2E7D32", borderRadius: 8, position: "relative" }}>
+            <View style={{ position: "absolute", right: -6, top: -4, width: 18, height: 18, borderRadius: 9, backgroundColor: "#388E3C" }}>
+              <View style={{ position: "absolute", top: -3, left: 2, right: 2, height: 8, backgroundColor: "#1B5E20", borderTopLeftRadius: 6, borderTopRightRadius: 6 }} />
+              <View style={{ position: "absolute", top: 6, left: 2, width: 5, height: 4, borderRadius: 2, backgroundColor: "#FFFFFF" }}>
+                <View style={{ position: "absolute", top: 1, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#1A1A1A" }} />
+              </View>
+              <View style={{ position: "absolute", top: 6, right: 2, width: 5, height: 4, borderRadius: 2, backgroundColor: "#FFFFFF" }}>
+                <View style={{ position: "absolute", top: 1, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#1A1A1A" }} />
+              </View>
+              <View style={{ position: "absolute", bottom: 1, left: 5, width: 8, height: 3, borderRadius: 1, backgroundColor: "#1B5E20" }} />
+            </View>
+            <View style={{ position: "absolute", left: -12, top: 2, width: 16, height: 12, backgroundColor: "#2E7D32", borderRadius: 6 }}>
+              <View style={{ position: "absolute", left: -4, top: 2, width: 8, height: 8, borderRadius: 4, backgroundColor: "#388E3C" }} />
+            </View>
+            <View style={{ position: "absolute", right: -14, top: 8, width: 18, height: 10, backgroundColor: "#2E7D32", borderRadius: 5 }}>
+              <View style={{ position: "absolute", right: -4, top: 2, width: 8, height: 8, borderRadius: 4, backgroundColor: "#388E3C" }} />
+            </View>
+            <View style={{ position: "absolute", bottom: -10, left: 6, width: 12, height: 14, backgroundColor: "#5D4037", borderBottomLeftRadius: 4, borderBottomRightRadius: 4 }} />
+            <View style={{ position: "absolute", bottom: -10, right: 6, width: 12, height: 14, backgroundColor: "#5D4037", borderBottomLeftRadius: 4, borderBottomRightRadius: 4 }} />
+          </View>
+        </View>
       ) : null}
 
       <View style={[styles.scoreContainer, { top: insets.top + Spacing.lg }]}>
