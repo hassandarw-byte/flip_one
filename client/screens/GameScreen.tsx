@@ -33,6 +33,7 @@ import {
   incrementTotalGames,
   updateMissionProgress,
   usePower,
+  checkAndUnlockAchievements,
   GameState,
 } from "@/lib/storage";
 import { 
@@ -671,6 +672,13 @@ export default function GameScreen() {
 
         const pointsEarned = Math.floor(currentScore / 2) + bonusPointsRef.current;
         await savePoints(gameState.points + pointsEarned);
+
+        const updatedState: GameState = {
+          ...gameState,
+          totalGames: (gameState.totalGames || 0) + 1,
+          totalFlips: (gameState.totalFlips || 0) + flipCountRef.current,
+        };
+        await checkAndUnlockAchievements(updatedState, currentScore, combo);
       }
 
       navigation.replace("GameOver", {
@@ -679,7 +687,7 @@ export default function GameScreen() {
         isNewBest: currentScore > (gameState?.bestScore || 0),
       });
     }, 200);
-  }, [gameState, score, navigation, cleanupGame]);
+  }, [gameState, score, combo, navigation, cleanupGame]);
 
   const startGame = useCallback(() => {
     const gameStartTime = Date.now();

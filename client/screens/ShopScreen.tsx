@@ -806,6 +806,8 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#FFD700",
     textAlign: "center",
+    lineHeight: 14,
+    includeFontPadding: false,
   },
   premiumPriceTag: {
     flexDirection: "row",
@@ -824,6 +826,8 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#FFD700",
     textAlign: "center",
+    lineHeight: 14,
+    includeFontPadding: false,
   },
   powerCard: {
     marginBottom: Spacing.md,

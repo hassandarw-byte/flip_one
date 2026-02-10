@@ -303,5 +303,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "700",
     color: "#9C27B0",
+    lineHeight: 16,
+    includeFontPadding: false,
   },
 });

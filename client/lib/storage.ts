@@ -650,7 +650,7 @@ export async function checkAndUnlockAchievements(gameState: GameState, score: nu
   const unlockedIds: string[] = [];
   
   try {
-    if (gameState.totalGames === 0) {
+    if (gameState.totalGames <= 1) {
       const result = await unlockAchievement("first_game");
       if (result.unlocked) unlockedIds.push("first_game");
     }

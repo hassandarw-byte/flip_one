@@ -301,6 +301,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
     color: "#000000",
+    lineHeight: 18,
+    includeFontPadding: false,
   },
   claimButton: {
     borderRadius: BorderRadius.md,

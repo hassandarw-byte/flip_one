@@ -44,5 +44,7 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     color: "#FFD700",
     textAlign: "center",
+    lineHeight: 16,
+    includeFontPadding: false,
   },
 });
