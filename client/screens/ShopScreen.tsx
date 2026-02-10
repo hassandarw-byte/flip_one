@@ -462,7 +462,7 @@ function SkinCard({
           </View>
         ) : (
           <View style={[styles.priceTag, !canAfford && styles.priceTagDisabled]}>
-            <Feather name="star" size={12} color="#000000" />
+            <Feather name="star" size={12} color="#FFD700" />
             <ThemedText style={styles.priceText}>{skin.price}</ThemedText>
           </View>
         )}
@@ -821,12 +821,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: Spacing.xs,
-    backgroundColor: GameColors.gold + "20",
+    backgroundColor: "#1A1A1A",
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.full,
     borderWidth: 1,
-    borderColor: GameColors.gold + "40",
+    borderColor: "#000000",
   },
   priceTagDisabled: {
     opacity: 0.5,
@@ -834,7 +834,7 @@ const styles = StyleSheet.create({
   priceText: {
     fontSize: 13,
     fontWeight: "700",
-    color: "#000000",
+    color: "#FFD700",
   },
   premiumPriceTag: {
     flexDirection: "row",

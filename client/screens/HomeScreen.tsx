@@ -241,10 +241,6 @@ export default function HomeScreen() {
 
   const loadGameState = async () => {
     const state = await getGameState();
-    if (state.points < 10000) {
-      await savePoints(state.points + 10000);
-      state.points = state.points + 10000;
-    }
     setGameState(state);
   };
 
