@@ -1,6 +1,8 @@
 import * as Haptics from "expo-haptics";
 import { createAudioPlayer, AudioPlayer, setAudioModeAsync } from "expo-audio";
 
+const carStartupAsset = require("../assets/sounds/car-startup.mp3");
+
 let flipUpPlayer: AudioPlayer | null = null;
 let flipDownPlayer: AudioPlayer | null = null;
 let gameOverPlayer: AudioPlayer | null = null;
@@ -28,8 +30,7 @@ const COLLECT_RING_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2019
 const CAR_ENGINE_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/559/559-preview.mp3";
 // Real dramatic thunder sound
 const THUNDER_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/1155/1155-preview.mp3";
-// Sports car startup sound
-const CAR_STARTUP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/553/553-preview.mp3";
+// Car startup sound (local asset)
 // Luxury car acceleration sound
 const GAS_PEDAL_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/561/561-preview.mp3";
 // Casino wheel spinning sound
@@ -55,7 +56,7 @@ export async function initializeSounds(): Promise<void> {
     collectPlayer = createAudioPlayer({ uri: COLLECT_RING_SOUND_URI });
     carEnginePlayer = createAudioPlayer({ uri: CAR_ENGINE_SOUND_URI });
     thunderPlayer = createAudioPlayer({ uri: THUNDER_SOUND_URI });
-    carStartupPlayer = createAudioPlayer({ uri: CAR_STARTUP_SOUND_URI });
+    carStartupPlayer = createAudioPlayer(carStartupAsset);
     gasPedalPlayer = createAudioPlayer({ uri: GAS_PEDAL_SOUND_URI });
     wheelSpinPlayer = createAudioPlayer({ uri: WHEEL_SPIN_SOUND_URI });
     
