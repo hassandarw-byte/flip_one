@@ -1342,7 +1342,7 @@ export default function GameScreen() {
         />
       ))}
       
-      {/* Sky Hero flying after 15 successful flips */}
+      {/* Flame Phoenix flying after 15 successful flips */}
       {showSkyHero ? (
         <Animated.View 
           style={[
@@ -1369,96 +1369,102 @@ export default function GameScreen() {
         </Animated.View>
       ) : null}
 
+      {/* Crystal Spider descending after 20 successful flips */}
       {showSwingHero ? (
         <View style={[styles.heroContainer, { left: swingHeroX - 18, top: swingHeroY }]}>
-          <View style={{ position: "absolute", top: -swingHeroY, left: 18, width: 2, backgroundColor: "#CCCCCC", height: swingHeroY, zIndex: 90 }} />
-          <View style={{ position: "absolute", top: -20, left: 8, width: 1, backgroundColor: "#CCCCCC", height: 25, transform: [{ rotate: "-30deg" }], zIndex: 90 }} />
-          <View style={{ position: "absolute", top: -20, left: 28, width: 1, backgroundColor: "#CCCCCC", height: 25, transform: [{ rotate: "30deg" }], zIndex: 90 }} />
-          <View style={{ width: 36, height: 22, backgroundColor: "#CC0000", borderRadius: 11, position: "relative" }}>
-            <View style={{ position: "absolute", right: -6, top: 1, width: 14, height: 14, borderRadius: 7, backgroundColor: "#CC0000", borderWidth: 1, borderColor: "#990000" }}>
-              <View style={{ position: "absolute", top: 4, left: 2, width: 4, height: 3, borderRadius: 2, backgroundColor: "#FFFFFF", borderWidth: 1, borderColor: "#1A1A1A" }} />
-              <View style={{ position: "absolute", top: 4, right: 2, width: 4, height: 3, borderRadius: 2, backgroundColor: "#FFFFFF", borderWidth: 1, borderColor: "#1A1A1A" }} />
+          <View style={{ position: "absolute", top: -swingHeroY, left: 18, width: 2, backgroundColor: "#C0C0C0", height: swingHeroY, zIndex: 90 }} />
+          <View style={{ position: "absolute", top: -20, left: 8, width: 1, backgroundColor: "#C0C0C0", height: 25, transform: [{ rotate: "-30deg" }], zIndex: 90 }} />
+          <View style={{ position: "absolute", top: -20, left: 28, width: 1, backgroundColor: "#C0C0C0", height: 25, transform: [{ rotate: "30deg" }], zIndex: 90 }} />
+          <View style={{ width: 36, height: 22, backgroundColor: "#7B1FA2", borderRadius: 11, position: "relative" }}>
+            <View style={{ position: "absolute", right: -6, top: 1, width: 14, height: 14, borderRadius: 7, backgroundColor: "#9C27B0", borderWidth: 1, borderColor: "#6A1B9A" }}>
+              <View style={{ position: "absolute", top: 3, left: 1, width: 5, height: 4, borderRadius: 2, backgroundColor: "#E1BEE7" }}>
+                <View style={{ position: "absolute", top: 1, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#1A1A1A" }} />
+              </View>
+              <View style={{ position: "absolute", top: 3, right: 1, width: 5, height: 4, borderRadius: 2, backgroundColor: "#E1BEE7" }}>
+                <View style={{ position: "absolute", top: 1, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#1A1A1A" }} />
+              </View>
             </View>
-            <View style={{ position: "absolute", top: 6, left: 4, right: 12, height: 2, backgroundColor: "#1A1A2E" }} />
-            <View style={{ position: "absolute", top: 10, left: 4, right: 12, height: 2, backgroundColor: "#0000CC" }} />
-            <View style={{ position: "absolute", bottom: 0, left: 4, right: 12, height: 8, backgroundColor: "#0000CC", borderBottomLeftRadius: 8, borderBottomRightRadius: 8 }} />
-            <View style={{ position: "absolute", right: -16, top: 7, width: 16, height: 6, backgroundColor: "#CC0000", borderRadius: 3 }}>
-              <View style={{ position: "absolute", right: -3, top: 0, width: 6, height: 6, borderRadius: 3, backgroundColor: "#CC0000" }} />
-            </View>
+            <View style={{ position: "absolute", top: 8, left: 2, width: 8, height: 3, backgroundColor: "#CE93D8", borderRadius: 1 }} />
+            <View style={{ position: "absolute", top: 12, left: 4, width: 6, height: 3, backgroundColor: "#CE93D8", borderRadius: 1 }} />
+            <View style={{ position: "absolute", left: -10, top: 6, width: 12, height: 4, backgroundColor: "#7B1FA2", borderRadius: 2, transform: [{ rotate: "-20deg" }] }} />
+            <View style={{ position: "absolute", left: -8, top: 12, width: 10, height: 4, backgroundColor: "#7B1FA2", borderRadius: 2, transform: [{ rotate: "15deg" }] }} />
+            <View style={{ position: "absolute", right: -14, top: 6, width: 12, height: 4, backgroundColor: "#7B1FA2", borderRadius: 2, transform: [{ rotate: "20deg" }] }} />
+            <View style={{ position: "absolute", right: -12, top: 12, width: 10, height: 4, backgroundColor: "#7B1FA2", borderRadius: 2, transform: [{ rotate: "-15deg" }] }} />
           </View>
         </View>
       ) : null}
 
+      {/* Storm Cloud floating after 25 successful flips */}
       {showStarWarrior ? (
         <View style={[styles.heroContainer, { left: starWarriorX, top: height * 0.25 }]}>
-          <View style={{ width: 36, height: 20, backgroundColor: "#002868", borderRadius: 10, position: "relative" }}>
-            <View style={{ position: "absolute", top: 0, left: 4, right: 12, height: 4, backgroundColor: "#BF0A30" }} />
-            <View style={{ position: "absolute", top: 8, left: 4, right: 12, height: 4, backgroundColor: "#FFFFFF" }} />
-            <View style={{ position: "absolute", top: 16, left: 4, right: 12, height: 4, backgroundColor: "#BF0A30" }} />
-            <View style={{ position: "absolute", right: -8, top: 0, width: 14, height: 14, borderRadius: 7, backgroundColor: "#FFCC99", borderWidth: 1, borderColor: "#E5B98A" }}>
-              <View style={{ position: "absolute", top: -3, left: 1, right: 1, height: 8, backgroundColor: "#002868", borderTopLeftRadius: 7, borderTopRightRadius: 7 }}>
-                <View style={{ position: "absolute", top: 3, left: 3, width: 5, height: 3, backgroundColor: "#FFFFFF" }}>
-                  <ThemedText style={{ fontSize: 3, color: "#002868", fontWeight: "bold", textAlign: "center" }}>A</ThemedText>
-                </View>
-              </View>
-              <View style={{ position: "absolute", top: 5, left: 3, width: 3, height: 3, borderRadius: 1.5, backgroundColor: "#0066CC" }} />
-              <View style={{ position: "absolute", top: 5, right: 3, width: 3, height: 3, borderRadius: 1.5, backgroundColor: "#0066CC" }} />
+          <View style={{ width: 44, height: 24, backgroundColor: "#546E7A", borderRadius: 12, position: "relative" }}>
+            <View style={{ position: "absolute", top: -8, left: 6, width: 16, height: 16, borderRadius: 8, backgroundColor: "#607D8B" }} />
+            <View style={{ position: "absolute", top: -12, left: 16, width: 20, height: 20, borderRadius: 10, backgroundColor: "#78909C" }} />
+            <View style={{ position: "absolute", top: -4, right: 2, width: 12, height: 12, borderRadius: 6, backgroundColor: "#607D8B" }} />
+            <View style={{ position: "absolute", top: 6, left: 10, width: 5, height: 5, borderRadius: 2.5, backgroundColor: "#FFFFFF" }}>
+              <View style={{ position: "absolute", top: 1, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#263238" }} />
             </View>
-            <View style={{ position: "absolute", right: -18, top: 5, width: 18, height: 7, backgroundColor: "#002868", borderRadius: 3 }}>
-              <View style={{ position: "absolute", right: -3, top: 0, width: 7, height: 7, borderRadius: 3.5, backgroundColor: "#FFCC99" }} />
+            <View style={{ position: "absolute", top: 6, left: 22, width: 5, height: 5, borderRadius: 2.5, backgroundColor: "#FFFFFF" }}>
+              <View style={{ position: "absolute", top: 1, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#263238" }} />
             </View>
-            <View style={{ position: "absolute", left: -14, top: -2, width: 16, height: 16, borderRadius: 8, backgroundColor: "#C0C0C0", borderWidth: 2, borderColor: "#BF0A30" }}>
-              <View style={{ position: "absolute", top: 4, left: 4, width: 8, height: 6, backgroundColor: "#FFFFFF" }}>
-                <View style={{ width: 0, height: 0, borderLeftWidth: 4, borderRightWidth: 4, borderBottomWidth: 6, borderLeftColor: "transparent", borderRightColor: "transparent", borderBottomColor: "#002868", alignSelf: "center" }} />
-              </View>
-            </View>
+            <View style={{ position: "absolute", bottom: -6, left: 10, width: 2, height: 8, backgroundColor: "#FFD54F", transform: [{ rotate: "-10deg" }] }} />
+            <View style={{ position: "absolute", bottom: -8, left: 16, width: 2, height: 10, backgroundColor: "#FFD54F" }} />
+            <View style={{ position: "absolute", bottom: -5, left: 22, width: 2, height: 7, backgroundColor: "#FFD54F", transform: [{ rotate: "10deg" }] }} />
           </View>
         </View>
       ) : null}
 
+      {/* Moonlight Owl gliding after 30 successful flips */}
       {showShadowGlider ? (
         <View style={[styles.heroContainer, { left: shadowGliderX, top: shadowGliderY }]}>
-          <View style={{ position: "absolute", top: -shadowGliderRopeY, left: 18, width: 2, backgroundColor: "#555555", height: shadowGliderRopeY, zIndex: 90 }} />
-          <View style={{ width: 36, height: 20, backgroundColor: "#1A1A2E", borderRadius: 10, position: "relative" }}>
-            <View style={{ position: "absolute", left: -10, top: 2, width: 14, height: 16, backgroundColor: "#1A1A2E", borderTopLeftRadius: 6, borderBottomLeftRadius: 8 }} />
-            <View style={{ position: "absolute", right: -8, top: 0, width: 14, height: 14, borderRadius: 7, backgroundColor: "#2D2D44" }}>
-              <View style={{ position: "absolute", top: -6, left: -2, width: 6, height: 8, backgroundColor: "#1A1A2E", transform: [{ rotate: "-15deg" }], borderTopLeftRadius: 3, borderTopRightRadius: 1 }} />
-              <View style={{ position: "absolute", top: -6, right: -2, width: 6, height: 8, backgroundColor: "#1A1A2E", transform: [{ rotate: "15deg" }], borderTopLeftRadius: 1, borderTopRightRadius: 3 }} />
-              <View style={{ position: "absolute", top: 4, left: 2, width: 4, height: 2, borderRadius: 1, backgroundColor: "#FFFFFF" }} />
-              <View style={{ position: "absolute", top: 4, right: 2, width: 4, height: 2, borderRadius: 1, backgroundColor: "#FFFFFF" }} />
+          <View style={{ position: "absolute", top: -shadowGliderRopeY, left: 18, width: 0, height: 0, zIndex: 90 }} />
+          <View style={{ width: 36, height: 24, backgroundColor: "#3E2723", borderRadius: 12, position: "relative" }}>
+            <View style={{ position: "absolute", left: -14, top: 4, width: 18, height: 12, backgroundColor: "#4E342E", borderTopLeftRadius: 10, borderBottomLeftRadius: 4, transform: [{ rotate: "-5deg" }] }} />
+            <View style={{ position: "absolute", right: -14, top: 4, width: 18, height: 12, backgroundColor: "#4E342E", borderTopRightRadius: 10, borderBottomRightRadius: 4, transform: [{ rotate: "5deg" }] }} />
+            <View style={{ position: "absolute", right: -4, top: -6, width: 16, height: 16, borderRadius: 8, backgroundColor: "#5D4037" }}>
+              <View style={{ position: "absolute", top: -4, left: -1, width: 7, height: 7, backgroundColor: "#3E2723", borderTopLeftRadius: 4, transform: [{ rotate: "-15deg" }] }} />
+              <View style={{ position: "absolute", top: -4, right: -1, width: 7, height: 7, backgroundColor: "#3E2723", borderTopRightRadius: 4, transform: [{ rotate: "15deg" }] }} />
+              <View style={{ position: "absolute", top: 4, left: 1, width: 6, height: 5, borderRadius: 3, backgroundColor: "#FFD54F" }}>
+                <View style={{ position: "absolute", top: 1, left: 2, width: 2, height: 3, borderRadius: 1, backgroundColor: "#1A1A1A" }} />
+              </View>
+              <View style={{ position: "absolute", top: 4, right: 1, width: 6, height: 5, borderRadius: 3, backgroundColor: "#FFD54F" }}>
+                <View style={{ position: "absolute", top: 1, left: 2, width: 2, height: 3, borderRadius: 1, backgroundColor: "#1A1A1A" }} />
+              </View>
+              <View style={{ position: "absolute", bottom: 1, left: 6, width: 4, height: 3, backgroundColor: "#FF8F00", borderRadius: 2 }} />
             </View>
-            <View style={{ position: "absolute", top: 5, left: 10, width: 10, height: 6, backgroundColor: "#FFD700" }}>
-              <View style={{ width: 0, height: 0, borderLeftWidth: 5, borderRightWidth: 5, borderBottomWidth: 4, borderLeftColor: "transparent", borderRightColor: "transparent", borderBottomColor: "#1A1A2E", alignSelf: "center", position: "absolute", top: 1 }} />
-            </View>
-            <View style={{ position: "absolute", right: -16, top: 7, width: 16, height: 6, backgroundColor: "#1A1A2E", borderRadius: 3 }} />
+            <View style={{ position: "absolute", bottom: -4, left: 10, width: 6, height: 6, backgroundColor: "#5D4037", borderRadius: 2 }} />
+            <View style={{ position: "absolute", bottom: -4, right: 10, width: 6, height: 6, backgroundColor: "#5D4037", borderRadius: 2 }} />
           </View>
         </View>
       ) : null}
 
+      {/* Rock Golem bouncing after 35 successful flips */}
       {showMightyJumper ? (
         <View style={[styles.heroContainer, { left: mightyJumperX, top: mightyJumperY }]}>
           {mightyJumperY < height * 0.65 ? (
             <View style={{ position: "absolute", bottom: -8, left: 10, width: 16, height: 8, backgroundColor: "rgba(0,0,0,0.2)", borderRadius: 8 }} />
           ) : null}
-          <View style={{ width: 44, height: 32, backgroundColor: "#2E7D32", borderRadius: 8, position: "relative" }}>
-            <View style={{ position: "absolute", right: -6, top: -4, width: 18, height: 18, borderRadius: 9, backgroundColor: "#388E3C" }}>
-              <View style={{ position: "absolute", top: -3, left: 2, right: 2, height: 8, backgroundColor: "#1B5E20", borderTopLeftRadius: 6, borderTopRightRadius: 6 }} />
-              <View style={{ position: "absolute", top: 6, left: 2, width: 5, height: 4, borderRadius: 2, backgroundColor: "#FFFFFF" }}>
-                <View style={{ position: "absolute", top: 1, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#1A1A1A" }} />
+          <View style={{ width: 40, height: 30, backgroundColor: "#78909C", borderRadius: 6, position: "relative" }}>
+            <View style={{ position: "absolute", top: -2, left: 4, right: 4, height: 6, backgroundColor: "#90A4AE", borderTopLeftRadius: 4, borderTopRightRadius: 4 }} />
+            <View style={{ position: "absolute", right: -4, top: -6, width: 16, height: 16, borderRadius: 8, backgroundColor: "#90A4AE" }}>
+              <View style={{ position: "absolute", top: 4, left: 2, width: 5, height: 4, borderRadius: 2, backgroundColor: "#B0BEC5" }}>
+                <View style={{ position: "absolute", top: 1, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#37474F" }} />
               </View>
-              <View style={{ position: "absolute", top: 6, right: 2, width: 5, height: 4, borderRadius: 2, backgroundColor: "#FFFFFF" }}>
-                <View style={{ position: "absolute", top: 1, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#1A1A1A" }} />
+              <View style={{ position: "absolute", top: 4, right: 2, width: 5, height: 4, borderRadius: 2, backgroundColor: "#B0BEC5" }}>
+                <View style={{ position: "absolute", top: 1, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#37474F" }} />
               </View>
-              <View style={{ position: "absolute", bottom: 1, left: 5, width: 8, height: 3, borderRadius: 1, backgroundColor: "#1B5E20" }} />
+              <View style={{ position: "absolute", bottom: 2, left: 5, width: 6, height: 2, borderRadius: 1, backgroundColor: "#546E7A" }} />
             </View>
-            <View style={{ position: "absolute", left: -12, top: 2, width: 16, height: 12, backgroundColor: "#2E7D32", borderRadius: 6 }}>
-              <View style={{ position: "absolute", left: -4, top: 2, width: 8, height: 8, borderRadius: 4, backgroundColor: "#388E3C" }} />
+            <View style={{ position: "absolute", left: -10, top: 6, width: 14, height: 10, backgroundColor: "#78909C", borderRadius: 4 }}>
+              <View style={{ position: "absolute", left: -3, bottom: 0, width: 6, height: 6, borderRadius: 3, backgroundColor: "#90A4AE" }} />
             </View>
-            <View style={{ position: "absolute", right: -14, top: 8, width: 18, height: 10, backgroundColor: "#2E7D32", borderRadius: 5 }}>
-              <View style={{ position: "absolute", right: -4, top: 2, width: 8, height: 8, borderRadius: 4, backgroundColor: "#388E3C" }} />
+            <View style={{ position: "absolute", right: -10, top: 10, width: 14, height: 10, backgroundColor: "#78909C", borderRadius: 4 }}>
+              <View style={{ position: "absolute", right: -3, bottom: 0, width: 6, height: 6, borderRadius: 3, backgroundColor: "#90A4AE" }} />
             </View>
-            <View style={{ position: "absolute", bottom: -10, left: 6, width: 12, height: 14, backgroundColor: "#5D4037", borderBottomLeftRadius: 4, borderBottomRightRadius: 4 }} />
-            <View style={{ position: "absolute", bottom: -10, right: 6, width: 12, height: 14, backgroundColor: "#5D4037", borderBottomLeftRadius: 4, borderBottomRightRadius: 4 }} />
+            <View style={{ position: "absolute", bottom: -8, left: 6, width: 10, height: 10, backgroundColor: "#607D8B", borderBottomLeftRadius: 3, borderBottomRightRadius: 3 }} />
+            <View style={{ position: "absolute", bottom: -8, right: 6, width: 10, height: 10, backgroundColor: "#607D8B", borderBottomLeftRadius: 3, borderBottomRightRadius: 3 }} />
+            <View style={{ position: "absolute", top: 10, left: 8, width: 6, height: 4, backgroundColor: "#FF6D00", borderRadius: 2 }} />
+            <View style={{ position: "absolute", top: 16, left: 14, width: 4, height: 3, backgroundColor: "#FF6D00", borderRadius: 1 }} />
           </View>
         </View>
       ) : null}
@@ -2531,106 +2537,106 @@ const styles = StyleSheet.create({
   heroBody: {
     width: 36,
     height: 20,
-    backgroundColor: "#0066CC",
+    backgroundColor: "#FF6D00",
     borderRadius: 10,
     position: "relative",
-    shadowColor: "#000",
+    shadowColor: "#FF6D00",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
+    shadowOpacity: 0.5,
+    shadowRadius: 6,
   },
   heroCape: {
     position: "absolute",
-    left: -12,
-    top: 2,
-    width: 16,
-    height: 18,
-    backgroundColor: "#CC0000",
-    borderTopLeftRadius: 8,
-    borderBottomLeftRadius: 10,
-    shadowColor: "#CC0000",
+    left: -14,
+    top: 0,
+    width: 18,
+    height: 20,
+    backgroundColor: "#FF8F00",
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 12,
+    shadowColor: "#FF6D00",
     shadowOffset: { width: -2, height: 2 },
     shadowOpacity: 0.5,
     shadowRadius: 4,
   },
   heroBelt: {
     position: "absolute",
-    bottom: 4,
-    left: 4,
+    bottom: 2,
+    left: 2,
     right: 8,
-    height: 3,
-    backgroundColor: "#FFD700",
-    borderRadius: 1,
+    height: 4,
+    backgroundColor: "#FFD54F",
+    borderRadius: 2,
   },
   heroHead: {
     position: "absolute",
     right: -8,
-    top: 0,
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    backgroundColor: "#FFCC99",
+    top: -2,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: "#FFB300",
     borderWidth: 1,
-    borderColor: "#E5B98A",
+    borderColor: "#FF8F00",
   },
   heroHair: {
     position: "absolute",
-    top: -2,
+    top: -6,
     left: 2,
     right: 2,
-    height: 6,
-    backgroundColor: "#1A1A1A",
+    height: 8,
+    backgroundColor: "#FF3D00",
     borderTopLeftRadius: 6,
     borderTopRightRadius: 6,
   },
   heroEyeLeft: {
     position: "absolute",
-    top: 4,
-    left: 2,
-    width: 3,
+    top: 5,
+    left: 3,
+    width: 4,
     height: 3,
-    borderRadius: 1.5,
-    backgroundColor: "#0066CC",
+    borderRadius: 2,
+    backgroundColor: "#FFFFFF",
   },
   heroEyeRight: {
     position: "absolute",
-    top: 4,
-    right: 2,
-    width: 3,
+    top: 5,
+    right: 3,
+    width: 4,
     height: 3,
-    borderRadius: 1.5,
-    backgroundColor: "#0066CC",
+    borderRadius: 2,
+    backgroundColor: "#FFFFFF",
   },
   heroArm: {
     position: "absolute",
-    right: -18,
-    top: 5,
-    width: 18,
-    height: 7,
-    backgroundColor: "#0066CC",
-    borderRadius: 3,
+    right: -16,
+    top: 4,
+    width: 16,
+    height: 8,
+    backgroundColor: "#FF6D00",
+    borderRadius: 4,
   },
   heroFist: {
     position: "absolute",
     right: -4,
     top: 0,
-    width: 7,
-    height: 7,
-    borderRadius: 3.5,
-    backgroundColor: "#FFCC99",
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#FFD54F",
     borderWidth: 1,
-    borderColor: "#E5B98A",
+    borderColor: "#FF8F00",
   },
   heroLogo: {
     position: "absolute",
-    top: 3,
-    left: 12,
-    width: 8,
-    height: 6,
-    backgroundColor: "#FFD700",
-    borderRadius: 2,
+    top: 4,
+    left: 10,
+    width: 10,
+    height: 8,
+    backgroundColor: "#FFD54F",
+    borderRadius: 5,
     borderWidth: 1,
-    borderColor: "#CC0000",
+    borderColor: "#FF6D00",
   },
   collectParticle: {
     position: "absolute",
