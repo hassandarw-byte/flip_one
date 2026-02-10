@@ -449,13 +449,14 @@ export default function HomeScreen() {
 
   const handleShare = async () => {
     try {
-      const appLink = "Download Flip One from HHD Apps!";
-      const message = `Check out Flip One - the addictive gravity-flipping game! Flip the world. Stay alive. Download now!\n\n${appLink}`;
+      const domain = process.env.EXPO_PUBLIC_DOMAIN || "";
+      const appUrl = domain ? `https://${domain}` : "";
+      const message = `Check out Flip One - the addictive gravity-flipping game! Flip the world. Stay alive. Download now!\n\n${appUrl}`;
       
       await Share.share({
         message,
         title: "Flip One",
-        url: appLink,
+        url: appUrl,
       });
     } catch (error) {
       console.log("Share error:", error);
