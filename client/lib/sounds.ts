@@ -197,26 +197,30 @@ export function startGasPedalSound(soundEnabled: boolean): void {
   if (!soundEnabled) return;
   stopGasPedalSound();
   
-  const playGas = () => {
-    try {
-      if (gasPedalPlayer) {
-        gasPedalPlayer.volume = 0.25;
-        gasPedalPlayer.seekTo(0);
-        gasPedalPlayer.play();
-      }
-    } catch (error) {
-      // Sound not available
+  try {
+    if (gasPedalPlayer) {
+      gasPedalPlayer.volume = 0.2;
+      gasPedalPlayer.loop = true;
+      gasPedalPlayer.seekTo(0);
+      gasPedalPlayer.play();
     }
-  };
-  
-  playGas();
-  gasPedalInterval = setInterval(playGas, 2000);
+  } catch (error) {
+    // Sound not available
+  }
 }
 
 export function stopGasPedalSound(): void {
   if (gasPedalInterval) {
     clearInterval(gasPedalInterval);
     gasPedalInterval = null;
+  }
+  try {
+    if (gasPedalPlayer) {
+      gasPedalPlayer.loop = false;
+      gasPedalPlayer.pause();
+    }
+  } catch (error) {
+    // Sound not available
   }
 }
 
