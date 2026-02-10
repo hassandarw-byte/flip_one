@@ -942,14 +942,9 @@ export default function GameScreen() {
         }
         
         if (passedObstacles.length > 0) {
-          passedObstacles.forEach(obs => {
-            const obsY = obs.track === "top" ? trackTopY + TRACK_HEIGHT / 2 : trackBottomY + TRACK_HEIGHT / 2;
-            runOnJS(createExplosion)(obs.x, obsY);
+          passedObstacles.forEach(() => {
             runOnJS(incrementCombo)();
           });
-          if (gameState?.hapticsEnabled) {
-            triggerVictoryHaptic(true);
-          }
         }
 
         return remainingObstacles;
