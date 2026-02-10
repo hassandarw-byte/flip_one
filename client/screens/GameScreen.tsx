@@ -51,7 +51,6 @@ import {
   playScoreSound,
   playPowerUpSound,
   playCollectSound,
-  playCarEngineSound,
   playThunderSound,
   playCarStartupSound,
   startGasPedalSound,

@@ -11,7 +11,6 @@ let scorePlayer: AudioPlayer | null = null;
 let sirenPlayer: AudioPlayer | null = null;
 let powerUpPlayer: AudioPlayer | null = null;
 let collectPlayer: AudioPlayer | null = null;
-let carEnginePlayer: AudioPlayer | null = null;
 let thunderPlayer: AudioPlayer | null = null;
 let carStartupPlayer: AudioPlayer | null = null;
 let gasPedalPlayer: AudioPlayer | null = null;
@@ -27,8 +26,6 @@ const TENSION_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2457/2457
 const POWER_UP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3";
 // Classic arcade coin collection sound
 const COLLECT_RING_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3";
-// Luxury sports car engine sounds
-const CAR_ENGINE_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/559/559-preview.mp3";
 // Real dramatic thunder sound
 const THUNDER_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/1155/1155-preview.mp3";
 // Car startup sound (local asset)
@@ -54,7 +51,6 @@ export async function initializeSounds(): Promise<void> {
     sirenPlayer = createAudioPlayer({ uri: TENSION_SOUND_URI });
     powerUpPlayer = createAudioPlayer({ uri: POWER_UP_SOUND_URI });
     collectPlayer = createAudioPlayer({ uri: COLLECT_RING_SOUND_URI });
-    carEnginePlayer = createAudioPlayer({ uri: CAR_ENGINE_SOUND_URI });
     thunderPlayer = createAudioPlayer({ uri: THUNDER_SOUND_URI });
     carStartupPlayer = createAudioPlayer(carStartupAsset);
     gasPedalPlayer = createAudioPlayer(carEngineLoopAsset);
@@ -146,20 +142,6 @@ export async function playCollectSound(soundEnabled: boolean): Promise<void> {
     if (collectPlayer) {
       collectPlayer.seekTo(0);
       collectPlayer.play();
-    }
-  } catch (error) {
-    // Sound not available
-  }
-}
-
-export async function playCarEngineSound(soundEnabled: boolean): Promise<void> {
-  if (!soundEnabled) return;
-  
-  try {
-    if (carEnginePlayer) {
-      carEnginePlayer.volume = 0.3;
-      carEnginePlayer.seekTo(0);
-      carEnginePlayer.play();
     }
   } catch (error) {
     // Sound not available
@@ -435,7 +417,6 @@ export async function cleanupSounds(): Promise<void> {
     if (sirenPlayer) sirenPlayer.release();
     if (powerUpPlayer) powerUpPlayer.release();
     if (collectPlayer) collectPlayer.release();
-    if (carEnginePlayer) carEnginePlayer.release();
     if (thunderPlayer) thunderPlayer.release();
     if (carStartupPlayer) carStartupPlayer.release();
     if (gasPedalPlayer) gasPedalPlayer.release();
@@ -447,7 +428,6 @@ export async function cleanupSounds(): Promise<void> {
     sirenPlayer = null;
     powerUpPlayer = null;
     collectPlayer = null;
-    carEnginePlayer = null;
     thunderPlayer = null;
     carStartupPlayer = null;
     gasPedalPlayer = null;
