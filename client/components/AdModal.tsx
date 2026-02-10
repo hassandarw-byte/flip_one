@@ -252,9 +252,11 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.8)",
     justifyContent: "center",
     alignItems: "center",
+    padding: Spacing.xl,
   },
   container: {
-    width: width - Spacing.xl * 2,
+    width: "100%",
+    maxWidth: width - Spacing.xl * 2,
     borderRadius: BorderRadius.xl,
     overflow: "hidden",
   },
