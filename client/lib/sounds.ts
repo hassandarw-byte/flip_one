@@ -22,8 +22,8 @@ const GAME_OVER_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2656/26
 const SCORE_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3";
 const TENSION_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2457/2457-preview.mp3";
 const POWER_UP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3";
-// Sonic ring collection sound - classic arcade coin/ring sound
-const SONIC_RING_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3";
+// Classic arcade coin collection sound
+const COLLECT_RING_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3";
 // Luxury sports car engine sounds
 const CAR_ENGINE_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/559/559-preview.mp3";
 // Real dramatic thunder sound
@@ -52,7 +52,7 @@ export async function initializeSounds(): Promise<void> {
     scorePlayer = createAudioPlayer({ uri: SCORE_SOUND_URI });
     sirenPlayer = createAudioPlayer({ uri: TENSION_SOUND_URI });
     powerUpPlayer = createAudioPlayer({ uri: POWER_UP_SOUND_URI });
-    collectPlayer = createAudioPlayer({ uri: SONIC_RING_SOUND_URI });
+    collectPlayer = createAudioPlayer({ uri: COLLECT_RING_SOUND_URI });
     carEnginePlayer = createAudioPlayer({ uri: CAR_ENGINE_SOUND_URI });
     thunderPlayer = createAudioPlayer({ uri: THUNDER_SOUND_URI });
     carStartupPlayer = createAudioPlayer({ uri: CAR_STARTUP_SOUND_URI });

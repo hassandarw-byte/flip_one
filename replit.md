@@ -54,10 +54,10 @@ client/
 
 ## Design System (Cheerful Arcade Style)
 
-### Bright Sky Theme (Sonic/Mario inspired)
-- **Background Gradient**: Bright Blue Sky (#29B6F6 to #81D4FA)
+### Cheerful Arcade Theme
+- **Background Gradient**: Sandy Beach (#F5E6D3 to #E8D4C0)
 - **Player**: Golden (#FFD700)
-- **Danger**: Red (#F44336) - Angry Birds style
+- **Danger**: Red (#F44336)
 - **Platform**: Green (#4CAF50)
 - **Primary**: Orange (#FF5722)
 - **Secondary**: Pink (#E91E63)
@@ -70,21 +70,18 @@ client/
 - **Road Edge**: White (#FFFFFF)
 - **Grass**: Green (#4CAF50)
 
-### Classic Game Color Palettes
-- **Candy Crush**: Red, Orange, Yellow, Green, Blue, Purple, Pink
-- **Mario**: Red, Blue, Yellow, Green, Brown, Orange
-- **Sonic**: Blue, Gold, Red, Green
-- **Angry Birds**: Red, Yellow, Blue, Green, Pink
+### Vibrant Arcade Color Palettes
+- Red, Orange, Yellow, Green, Blue, Purple, Pink
 
 ### Character Themes
 Each premium character has a unique color scheme:
-- Dark Knight: Dark purple/gray
-- Web Hero: Red/blue
-- Green Giant: Forest green
-- Iron Armor: Red/gold
-- Ice Queen: Cyan/blue
+- Shadow Knight: Dark purple/gray
+- Web Spinner: Red/blue
+- Forest Titan: Forest green
+- Steel Guardian: Red/gold
+- Frost Queen: Cyan/blue
 - Kawaii Cat: Pink
-- Captain Star: Navy/red
+- Star Commander: Navy/red
 
 ## Technical Details
 
@@ -102,28 +99,33 @@ The app runs on Expo and can be tested via:
 
 ## Recent Changes
 
-### Latest (Cheerful Visual Overhaul)
-- **Bright Sky Background**: Changed from dark purple to cheerful bright blue sky (Sonic/Mario style)
+### Latest (Copyright Cleanup & Improvements)
+- **Copyright Compliance**: All character names changed to original names (no trademarked references)
+- **Removed Movement Haptic**: No more constant device vibration during gameplay
+- **Improved Car Sound**: Continuous looping car engine sound during gameplay
+- **Character Names**: Shadow Knight, Web Spinner, Forest Titan, Steel Guardian, Speed Dash, Lightning Bolt, Frost Queen, Sky Champion, Star Commander
+- **Easter Egg Heroes**: Sky Hero, Swing Hero, Star Warrior, Shadow Glider, Mighty Jumper
+
+### Previous (Cheerful Visual Overhaul)
 - **Road-Style Tracks**: Both tracks now look like real roads with asphalt, yellow center dashes, white edge lines, and green grass borders
-- **Smaller Superman**: Superman reduced to half size for better proportions
 - **Improved Sound Effects**: 
-  - Sonic ring collection sound for hearts/stars
+  - Arcade coin collection sound for hearts/stars
   - Luxury sports car engine sounds
   - Real dramatic thunder for flip effect
   - Sports car startup sound at game start
-- **Cheerful Color Palette**: All colors updated to match Candy Crush + Mario + Sonic + Angry Birds style
+- **Cheerful Color Palette**: Vibrant arcade-style colors throughout
 - **Vibrant UI**: Brighter, more cheerful interface colors throughout
 
-### Previous (Car-Style Player & Superman Update)
+### Previous (Car-Style Player Update)
 - **Car-Like Player**: Player now has spinning wheels at the bottom with spoke animation
 - **Sparkling Eyes**: Animated eyes on the player with sparkle effect
 - **Removed Trail**: Golden trail particles removed for cleaner look
 - **Car Engine Sound**: Engine sound plays at game start
 - **Thunder Flip Sound**: Light thunder sound on each flip for dramatic effect
 - **720° Special Flip**: Double rotation (720°) with dramatic back easing animation
-- **Superman Easter Egg**: After 15 successful flips, Superman flies across the screen horizontally
-- **Mario/Sonic/Candy Crush Colors**: Added color palette inspiration from classic games
-- **Sonic Ring Sound**: Collectibles now use Sonic-style ring collection sound
+- **Easter Egg Characters**: After consecutive successful flips, original hero characters appear on screen
+- **Arcade-Style Colors**: Vibrant color palette inspired by classic arcade games
+- **Coin Collection Sound**: Collectibles use classic arcade coin sound
 
 ### Previous (Obstacles & Collectibles Update)
 - **New Obstacle Types**: Electric lightning symbols (yellow), danger triangles (red), and fancy skulls (white) replace card suits
@@ -146,7 +148,7 @@ The app runs on Expo and can be tested via:
 
 ### Previous (Premium Shop & Sound Updates)
 - **Premium Skin Purchases**: Premium characters now purchasable with in-game points (1000-5000 points)
-- **Character Images**: Superhero character avatars displayed on premium skin buttons
+- **Character Images**: Character avatars displayed on premium skin buttons
 - **Soft Emergency Siren**: Replaced heartbeat sound with softer siren alert during gameplay
 - **Button Text Centering**: All button text centered horizontally and vertically across the game
 - **Premium Skin Storage**: Added ownedPremiumSkins array to track purchased premium characters
@@ -195,7 +197,7 @@ The app runs on Expo and can be tested via:
 - Player glow reduced from 8px to 4px for subtler effect
 - Tajawal font family available for text styling
 - Initial MVP implementation with all core screens
-- Candy Crush style design with purple gradients and sparkle effects
+- Vibrant arcade style design with purple gradients and sparkle effects
 - Gravity flip game mechanic
 - Local storage for scores and settings
 - Daily missions system with "Daily Missions" header

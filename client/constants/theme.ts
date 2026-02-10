@@ -15,50 +15,43 @@ export const GameColors = {
   shellBlue: "#00BCD4",
   shellTurquoise: "#26C6DA",
   
-  // Mario green for buttons
-  marioGreenDark: "#2E7D32",
+  arcadeGreenDark: "#2E7D32",
   
-  // Bright golden player (Sonic rings style)
   player: "#FFD700",
   playerGlow: "#FFC107",
   playerHighlight: "#FFEB3B",
   
-  // Angry Birds style danger colors
   spike: "#F44336",
   spikeGlow: "#E53935",
   platform: "#4CAF50",
   platformGlow: "#66BB6A",
   
-  // Candy Crush vibrant colors
-  candy1: "#FF5252",   // Red candy
-  candy2: "#FF9800",   // Orange candy
-  candy3: "#FFEB3B",   // Yellow candy
-  candy4: "#8BC34A",   // Green candy
-  candy5: "#2196F3",   // Blue candy
-  candy6: "#9C27B0",   // Purple candy
-  candyPink: "#E91E63", // Pink candy
+  candy1: "#FF5252",
+  candy2: "#FF9800",
+  candy3: "#FFEB3B",
+  candy4: "#8BC34A",
+  candy5: "#2196F3",
+  candy6: "#9C27B0",
+  candyPink: "#E91E63",
   
-  // Mario classic colors
-  marioRed: "#E52521",
-  marioBlue: "#049CD8",
-  marioYellow: "#FBD000",
-  marioGreen: "#4CAF50",
-  marioBrown: "#8B4513",
-  marioOrange: "#FF9800",
+  arcadeRed: "#E52521",
+  arcadeBlue: "#049CD8",
+  arcadeYellow: "#FBD000",
+  arcadeGreen: "#4CAF50",
+  arcadeBrown: "#8B4513",
+  arcadeOrange: "#FF9800",
   
-  // Sonic colors
-  sonicBlue: "#0066CC",
-  sonicGold: "#FFD700",
-  sonicRed: "#CC0000",
-  sonicGreen: "#00CC00",
-  sonicRingGold: "#FFCC00",
+  speedBlue: "#0066CC",
+  speedGold: "#FFD700",
+  speedRed: "#CC0000",
+  speedGreen: "#00CC00",
+  coinGold: "#FFCC00",
   
-  // Angry Birds colors
-  angryRed: "#C62828",
-  angryYellow: "#FFD600",
-  angryBlue: "#1565C0",
-  angryGreen: "#2E7D32",
-  angryPink: "#EC407A",
+  boldRed: "#C62828",
+  boldYellow: "#FFD600",
+  boldBlue: "#1565C0",
+  boldGreen: "#2E7D32",
+  boldPink: "#EC407A",
   
   // UI Colors (bright and cheerful)
   primary: "#FF5722",

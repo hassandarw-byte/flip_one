@@ -4,13 +4,13 @@
 
 **Purpose**: A minimalist one-tap arcade game where players flip gravity to navigate obstacles. Designed for maximum addictiveness through simple mechanics and instant gratification.
 
-**Aesthetic Direction**: Candy Crush-inspired premium look with vibrant candy colors, gradients, and sparkle effects on a deep purple background. Rich, polished visuals with satisfying animations.
+**Aesthetic Direction**: Vibrant arcade-inspired premium look with bright colors, gradients, and sparkle effects on a sandy beach background. Rich, polished visuals with satisfying animations.
 
 **Memorable Element**: The world-flip mechanic—the entire game rotates 180° rather than the player jumping. Combined with haptic feedback and gratifying visual feedback.
 
 ## Design System
 
-### Color Palette - Candy Crush Style
+### Color Palette - Arcade Style
 
 | Category | Color | Hex Code | Usage |
 |----------|-------|----------|-------|
@@ -19,19 +19,19 @@
 | **Surface** | Dark Purple | `#2D1B4E` | Cards, modals |
 | **Surface Light** | Lighter Purple | `#3D2B5E` | Hover states |
 
-### Candy Colors (Game Elements)
+### Arcade Colors (Game Elements)
 
 | Element | Color | Hex Code | Effect |
 |---------|-------|----------|--------|
 | **Player** | Golden Yellow | `#FFD93D` | With glow + gradient highlight |
 | **Spikes** | Coral Red | `#FF6B6B` | Danger indicator with glow |
 | **Platforms** | Teal | `#4ECDC4` | Safe zones with gradient |
-| **Candy 1** | Coral Red | `#FF6B6B` | Sparkle/accent color |
-| **Candy 2** | Teal | `#4ECDC4` | Sparkle/accent color |
-| **Candy 3** | Golden | `#FFD93D` | Sparkle/accent color |
-| **Candy 4** | Purple | `#A66CFF` | Primary accent |
-| **Candy 5** | Pink | `#FF9FF3` | Secondary accent |
-| **Candy 6** | Lime | `#54E346` | Success color |
+| **Accent 1** | Coral Red | `#FF6B6B` | Sparkle/accent color |
+| **Accent 2** | Teal | `#4ECDC4` | Sparkle/accent color |
+| **Accent 3** | Golden | `#FFD93D` | Sparkle/accent color |
+| **Accent 4** | Purple | `#A66CFF` | Primary accent |
+| **Accent 5** | Pink | `#FF9FF3` | Secondary accent |
+| **Accent 6** | Lime | `#54E346` | Success color |
 
 ### Accent Colors
 
