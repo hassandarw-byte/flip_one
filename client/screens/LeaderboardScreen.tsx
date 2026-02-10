@@ -14,7 +14,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeInDown } from "react-native-reanimated";
 
 import { ThemedText } from "@/components/ThemedText";
-import PointsBadge from "@/components/PointsBadge";
 import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import { getGameState, GameState, getDeviceId, getUsername, setUsername } from "@/lib/storage";
 import { useNightMode } from "@/contexts/NightModeContext";
@@ -143,7 +142,6 @@ export default function LeaderboardScreen() {
       colors={backgroundGradient}
       style={styles.container}
     >
-      <PointsBadge points={gameState?.points || 0} />
       <View
         style={[
           styles.content,

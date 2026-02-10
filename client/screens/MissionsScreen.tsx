@@ -18,7 +18,6 @@ import Animated, {
 import * as Haptics from "expo-haptics";
 
 import { ThemedText } from "@/components/ThemedText";
-import PointsBadge from "@/components/PointsBadge";
 import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import {
   getGameState,
@@ -72,7 +71,6 @@ export default function MissionsScreen() {
       colors={backgroundGradient}
       style={[styles.container, { paddingTop: headerHeight + Spacing.lg }]}
     >
-      <PointsBadge points={gameState?.points || 0} />
       <View style={styles.header}>
         <View style={styles.titleRow}>
           <LinearGradient

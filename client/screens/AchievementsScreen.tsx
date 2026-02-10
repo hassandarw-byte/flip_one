@@ -97,9 +97,8 @@ export default function AchievementsScreen() {
         <View style={styles.headerCenter}>
           <ThemedText style={styles.title}>Achievements</ThemedText>
         </View>
-        <View style={{ width: 40 }} />
+        <PointsBadge points={points} />
       </View>
-      <PointsBadge points={points} />
 
       <View style={styles.statsRow}>
         <View style={styles.statBadge}>

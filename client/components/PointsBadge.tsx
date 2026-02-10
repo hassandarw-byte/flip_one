@@ -1,40 +1,43 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
-import { Spacing, BorderRadius } from "@/constants/theme";
+import { BorderRadius } from "@/constants/theme";
+import { getGameState } from "@/lib/storage";
 
 interface PointsBadgeProps {
-  points: number;
+  points?: number;
 }
 
-export default function PointsBadge({ points }: PointsBadgeProps) {
+export default function PointsBadge({ points: propPoints }: PointsBadgeProps) {
+  const [localPoints, setLocalPoints] = useState(0);
+
+  useEffect(() => {
+    if (propPoints === undefined) {
+      getGameState().then((state) => setLocalPoints(state.points));
+    }
+  }, [propPoints]);
+
+  const displayPoints = propPoints !== undefined ? propPoints : localPoints;
+
   return (
-    <View style={styles.container}>
-      <View style={styles.badge}>
-        <Feather name="star" size={16} color="#FFD700" />
-        <ThemedText style={styles.text}>{points}</ThemedText>
-      </View>
+    <View style={styles.badge}>
+      <Feather name="star" size={14} color="#FFD700" />
+      <ThemedText style={styles.text}>{displayPoints}</ThemedText>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: "flex-end",
-    paddingHorizontal: Spacing.xl,
-    marginBottom: Spacing.sm,
-  },
   badge: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: Spacing.xs,
+    gap: 4,
     backgroundColor: "#000000",
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.lg,
-    minWidth: 80,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: BorderRadius.md,
   },
   text: {
     fontSize: 16,

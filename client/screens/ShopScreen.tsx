@@ -25,7 +25,6 @@ import Animated, {
 import * as Haptics from "expo-haptics";
 
 import { ThemedText } from "@/components/ThemedText";
-import PointsBadge from "@/components/PointsBadge";
 import AdModal from "@/components/AdModal";
 import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import {
@@ -276,8 +275,6 @@ export default function ShopScreen() {
       colors={backgroundGradient}
       style={[styles.container, { paddingTop: headerHeight + Spacing.lg }]}
     >
-      <PointsBadge points={gameState?.points || 0} />
-
       <View style={styles.tabs}>
         <TabButton
           label="Skins"

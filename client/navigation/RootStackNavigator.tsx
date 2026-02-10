@@ -5,6 +5,7 @@ import * as SplashScreenExpo from "expo-splash-screen";
 
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { GameColors } from "@/constants/theme";
+import PointsBadge from "@/components/PointsBadge";
 
 import SplashScreen from "@/screens/SplashScreen";
 import HomeScreen from "@/screens/HomeScreen";
@@ -107,6 +108,7 @@ export default function RootStackNavigator() {
           headerTransparent: true,
           animation: "slide_from_right",
           headerTitleStyle: { fontSize: 24, fontWeight: "400", color: "#9C27B0" },
+          headerRight: () => <PointsBadge />,
         }}
       />
       <Stack.Screen
@@ -117,6 +119,7 @@ export default function RootStackNavigator() {
           headerTransparent: true,
           animation: "slide_from_right",
           headerTitleStyle: { fontSize: 24, fontWeight: "400", color: "#9C27B0" },
+          headerRight: () => <PointsBadge />,
         }}
       />
       <Stack.Screen
@@ -127,6 +130,7 @@ export default function RootStackNavigator() {
           headerTransparent: true,
           animation: "slide_from_right",
           headerTitleStyle: { fontSize: 24, fontWeight: "400", color: "#9C27B0" },
+          headerRight: () => <PointsBadge />,
         }}
       />
       <Stack.Screen
@@ -137,6 +141,7 @@ export default function RootStackNavigator() {
           headerTransparent: true,
           animation: "slide_from_right",
           headerTitleStyle: { fontSize: 24, fontWeight: "400", color: "#9C27B0" },
+          headerRight: () => <PointsBadge />,
         }}
       />
       <Stack.Screen

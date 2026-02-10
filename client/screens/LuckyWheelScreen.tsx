@@ -204,9 +204,8 @@ export default function LuckyWheelScreen() {
         <View style={styles.headerCenter}>
           <ThemedText style={styles.title}>Wheel</ThemedText>
         </View>
-        <View style={{ width: 40 }} />
+        <PointsBadge points={points} />
       </View>
-      <PointsBadge points={points} />
 
       <View style={styles.wheelContainer}>
         <Animated.View style={[styles.wheelGlow, wheelGlowStyle]} />
