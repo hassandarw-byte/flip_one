@@ -1341,18 +1341,30 @@ export default function GameScreen() {
             }
           ]}
         >
-          <View style={styles.heroBody}>
-            <View style={styles.heroCape} />
-            <View style={styles.heroBelt} />
-            <View style={styles.heroHead}>
-              <View style={styles.heroHair} />
-              <View style={styles.heroEyeLeft} />
-              <View style={styles.heroEyeRight} />
+          <View style={{ width: 44, height: 22, position: "relative" }}>
+            {/* Body */}
+            <View style={{ position: "absolute", top: 4, left: 10, width: 24, height: 14, backgroundColor: "#FF6D00", borderRadius: 7, shadowColor: "#FF6D00", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.8, shadowRadius: 6 }} />
+            {/* Left wing (top) */}
+            <View style={{ position: "absolute", top: -4, left: 0, width: 18, height: 10, backgroundColor: "#FF8F00", borderTopLeftRadius: 12, borderTopRightRadius: 4, transform: [{ rotate: "-15deg" }] }} />
+            {/* Right wing (top) */}
+            <View style={{ position: "absolute", top: -4, right: 0, width: 18, height: 10, backgroundColor: "#FF8F00", borderTopRightRadius: 12, borderTopLeftRadius: 4, transform: [{ rotate: "15deg" }] }} />
+            {/* Left wing flame tip */}
+            <View style={{ position: "absolute", top: -8, left: -2, width: 8, height: 6, backgroundColor: "#FFD54F", borderTopLeftRadius: 6, borderTopRightRadius: 2, transform: [{ rotate: "-20deg" }] }} />
+            {/* Right wing flame tip */}
+            <View style={{ position: "absolute", top: -8, right: -2, width: 8, height: 6, backgroundColor: "#FFD54F", borderTopRightRadius: 6, borderTopLeftRadius: 2, transform: [{ rotate: "20deg" }] }} />
+            {/* Head */}
+            <View style={{ position: "absolute", top: 0, left: 16, width: 12, height: 12, borderRadius: 6, backgroundColor: "#FFB300" }}>
+              {/* Eye */}
+              <View style={{ position: "absolute", top: 3, left: 3, width: 4, height: 3, borderRadius: 2, backgroundColor: "#FFFFFF" }}>
+                <View style={{ position: "absolute", top: 0.5, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#1A1A1A" }} />
+              </View>
+              {/* Beak */}
+              <View style={{ position: "absolute", top: 5, right: -4, width: 6, height: 3, backgroundColor: "#FF3D00", borderTopRightRadius: 4, borderBottomRightRadius: 2 }} />
             </View>
-            <View style={styles.heroArm}>
-              <View style={styles.heroFist} />
-            </View>
-            <View style={styles.heroLogo} />
+            {/* Tail flames */}
+            <View style={{ position: "absolute", bottom: 0, left: -4, width: 10, height: 5, backgroundColor: "#FF3D00", borderTopLeftRadius: 6, borderBottomLeftRadius: 3, transform: [{ rotate: "10deg" }] }} />
+            <View style={{ position: "absolute", bottom: 4, left: -8, width: 8, height: 4, backgroundColor: "#FFD54F", borderTopLeftRadius: 4, borderBottomLeftRadius: 2, transform: [{ rotate: "5deg" }] }} />
+            <View style={{ position: "absolute", bottom: -2, left: -2, width: 6, height: 3, backgroundColor: "#FFAB00", borderRadius: 2, transform: [{ rotate: "15deg" }] }} />
           </View>
         </Animated.View>
       ) : null}
@@ -2521,110 +2533,6 @@ const styles = StyleSheet.create({
   heroContainer: {
     position: "absolute",
     zIndex: 100,
-  },
-  heroBody: {
-    width: 36,
-    height: 20,
-    backgroundColor: "#FF6D00",
-    borderRadius: 10,
-    position: "relative",
-    shadowColor: "#FF6D00",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 6,
-  },
-  heroCape: {
-    position: "absolute",
-    left: -14,
-    top: 0,
-    width: 18,
-    height: 20,
-    backgroundColor: "#FF8F00",
-    borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 12,
-    shadowColor: "#FF6D00",
-    shadowOffset: { width: -2, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 4,
-  },
-  heroBelt: {
-    position: "absolute",
-    bottom: 2,
-    left: 2,
-    right: 8,
-    height: 4,
-    backgroundColor: "#FFD54F",
-    borderRadius: 2,
-  },
-  heroHead: {
-    position: "absolute",
-    right: -8,
-    top: -2,
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    backgroundColor: "#FFB300",
-    borderWidth: 1,
-    borderColor: "#FF8F00",
-  },
-  heroHair: {
-    position: "absolute",
-    top: -6,
-    left: 2,
-    right: 2,
-    height: 8,
-    backgroundColor: "#FF3D00",
-    borderTopLeftRadius: 6,
-    borderTopRightRadius: 6,
-  },
-  heroEyeLeft: {
-    position: "absolute",
-    top: 5,
-    left: 3,
-    width: 4,
-    height: 3,
-    borderRadius: 2,
-    backgroundColor: "#FFFFFF",
-  },
-  heroEyeRight: {
-    position: "absolute",
-    top: 5,
-    right: 3,
-    width: 4,
-    height: 3,
-    borderRadius: 2,
-    backgroundColor: "#FFFFFF",
-  },
-  heroArm: {
-    position: "absolute",
-    right: -16,
-    top: 4,
-    width: 16,
-    height: 8,
-    backgroundColor: "#FF6D00",
-    borderRadius: 4,
-  },
-  heroFist: {
-    position: "absolute",
-    right: -4,
-    top: 0,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "#FFD54F",
-    borderWidth: 1,
-    borderColor: "#FF8F00",
-  },
-  heroLogo: {
-    position: "absolute",
-    top: 4,
-    left: 10,
-    width: 10,
-    height: 8,
-    backgroundColor: "#FFD54F",
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: "#FF6D00",
   },
   collectParticle: {
     position: "absolute",
