@@ -200,7 +200,7 @@ export function startGasPedalSound(soundEnabled: boolean): void {
   
   try {
     if (gasPedalPlayer) {
-      gasPedalPlayer.volume = 0.2;
+      gasPedalPlayer.volume = 0.5;
       gasPedalPlayer.loop = true;
       gasPedalPlayer.seekTo(0);
       gasPedalPlayer.play();
