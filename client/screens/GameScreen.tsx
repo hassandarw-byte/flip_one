@@ -947,10 +947,6 @@ export default function GameScreen() {
             runOnJS(createExplosion)(obs.x, obsY);
             runOnJS(incrementCombo)();
           });
-          // Victory sound and haptic when avoiding obstacles
-          if (gameState?.soundEnabled) {
-            playScoreSound(true);
-          }
           if (gameState?.hapticsEnabled) {
             triggerVictoryHaptic(true);
           }
