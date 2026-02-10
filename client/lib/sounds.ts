@@ -63,6 +63,7 @@ export async function playFlipUpSound(soundEnabled: boolean): Promise<void> {
   
   try {
     if (flipUpPlayer) {
+      flipUpPlayer.volume = 0.5;
       flipUpPlayer.seekTo(0);
       flipUpPlayer.play();
     }
@@ -76,6 +77,7 @@ export async function playFlipDownSound(soundEnabled: boolean): Promise<void> {
   
   try {
     if (flipDownPlayer) {
+      flipDownPlayer.volume = 0.5;
       flipDownPlayer.seekTo(0);
       flipDownPlayer.play();
     }
@@ -97,6 +99,7 @@ export async function playGameOverSound(soundEnabled: boolean): Promise<void> {
   
   try {
     if (gameOverPlayer) {
+      gameOverPlayer.volume = 0.5;
       gameOverPlayer.seekTo(0);
       gameOverPlayer.play();
     }
@@ -110,6 +113,7 @@ export async function playScoreSound(soundEnabled: boolean): Promise<void> {
   
   try {
     if (scorePlayer) {
+      scorePlayer.volume = 0.5;
       scorePlayer.seekTo(0);
       scorePlayer.play();
     }
@@ -123,6 +127,7 @@ export async function playPowerUpSound(soundEnabled: boolean): Promise<void> {
   
   try {
     if (powerUpPlayer) {
+      powerUpPlayer.volume = 0.5;
       powerUpPlayer.seekTo(0);
       powerUpPlayer.play();
     }
@@ -136,6 +141,7 @@ export async function playCollectSound(soundEnabled: boolean): Promise<void> {
   
   try {
     if (collectPlayer) {
+      collectPlayer.volume = 0.5;
       collectPlayer.seekTo(0);
       collectPlayer.play();
     }
@@ -149,7 +155,7 @@ export async function playThunderSound(soundEnabled: boolean): Promise<void> {
   
   try {
     if (thunderPlayer) {
-      thunderPlayer.volume = 0.4;
+      thunderPlayer.volume = 0.5;
       thunderPlayer.seekTo(0);
       thunderPlayer.play();
     }
