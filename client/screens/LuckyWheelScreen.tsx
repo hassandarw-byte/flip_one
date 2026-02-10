@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.full,
+    borderRadius: BorderRadius.md,
     gap: Spacing.xs,
   },
   pointsText: {
