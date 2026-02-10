@@ -83,6 +83,10 @@ export default function MissionsScreen() {
             Complete missions to earn points
           </ThemedText>
         </View>
+        <LinearGradient colors={["#1A1A1A", "#000000"]} style={styles.pointsBadge}>
+          <Feather name="star" size={16} color="#FFD700" />
+          <ThemedText style={styles.pointsText}>{gameState?.points || 0}</ThemedText>
+        </LinearGradient>
       </View>
 
       <FlatList
@@ -208,11 +212,29 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: Spacing.xl,
     marginBottom: Spacing.xl,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   titleRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.md,
+    flex: 1,
+  },
+  pointsBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.xs,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.md,
+  },
+  pointsText: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#FFD700",
   },
   titleIcon: {
     width: 44,

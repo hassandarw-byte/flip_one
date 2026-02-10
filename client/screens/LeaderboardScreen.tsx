@@ -217,6 +217,13 @@ export default function LeaderboardScreen() {
           </LinearGradient>
         </View>
 
+        <View style={styles.pointsRow}>
+          <LinearGradient colors={["#1A1A1A", "#000000"]} style={styles.pointsBadge}>
+            <Feather name="star" size={16} color="#FFD700" />
+            <ThemedText style={styles.pointsBadgeText}>{gameState?.points || 0}</ThemedText>
+          </LinearGradient>
+        </View>
+
         <View style={styles.listHeader}>
           <ThemedText style={styles.listHeaderText}>Global Rankings</ThemedText>
           <View style={styles.totalPlayers}>
@@ -343,6 +350,24 @@ const styles = StyleSheet.create({
     marginTop: Spacing.lg,
     color: GameColors.textSecondary,
     fontSize: 16,
+  },
+  pointsRow: {
+    alignItems: "center",
+    marginBottom: Spacing.md,
+  },
+  pointsBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.xs,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.md,
+  },
+  pointsBadgeText: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#FFD700",
   },
   headerCard: {
     marginBottom: Spacing.lg,
