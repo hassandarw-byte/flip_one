@@ -92,7 +92,7 @@ export default function AchievementsScreen() {
       
       <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
         <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Feather name="arrow-left" size={24} color="#000000" />
+          <Feather name="arrow-left" size={24} color={textColor} />
         </Pressable>
         <View style={styles.headerCenter}>
           <ThemedText style={styles.title}>Achievements</ThemedText>
@@ -155,10 +155,10 @@ function AchievementCard({ achievement, textColor }: { achievement: Achievement;
           </View>
           
           <View style={styles.achievementInfo}>
-            <ThemedText style={[styles.achievementTitle, !achievement.unlocked && styles.textLocked]}>
+            <ThemedText style={[styles.achievementTitle, { color: textColor }, !achievement.unlocked && styles.textLocked]}>
               {achievement.title}
             </ThemedText>
-            <ThemedText style={[styles.achievementDesc, !achievement.unlocked && styles.textLocked]}>
+            <ThemedText style={[styles.achievementDesc, { color: textColor }, !achievement.unlocked && styles.textLocked]}>
               {achievement.description}
             </ThemedText>
           </View>

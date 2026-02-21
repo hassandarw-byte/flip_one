@@ -519,18 +519,18 @@ export default function HomeScreen() {
         >
           <View style={styles.statItem}>
             <View style={[styles.statIconContainer, { backgroundColor: "#FFD700" + "50" }]}>
-              <Feather name="award" size={18} color="#000000" />
+              <Feather name="award" size={18} color={textColor} />
             </View>
-            <ThemedText style={styles.statLabel}>BEST</ThemedText>
-            <ThemedText style={styles.statValue}>{gameState?.bestScore || 0}</ThemedText>
+            <ThemedText style={[styles.statLabel, { color: textColor }]}>BEST</ThemedText>
+            <ThemedText style={[styles.statValue, { color: textColor }]}>{gameState?.bestScore || 0}</ThemedText>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
             <View style={[styles.statIconContainer, { backgroundColor: "#FFD700" + "50" }]}>
-              <Feather name="star" size={18} color="#000000" />
+              <Feather name="star" size={18} color={textColor} />
             </View>
-            <ThemedText style={styles.statLabel}>POINTS</ThemedText>
-            <ThemedText style={styles.statValue}>
+            <ThemedText style={[styles.statLabel, { color: textColor }]}>POINTS</ThemedText>
+            <ThemedText style={[styles.statValue, { color: textColor }]}>
               {gameState?.points || 0}
             </ThemedText>
           </View>
@@ -597,6 +597,7 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate("LuckyWheel")}
             colors={["#FFD700", "#FFC107"]}
             iconColor="#9C27B0"
+            labelColor={textColor}
           />
           <MenuButton
             seaCreature="seahorse"
@@ -604,6 +605,7 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate("Settings")}
             colors={["#4CAF50", "#388E3C"]}
             iconColor="#1A1A1A"
+            labelColor={textColor}
           />
           <MenuButton
             seaCreature="starfish"
@@ -611,6 +613,7 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate("Achievements")}
             colors={["#FF1493", "#E91E8C"]}
             iconColor="#2196F3"
+            labelColor={textColor}
           />
         </View>
         
@@ -621,6 +624,7 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate("Leaderboard")}
             colors={["#1A1A1A", "#000000"]}
             iconColor="#4CAF50"
+            labelColor={textColor}
           />
           <MenuButton
             seaCreature="shell"
@@ -628,6 +632,7 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate("Shop")}
             colors={["#9C27B0", "#7B1FA2"]}
             iconColor="#FFD700"
+            labelColor={textColor}
           />
           <MenuButton
             seaCreature="jellyfish"
@@ -635,6 +640,7 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate("Missions")}
             colors={["#2196F3", "#1976D2"]}
             iconColor="#FF1493"
+            labelColor={textColor}
             badge={gameState?.dailyMissions.filter((m) => m.completed && !m.claimed).length}
           />
         </View>
@@ -648,8 +654,8 @@ export default function HomeScreen() {
             colors={["rgba(255,255,255,0.1)", "rgba(255,255,255,0.05)"]}
             style={styles.shareButtonGradient}
           >
-            <Feather name="share-2" size={18} color={GameColors.textSecondary} />
-            <ThemedText style={styles.shareButtonText}>Share with Friends</ThemedText>
+            <Feather name="share-2" size={18} color={textColor} />
+            <ThemedText style={[styles.shareButtonText, { color: textColor }]}>Share with Friends</ThemedText>
           </LinearGradient>
         </Pressable>
       </Animated.View>
@@ -814,9 +820,10 @@ interface MenuButtonProps {
   colors: readonly [string, string, ...string[]];
   badge?: number;
   iconColor?: string;
+  labelColor?: string;
 }
 
-function MenuButton({ seaCreature, label, onPress, colors, badge, iconColor = "#FFFFFF" }: MenuButtonProps) {
+function MenuButton({ seaCreature, label, onPress, colors, badge, iconColor = "#FFFFFF", labelColor = "#000000" }: MenuButtonProps) {
   const scale = useSharedValue(1);
   const glowOpacity = useSharedValue(0.3);
   const shimmerPosition = useSharedValue(-100);
@@ -881,7 +888,7 @@ function MenuButton({ seaCreature, label, onPress, colors, badge, iconColor = "#
           ) : null}
         </LinearGradient>
       </View>
-      <ThemedText style={styles.menuButtonLabel}>{label}</ThemedText>
+      <ThemedText style={[styles.menuButtonLabel, { color: labelColor }]}>{label}</ThemedText>
     </AnimatedPressable>
   );
 }

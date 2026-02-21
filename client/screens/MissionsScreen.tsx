@@ -32,7 +32,7 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 export default function MissionsScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
-  const { backgroundGradient } = useNightMode();
+  const { backgroundGradient, textColor } = useNightMode();
   const [gameState, setGameState] = useState<GameState | null>(null);
 
   useEffect(() => {
@@ -60,7 +60,7 @@ export default function MissionsScreen() {
     index: number;
   }) => (
     <Animated.View entering={FadeInDown.delay(index * 100).springify()}>
-      <MissionCard mission={item} onClaim={() => handleClaimReward(item.id)} />
+      <MissionCard mission={item} onClaim={() => handleClaimReward(item.id)} textColor={textColor} />
     </Animated.View>
   );
 
@@ -128,9 +128,10 @@ export default function MissionsScreen() {
 interface MissionCardProps {
   mission: DailyMission;
   onClaim: () => void;
+  textColor: string;
 }
 
-function MissionCard({ mission, onClaim }: MissionCardProps) {
+function MissionCard({ mission, onClaim, textColor }: MissionCardProps) {
   const scale = useSharedValue(1);
   const progress = mission.progress / mission.target;
 
@@ -146,13 +147,13 @@ function MissionCard({ mission, onClaim }: MissionCardProps) {
       >
         <View style={styles.missionContent}>
           <View style={styles.missionInfo}>
-            <ThemedText style={styles.missionDescription}>
+            <ThemedText style={[styles.missionDescription, { color: textColor }]}>
               {mission.description}
             </ThemedText>
             
             <View style={styles.rewardCenter}>
-              <Feather name="star" size={16} color="#000000" />
-              <ThemedText style={styles.rewardText}>{mission.reward}</ThemedText>
+              <Feather name="star" size={16} color={textColor} />
+              <ThemedText style={[styles.rewardText, { color: textColor }]}>{mission.reward}</ThemedText>
             </View>
             
             <View style={styles.progressContainer}>
