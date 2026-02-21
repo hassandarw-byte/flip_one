@@ -1,17 +1,5 @@
 import { Platform, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Constants from "expo-constants";
-
-const IS_DEVELOPMENT_BUILD = (() => {
-  try {
-    const appOwnership = Constants.appOwnership;
-    if (appOwnership === "expo") return false;
-    require("expo-in-app-purchases");
-    return true;
-  } catch {
-    return false;
-  }
-})();
 
 export const PRODUCT_IDS = {
   REMOVE_ADS: "com.flipone.remove_ads",
@@ -45,142 +33,35 @@ export interface PurchaseResult {
 
 const PURCHASED_PRODUCTS_KEY = "flip_one_purchased_products";
 
-let purchaseConnection: any = null;
-let products: Product[] = [];
-
 export const initializePurchases = async (): Promise<boolean> => {
-  if (!IS_DEVELOPMENT_BUILD) {
-    console.log("IAP: Running in Expo Go - purchases disabled");
-    return true;
-  }
-
-  try {
-    const InAppPurchases = require("expo-in-app-purchases");
-    
-    await InAppPurchases.connectAsync();
-    purchaseConnection = InAppPurchases;
-
-    InAppPurchases.setPurchaseListener(({ responseCode, results, errorCode }: any) => {
-      if (responseCode === InAppPurchases.IAPResponseCode.OK) {
-        results.forEach((purchase: any) => {
-          if (!purchase.acknowledged) {
-            InAppPurchases.finishTransactionAsync(purchase, true);
-          }
-        });
-      }
-    });
-
-    console.log("IAP initialized successfully");
-    return true;
-  } catch (error) {
-    console.log("IAP initialization failed:", error);
-    return false;
-  }
+  console.log("IAP: Running in Expo Go - purchases disabled");
+  return true;
 };
 
 export const getProducts = async (): Promise<Product[]> => {
-  if (!IS_DEVELOPMENT_BUILD) {
-    return getMockProducts();
-  }
-
-  try {
-    const InAppPurchases = require("expo-in-app-purchases");
-    
-    const { responseCode, results } = await InAppPurchases.getProductsAsync(
-      Object.values(PRODUCT_IDS)
-    );
-
-    if (responseCode === InAppPurchases.IAPResponseCode.OK && results) {
-      products = results.map((product: any) => ({
-        productId: product.productId,
-        title: product.title,
-        description: product.description,
-        price: product.price,
-        priceAmount: product.priceAmountMicros / 1000000,
-        currency: product.priceCurrencyCode,
-      }));
-      return products;
-    }
-
-    return [];
-  } catch (error) {
-    console.log("Failed to get products:", error);
-    return getMockProducts();
-  }
+  return getMockProducts();
 };
 
 export const purchaseProduct = async (productId: string): Promise<PurchaseResult> => {
-  if (!IS_DEVELOPMENT_BUILD) {
-    console.log("IAP: In-App Purchases not available in this build");
-    Alert.alert(
-      "Purchase Not Available",
-      "In-App Purchases are only available in the full version from Google Play Store.",
-      [{ text: "OK" }]
-    );
-    return {
-      success: false,
-      error: "IAP not available",
-    };
-  }
-
-  try {
-    const InAppPurchases = require("expo-in-app-purchases");
-    
-    await InAppPurchases.purchaseItemAsync(productId);
-    
-    await savePurchasedProduct(productId);
-    
-    return {
-      success: true,
-      productId,
-    };
-  } catch (error: any) {
-    console.log("Purchase failed:", error);
-    return {
-      success: false,
-      error: error.message || "Purchase failed",
-    };
-  }
+  console.log("IAP: In-App Purchases not available in this build");
+  Alert.alert(
+    "Purchase Not Available",
+    "In-App Purchases are only available in the full version from Google Play Store.",
+    [{ text: "OK" }]
+  );
+  return {
+    success: false,
+    error: "IAP not available",
+  };
 };
 
 export const restorePurchases = async (): Promise<string[]> => {
-  if (!IS_DEVELOPMENT_BUILD) {
-    console.log("IAP: Restore not available in this build");
-    return [];
-  }
-
-  try {
-    const InAppPurchases = require("expo-in-app-purchases");
-    
-    const { responseCode, results } = await InAppPurchases.getPurchaseHistoryAsync();
-    
-    if (responseCode === InAppPurchases.IAPResponseCode.OK && results) {
-      const purchasedIds = results.map((purchase: any) => purchase.productId);
-      
-      for (const productId of purchasedIds) {
-        await savePurchasedProduct(productId);
-      }
-      
-      return purchasedIds;
-    }
-    
-    return [];
-  } catch (error) {
-    console.log("Failed to restore purchases:", error);
-    return [];
-  }
+  console.log("IAP: Restore not available in this build");
+  return [];
 };
 
 export const disconnectPurchases = async (): Promise<void> => {
-  if (!IS_DEVELOPMENT_BUILD || !purchaseConnection) return;
-
-  try {
-    const InAppPurchases = require("expo-in-app-purchases");
-    await InAppPurchases.disconnectAsync();
-    purchaseConnection = null;
-  } catch (error) {
-    console.log("Failed to disconnect IAP:", error);
-  }
+  return;
 };
 
 export const savePurchasedProduct = async (productId: string): Promise<void> => {
