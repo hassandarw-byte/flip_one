@@ -207,6 +207,41 @@ export default function LuckyWheelScreen() {
         <PointsBadge points={points} />
       </View>
 
+      <View style={styles.headerCard}>
+        <LinearGradient
+          colors={[GameColors.surfaceLight, GameColors.surface]}
+          style={styles.headerCardGradient}
+        >
+          <View style={styles.userStats}>
+            <View style={styles.statBox}>
+              <LinearGradient
+                colors={[GameColors.gold, GameColors.goldGlow]}
+                style={styles.statIconBg}
+              >
+                <Feather name="star" size={16} color="#FFF" />
+              </LinearGradient>
+              <View>
+                <ThemedText style={styles.statBoxLabel}>Your Points</ThemedText>
+                <ThemedText style={styles.statBoxValue}>{points}</ThemedText>
+              </View>
+            </View>
+            
+            <View style={styles.statBox}>
+              <LinearGradient
+                colors={[GameColors.primary, GameColors.primaryGlow]}
+                style={styles.statIconBg}
+              >
+                <Feather name="refresh-cw" size={16} color="#FFF" />
+              </LinearGradient>
+              <View>
+                <ThemedText style={styles.statBoxLabel}>Status</ThemedText>
+                <ThemedText style={styles.statBoxValue}>{canSpin ? "Ready!" : "Used"}</ThemedText>
+              </View>
+            </View>
+          </View>
+        </LinearGradient>
+      </View>
+
       <View style={styles.wheelContainer}>
         <Animated.View style={[styles.wheelGlow, wheelGlowStyle]} />
         <View style={styles.wheelOuterRing} />
@@ -318,12 +353,51 @@ const styles = StyleSheet.create({
     position: "absolute",
     borderRadius: 10,
   },
+  headerCard: {
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.md,
+    borderRadius: BorderRadius.xl,
+    overflow: "hidden",
+  },
+  headerCardGradient: {
+    padding: Spacing.lg,
+    borderRadius: BorderRadius.xl,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
+  },
+  userStats: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: Spacing.xl,
+  },
+  statBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  statIconBg: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  statBoxLabel: {
+    fontSize: 11,
+    color: GameColors.textSecondary,
+    textTransform: "uppercase",
+  },
+  statBoxValue: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: GameColors.textPrimary,
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: Spacing.lg,
-    marginBottom: Spacing.xl,
+    marginBottom: Spacing.md,
   },
   backButton: {
     width: 40,
