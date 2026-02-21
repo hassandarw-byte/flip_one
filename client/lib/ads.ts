@@ -1,6 +1,17 @@
 import { Platform } from "react-native";
+import * as Constants from "expo-constants";
 
-const IS_DEVELOPMENT_BUILD = false;
+const isExpoGo = Constants.default?.appOwnership === "expo";
+
+let admobAvailable = false;
+try {
+  if (!isExpoGo) {
+    require("react-native-google-mobile-ads");
+    admobAvailable = true;
+  }
+} catch (e) {
+  admobAvailable = false;
+}
 
 const AD_UNIT_IDS = {
   REWARDED: Platform.select({
@@ -32,6 +43,8 @@ const TEST_AD_UNIT_IDS = {
   }),
 };
 
+export const isAdMobAvailable = () => admobAvailable;
+
 export const getAdUnitId = (type: "REWARDED" | "INTERSTITIAL" | "BANNER") => {
   if (__DEV__) {
     return TEST_AD_UNIT_IDS[type];
@@ -43,8 +56,8 @@ let rewardedAd: any = null;
 let interstitialAd: any = null;
 
 export const initializeAds = async () => {
-  if (!IS_DEVELOPMENT_BUILD) {
-    console.log("AdMob: Running in Expo Go - ads disabled");
+  if (!admobAvailable) {
+    console.log("AdMob: Not available in this build");
     return;
   }
 
@@ -58,7 +71,7 @@ export const initializeAds = async () => {
 };
 
 export const loadRewardedAd = async (): Promise<boolean> => {
-  if (!IS_DEVELOPMENT_BUILD) {
+  if (!admobAvailable) {
     console.log("AdMob: Simulating rewarded ad load");
     return true;
   }
@@ -97,7 +110,7 @@ export const loadRewardedAd = async (): Promise<boolean> => {
 };
 
 export const showRewardedAd = async (): Promise<boolean> => {
-  if (!IS_DEVELOPMENT_BUILD) {
+  if (!admobAvailable) {
     console.log("AdMob: Simulating rewarded ad show");
     return new Promise((resolve) => {
       setTimeout(() => resolve(true), 2000);
@@ -139,7 +152,7 @@ export const showRewardedAd = async (): Promise<boolean> => {
 };
 
 export const loadInterstitialAd = async (): Promise<boolean> => {
-  if (!IS_DEVELOPMENT_BUILD) {
+  if (!admobAvailable) {
     console.log("AdMob: Simulating interstitial ad load");
     return true;
   }
@@ -178,7 +191,7 @@ export const loadInterstitialAd = async (): Promise<boolean> => {
 };
 
 export const showInterstitialAd = async (): Promise<boolean> => {
-  if (!IS_DEVELOPMENT_BUILD) {
+  if (!admobAvailable) {
     console.log("AdMob: Simulating interstitial ad show");
     return new Promise((resolve) => {
       setTimeout(() => resolve(true), 1500);

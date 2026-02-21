@@ -19,7 +19,7 @@ import Animated, {
 
 import { ThemedText } from "@/components/ThemedText";
 import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
-import { showRewardedAd, loadRewardedAd } from "@/lib/ads";
+import { showRewardedAd, loadRewardedAd, isAdMobAvailable } from "@/lib/ads";
 
 const { width } = Dimensions.get("window");
 
@@ -31,7 +31,6 @@ interface AdModalProps {
 }
 
 const AD_DURATION = 3;
-const IS_DEVELOPMENT_BUILD = false;
 
 export default function AdModal({ visible, onClose, onComplete, rewardName }: AdModalProps) {
   const [countdown, setCountdown] = useState(AD_DURATION);
@@ -44,7 +43,7 @@ export default function AdModal({ visible, onClose, onComplete, rewardName }: Ad
   
   useEffect(() => {
     if (visible) {
-      if (IS_DEVELOPMENT_BUILD) {
+      if (isAdMobAvailable()) {
         showRealAd();
       } else {
         showSimulatedAd();
@@ -101,7 +100,6 @@ export default function AdModal({ visible, onClose, onComplete, rewardName }: Ad
         if (prev <= 1) {
           clearInterval(timer);
           setCanClose(true);
-          // Auto-complete after countdown
           setTimeout(() => {
             onComplete();
             onClose();
@@ -129,14 +127,14 @@ export default function AdModal({ visible, onClose, onComplete, rewardName }: Ad
   };
 
   const handleRetry = () => {
-    if (IS_DEVELOPMENT_BUILD) {
+    if (isAdMobAvailable()) {
       showRealAd();
     } else {
       showSimulatedAd();
     }
   };
 
-  if (IS_DEVELOPMENT_BUILD && isLoading) {
+  if (isAdMobAvailable() && isLoading) {
     return (
       <Modal visible={visible} transparent animationType="fade">
         <View style={styles.overlay}>
@@ -234,11 +232,11 @@ export default function AdModal({ visible, onClose, onComplete, rewardName }: Ad
               </ThemedText>
             </View>
             
-            {!IS_DEVELOPMENT_BUILD && (
+            {!isAdMobAvailable() ? (
               <ThemedText style={styles.disclaimerText}>
                 Simulated ad. Real ads work in production build.
               </ThemedText>
-            )}
+            ) : null}
           </View>
         </LinearGradient>
       </View>
