@@ -271,7 +271,7 @@ export default function HomeScreen() {
     crab1X.value = withRepeat(
       withSequence(
         withTiming(width + 60, { duration: 6000, easing: Easing.linear }),
-        withTiming(-60, { duration: 0 })
+        withTiming(-60, { duration: 1 })
       ),
       -1,
       false
@@ -280,7 +280,7 @@ export default function HomeScreen() {
     crab2X.value = withRepeat(
       withSequence(
         withTiming(-60, { duration: 5000, easing: Easing.linear }),
-        withTiming(width + 60, { duration: 0 })
+        withTiming(width + 60, { duration: 1 })
       ),
       -1,
       false
@@ -289,7 +289,7 @@ export default function HomeScreen() {
     crab3X.value = withDelay(2000, withRepeat(
       withSequence(
         withTiming(width + 60, { duration: 7000, easing: Easing.linear }),
-        withTiming(-60, { duration: 0 })
+        withTiming(-60, { duration: 1 })
       ),
       -1,
       false
@@ -298,7 +298,7 @@ export default function HomeScreen() {
     crab4X.value = withDelay(1500, withRepeat(
       withSequence(
         withTiming(-60, { duration: 5500, easing: Easing.linear }),
-        withTiming(width + 60, { duration: 0 })
+        withTiming(width + 60, { duration: 1 })
       ),
       -1,
       false
@@ -308,7 +308,7 @@ export default function HomeScreen() {
     fish1X.value = withRepeat(
       withSequence(
         withTiming(width + 60, { duration: 4000, easing: Easing.linear }),
-        withTiming(-60, { duration: 0 })
+        withTiming(-60, { duration: 1 })
       ),
       -1,
       false
@@ -317,7 +317,7 @@ export default function HomeScreen() {
     fish2X.value = withDelay(1000, withRepeat(
       withSequence(
         withTiming(-60, { duration: 3500, easing: Easing.linear }),
-        withTiming(width + 60, { duration: 0 })
+        withTiming(width + 60, { duration: 1 })
       ),
       -1,
       false
@@ -326,7 +326,7 @@ export default function HomeScreen() {
     fish3X.value = withDelay(2000, withRepeat(
       withSequence(
         withTiming(width + 60, { duration: 5000, easing: Easing.linear }),
-        withTiming(-60, { duration: 0 })
+        withTiming(-60, { duration: 1 })
       ),
       -1,
       false
@@ -355,7 +355,7 @@ export default function HomeScreen() {
     shell1X.value = withRepeat(
       withSequence(
         withTiming(width + 60, { duration: 8000, easing: Easing.linear }),
-        withTiming(-60, { duration: 0 })
+        withTiming(-60, { duration: 1 })
       ),
       -1,
       false
@@ -364,7 +364,7 @@ export default function HomeScreen() {
     shell2X.value = withDelay(4000, withRepeat(
       withSequence(
         withTiming(-60, { duration: 9000, easing: Easing.linear }),
-        withTiming(width + 60, { duration: 0 })
+        withTiming(width + 60, { duration: 1 })
       ),
       -1,
       false
@@ -888,7 +888,7 @@ function MenuButton({ seaCreature, label, onPress, colors, badge, iconColor = "#
           ) : null}
         </LinearGradient>
       </View>
-      <ThemedText style={[styles.menuButtonLabel, { color: labelColor }]}>{label}</ThemedText>
+      <ThemedText numberOfLines={1} style={[styles.menuButtonLabel, { color: labelColor }]}>{label}</ThemedText>
     </AnimatedPressable>
   );
 }
@@ -1047,7 +1047,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   menuButtonLabel: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#000000",
     marginTop: 6,
     fontWeight: "700",
