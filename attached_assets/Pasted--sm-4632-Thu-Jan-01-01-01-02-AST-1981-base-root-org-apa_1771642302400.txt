@@ -1,0 +1,88 @@
+]
+
+sm      4632 Thu Jan 01 01:01:02 AST 1981 base/root/org/apache/commons/codec/language/bm/sep_rules_any.txt
+
+      >>> Signer
+      X.509, CN=Android Debug, OU=Android, O=Unknown, L=Unknown, ST=Unknown, C=US
+      Signature algorithm: SHA1withRSA (disabled), 2048-bit key
+      [certificate is valid from 1/1/14, 1:35 AM to 5/1/52, 1:35 AM]
+      [Invalid certificate chain: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target]
+
+sm      2224 Thu Jan 01 01:01:02 AST 1981 base/root/org/apache/commons/codec/language/bm/sep_rules_french.txt
+
+      >>> Signer
+      X.509, CN=Android Debug, OU=Android, O=Unknown, L=Unknown, ST=Unknown, C=US
+      Signature algorithm: SHA1withRSA (disabled), 2048-bit key
+      [certificate is valid from 1/1/14, 1:35 AM to 5/1/52, 1:35 AM]
+      [Invalid certificate chain: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target]
+
+sm      1459 Thu Jan 01 01:01:02 AST 1981 base/root/org/apache/commons/codec/language/bm/sep_rules_hebrew.txt
+
+      >>> Signer
+      X.509, CN=Android Debug, OU=Android, O=Unknown, L=Unknown, ST=Unknown, C=US
+      Signature algorithm: SHA1withRSA (disabled), 2048-bit key
+      [certificate is valid from 1/1/14, 1:35 AM to 5/1/52, 1:35 AM]
+      [Invalid certificate chain: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target]
+
+sm      1848 Thu Jan 01 01:01:02 AST 1981 base/root/org/apache/commons/codec/language/bm/sep_rules_italian.txt
+
+      >>> Signer
+      X.509, CN=Android Debug, OU=Android, O=Unknown, L=Unknown, ST=Unknown, C=US
+      Signature algorithm: SHA1withRSA (disabled), 2048-bit key
+      [certificate is valid from 1/1/14, 1:35 AM to 5/1/52, 1:35 AM]
+      [Invalid certificate chain: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target]
+
+sm      2573 Thu Jan 01 01:01:02 AST 1981 base/root/org/apache/commons/codec/language/bm/sep_rules_portuguese.txt
+
+      >>> Signer
+      X.509, CN=Android Debug, OU=Android, O=Unknown, L=Unknown, ST=Unknown, C=US
+      Signature algorithm: SHA1withRSA (disabled), 2048-bit key
+      [certificate is valid from 1/1/14, 1:35 AM to 5/1/52, 1:35 AM]
+      [Invalid certificate chain: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target]
+
+sm      2480 Thu Jan 01 01:01:02 AST 1981 base/root/org/apache/commons/codec/language/bm/sep_rules_spanish.txt
+
+      >>> Signer
+      X.509, CN=Android Debug, OU=Android, O=Unknown, L=Unknown, ST=Unknown, C=US
+      Signature algorithm: SHA1withRSA (disabled), 2048-bit key
+      [certificate is valid from 1/1/14, 1:35 AM to 5/1/52, 1:35 AM]
+      [Invalid certificate chain: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target]
+
+sm      3745 Thu Jan 01 01:01:02 AST 1981 base/root/org/apache/commons/codec/language/dmrules.txt
+
+      >>> Signer
+      X.509, CN=Android Debug, OU=Android, O=Unknown, L=Unknown, ST=Unknown, C=US
+      Signature algorithm: SHA1withRSA (disabled), 2048-bit key
+      [certificate is valid from 1/1/14, 1:35 AM to 5/1/52, 1:35 AM]
+      [Invalid certificate chain: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target]
+
+      209698 Thu Jan 01 01:01:02 AST 1981 META-INF/ANDROIDD.SF
+        1375 Thu Jan 01 01:01:02 AST 1981 META-INF/ANDROIDD.RSA
+s     209649 Thu Jan 01 01:01:02 AST 1981 META-INF/MANIFEST.MF
+
+      >>> Signer
+      X.509, CN=Android Debug, OU=Android, O=Unknown, L=Unknown, ST=Unknown, C=US
+      Signature algorithm: SHA1withRSA (disabled), 2048-bit key
+      [certificate is valid from 1/1/14, 1:35 AM to 5/1/52, 1:35 AM]
+      [Invalid certificate chain: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target]
+
+
+  s = signature was verified
+  m = entry is listed in manifest
+  k = at least one certificate was found in keystore
+
+- Signed by "CN=Android Debug, OU=Android, O=Unknown, L=Unknown, ST=Unknown, C=US"
+    Digest algorithm: SHA-256
+    Signature algorithm: SHA256withRSA, 2048-bit key
+
+jar verified.
+
+Warning:
+This jar contains entries whose certificate chain is invalid. Reason: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+This jar contains entries whose signer certificate is self-signed.
+This jar contains signatures that do not include a timestamp. Without a timestamp, users may not be able to validate this jar after any of the signer certificates expire (as early as 2052-05-01).
+POSIX file permission and/or symlink attributes detected. These attributes are ignored when signing and are not protected by the signature.
+
+The signer certificate will expire on 2052-05-01.
+
+D:\FO\android>
