@@ -1174,9 +1174,9 @@ export default function GameScreen() {
       return newCount;
     });
 
-    // Special 360 rotation with dramatic effect + thunder sound
+    // Smooth 360 rotation with spring effect
     playerRotation.value = withSequence(
-      withTiming(newTrack === "top" ? 720 : -720, { duration: 400, easing: Easing.out(Easing.back(1.5)) }),
+      withSpring(newTrack === "top" ? 360 : -360, { damping: 12, stiffness: 80, mass: 0.8 }),
       withTiming(0, { duration: 0 })
     );
     
@@ -1199,15 +1199,15 @@ export default function GameScreen() {
     
     createFlipParticles();
 
-    const flipSpeed = score >= 70 ? 100 : 150;
+    const flipSpeed = score >= 70 ? 180 : 250;
     
     worldRotation.value = withTiming(
       newTrack === "top" ? 180 : 0,
-      { duration: flipSpeed, easing: Easing.out(Easing.cubic) }
+      { duration: flipSpeed, easing: Easing.bezier(0.25, 0.1, 0.25, 1) }
     );
 
-    playerBounce.value = withSpring(-10, { damping: 8 }, () => {
-      playerBounce.value = withSpring(0, { damping: 12 });
+    playerBounce.value = withSpring(-8, { damping: 14, stiffness: 150 }, () => {
+      playerBounce.value = withSpring(0, { damping: 16, stiffness: 120 });
     });
   }, [isPlaying, gameState, worldRotation, playerBounce, startGame, createFlipParticles, score]);
 
