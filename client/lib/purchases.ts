@@ -1,7 +1,17 @@
-import { Platform } from "react-native";
+import { Platform, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Constants from "expo-constants";
 
-const IS_DEVELOPMENT_BUILD = false;
+const IS_DEVELOPMENT_BUILD = (() => {
+  try {
+    const appOwnership = Constants.appOwnership;
+    if (appOwnership === "expo") return false;
+    require("expo-in-app-purchases");
+    return true;
+  } catch {
+    return false;
+  }
+})();
 
 export const PRODUCT_IDS = {
   REMOVE_ADS: "com.flipone.remove_ads",
@@ -101,12 +111,15 @@ export const getProducts = async (): Promise<Product[]> => {
 
 export const purchaseProduct = async (productId: string): Promise<PurchaseResult> => {
   if (!IS_DEVELOPMENT_BUILD) {
-    console.log("IAP: Simulating purchase for", productId);
-    await savePurchasedProduct(productId);
+    console.log("IAP: In-App Purchases not available in this build");
+    Alert.alert(
+      "Purchase Not Available",
+      "In-App Purchases are only available in the full version from Google Play Store.",
+      [{ text: "OK" }]
+    );
     return {
-      success: true,
-      productId,
-      transactionId: `mock_${Date.now()}`,
+      success: false,
+      error: "IAP not available",
     };
   }
 
@@ -132,8 +145,8 @@ export const purchaseProduct = async (productId: string): Promise<PurchaseResult
 
 export const restorePurchases = async (): Promise<string[]> => {
   if (!IS_DEVELOPMENT_BUILD) {
-    console.log("IAP: Simulating restore purchases");
-    return await getPurchasedProducts();
+    console.log("IAP: Restore not available in this build");
+    return [];
   }
 
   try {
