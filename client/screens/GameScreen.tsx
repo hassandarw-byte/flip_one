@@ -2162,6 +2162,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: GameColors.background,
+    direction: "ltr",
   },
   sparklesContainer: {
     position: "absolute",
