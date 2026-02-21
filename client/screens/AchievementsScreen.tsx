@@ -100,15 +100,39 @@ export default function AchievementsScreen() {
         <PointsBadge points={points} />
       </View>
 
-      <View style={styles.statsRow}>
-        <View style={styles.statBadge}>
-          <ThemedText style={styles.statNumber}>{unlockedCount}/{achievements.length}</ThemedText>
-          <ThemedText style={[styles.statLabel, { color: textColor }]}>Unlocked</ThemedText>
-        </View>
-        <View style={styles.statBadge}>
-          <ThemedText style={styles.statNumber}>{totalRewards}</ThemedText>
-          <ThemedText style={[styles.statLabel, { color: textColor }]}>Points Earned</ThemedText>
-        </View>
+      <View style={styles.headerCard}>
+        <LinearGradient
+          colors={[GameColors.surfaceLight, GameColors.surface]}
+          style={styles.headerCardGradient}
+        >
+          <View style={styles.userStats}>
+            <View style={styles.statBox}>
+              <LinearGradient
+                colors={[GameColors.gold, GameColors.goldGlow]}
+                style={styles.statIconBg}
+              >
+                <Feather name="unlock" size={16} color="#FFF" />
+              </LinearGradient>
+              <View>
+                <ThemedText style={styles.statBoxLabel}>Unlocked</ThemedText>
+                <ThemedText style={styles.statBoxValue}>{unlockedCount}/{achievements.length}</ThemedText>
+              </View>
+            </View>
+            
+            <View style={styles.statBox}>
+              <LinearGradient
+                colors={[GameColors.primary, GameColors.primaryGlow]}
+                style={styles.statIconBg}
+              >
+                <Feather name="star" size={16} color="#FFF" />
+              </LinearGradient>
+              <View>
+                <ThemedText style={styles.statBoxLabel}>Points Earned</ThemedText>
+                <ThemedText style={styles.statBoxValue}>{totalRewards}</ThemedText>
+              </View>
+            </View>
+          </View>
+        </LinearGradient>
       </View>
 
       <ScrollView 
@@ -221,29 +245,44 @@ const styles = StyleSheet.create({
     color: "#9C27B0",
     textAlign: "center",
   },
-  statsRow: {
+  headerCard: {
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.lg,
+    borderRadius: BorderRadius.xl,
+    overflow: "hidden",
+  },
+  headerCardGradient: {
+    padding: Spacing.lg,
+    borderRadius: BorderRadius.xl,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
+  },
+  userStats: {
     flexDirection: "row",
     justifyContent: "center",
     gap: Spacing.xl,
-    marginBottom: Spacing.lg,
-    paddingHorizontal: Spacing.lg,
   },
-  statBadge: {
+  statBox: {
+    flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.1)",
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing.md,
-    borderRadius: BorderRadius.lg,
+    gap: Spacing.sm,
   },
-  statNumber: {
-    fontSize: 24,
-    fontWeight: "800",
-    color: "#9C27B0",
+  statIconBg: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  statLabel: {
-    fontSize: 12,
-    color: "#000000",
-    marginTop: Spacing.xs,
+  statBoxLabel: {
+    fontSize: 11,
+    color: GameColors.textSecondary,
+    textTransform: "uppercase",
+  },
+  statBoxValue: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: GameColors.textPrimary,
   },
   scrollView: {
     flex: 1,
