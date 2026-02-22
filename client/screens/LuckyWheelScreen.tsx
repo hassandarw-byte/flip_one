@@ -309,7 +309,7 @@ export default function LuckyWheelScreen() {
           </LinearGradient>
         </Pressable>
 
-        {hasSpun && !canSpin ? (
+        {!canSpin && !isSpinning ? (
           <Pressable style={styles.watchAdButton} onPress={handleWatchAd}>
             <LinearGradient
               colors={["#9C27B0", "#7B1FA2"]}
