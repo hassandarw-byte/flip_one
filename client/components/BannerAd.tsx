@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Pressable, Linking } from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withRepeat,
-  withSequence,
   withTiming,
 } from "react-native-reanimated";
 
@@ -45,16 +44,11 @@ export default function BannerAd({ style }: BannerAdProps) {
             <ThemedText style={styles.adLabel}>AD</ThemedText>
           </View>
           <View style={styles.adTextContainer}>
-            <ThemedText style={styles.adTitle}>Flip One Premium</ThemedText>
-            <ThemedText style={styles.adSubtitle}>Remove all ads for $0.99</ThemedText>
+            <ThemedText style={styles.adTitle}>Advertisement</ThemedText>
+            <ThemedText style={styles.adSubtitle}>Sponsored content</ThemedText>
           </View>
           <View style={styles.adAction}>
-            <LinearGradient
-              colors={[GameColors.success, GameColors.successGlow]}
-              style={styles.adButton}
-            >
-              <Feather name="zap" size={14} color="#FFF" />
-            </LinearGradient>
+            <Feather name="external-link" size={16} color="#999" />
           </View>
         </View>
       </LinearGradient>
@@ -115,12 +109,6 @@ const styles = StyleSheet.create({
   },
   adAction: {
     alignItems: "center",
-  },
-  adButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
+    padding: 4,
   },
 });
