@@ -6,6 +6,8 @@ interface NightModeContextType {
   toggleNightMode: (enabled: boolean) => Promise<void>;
   backgroundGradient: [string, string];
   textColor: string;
+  textSecondaryColor: string;
+  textMutedColor: string;
 }
 
 const NightModeContext = createContext<NightModeContextType>({
@@ -13,6 +15,8 @@ const NightModeContext = createContext<NightModeContextType>({
   toggleNightMode: async () => {},
   backgroundGradient: ["#F5DEB3", "#D2B48C"],
   textColor: "#000000",
+  textSecondaryColor: "#333333",
+  textMutedColor: "#555555",
 });
 
 const DAY_GRADIENT: [string, string] = ["#F5DEB3", "#D2B48C"];
@@ -37,9 +41,11 @@ export function NightModeProvider({ children }: { children: ReactNode }) {
 
   const backgroundGradient = isNightMode ? NIGHT_GRADIENT : DAY_GRADIENT;
   const textColor = isNightMode ? "#FFFFFF" : "#000000";
+  const textSecondaryColor = isNightMode ? "#CCCCCC" : "#333333";
+  const textMutedColor = isNightMode ? "#AAAAAA" : "#555555";
 
   return (
-    <NightModeContext.Provider value={{ isNightMode, toggleNightMode, backgroundGradient, textColor }}>
+    <NightModeContext.Provider value={{ isNightMode, toggleNightMode, backgroundGradient, textColor, textSecondaryColor, textMutedColor }}>
       {children}
     </NightModeContext.Provider>
   );

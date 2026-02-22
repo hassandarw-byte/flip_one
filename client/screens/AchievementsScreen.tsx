@@ -33,7 +33,7 @@ export default function AchievementsScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { backgroundGradient, textColor } = useNightMode();
+  const { backgroundGradient, textColor, textSecondaryColor, textMutedColor } = useNightMode();
   
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [points, setPoints] = useState(0);
@@ -107,8 +107,8 @@ export default function AchievementsScreen() {
                 <Feather name="unlock" size={16} color="#FFF" />
               </LinearGradient>
               <View>
-                <ThemedText style={styles.statBoxLabel}>Unlocked</ThemedText>
-                <ThemedText style={styles.statBoxValue}>{unlockedCount}/{achievements.length}</ThemedText>
+                <ThemedText style={[styles.statBoxLabel, { color: textSecondaryColor }]}>Unlocked</ThemedText>
+                <ThemedText style={[styles.statBoxValue, { color: textColor }]}>{unlockedCount}/{achievements.length}</ThemedText>
               </View>
             </View>
             
@@ -120,8 +120,8 @@ export default function AchievementsScreen() {
                 <Feather name="star" size={16} color="#FFF" />
               </LinearGradient>
               <View>
-                <ThemedText style={styles.statBoxLabel}>Points Earned</ThemedText>
-                <ThemedText style={styles.statBoxValue}>{totalRewards}</ThemedText>
+                <ThemedText style={[styles.statBoxLabel, { color: textSecondaryColor }]}>Points Earned</ThemedText>
+                <ThemedText style={[styles.statBoxValue, { color: textColor }]}>{totalRewards}</ThemedText>
               </View>
             </View>
           </View>
@@ -134,14 +134,14 @@ export default function AchievementsScreen() {
         showsVerticalScrollIndicator={false}
       >
         {[...achievements].sort((a, b) => a.reward - b.reward).map((achievement) => (
-          <AchievementCard key={achievement.id} achievement={achievement} textColor={textColor} />
+          <AchievementCard key={achievement.id} achievement={achievement} textColor={textColor} textMutedColor={textMutedColor} />
         ))}
       </ScrollView>
     </View>
   );
 }
 
-function AchievementCard({ achievement, textColor }: { achievement: Achievement; textColor: string }) {
+function AchievementCard({ achievement, textColor, textMutedColor }: { achievement: Achievement; textColor: string; textMutedColor: string }) {
   const scale = useSharedValue(1);
   
   const cardStyle = useAnimatedStyle(() => ({
@@ -172,10 +172,10 @@ function AchievementCard({ achievement, textColor }: { achievement: Achievement;
           </View>
           
           <View style={styles.achievementInfo}>
-            <ThemedText style={[styles.achievementTitle, { color: textColor }, !achievement.unlocked && styles.textLocked]}>
+            <ThemedText style={[styles.achievementTitle, { color: textColor }, !achievement.unlocked && { color: textMutedColor }]}>
               {achievement.title}
             </ThemedText>
-            <ThemedText style={[styles.achievementDesc, { color: textColor }, !achievement.unlocked && styles.textLocked]}>
+            <ThemedText style={[styles.achievementDesc, { color: textColor }, !achievement.unlocked && { color: textMutedColor }]}>
               {achievement.description}
             </ThemedText>
           </View>

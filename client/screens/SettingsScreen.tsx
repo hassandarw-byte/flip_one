@@ -39,7 +39,7 @@ export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const [gameState, setGameState] = useState<GameState | null>(null);
-  const { isNightMode, toggleNightMode, backgroundGradient, textColor } = useNightMode();
+  const { isNightMode, toggleNightMode, backgroundGradient, textColor, textSecondaryColor, textMutedColor } = useNightMode();
 
   useEffect(() => {
     loadGameState();
@@ -90,13 +90,15 @@ export default function SettingsScreen() {
       >
         <Animated.View entering={FadeInDown.delay(0).springify()}>
           <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Gameplay</ThemedText>
+            <ThemedText style={[styles.sectionTitle, { color: textMutedColor }]}>Gameplay</ThemedText>
 
             <SettingRow
               icon="volume-2"
               title="Sound Effects"
               description="Play sounds during gameplay"
               colors={[GameColors.primary, GameColors.primaryGlow]}
+              textColor={textColor}
+              textMutedColor={textMutedColor}
             >
               <Switch
                 value={gameState?.soundEnabled ?? true}
@@ -117,6 +119,8 @@ export default function SettingsScreen() {
               title="Haptic Feedback"
               description="Vibrate on flips and actions"
               colors={[GameColors.secondary, GameColors.secondaryGlow]}
+              textColor={textColor}
+              textMutedColor={textMutedColor}
             >
               <Switch
                 value={gameState?.hapticsEnabled ?? true}
@@ -137,6 +141,8 @@ export default function SettingsScreen() {
               title="Night Mode"
               description="Darker theme for night gaming"
               colors={[GameColors.candy4, GameColors.primaryGlow]}
+              textColor={textColor}
+              textMutedColor={textMutedColor}
             >
               <Switch
                 value={isNightMode}
@@ -156,7 +162,7 @@ export default function SettingsScreen() {
 
         <Animated.View entering={FadeInDown.delay(100).springify()}>
           <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Premium</ThemedText>
+            <ThemedText style={[styles.sectionTitle, { color: textMutedColor }]}>Premium</ThemedText>
 
             <PurchaseRow
               icon="slash"
@@ -166,13 +172,15 @@ export default function SettingsScreen() {
               isPurchased={gameState?.adsRemoved}
               colors={[GameColors.candy5, GameColors.secondaryGlow]}
               onPress={handleRemoveAdsPurchase}
+              textColor={textColor}
+              textMutedColor={textMutedColor}
             />
           </View>
         </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(200).springify()}>
           <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>About</ThemedText>
+            <ThemedText style={[styles.sectionTitle, { color: textMutedColor }]}>About</ThemedText>
 
             <LinearGradient
               colors={[GameColors.surfaceLight, GameColors.surface]}
@@ -180,8 +188,8 @@ export default function SettingsScreen() {
             >
               <Image source={appIcon} style={styles.aboutLogo} />
               <ThemedText style={[styles.appName, { color: textColor }]}>Flip One</ThemedText>
-              <ThemedText style={styles.appVersion}>Version 1.0.0</ThemedText>
-              <ThemedText style={styles.developerText}>© 2026 HHD Apps</ThemedText>
+              <ThemedText style={[styles.appVersion, { color: textMutedColor }]}>Version 1.0.0</ThemedText>
+              <ThemedText style={[styles.developerText, { color: textSecondaryColor }]}>© 2026 HHD Apps</ThemedText>
             </LinearGradient>
           </View>
         </Animated.View>
@@ -196,9 +204,11 @@ interface SettingRowProps {
   description: string;
   colors: readonly [string, string, ...string[]];
   children: React.ReactNode;
+  textColor: string;
+  textMutedColor: string;
 }
 
-function SettingRow({ icon, title, description, colors, children }: SettingRowProps) {
+function SettingRow({ icon, title, description, colors, children, textColor, textMutedColor }: SettingRowProps) {
   return (
     <LinearGradient
       colors={[GameColors.surfaceLight, GameColors.surface]}
@@ -211,8 +221,8 @@ function SettingRow({ icon, title, description, colors, children }: SettingRowPr
         <Feather name={icon} size={18} color="#FFFFFF" />
       </LinearGradient>
       <View style={styles.settingInfo}>
-        <ThemedText style={styles.settingTitle}>{title}</ThemedText>
-        <ThemedText style={styles.settingDescription}>{description}</ThemedText>
+        <ThemedText style={[styles.settingTitle, { color: textColor }]}>{title}</ThemedText>
+        <ThemedText style={[styles.settingDescription, { color: textMutedColor }]}>{description}</ThemedText>
       </View>
       {children}
     </LinearGradient>
@@ -227,6 +237,8 @@ interface PurchaseRowProps {
   isPurchased?: boolean;
   colors: readonly [string, string, ...string[]];
   onPress: () => void;
+  textColor: string;
+  textMutedColor: string;
 }
 
 function PurchaseRow({
@@ -237,6 +249,8 @@ function PurchaseRow({
   isPurchased,
   colors,
   onPress,
+  textColor,
+  textMutedColor,
 }: PurchaseRowProps) {
   const scale = useSharedValue(1);
 
@@ -268,8 +282,8 @@ function PurchaseRow({
           <Feather name={icon} size={18} color="#FFFFFF" />
         </LinearGradient>
         <View style={styles.settingInfo}>
-          <ThemedText style={styles.settingTitle}>{title}</ThemedText>
-          <ThemedText style={styles.settingDescription}>{description}</ThemedText>
+          <ThemedText style={[styles.settingTitle, { color: textColor }]}>{title}</ThemedText>
+          <ThemedText style={[styles.settingDescription, { color: textMutedColor }]}>{description}</ThemedText>
         </View>
         {isPurchased ? (
           <View style={styles.purchasedBadge}>
@@ -293,9 +307,10 @@ interface SettingButtonProps {
   title: string;
   colors: readonly [string, string, ...string[]];
   onPress: () => void;
+  textColor?: string;
 }
 
-function SettingButton({ icon, title, colors, onPress }: SettingButtonProps) {
+function SettingButton({ icon, title, colors, onPress, textColor }: SettingButtonProps) {
   const scale = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -323,7 +338,7 @@ function SettingButton({ icon, title, colors, onPress }: SettingButtonProps) {
         >
           <Feather name={icon} size={18} color="#FFFFFF" />
         </LinearGradient>
-        <ThemedText style={styles.settingButtonText}>{title}</ThemedText>
+        <ThemedText style={[styles.settingButtonText, textColor ? { color: textColor } : undefined]}>{title}</ThemedText>
         <Feather name="chevron-right" size={20} color={GameColors.textMuted} />
       </LinearGradient>
     </AnimatedPressable>

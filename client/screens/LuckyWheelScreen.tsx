@@ -48,7 +48,7 @@ export default function LuckyWheelScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { backgroundGradient, textColor } = useNightMode();
+  const { backgroundGradient, textColor, textSecondaryColor, textMutedColor } = useNightMode();
   
   const [canSpin, setCanSpin] = useState(false);
   const [isSpinning, setIsSpinning] = useState(false);
@@ -214,8 +214,8 @@ export default function LuckyWheelScreen() {
                 <Feather name="star" size={16} color="#FFF" />
               </LinearGradient>
               <View>
-                <ThemedText style={styles.statBoxLabel}>Your Points</ThemedText>
-                <ThemedText style={styles.statBoxValue}>{points}</ThemedText>
+                <ThemedText style={[styles.statBoxLabel, { color: textSecondaryColor }]}>Your Points</ThemedText>
+                <ThemedText style={[styles.statBoxValue, { color: textColor }]}>{points}</ThemedText>
               </View>
             </View>
             
@@ -227,8 +227,8 @@ export default function LuckyWheelScreen() {
                 <Feather name="refresh-cw" size={16} color="#FFF" />
               </LinearGradient>
               <View>
-                <ThemedText style={styles.statBoxLabel}>Status</ThemedText>
-                <ThemedText style={styles.statBoxValue}>{canSpin ? "Ready!" : "Used"}</ThemedText>
+                <ThemedText style={[styles.statBoxLabel, { color: textSecondaryColor }]}>Status</ThemedText>
+                <ThemedText style={[styles.statBoxValue, { color: textColor }]}>{canSpin ? "Ready!" : "Used"}</ThemedText>
               </View>
             </View>
           </View>

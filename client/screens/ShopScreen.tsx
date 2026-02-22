@@ -127,7 +127,7 @@ const SPECIAL_POWERS: PowerItem[] = [
 export default function ShopScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
-  const { backgroundGradient } = useNightMode();
+  const { backgroundGradient, textColor, textSecondaryColor, textMutedColor } = useNightMode();
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [activeTab, setActiveTab] = useState<"skins" | "premium" | "powers">("skins");
   const [adModalVisible, setAdModalVisible] = useState(false);
@@ -248,6 +248,7 @@ export default function ShopScreen() {
           isEquipped={isEquipped || false}
           canAfford={canAfford}
           onPress={() => handlePurchase(item)}
+          textColor={textColor}
         />
       </Animated.View>
     );
@@ -265,6 +266,7 @@ export default function ShopScreen() {
           isEquipped={isEquipped || false}
           canAfford={canAfford}
           onPress={() => handlePremiumSkinSelect(item)}
+          textColor={textColor}
         />
       </Animated.View>
     );
@@ -280,16 +282,19 @@ export default function ShopScreen() {
           label="Skins"
           isActive={activeTab === "skins"}
           onPress={() => setActiveTab("skins")}
+          textSecondaryColor={textSecondaryColor}
         />
         <TabButton
           label="Premium"
           isActive={activeTab === "premium"}
           onPress={() => setActiveTab("premium")}
+          textSecondaryColor={textSecondaryColor}
         />
         <TabButton
           label="Powers"
           isActive={activeTab === "powers"}
           onPress={() => setActiveTab("powers")}
+          textSecondaryColor={textSecondaryColor}
         />
       </View>
 
@@ -320,8 +325,8 @@ export default function ShopScreen() {
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={
             <View style={styles.premiumHeader}>
-              <ThemedText style={styles.premiumTitle}>Character Skins</ThemedText>
-              <ThemedText style={styles.premiumSubtitle}>
+              <ThemedText style={[styles.premiumTitle, { color: textColor }]}>Character Skins</ThemedText>
+              <ThemedText style={[styles.premiumSubtitle, { color: textMutedColor }]}>
                 Unlock exclusive character designs
               </ThemedText>
             </View>
@@ -336,8 +341,8 @@ export default function ShopScreen() {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.premiumHeader}>
-            <ThemedText style={styles.premiumTitle}>Special Powers</ThemedText>
-            <ThemedText style={styles.premiumSubtitle}>
+            <ThemedText style={[styles.premiumTitle, { color: textColor }]}>Special Powers</ThemedText>
+            <ThemedText style={[styles.premiumSubtitle, { color: textMutedColor }]}>
               Watch ads to unlock game-changing abilities
             </ThemedText>
           </View>
@@ -346,7 +351,9 @@ export default function ShopScreen() {
               <PowerCard 
                 power={power} 
                 usedToday={gameState?.powersUsedToday.includes(power.id) || false}
-                onWatchAd={() => handleWatchAd(power)} 
+                onWatchAd={() => handleWatchAd(power)}
+                textColor={textColor}
+                textMutedColor={textMutedColor}
               />
             </Animated.View>
           ))}
@@ -367,9 +374,10 @@ interface TabButtonProps {
   label: string;
   isActive: boolean;
   onPress: () => void;
+  textSecondaryColor: string;
 }
 
-function TabButton({ label, isActive, onPress }: TabButtonProps) {
+function TabButton({ label, isActive, onPress, textSecondaryColor }: TabButtonProps) {
   return (
     <Pressable
       style={[styles.tab, isActive && styles.tabActive]}
@@ -383,7 +391,7 @@ function TabButton({ label, isActive, onPress }: TabButtonProps) {
           <ThemedText style={styles.tabTextActive}>{label}</ThemedText>
         </LinearGradient>
       ) : (
-        <ThemedText style={styles.tabText}>{label}</ThemedText>
+        <ThemedText style={[styles.tabText, { color: textSecondaryColor }]}>{label}</ThemedText>
       )}
     </Pressable>
   );
@@ -395,6 +403,7 @@ interface SkinCardProps {
   isEquipped: boolean;
   canAfford: boolean;
   onPress: () => void;
+  textColor: string;
 }
 
 function SkinCard({
@@ -403,6 +412,7 @@ function SkinCard({
   isEquipped,
   canAfford,
   onPress,
+  textColor,
 }: SkinCardProps) {
   const scale = useSharedValue(1);
 
@@ -440,7 +450,7 @@ function SkinCard({
           ) : null}
         </View>
 
-        <ThemedText style={styles.skinName}>{skin.name}</ThemedText>
+        <ThemedText style={[styles.skinName, { color: textColor }]}>{skin.name}</ThemedText>
 
         {isOwned ? (
           <View style={styles.ownedBadge}>
@@ -465,9 +475,10 @@ interface PremiumSkinCardProps {
   isEquipped: boolean;
   canAfford: boolean;
   onPress: () => void;
+  textColor: string;
 }
 
-function PremiumSkinCard({ skin, isOwned, isEquipped, canAfford, onPress }: PremiumSkinCardProps) {
+function PremiumSkinCard({ skin, isOwned, isEquipped, canAfford, onPress, textColor }: PremiumSkinCardProps) {
   const scale = useSharedValue(1);
   const glow = useSharedValue(0.5);
 
@@ -536,7 +547,7 @@ function PremiumSkinCard({ skin, isOwned, isEquipped, canAfford, onPress }: Prem
           ) : null}
         </View>
 
-        <ThemedText style={styles.skinName}>{skin.name}</ThemedText>
+        <ThemedText style={[styles.skinName, { color: textColor }]}>{skin.name}</ThemedText>
 
         {isEquipped ? (
           <View style={styles.ownedBadge}>
@@ -567,9 +578,11 @@ interface PowerCardProps {
   power: PowerItem;
   usedToday: boolean;
   onWatchAd: () => void;
+  textColor: string;
+  textMutedColor: string;
 }
 
-function PowerCard({ power, usedToday, onWatchAd }: PowerCardProps) {
+function PowerCard({ power, usedToday, onWatchAd, textColor, textMutedColor }: PowerCardProps) {
   const scale = useSharedValue(1);
   const glow = useSharedValue(0.5);
 
@@ -613,8 +626,8 @@ function PowerCard({ power, usedToday, onWatchAd }: PowerCardProps) {
         </LinearGradient>
         
         <View style={styles.powerInfo}>
-          <ThemedText style={styles.powerName}>{power.name}</ThemedText>
-          <ThemedText style={styles.powerDescription}>{power.description}</ThemedText>
+          <ThemedText style={[styles.powerName, { color: textColor }]}>{power.name}</ThemedText>
+          <ThemedText style={[styles.powerDescription, { color: textMutedColor }]}>{power.description}</ThemedText>
         </View>
 
         {usedToday ? (

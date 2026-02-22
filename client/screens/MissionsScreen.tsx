@@ -32,7 +32,7 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 export default function MissionsScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
-  const { backgroundGradient, textColor } = useNightMode();
+  const { backgroundGradient, textColor, textSecondaryColor, textMutedColor } = useNightMode();
   const [gameState, setGameState] = useState<GameState | null>(null);
 
   useEffect(() => {
@@ -60,7 +60,7 @@ export default function MissionsScreen() {
     index: number;
   }) => (
     <Animated.View entering={FadeInDown.delay(index * 100).springify()}>
-      <MissionCard mission={item} onClaim={() => handleClaimReward(item.id)} textColor={textColor} />
+      <MissionCard mission={item} onClaim={() => handleClaimReward(item.id)} textColor={textColor} textMutedColor={textMutedColor} />
     </Animated.View>
   );
 
@@ -79,7 +79,7 @@ export default function MissionsScreen() {
           >
             <Feather name="calendar" size={20} color="#FFFFFF" />
           </LinearGradient>
-          <ThemedText style={styles.subtitle}>
+          <ThemedText style={[styles.subtitle, { color: textMutedColor }]}>
             Complete missions to earn points
           </ThemedText>
         </View>
@@ -102,8 +102,8 @@ export default function MissionsScreen() {
             >
               <Feather name="check-circle" size={48} color="#FFFFFF" />
             </LinearGradient>
-            <ThemedText style={styles.emptyTitle}>All Done!</ThemedText>
-            <ThemedText style={styles.emptyText}>
+            <ThemedText style={[styles.emptyTitle, { color: textColor }]}>All Done!</ThemedText>
+            <ThemedText style={[styles.emptyText, { color: textMutedColor }]}>
               Come back tomorrow for new missions
             </ThemedText>
           </View>
@@ -129,9 +129,10 @@ interface MissionCardProps {
   mission: DailyMission;
   onClaim: () => void;
   textColor: string;
+  textMutedColor: string;
 }
 
-function MissionCard({ mission, onClaim, textColor }: MissionCardProps) {
+function MissionCard({ mission, onClaim, textColor, textMutedColor }: MissionCardProps) {
   const scale = useSharedValue(1);
   const progress = mission.progress / mission.target;
 
@@ -163,7 +164,7 @@ function MissionCard({ mission, onClaim, textColor }: MissionCardProps) {
                   style={[styles.progressFill, { width: `${Math.min(progress * 100, 100)}%` }]}
                 />
               </View>
-              <ThemedText style={styles.progressText}>
+              <ThemedText style={[styles.progressText, { color: textMutedColor }]}>
                 {mission.progress}/{mission.target}
               </ThemedText>
             </View>

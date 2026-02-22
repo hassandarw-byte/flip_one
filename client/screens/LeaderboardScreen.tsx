@@ -30,7 +30,7 @@ interface LeaderboardEntry {
 export default function LeaderboardScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
-  const { backgroundGradient, textColor, isNightMode } = useNightMode();
+  const { backgroundGradient, textColor, textSecondaryColor, isNightMode } = useNightMode();
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -157,11 +157,11 @@ export default function LeaderboardScreen() {
               {isEditingName ? (
                 <View style={styles.editNameContainer}>
                   <TextInput
-                    style={styles.nameInput}
+                    style={[styles.nameInput, { color: textColor }]}
                     value={tempName}
                     onChangeText={setTempName}
                     placeholder="Enter your name"
-                    placeholderTextColor={GameColors.textSecondary}
+                    placeholderTextColor={textSecondaryColor}
                     maxLength={20}
                     autoFocus
                   />
@@ -191,7 +191,7 @@ export default function LeaderboardScreen() {
                     <Feather name="award" size={16} color="#FFF" />
                   </LinearGradient>
                   <View>
-                    <ThemedText style={styles.statLabel}>Your Best</ThemedText>
+                    <ThemedText style={[styles.statLabel, { color: textSecondaryColor }]}>Your Best</ThemedText>
                     <ThemedText style={[styles.statValue, { color: textColor }]}>
                       {gameState?.bestScore || 0}
                     </ThemedText>
@@ -206,7 +206,7 @@ export default function LeaderboardScreen() {
                     <Feather name="hash" size={16} color="#FFF" />
                   </LinearGradient>
                   <View>
-                    <ThemedText style={styles.statLabel}>Your Rank</ThemedText>
+                    <ThemedText style={[styles.statLabel, { color: textSecondaryColor }]}>Your Rank</ThemedText>
                     <ThemedText style={[styles.statValue, { color: textColor }]}>
                       {userRank ? `#${userRank}` : "-"}
                     </ThemedText>
