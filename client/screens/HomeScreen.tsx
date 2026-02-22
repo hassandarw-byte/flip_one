@@ -30,6 +30,7 @@ import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import { getGameState, GameState, savePoints } from "@/lib/storage";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useNightMode } from "@/contexts/NightModeContext";
+import BannerAd from "@/components/BannerAd";
 
 const { width, height } = Dimensions.get("window");
 
@@ -657,6 +658,8 @@ export default function HomeScreen() {
             <ThemedText style={[styles.shareButtonText, { color: textColor }]}>Share with Friends</ThemedText>
           </LinearGradient>
         </Pressable>
+
+        <BannerAd style={{ marginTop: Spacing.sm }} />
       </Animated.View>
     </LinearGradient>
   );

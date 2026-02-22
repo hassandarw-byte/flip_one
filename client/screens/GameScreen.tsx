@@ -60,6 +60,7 @@ import {
 } from "@/lib/sounds";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useNightMode } from "@/contexts/NightModeContext";
+import InterstitialAdModal from "@/components/InterstitialAdModal";
 
 interface FlipParticle {
   id: number;
@@ -192,6 +193,8 @@ export default function GameScreen() {
   const [distance, setDistance] = useState(0);
   const [encourageMessage, setEncourageMessage] = useState<string | null>(null);
   const [collectExplosions, setCollectExplosions] = useState<{id: number, x: number, y: number, color: string}[]>([]);
+  const [showInterstitialAd, setShowInterstitialAd] = useState(false);
+  const lastAdLevelRef = useRef(0);
   const [streak, setStreak] = useState(0);
   const [successfulFlips, setSuccessfulFlips] = useState(0);
   const [showSkyHero, setShowSkyHero] = useState(false);
@@ -1121,6 +1124,10 @@ export default function GameScreen() {
             if (newLevel % 10 === 0) {
               setBackgroundLevel(bl => (bl + 1) % BACKGROUND_GRADIENTS.length);
             }
+            if (newLevel % 4 === 0 && newLevel > lastAdLevelRef.current) {
+              lastAdLevelRef.current = newLevel;
+              setShowInterstitialAd(true);
+            }
             return newLevel;
           });
         }
@@ -1825,6 +1832,11 @@ export default function GameScreen() {
         pointerEvents="none"
       />
     ) : null}
+
+    <InterstitialAdModal
+      visible={showInterstitialAd}
+      onClose={() => setShowInterstitialAd(false)}
+    />
     </View>
   );
 }
