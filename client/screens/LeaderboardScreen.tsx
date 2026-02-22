@@ -30,7 +30,7 @@ interface LeaderboardEntry {
 export default function LeaderboardScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
-  const { backgroundGradient } = useNightMode();
+  const { backgroundGradient, textColor, isNightMode } = useNightMode();
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -120,7 +120,7 @@ export default function LeaderboardScreen() {
     index: number;
   }) => (
     <Animated.View entering={FadeInDown.delay(index * 50).springify()}>
-      <LeaderboardRow entry={item} />
+      <LeaderboardRow entry={item} textColor={textColor} isNightMode={isNightMode} />
     </Animated.View>
   );
 
@@ -177,8 +177,8 @@ export default function LeaderboardScreen() {
                     setIsEditingName(true);
                   }}
                 >
-                  <ThemedText style={styles.userName}>{username}</ThemedText>
-                  <Feather name="edit-2" size={14} color={GameColors.textSecondary} />
+                  <ThemedText style={[styles.userName, { color: textColor }]}>{username}</ThemedText>
+                  <Feather name="edit-2" size={14} color={isNightMode ? "#AAAAAA" : GameColors.textSecondary} />
                 </Pressable>
               )}
               
@@ -192,7 +192,7 @@ export default function LeaderboardScreen() {
                   </LinearGradient>
                   <View>
                     <ThemedText style={styles.statLabel}>Your Best</ThemedText>
-                    <ThemedText style={styles.statValue}>
+                    <ThemedText style={[styles.statValue, { color: textColor }]}>
                       {gameState?.bestScore || 0}
                     </ThemedText>
                   </View>
@@ -207,7 +207,7 @@ export default function LeaderboardScreen() {
                   </LinearGradient>
                   <View>
                     <ThemedText style={styles.statLabel}>Your Rank</ThemedText>
-                    <ThemedText style={styles.statValue}>
+                    <ThemedText style={[styles.statValue, { color: textColor }]}>
                       {userRank ? `#${userRank}` : "-"}
                     </ThemedText>
                   </View>
@@ -218,10 +218,10 @@ export default function LeaderboardScreen() {
         </View>
 
         <View style={styles.listHeader}>
-          <ThemedText style={styles.listHeaderText}>Global Rankings</ThemedText>
+          <ThemedText style={[styles.listHeaderText, { color: textColor }]}>Global Rankings</ThemedText>
           <View style={styles.totalPlayers}>
-            <Feather name="users" size={14} color={GameColors.textSecondary} />
-            <ThemedText style={styles.totalPlayersText}>
+            <Feather name="users" size={14} color={isNightMode ? "#AAAAAA" : GameColors.textSecondary} />
+            <ThemedText style={[styles.totalPlayersText, { color: isNightMode ? "#AAAAAA" : GameColors.textSecondary }]}>
               {leaderboard.length} Players
             </ThemedText>
           </View>
@@ -229,9 +229,9 @@ export default function LeaderboardScreen() {
 
         {leaderboard.length === 0 ? (
           <View style={styles.emptyState}>
-            <Feather name="award" size={48} color={GameColors.textSecondary} />
-            <ThemedText style={styles.emptyText}>No rankings yet!</ThemedText>
-            <ThemedText style={styles.emptySubtext}>Be the first to set a high score</ThemedText>
+            <Feather name="award" size={48} color={isNightMode ? "#AAAAAA" : GameColors.textSecondary} />
+            <ThemedText style={[styles.emptyText, { color: textColor }]}>No rankings yet!</ThemedText>
+            <ThemedText style={[styles.emptySubtext, { color: isNightMode ? "#AAAAAA" : GameColors.textSecondary }]}>Be the first to set a high score</ThemedText>
           </View>
         ) : (
           <FlatList
@@ -249,9 +249,11 @@ export default function LeaderboardScreen() {
 
 interface LeaderboardRowProps {
   entry: LeaderboardEntry;
+  textColor: string;
+  isNightMode: boolean;
 }
 
-function LeaderboardRow({ entry }: LeaderboardRowProps) {
+function LeaderboardRow({ entry, textColor, isNightMode }: LeaderboardRowProps) {
   const isTop3 = entry.rank <= 3;
   const getMedalColor = () => {
     switch (entry.rank) {
@@ -290,7 +292,7 @@ function LeaderboardRow({ entry }: LeaderboardRowProps) {
             <ThemedText style={styles.medalText}>{entry.rank}</ThemedText>
           </LinearGradient>
         ) : (
-          <ThemedText style={styles.rankText}>#{entry.rank}</ThemedText>
+          <ThemedText style={[styles.rankText, { color: isNightMode ? "#AAAAAA" : GameColors.textSecondary }]}>#{entry.rank}</ThemedText>
         )}
       </View>
 
@@ -298,6 +300,7 @@ function LeaderboardRow({ entry }: LeaderboardRowProps) {
         <ThemedText
           style={[
             styles.entryName,
+            { color: textColor },
             entry.isCurrentUser && styles.currentUserName,
           ]}
         >
@@ -316,7 +319,7 @@ function LeaderboardRow({ entry }: LeaderboardRowProps) {
           style={styles.scoreBadge}
         >
           <ThemedText
-            style={[styles.scoreText, isTop3 && styles.topScoreText]}
+            style={[styles.scoreText, { color: textColor }, isTop3 && styles.topScoreText]}
           >
             {entry.score}
           </ThemedText>
