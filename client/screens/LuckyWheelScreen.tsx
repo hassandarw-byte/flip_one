@@ -6,6 +6,7 @@ import {
   Dimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useHeaderHeight } from "@react-navigation/elements";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
   useSharedValue,
@@ -21,7 +22,6 @@ import { useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 
 import { ThemedText } from "@/components/ThemedText";
-import PointsBadge from "@/components/PointsBadge";
 import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import { canSpinWheel, spinWheel, getGameState } from "@/lib/storage";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
@@ -46,6 +46,7 @@ const WHEEL_SEGMENTS = [
 
 export default function LuckyWheelScreen() {
   const insets = useSafeAreaInsets();
+  const headerHeight = useHeaderHeight();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { backgroundGradient, textColor } = useNightMode();
   
@@ -197,15 +198,7 @@ export default function LuckyWheelScreen() {
         ))}
       </View>
       
-      <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
-        <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Feather name="arrow-left" size={24} color="#000000" />
-        </Pressable>
-        <View style={styles.headerCenter}>
-          <ThemedText style={styles.title}>Wheel</ThemedText>
-        </View>
-        <PointsBadge points={points} />
-      </View>
+      <View style={{ height: headerHeight + Spacing.md }} />
 
       <View style={styles.headerCard}>
         <LinearGradient
@@ -391,34 +384,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
     color: GameColors.textPrimary,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: Spacing.lg,
-    marginBottom: Spacing.md,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#FFFFFF",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  headerCenter: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "400",
-    color: "#9C27B0",
-    textAlign: "center",
   },
   wheelContainer: {
     flex: 1,

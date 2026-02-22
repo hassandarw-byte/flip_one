@@ -147,17 +147,23 @@ export default function RootStackNavigator() {
       <Stack.Screen
         name="LuckyWheel"
         component={LuckyWheelScreen}
-        options={{ 
-          headerShown: false,
+        options={{
+          headerTitle: "Wheel",
+          headerTransparent: true,
           animation: "fade_from_bottom",
+          headerTitleStyle: { fontSize: 24, fontWeight: "400", color: "#9C27B0" },
+          headerRight: () => <PointsBadge />,
         }}
       />
       <Stack.Screen
         name="Achievements"
         component={AchievementsScreen}
-        options={{ 
-          headerShown: false,
+        options={{
+          headerTitle: "Achievements",
+          headerTransparent: true,
           animation: "fade_from_bottom",
+          headerTitleStyle: { fontSize: 24, fontWeight: "400", color: "#9C27B0" },
+          headerRight: () => <PointsBadge />,
         }}
       />
     </Stack.Navigator>
