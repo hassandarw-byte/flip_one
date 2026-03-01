@@ -111,6 +111,8 @@ The app runs on Expo and can be tested via:
 - **Ad Reward Verification**: Rewarded ads now require watching full 5-second ad before claiming reward; locked claim button during ad playback
 - **Ad Close Without Reward**: Users can close ad early but forfeit the reward
 - **Banner Ad Update**: Home screen shows generic advertisement placeholder instead of premium promo
+- **System Theme**: 3 theme options in Settings (System, Light, Dark) - System follows device theme automatically
+- **Real AdMob Ads**: Production builds use real AdMob SDK with actual ad unit IDs
 
 ### Previous (Full Copyright Overhaul)
 - **100% Original Characters**: All 13 premium skins are completely original with AI-generated artwork

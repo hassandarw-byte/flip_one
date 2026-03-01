@@ -39,7 +39,7 @@ export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const [gameState, setGameState] = useState<GameState | null>(null);
-  const { isNightMode, toggleNightMode, backgroundGradient, textColor, textSecondaryColor, textMutedColor } = useNightMode();
+  const { isNightMode, themeMode, setThemeMode, toggleNightMode, backgroundGradient, textColor, textSecondaryColor, textMutedColor } = useNightMode();
 
   useEffect(() => {
     loadGameState();
@@ -63,9 +63,9 @@ export default function SettingsScreen() {
     }
   };
 
-  const handleNightModeToggle = async (value: boolean) => {
-    await toggleNightMode(value);
-    setGameState((prev) => (prev ? { ...prev, nightMode: value } : null));
+  const handleThemeModeChange = async (mode: "system" | "light" | "dark") => {
+    await setThemeMode(mode);
+    setGameState((prev) => (prev ? { ...prev, nightMode: mode === "dark" } : null));
   };
 
   const handleRemoveAdsPurchase = async () => {
@@ -136,27 +136,46 @@ export default function SettingsScreen() {
               />
             </SettingRow>
 
-            <SettingRow
-              icon="moon"
-              title="Night Mode"
-              description="Darker theme for night gaming"
-              colors={[GameColors.candy4, GameColors.primaryGlow]}
-              textColor={textColor}
-              textMutedColor={textMutedColor}
-            >
-              <Switch
-                value={isNightMode}
-                onValueChange={handleNightModeToggle}
-                trackColor={{
-                  false: GameColors.surface,
-                  true: GameColors.candy4 + "60",
-                }}
-                thumbColor={
-                  isNightMode ? GameColors.candy4 : GameColors.textMuted
-                }
-                testID="switch-night-mode"
-              />
-            </SettingRow>
+            <View style={styles.themeSection}>
+              <View style={styles.themeLabelRow}>
+                <LinearGradient
+                  colors={[GameColors.candy4, GameColors.primaryGlow]}
+                  style={styles.settingIcon}
+                >
+                  <Feather name="moon" size={18} color="#FFFFFF" />
+                </LinearGradient>
+                <View style={styles.settingInfo}>
+                  <ThemedText style={[styles.settingTitle, { color: textColor }]}>Theme</ThemedText>
+                  <ThemedText style={[styles.settingDescription, { color: textMutedColor }]}>Choose your display mode</ThemedText>
+                </View>
+              </View>
+              <View style={styles.themeOptions}>
+                <ThemeOption
+                  icon="smartphone"
+                  label="System"
+                  isActive={themeMode === "system"}
+                  onPress={() => handleThemeModeChange("system")}
+                  textColor={textColor}
+                  textMutedColor={textMutedColor}
+                />
+                <ThemeOption
+                  icon="sun"
+                  label="Light"
+                  isActive={themeMode === "light"}
+                  onPress={() => handleThemeModeChange("light")}
+                  textColor={textColor}
+                  textMutedColor={textMutedColor}
+                />
+                <ThemeOption
+                  icon="moon"
+                  label="Dark"
+                  isActive={themeMode === "dark"}
+                  onPress={() => handleThemeModeChange("dark")}
+                  textColor={textColor}
+                  textMutedColor={textMutedColor}
+                />
+              </View>
+            </View>
           </View>
         </Animated.View>
 
@@ -345,6 +364,47 @@ function SettingButton({ icon, title, colors, onPress, textColor }: SettingButto
   );
 }
 
+interface ThemeOptionProps {
+  icon: keyof typeof Feather.glyphMap;
+  label: string;
+  isActive: boolean;
+  onPress: () => void;
+  textColor: string;
+  textMutedColor: string;
+}
+
+function ThemeOption({ icon, label, isActive, onPress, textColor, textMutedColor }: ThemeOptionProps) {
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  return (
+    <AnimatedPressable
+      style={[styles.themeOptionButton, animatedStyle]}
+      onPress={onPress}
+      onPressIn={() => {
+        scale.value = withSpring(0.95, { damping: 15 });
+      }}
+      onPressOut={() => {
+        scale.value = withSpring(1, { damping: 10 });
+      }}
+      testID={`button-theme-${label.toLowerCase()}`}
+    >
+      <LinearGradient
+        colors={isActive ? [GameColors.candy4, GameColors.primaryGlow] : [GameColors.surfaceLight, GameColors.surface]}
+        style={styles.themeOptionGradient}
+      >
+        <Feather name={icon} size={18} color={isActive ? "#FFFFFF" : textMutedColor} />
+        <ThemedText style={[styles.themeOptionText, { color: isActive ? "#FFFFFF" : textColor }]}>
+          {label}
+        </ThemedText>
+      </LinearGradient>
+    </AnimatedPressable>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -427,6 +487,39 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "500",
     color: GameColors.textPrimary,
+  },
+  themeSection: {
+    backgroundColor: GameColors.surfaceLight,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    marginBottom: Spacing.sm,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
+  },
+  themeLabelRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: Spacing.md,
+  },
+  themeOptions: {
+    flexDirection: "row",
+    gap: Spacing.sm,
+  },
+  themeOptionButton: {
+    flex: 1,
+    borderRadius: BorderRadius.md,
+    overflow: "hidden",
+  },
+  themeOptionGradient: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: Spacing.md,
+    gap: 4,
+    borderRadius: BorderRadius.md,
+  },
+  themeOptionText: {
+    fontSize: 12,
+    fontWeight: "700",
   },
   aboutCard: {
     borderRadius: BorderRadius.lg,

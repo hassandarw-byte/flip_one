@@ -28,6 +28,7 @@ const KEYS = {
   DAILY_CHALLENGE: "flip_one_daily_challenge",
   LAST_DAILY_CHALLENGE_DATE: "flip_one_last_daily_challenge_date",
   HAS_SEEN_TUTORIAL: "flip_one_has_seen_tutorial",
+  THEME_MODE: "flip_one_theme_mode",
 };
 
 export interface DailyMission {
@@ -337,6 +338,26 @@ export async function saveNightModeEnabled(enabled: boolean): Promise<void> {
     await AsyncStorage.setItem(KEYS.NIGHT_MODE, enabled.toString());
   } catch (error) {
     console.error("Error saving night mode setting:", error);
+  }
+}
+
+export type ThemeMode = "system" | "light" | "dark";
+
+export async function getThemeMode(): Promise<ThemeMode> {
+  try {
+    const value = await AsyncStorage.getItem(KEYS.THEME_MODE);
+    if (value === "system" || value === "light" || value === "dark") return value;
+    return "light";
+  } catch {
+    return "light";
+  }
+}
+
+export async function saveThemeMode(mode: ThemeMode): Promise<void> {
+  try {
+    await AsyncStorage.setItem(KEYS.THEME_MODE, mode);
+  } catch (error) {
+    console.error("Error saving theme mode:", error);
   }
 }
 
