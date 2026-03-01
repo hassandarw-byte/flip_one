@@ -27,6 +27,7 @@ const KEYS = {
   LAST_FREE_REVIVE_DATE: "flip_one_last_free_revive_date",
   DAILY_CHALLENGE: "flip_one_daily_challenge",
   LAST_DAILY_CHALLENGE_DATE: "flip_one_last_daily_challenge_date",
+  HAS_SEEN_TUTORIAL: "flip_one_has_seen_tutorial",
 };
 
 export interface DailyMission {
@@ -776,6 +777,23 @@ export async function updateDailyChallenge(progress: number): Promise<DailyChall
   } catch (error) {
     console.error("Error updating daily challenge:", error);
     return null;
+  }
+}
+
+export async function getHasSeenTutorial(): Promise<boolean> {
+  try {
+    const value = await AsyncStorage.getItem(KEYS.HAS_SEEN_TUTORIAL);
+    return value === "true";
+  } catch {
+    return false;
+  }
+}
+
+export async function saveHasSeenTutorial(): Promise<void> {
+  try {
+    await AsyncStorage.setItem(KEYS.HAS_SEEN_TUTORIAL, "true");
+  } catch (error) {
+    console.error("Error saving tutorial state:", error);
   }
 }
 

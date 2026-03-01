@@ -6,8 +6,10 @@ import * as SplashScreenExpo from "expo-splash-screen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { GameColors } from "@/constants/theme";
 import PointsBadge from "@/components/PointsBadge";
+import { getHasSeenTutorial } from "@/lib/storage";
 
 import SplashScreen from "@/screens/SplashScreen";
+import TutorialScreen from "@/screens/TutorialScreen";
 import HomeScreen from "@/screens/HomeScreen";
 import GameScreen from "@/screens/GameScreen";
 import GameOverScreen from "@/screens/GameOverScreen";
@@ -42,6 +44,8 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function RootStackNavigator() {
   const screenOptions = useScreenOptions();
   const [showSplash, setShowSplash] = useState(true);
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [tutorialChecked, setTutorialChecked] = useState(false);
   
   const [fontsLoaded, fontError] = useFonts({
     Tajawal_400Regular,
@@ -54,12 +58,29 @@ export default function RootStackNavigator() {
     }
   }, [fontsLoaded, fontError]);
 
+  useEffect(() => {
+    const checkTutorial = async () => {
+      const hasSeen = await getHasSeenTutorial();
+      setShowTutorial(!hasSeen);
+      setTutorialChecked(true);
+    };
+    checkTutorial();
+  }, []);
+
   if (!fontsLoaded && !fontError) {
+    return null;
+  }
+
+  if (!tutorialChecked) {
     return null;
   }
 
   if (showSplash) {
     return <SplashScreen onComplete={() => setShowSplash(false)} />;
+  }
+
+  if (showTutorial) {
+    return <TutorialScreen onComplete={() => setShowTutorial(false)} />;
   }
 
   return (

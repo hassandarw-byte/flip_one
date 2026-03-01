@@ -43,6 +43,7 @@ client/
 │   └── RootStackNavigator.tsx # Stack navigation
 └── screens/
     ├── SplashScreen.tsx       # Animated splash screen
+    ├── TutorialScreen.tsx     # First-time user walkthrough (3 steps)
     ├── HomeScreen.tsx         # Main menu
     ├── GameScreen.tsx         # Core gameplay
     ├── GameOverScreen.tsx     # Results modal
@@ -105,7 +106,13 @@ The app runs on Expo and can be tested via:
 
 ## Recent Changes
 
-### Latest (Full Copyright Overhaul)
+### Latest (Tester Feedback Improvements)
+- **Interactive Tutorial**: 3-step walkthrough for first-time users showing gameplay mechanics, flip controls, and tips
+- **Ad Reward Verification**: Rewarded ads now require watching full 5-second ad before claiming reward; locked claim button during ad playback
+- **Ad Close Without Reward**: Users can close ad early but forfeit the reward
+- **Banner Ad Update**: Home screen shows generic advertisement placeholder instead of premium promo
+
+### Previous (Full Copyright Overhaul)
 - **100% Original Characters**: All 13 premium skins are completely original with AI-generated artwork
 - **Character Names**: Shadow Ninja, Web Crawler, Forest Spirit, Steel Bot, Speed Bird, Cozy Bunny, Golden Firefly, Frost Fox, Sweet Kitty, Purple Imp, Sky Eagle, Kawaii Cat, Star Hamster
 - **Easter Egg Creatures**: Flame Phoenix (15 flips), Crystal Spider (20 flips), Storm Cloud (25 flips), Moonlight Owl (30 flips), Rock Golem (35 flips)

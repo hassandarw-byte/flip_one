@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -30,25 +30,39 @@ interface AdModalProps {
   rewardName: string;
 }
 
-const AD_DURATION = 3;
+const AD_DURATION = 5;
 
 export default function AdModal({ visible, onClose, onComplete, rewardName }: AdModalProps) {
   const [countdown, setCountdown] = useState(AD_DURATION);
-  const [canClose, setCanClose] = useState(false);
+  const [adFinished, setAdFinished] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [adFailed, setAdFailed] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
   const progressWidth = useSharedValue(0);
   const pulseOpacity = useSharedValue(0.3);
   
   useEffect(() => {
     if (visible) {
+      setAdFinished(false);
+      setCountdown(AD_DURATION);
       if (isAdMobAvailable()) {
         showRealAd();
       } else {
         showSimulatedAd();
       }
+    } else {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
     }
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
   }, [visible]);
 
   const showRealAd = async () => {
@@ -67,8 +81,7 @@ export default function AdModal({ visible, onClose, onComplete, rewardName }: Ad
       setIsLoading(false);
       
       if (rewarded) {
-        onComplete();
-        onClose();
+        setAdFinished(true);
       } else {
         setAdFailed(true);
       }
@@ -81,7 +94,7 @@ export default function AdModal({ visible, onClose, onComplete, rewardName }: Ad
 
   const showSimulatedAd = () => {
     setCountdown(AD_DURATION);
-    setCanClose(false);
+    setAdFinished(false);
     setAdFailed(false);
     progressWidth.value = 0;
     
@@ -95,22 +108,19 @@ export default function AdModal({ visible, onClose, onComplete, rewardName }: Ad
       true
     );
     
-    const timer = setInterval(() => {
+    timerRef.current = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
-          clearInterval(timer);
-          setCanClose(true);
-          setTimeout(() => {
-            onComplete();
-            onClose();
-          }, 500);
+          if (timerRef.current) {
+            clearInterval(timerRef.current);
+            timerRef.current = null;
+          }
+          setAdFinished(true);
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
-    
-    return () => clearInterval(timer);
   };
   
   const progressStyle = useAnimatedStyle(() => ({
@@ -121,7 +131,8 @@ export default function AdModal({ visible, onClose, onComplete, rewardName }: Ad
     opacity: pulseOpacity.value,
   }));
   
-  const handleComplete = () => {
+  const handleClaimReward = () => {
+    if (!adFinished) return;
     onComplete();
     onClose();
   };
@@ -132,6 +143,10 @@ export default function AdModal({ visible, onClose, onComplete, rewardName }: Ad
     } else {
       showSimulatedAd();
     }
+  };
+
+  const handleCloseWithoutReward = () => {
+    onClose();
   };
 
   if (isAdMobAvailable() && isLoading) {
@@ -191,7 +206,7 @@ export default function AdModal({ visible, onClose, onComplete, rewardName }: Ad
       visible={visible}
       transparent
       animationType="fade"
-      onRequestClose={canClose ? handleComplete : undefined}
+      onRequestClose={adFinished ? handleClaimReward : undefined}
     >
       <View style={styles.overlay}>
         <LinearGradient
@@ -206,15 +221,25 @@ export default function AdModal({ visible, onClose, onComplete, rewardName }: Ad
           </Animated.View>
           
           <View style={styles.content}>
-            <Feather name="play-circle" size={80} color={GameColors.gold} />
+            <Feather 
+              name={adFinished ? "check-circle" : "play-circle"} 
+              size={80} 
+              color={adFinished ? GameColors.success : GameColors.gold} 
+            />
             
             <ThemedText style={styles.title}>
-              {canClose ? "Ad Complete!" : "Watching Ad..."}
+              {adFinished ? "Ad Complete!" : "Watching Ad..."}
             </ThemedText>
             
             <ThemedText style={styles.rewardText}>
-              {canClose ? `Claim your ${rewardName}!` : `Reward: ${rewardName}`}
+              {adFinished ? `Claim your ${rewardName}!` : `Reward: ${rewardName}`}
             </ThemedText>
+
+            {!adFinished ? (
+              <ThemedText style={styles.watchMessage}>
+                Watch the full ad to earn your reward
+              </ThemedText>
+            ) : null}
             
             <View style={styles.progressContainer}>
               <View style={styles.progressBackground}>
@@ -228,9 +253,34 @@ export default function AdModal({ visible, onClose, onComplete, rewardName }: Ad
                 </Animated.View>
               </View>
               <ThemedText style={styles.countdownText}>
-                {canClose ? "Continuing..." : `${countdown}s`}
+                {adFinished ? "Complete!" : `${countdown}s remaining`}
               </ThemedText>
             </View>
+
+            {adFinished ? (
+              <Pressable style={styles.claimButton} onPress={handleClaimReward} testID="button-claim-reward">
+                <LinearGradient
+                  colors={[GameColors.success, "#27AE60"]}
+                  style={styles.claimButtonGradient}
+                >
+                  <Feather name="gift" size={24} color="#FFFFFF" />
+                  <ThemedText style={styles.claimButtonText}>Claim {rewardName}</ThemedText>
+                </LinearGradient>
+              </Pressable>
+            ) : (
+              <View style={styles.lockedButton}>
+                <Feather name="lock" size={18} color="rgba(255,255,255,0.4)" />
+                <ThemedText style={styles.lockedText}>
+                  Watch to unlock reward
+                </ThemedText>
+              </View>
+            )}
+
+            {!adFinished ? (
+              <Pressable onPress={handleCloseWithoutReward}>
+                <ThemedText style={styles.closeText}>Close (no reward)</ThemedText>
+              </Pressable>
+            ) : null}
             
             {!isAdMobAvailable() ? (
               <ThemedText style={styles.disclaimerText}>
@@ -281,7 +331,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: GameColors.gold,
     fontWeight: "600",
-    marginBottom: Spacing.xl,
+    marginBottom: Spacing.sm,
+  },
+  watchMessage: {
+    fontSize: 13,
+    color: "rgba(255,255,255,0.6)",
+    marginBottom: Spacing.lg,
+    textAlign: "center",
   },
   progressContainer: {
     width: "100%",
@@ -300,7 +356,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   countdownText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "700",
     color: GameColors.gold,
     marginTop: Spacing.md,
@@ -309,7 +365,7 @@ const styles = StyleSheet.create({
     width: "100%",
     borderRadius: BorderRadius.lg,
     overflow: "hidden",
-    marginBottom: Spacing.lg,
+    marginBottom: Spacing.sm,
   },
   claimButtonGradient: {
     flexDirection: "row",
@@ -324,16 +380,33 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     textAlign: "center",
   },
+  lockedButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: Spacing.lg,
+    gap: Spacing.sm,
+    width: "100%",
+    backgroundColor: "rgba(255,255,255,0.1)",
+    borderRadius: BorderRadius.lg,
+    marginBottom: Spacing.sm,
+  },
+  lockedText: {
+    fontSize: 14,
+    color: "rgba(255,255,255,0.4)",
+    fontWeight: "600",
+  },
   disclaimerText: {
     fontSize: 11,
     color: GameColors.textMuted,
     textAlign: "center",
     fontStyle: "italic",
+    marginTop: Spacing.sm,
   },
   closeText: {
-    fontSize: 14,
-    color: GameColors.textSecondary,
-    marginTop: Spacing.md,
+    fontSize: 13,
+    color: "rgba(255,255,255,0.4)",
+    marginTop: Spacing.sm,
     textAlign: "center",
   },
 });
