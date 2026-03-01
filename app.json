@@ -1,4 +1,7 @@
 {
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-4988944368021582~4442685498"
+  },
   "expo": {
     "name": "Flip One",
     "slug": "flip-one",
