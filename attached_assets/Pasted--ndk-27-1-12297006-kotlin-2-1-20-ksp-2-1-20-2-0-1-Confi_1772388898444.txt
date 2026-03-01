@@ -1,0 +1,78 @@
+  - ndk:         27.1.12297006
+  - kotlin:      2.1.20
+  - ksp:         2.1.20-2.0.1
+
+> Configure project :expo
+
+Using expo modules
+  - expo-constants (18.0.13)
+  - expo-modules-core (3.0.29)
+  - [≡ƒôª] expo-asset (12.0.12)
+  - [≡ƒôª] expo-audio (1.1.1)
+  - [≡ƒôª] expo-blur (15.0.8)
+  - [≡ƒôª] expo-file-system (19.0.21)
+  - [≡ƒôª] expo-font (14.0.11)
+  - [≡ƒôª] expo-haptics (15.0.8)
+  - [≡ƒôª] expo-image (3.0.11)
+  - [≡ƒôª] expo-keep-awake (15.0.8)
+  - [≡ƒôª] expo-linear-gradient (15.0.8)
+  - [≡ƒôª] expo-linking (8.0.11)
+  - [≡ƒôª] expo-splash-screen (31.0.13)
+  - [≡ƒôª] expo-system-ui (6.0.9)
+  - [≡ƒôª] expo-web-browser (15.0.10)
+
+
+> Task :expo-constants:createExpoConfig
+
+> Task :react-native-reanimated:buildCMakeRelWithDebInfo[x86_64][reanimated]
+C/C++: ninja: warning: premature end of file; recovering
+
+> Task :app:buildCMakeRelWithDebInfo[arm64-v8a] FAILED
+C/C++: ninja: error: Stat(reactnativekeyboardcontroller_autolinked_build/CMakeFiles/react_codegen_reactnativekeyboardcontroller.dir/D_/Flip-One/node_modules/react-native-keyboard-controller/android/build/generated/source/codegen/jni/react/renderer/components/reactnativekeyboardcontroller/reactnativekeyboardcontrollerJSI-generated.cpp.o): Filename longer than 260 characters
+
+> Task :react-native-gesture-handler:buildCMakeRelWithDebInfo[arm64-v8a]
+C/C++: ninja: warning: premature end of file; recovering
+
+[Incubating] Problems report is available at: file:///D:/Flip-One/android/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+535 actionable tasks: 51 executed, 484 up-to-date
+
+D:\Flip-One\android>type build_errors.txt
+The NODE_ENV environment variable is required but was not specified. Ensure the project is bundled with Expo CLI or NODE_ENV is set. Using only .env.local and .env
+Warning: Root-level "expo" object found. Ignoring extra key in Expo config: "react-native-google-mobile-ads"
+Learn more: https://expo.fyi/root-expo-object
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:buildCMakeRelWithDebInfo[arm64-v8a]'.
+> com.android.ide.common.process.ProcessException: ninja: Entering directory `D:\Flip-One\android\app\.cxx\RelWithDebInfo\6a4v2w5b\arm64-v8a'
+  [0/2] Re-checking globbed directories...
+
+  C++ build system [build] failed while executing:
+      @echo off
+      "C:\\Users\\LEGION\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe" ^
+        -C ^
+        "D:\\Flip-One\\android\\app\\.cxx\\RelWithDebInfo\\6a4v2w5b\\arm64-v8a" ^
+        appmodules ^
+        react_codegen_reactnativekeyboardcontroller ^
+        react_codegen_rnscreens ^
+        react_codegen_rnsvg ^
+        react_codegen_safeareacontext
+    from D:\Flip-One\android\app
+  ninja: error: Stat(reactnativekeyboardcontroller_autolinked_build/CMakeFiles/react_codegen_reactnativekeyboardcontroller.dir/D_/Flip-One/node_modules/react-native-keyboard-controller/android/build/generated/source/codegen/jni/react/renderer/components/reactnativekeyboardcontroller/reactnativekeyboardcontrollerJSI-generated.cpp.o): Filename longer than 260 characters
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 51s
+
+D:\Flip-One\android>
