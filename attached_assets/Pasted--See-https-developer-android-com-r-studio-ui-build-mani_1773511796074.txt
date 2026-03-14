@@ -1,0 +1,36 @@
+
+See https://developer.android.com/r/studio-ui/build/manifest-merger for more information about the manifest merger.
+
+
+> Task :react-native-screens:buildCMakeRelWithDebInfo[arm64-v8a]
+C/C++: Hard link from 'C:\Users\LEGION\.gradle\caches\8.14.3\transforms\5ada105901623d3a4fdf3191bb54b6dc\transformed\jetified-react-android-0.81.5-release\prefab\modules\reactnative\libs\android.arm64-v8a\libreactnative.so' to 'D:\Flip-One\node_modules\react-native-screens\android\build\intermediates\cxx\RelWithDebInfo\5o1t456j\obj\arm64-v8a\libreactnative.so' failed. Doing a slower copy instead.
+C/C++: Hard link from 'C:\Users\LEGION\.gradle\caches\8.14.3\transforms\5ada105901623d3a4fdf3191bb54b6dc\transformed\jetified-react-android-0.81.5-release\prefab\modules\reactnative\libs\android.arm64-v8a\libreactnative.so' to 'D:\Flip-One\node_modules\react-native-screens\android\build\intermedi
+> Task :expo-modules-core:buildCMakeRelWithDebInfo[arm64-v8a]
+C/C++: Hard link from 'C:\Users\LEGION\.gradle\caches\8.14.3\transforms\5ada105901623d3a4fdf3191bb54b6dc\transformed\jetified-react-android-0.81.5-release\prefab\modules\reactnative\libs\android.arm64-v8a\libreactnative.so' to 'D:\Flip-One\node_modules\expo-modules-core\android\build\intermediates\cxx\RelWithDebInfo\1k6q1q5r\obj\arm64-v8a\libreactnative.so' failed. Doing a slower copy instead
+C/C++: Hard link from 'C:\Users\LEGION\.gradle\caches\8.14.3\transforms\5ada105901623d3a4fdf3191bb54b6dc\transformed\jetified-react-android-0.81.5-release\prefab\modules\reactnative\libs\android.arm64-v8a\libreactnative.so' to 'D:\Flip-One\node_modules\expo-modules-core\android\build\intermediates\cxx\RelWithDebInfo\1k6q1q5r\obj\arm64-v8a\libreactnative.so' failed. Doing a slower copy instead
+
+[Incubating] Problems report is available at: file:///D:/Flip-One/android/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:processReleaseMainManifest'.
+> Manifest merger failed with multiple errors, see logs
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 59s
+392 actionable tasks: 328 executed, 64 from cache
+
+========================================
+ Build exit code: 1
+========================================
+FAILED - AAB file NOT found!
+
+Searching for any .aab files...
+
+Press any key to continue . . .

@@ -3,41 +3,46 @@ const { withAndroidManifest } = require("@expo/config-plugins");
 module.exports = function withAdMob(config, { androidAppId } = {}) {
   return withAndroidManifest(config, async (config) => {
     const manifest = config.modResults;
-    const application = manifest.manifest.application[0];
 
+    if (!manifest.manifest.$["xmlns:tools"]) {
+      manifest.manifest.$["xmlns:tools"] =
+        "http://schemas.android.com/tools";
+    }
+
+    const application = manifest.manifest.application[0];
     if (!application["meta-data"]) {
       application["meta-data"] = [];
     }
 
-    const existing = application["meta-data"].find(
-      (item) =>
-        item.$?.["android:name"] === "com.google.android.gms.ads.APPLICATION_ID"
-    );
-
-    if (!existing && androidAppId) {
-      application["meta-data"].push({
+    const setMetaData = (name, value) => {
+      const idx = application["meta-data"].findIndex(
+        (item) => item.$?.["android:name"] === name
+      );
+      const entry = {
         $: {
-          "android:name": "com.google.android.gms.ads.APPLICATION_ID",
-          "android:value": androidAppId,
+          "android:name": name,
+          "android:value": value,
+          "tools:replace": "android:value",
         },
-      });
+      };
+      if (idx >= 0) {
+        application["meta-data"][idx] = entry;
+      } else {
+        application["meta-data"].push(entry);
+      }
+    };
+
+    if (androidAppId) {
+      setMetaData(
+        "com.google.android.gms.ads.APPLICATION_ID",
+        androidAppId
+      );
     }
 
-    const delayMeasurement = application["meta-data"].find(
-      (item) =>
-        item.$?.["android:name"] ===
-        "com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT"
+    setMetaData(
+      "com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT",
+      "true"
     );
-
-    if (!delayMeasurement) {
-      application["meta-data"].push({
-        $: {
-          "android:name":
-            "com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT",
-          "android:value": "true",
-        },
-      });
-    }
 
     return config;
   });
