@@ -6,21 +6,36 @@ echo ========================================
 set /p KEYSTORE_PASS=Enter keystore password: 
 
 echo.
+echo Creating short virtual drive Z: to avoid Windows path length limit...
+subst Z: /d 2>nul
+subst Z: "%~dp0"
+if %ERRORLEVEL% NEQ 0 (
+  echo ERROR: Could not create virtual drive Z:
+  pause
+  exit /b 1
+)
+echo Drive Z: created pointing to: %~dp0
+
+echo.
 echo [1/4] Installing dependencies...
+Z:
+cd Z:\
 call npm install
 call npm uninstall react-native-google-mobile-ads 2>nul
 
 echo.
-echo [2/4] Generating Android project (using local Expo CLI)...
+echo [2/4] Generating Android project...
 call node_modules\.bin\expo prebuild --platform android --clean --non-interactive
 if %ERRORLEVEL% NEQ 0 (
   echo ERROR: Prebuild failed!
+  subst Z: /d 2>nul
   pause
   exit /b 1
 )
 
 if not exist "android" (
   echo ERROR: android folder not found after prebuild!
+  subst Z: /d 2>nul
   pause
   exit /b 1
 )
@@ -28,7 +43,7 @@ echo Android folder ready.
 
 echo.
 echo [3/4] Building release AAB...
-echo (This takes 3-5 minutes, you will see Gradle progress below)
+echo (Building from short path Z:\ to avoid 260-char limit)
 echo.
 cd android
 call gradlew bundleRelease ^
@@ -38,21 +53,28 @@ call gradlew bundleRelease ^
   -Pandroid.injected.signing.key.password=%KEYSTORE_PASS%
 
 set BUILD_CODE=%ERRORLEVEL%
-cd ..
+cd Z:\
 
 echo.
-if exist "android\app\build\outputs\bundle\release\app-release.aab" (
+if exist "Z:\android\app\build\outputs\bundle\release\app-release.aab" (
   echo ========================================
   echo  SUCCESS! AAB file created!
   echo ========================================
-  copy "android\app\build\outputs\bundle\release\app-release.aab" "app-release.aab" > nul
-  echo File ready at: %CD%\app-release.aab
+  copy "Z:\android\app\build\outputs\bundle\release\app-release.aab" "%~dp0app-release.aab" > nul
+  echo File ready at: %~dp0app-release.aab
+  echo.
+  echo You can now upload this file to Google Play Console.
 ) else (
   echo ========================================
   echo  BUILD FAILED! (exit code: %BUILD_CODE%^)
   echo ========================================
-  echo Scroll up to see the error details.
+  echo.
+  echo Scroll up in this window to see the error details.
 )
+
+echo.
+echo Cleaning up virtual drive Z:...
+subst Z: /d 2>nul
 
 echo.
 pause
