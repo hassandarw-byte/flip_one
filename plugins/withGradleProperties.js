@@ -20,6 +20,7 @@ module.exports = function withCustomGradleProperties(config) {
     set("org.gradle.daemon", "true");
     set("org.gradle.parallel", "true");
     set("org.gradle.caching", "true");
+    set("android.cxx.buildRoot", "D:/cxx");
 
     return config;
   });
