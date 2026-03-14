@@ -14,25 +14,22 @@ if %ERRORLEVEL% NEQ 0 (
 call npm uninstall react-native-google-mobile-ads 2>nul
 
 echo.
-echo [2/4] Generating Android project...
-call npx expo prebuild --platform android --clean --yes
+echo [2/4] Generating Android project (using local Expo CLI)...
+call node_modules\.bin\expo prebuild --platform android --clean --non-interactive
 if %ERRORLEVEL% NEQ 0 (
-  echo Trying alternative prebuild command...
-  echo Y | call npx expo prebuild --platform android --clean
+  echo ERROR: Prebuild failed!
+  pause
+  exit /b 1
 )
 
 echo.
 echo Checking if android folder was created...
 if not exist "android" (
-  echo ERROR: android folder not found! Prebuild failed.
-  echo.
-  echo Try running this manually:
-  echo   npx expo prebuild --platform android --clean
+  echo ERROR: android folder not found after prebuild!
   pause
   exit /b 1
 )
-
-echo Android folder found, continuing...
+echo Android folder ready.
 
 echo.
 echo [3/4] Building release AAB (log in build-log.txt)...
