@@ -184,6 +184,11 @@ function configureExpoAndLanding(app: express.Application) {
     res.status(200).send(privacyPolicyTemplate);
   });
 
+  app.get("/app-ads.txt", (_req: Request, res: Response) => {
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.status(200).send("google.com, pub-4988944368021582, DIRECT, f08c47fec0942fa0");
+  });
+
   app.use((req: Request, res: Response, next: NextFunction) => {
     if (req.path.startsWith("/api")) {
       return next();
