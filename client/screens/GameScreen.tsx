@@ -228,6 +228,7 @@ export default function GameScreen() {
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
   const obstacleSpawnRef = useRef<NodeJS.Timeout | null>(null);
   const collectibleSpawnRef = useRef<NodeJS.Timeout | null>(null);
+  const isAdShowingRef = useRef(false);
   const collectibleIdRef = useRef(0);
   const bonusPointsRef = useRef(0);
   const scoreIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -798,7 +799,7 @@ export default function GameScreen() {
     setFloatingParticles(initialParticles);
     
     gameLoopRef.current = setInterval(() => {
-      if (isGameOverRef.current) return;
+      if (isGameOverRef.current || isAdShowingRef.current) return;
 
       // Update floating particles
       setFloatingParticles((prev) =>
@@ -1027,7 +1028,7 @@ export default function GameScreen() {
       ];
       
       obstacleSpawnRef.current = setInterval(() => {
-        if (isGameOverRef.current) return;
+        if (isGameOverRef.current || isAdShowingRef.current) return;
         
         setScore(currentScore => {
           // Boss Level check - every 50 points
@@ -1069,7 +1070,7 @@ export default function GameScreen() {
       // Spawn collectibles (hearts and stars) between obstacles
       setTimeout(() => {
         collectibleSpawnRef.current = setInterval(() => {
-          if (isGameOverRef.current) return;
+          if (isGameOverRef.current || isAdShowingRef.current) return;
           
           const collectibleTypes: Collectible["type"][] = ["heart", "star"];
           const type = collectibleTypes[Math.floor(Math.random() * collectibleTypes.length)];
@@ -1107,7 +1108,7 @@ export default function GameScreen() {
     }, GRACE_PERIOD);
 
     scoreIntervalRef.current = setInterval(() => {
-      if (isGameOverRef.current) return;
+      if (isGameOverRef.current || isAdShowingRef.current) return;
       
       setScore((prev) => {
         const comboMultiplier = combo > 3 ? 1 + (combo - 3) * 0.1 : 1;
@@ -1126,6 +1127,7 @@ export default function GameScreen() {
             }
             if (newLevel % 4 === 0 && newLevel > lastAdLevelRef.current) {
               lastAdLevelRef.current = newLevel;
+              isAdShowingRef.current = true;
               setShowInterstitialAd(true);
             }
             return newLevel;
@@ -1835,7 +1837,10 @@ export default function GameScreen() {
 
     <InterstitialAdModal
       visible={showInterstitialAd}
-      onClose={() => setShowInterstitialAd(false)}
+      onClose={() => {
+        isAdShowingRef.current = false;
+        setShowInterstitialAd(false);
+      }}
     />
     </View>
   );

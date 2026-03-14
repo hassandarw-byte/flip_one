@@ -1,6 +1,12 @@
 import * as Haptics from "expo-haptics";
 import { createAudioPlayer, AudioPlayer, setAudioModeAsync } from "expo-audio";
 
+const flipUpAsset = require("../assets/sounds/flip-up.mp3");
+const flipDownAsset = require("../assets/sounds/flip-down.mp3");
+const gameOverAsset = require("../assets/sounds/game-over.mp3");
+const scoreAsset = require("../assets/sounds/score.mp3");
+const collectAsset = require("../assets/sounds/collect.mp3");
+const thunderAsset = require("../assets/sounds/thunder.mp3");
 const carStartupAsset = require("../assets/sounds/car-startup.mp3");
 const carEngineLoopAsset = require("../assets/sounds/car-engine-loop.mp3");
 
@@ -8,28 +14,12 @@ let flipUpPlayer: AudioPlayer | null = null;
 let flipDownPlayer: AudioPlayer | null = null;
 let gameOverPlayer: AudioPlayer | null = null;
 let scorePlayer: AudioPlayer | null = null;
-let powerUpPlayer: AudioPlayer | null = null;
 let collectPlayer: AudioPlayer | null = null;
 let thunderPlayer: AudioPlayer | null = null;
 let carStartupPlayer: AudioPlayer | null = null;
 let gasPedalPlayer: AudioPlayer | null = null;
-let wheelSpinPlayer: AudioPlayer | null = null;
 
 let gasPedalInterval: ReturnType<typeof setInterval> | null = null;
-
-const FLIP_UP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3";
-const FLIP_DOWN_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3";
-const GAME_OVER_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2656/2656-preview.mp3";
-const SCORE_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3";
-const POWER_UP_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3";
-// Classic arcade coin collection sound
-const COLLECT_RING_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3";
-// Real dramatic thunder sound
-const THUNDER_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/1155/1155-preview.mp3";
-// Car startup sound (local asset)
-// Car engine loop sound (local asset)
-// Casino wheel spinning sound
-const WHEEL_SPIN_SOUND_URI = "https://assets.mixkit.co/active_storage/sfx/1653/1653-preview.mp3";
 
 let soundsLoaded = false;
 
@@ -41,16 +31,14 @@ export async function initializeSounds(): Promise<void> {
       playsInSilentMode: true,
     });
     
-    flipUpPlayer = createAudioPlayer({ uri: FLIP_UP_SOUND_URI });
-    flipDownPlayer = createAudioPlayer({ uri: FLIP_DOWN_SOUND_URI });
-    gameOverPlayer = createAudioPlayer({ uri: GAME_OVER_SOUND_URI });
-    scorePlayer = createAudioPlayer({ uri: SCORE_SOUND_URI });
-    powerUpPlayer = createAudioPlayer({ uri: POWER_UP_SOUND_URI });
-    collectPlayer = createAudioPlayer({ uri: COLLECT_RING_SOUND_URI });
-    thunderPlayer = createAudioPlayer({ uri: THUNDER_SOUND_URI });
+    flipUpPlayer = createAudioPlayer(flipUpAsset);
+    flipDownPlayer = createAudioPlayer(flipDownAsset);
+    gameOverPlayer = createAudioPlayer(gameOverAsset);
+    scorePlayer = createAudioPlayer(scoreAsset);
+    collectPlayer = createAudioPlayer(collectAsset);
+    thunderPlayer = createAudioPlayer(thunderAsset);
     carStartupPlayer = createAudioPlayer(carStartupAsset);
     gasPedalPlayer = createAudioPlayer(carEngineLoopAsset);
-    wheelSpinPlayer = createAudioPlayer({ uri: WHEEL_SPIN_SOUND_URI });
     
     soundsLoaded = true;
   } catch (error) {
@@ -124,12 +112,11 @@ export async function playScoreSound(soundEnabled: boolean): Promise<void> {
 
 export async function playPowerUpSound(soundEnabled: boolean): Promise<void> {
   if (!soundEnabled) return;
-  
   try {
-    if (powerUpPlayer) {
-      powerUpPlayer.volume = 0.5;
-      powerUpPlayer.seekTo(0);
-      powerUpPlayer.play();
+    if (collectPlayer) {
+      collectPlayer.volume = 0.5;
+      collectPlayer.seekTo(0);
+      collectPlayer.play();
     }
   } catch (error) {
     // Sound not available
@@ -211,12 +198,11 @@ export function stopGasPedalSound(): void {
 
 export async function playWheelSpinSound(soundEnabled: boolean): Promise<void> {
   if (!soundEnabled) return;
-  
   try {
-    if (wheelSpinPlayer) {
-      wheelSpinPlayer.volume = 0.5;
-      wheelSpinPlayer.seekTo(0);
-      wheelSpinPlayer.play();
+    if (scorePlayer) {
+      scorePlayer.volume = 0.4;
+      scorePlayer.seekTo(0);
+      scorePlayer.play();
     }
   } catch (error) {
     // Sound not available
@@ -388,7 +374,6 @@ export async function cleanupSounds(): Promise<void> {
     if (flipDownPlayer) flipDownPlayer.release();
     if (gameOverPlayer) gameOverPlayer.release();
     if (scorePlayer) scorePlayer.release();
-    if (powerUpPlayer) powerUpPlayer.release();
     if (collectPlayer) collectPlayer.release();
     if (thunderPlayer) thunderPlayer.release();
     if (carStartupPlayer) carStartupPlayer.release();
@@ -398,7 +383,6 @@ export async function cleanupSounds(): Promise<void> {
     flipDownPlayer = null;
     gameOverPlayer = null;
     scorePlayer = null;
-    powerUpPlayer = null;
     collectPlayer = null;
     thunderPlayer = null;
     carStartupPlayer = null;
