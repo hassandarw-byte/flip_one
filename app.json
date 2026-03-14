@@ -7,7 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "flipone",
     "userInterfaceStyle": "dark",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.flipone.app"
@@ -49,9 +49,7 @@
       ],
       "./plugins/withGradleProperties"
     ],
-    "experiments": {
-      "reactCompiler": true
-    },
+    "experiments": {},
     "extra": {
       "eas": {
         "projectId": "your-project-id"
