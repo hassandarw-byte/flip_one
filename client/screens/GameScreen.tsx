@@ -1142,7 +1142,7 @@ export default function GameScreen() {
   }, [playerX, handleGameOver, scoreScale, obstacles]);
 
   const handleFlip = useCallback(() => {
-    if (isGameOverRef.current || isDyingRef.current) return;
+    if (isGameOverRef.current || isDyingRef.current || isAdShowingRef.current) return;
 
     if (!isPlaying) {
       return;
