@@ -7,14 +7,13 @@ set /p KEYSTORE_PASS=Enter keystore password:
 
 echo.
 echo [1/4] Installing dependencies...
-call npm install
-
+call npm install --prefer-offline
 echo     Removing react-native-google-mobile-ads to avoid build conflicts...
 call npm uninstall react-native-google-mobile-ads 2>nul
 
 echo.
 echo [2/4] Generating Android project...
-call npx expo prebuild --platform android --clean
+echo Y | call npx expo prebuild --platform android --clean --non-interactive
 
 echo.
 echo [3/4] Building release AAB (log in build-log.txt)...
@@ -44,7 +43,7 @@ if exist "android\app\build\outputs\bundle\release\app-release.aab" (
   echo Last errors from build-log.txt:
   powershell -command "Get-Content 'build-log.txt' | Select-String 'error|Error|FAILED|exception|What went wrong' | Select-Object -Last 30 | ForEach-Object { $_.Line }"
   echo.
-  echo Open build-log.txt for full details.
+  echo Open build-log.txt with Notepad for full details.
 )
 
 echo.
