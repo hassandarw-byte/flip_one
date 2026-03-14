@@ -1,6 +1,6 @@
 @echo off
 echo ========================================
-echo  Flip One - Android Build v1.0.4 (NEW)
+echo  Flip One - Android Build v1.0.4
 echo ========================================
 
 set /p KEYSTORE_PASS=Enter keystore password: 
@@ -8,14 +8,16 @@ set /p KEYSTORE_PASS=Enter keystore password:
 echo.
 echo [1/4] Installing dependencies...
 call npm install
-call npm install react-native-google-mobile-ads
+
+echo     Removing react-native-google-mobile-ads to avoid build conflicts...
+call npm uninstall react-native-google-mobile-ads 2>nul
 
 echo.
 echo [2/4] Generating Android project...
 call npx expo prebuild --platform android --clean
 
 echo.
-echo [3/4] Building release AAB (log saved to build-log.txt)...
+echo [3/4] Building release AAB (log in build-log.txt)...
 cd android
 call gradlew bundleRelease ^
   -Pandroid.injected.signing.store.file=D:\F\flipone-release.keystore ^
@@ -28,22 +30,21 @@ set BUILD_CODE=%ERRORLEVEL%
 cd ..
 
 echo.
-echo ========================================
-echo  Build exit code: %BUILD_CODE%
-echo ========================================
-
 if exist "android\app\build\outputs\bundle\release\app-release.aab" (
-  echo SUCCESS - AAB file found!
+  echo ========================================
+  echo  SUCCESS! AAB file created!
+  echo ========================================
   copy "android\app\build\outputs\bundle\release\app-release.aab" "app-release.aab" > nul
-  echo Copied to: %CD%\app-release.aab
+  echo File ready at: %CD%\app-release.aab
 ) else (
-  echo FAILED - AAB file NOT found!
+  echo ========================================
+  echo  BUILD FAILED! (exit code: %BUILD_CODE%)
+  echo ========================================
   echo.
-  echo === ERROR DETAILS ===
-  powershell -command "Select-String -Path 'build-log.txt' -Pattern 'error|Error|FAILED|failed|exception|Exception' | Select-Object -Last 40 | ForEach-Object { $_.Line }"
+  echo Last errors from build-log.txt:
+  powershell -command "Get-Content 'build-log.txt' | Select-String 'error|Error|FAILED|exception|What went wrong' | Select-Object -Last 30 | ForEach-Object { $_.Line }"
   echo.
-  echo Full log saved to: %CD%\build-log.txt
-  echo Open it with Notepad for full details.
+  echo Open build-log.txt for full details.
 )
 
 echo.
