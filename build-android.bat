@@ -7,13 +7,32 @@ set /p KEYSTORE_PASS=Enter keystore password:
 
 echo.
 echo [1/4] Installing dependencies...
-call npm install --prefer-offline
-echo     Removing react-native-google-mobile-ads to avoid build conflicts...
+call npm install
+if %ERRORLEVEL% NEQ 0 (
+  echo WARNING: npm install had issues, continuing anyway...
+)
 call npm uninstall react-native-google-mobile-ads 2>nul
 
 echo.
 echo [2/4] Generating Android project...
-echo Y | call npx expo prebuild --platform android --clean --non-interactive
+call npx expo prebuild --platform android --clean --yes
+if %ERRORLEVEL% NEQ 0 (
+  echo Trying alternative prebuild command...
+  echo Y | call npx expo prebuild --platform android --clean
+)
+
+echo.
+echo Checking if android folder was created...
+if not exist "android" (
+  echo ERROR: android folder not found! Prebuild failed.
+  echo.
+  echo Try running this manually:
+  echo   npx expo prebuild --platform android --clean
+  pause
+  exit /b 1
+)
+
+echo Android folder found, continuing...
 
 echo.
 echo [3/4] Building release AAB (log in build-log.txt)...
@@ -37,11 +56,11 @@ if exist "android\app\build\outputs\bundle\release\app-release.aab" (
   echo File ready at: %CD%\app-release.aab
 ) else (
   echo ========================================
-  echo  BUILD FAILED! (exit code: %BUILD_CODE%)
+  echo  BUILD FAILED! (exit code: %BUILD_CODE%^)
   echo ========================================
   echo.
   echo Last errors from build-log.txt:
-  powershell -command "Get-Content 'build-log.txt' | Select-String 'error|Error|FAILED|exception|What went wrong' | Select-Object -Last 30 | ForEach-Object { $_.Line }"
+  powershell -command "if (Test-Path 'build-log.txt') { Get-Content 'build-log.txt' | Select-String 'rror|FAIL|exception|wrong' | Select-Object -Last 30 | ForEach-Object { $_.Line } } else { Write-Host 'build-log.txt not found' }"
   echo.
   echo Open build-log.txt with Notepad for full details.
 )
