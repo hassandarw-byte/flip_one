@@ -451,13 +451,13 @@ export default function HomeScreen() {
   const handleShare = async () => {
     try {
       const playStoreUrl = "https://play.google.com/store/apps/details?id=com.flipone.app";
-      const message = `Check out Flip One - the addictive gravity-flipping game! Flip the world. Stay alive. Download now!\n\n${playStoreUrl}`;
-      
-      await Share.share({
-        message,
-        title: "Flip One",
-        url: playStoreUrl,
-      });
+      const message = `🎮 Flip One - Can you beat my score?\n\n⚡ Flip gravity, dodge obstacles & survive as long as you can!\n\n👉 Download free: ${playStoreUrl}`;
+
+      await Share.share(
+        Platform.OS === "ios"
+          ? { title: "Flip One", message, url: playStoreUrl }
+          : { title: "Flip One", message }
+      );
     } catch (error) {
       console.log("Share error:", error);
     }
