@@ -95,7 +95,7 @@ export default function AchievementsScreen() {
 
       <View style={styles.headerCard}>
         <LinearGradient
-          colors={[GameColors.surfaceLight, GameColors.surface]}
+          colors={isNightMode ? ["#2A2A35", "#1A1A25"] : [GameColors.surfaceLight, GameColors.surface]}
           style={styles.headerCardGradient}
         >
           <View style={styles.userStats}>

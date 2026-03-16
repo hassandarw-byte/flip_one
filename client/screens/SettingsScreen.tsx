@@ -202,7 +202,7 @@ export default function SettingsScreen() {
             <ThemedText style={[styles.sectionTitle, { color: textMutedColor }]}>About</ThemedText>
 
             <LinearGradient
-              colors={[GameColors.surfaceLight, GameColors.surface]}
+              colors={isNightMode ? ["#2A2A35", "#1A1A25"] : [GameColors.surfaceLight, GameColors.surface]}
               style={styles.aboutCard}
             >
               <Image source={appIcon} style={styles.aboutLogo} />
