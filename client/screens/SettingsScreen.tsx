@@ -207,7 +207,7 @@ export default function SettingsScreen() {
             >
               <Image source={appIcon} style={styles.aboutLogo} />
               <ThemedText style={[styles.appName, { color: textColor }]}>Flip One</ThemedText>
-              <ThemedText style={[styles.appVersion, { color: textMutedColor }]}>Version 1.0.0</ThemedText>
+              <ThemedText style={[styles.appVersion, { color: textMutedColor }]}>Version 1.0.5</ThemedText>
               <ThemedText style={[styles.developerText, { color: textSecondaryColor }]}>© 2026 HHD Apps</ThemedText>
             </LinearGradient>
           </View>
