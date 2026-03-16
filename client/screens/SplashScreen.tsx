@@ -146,7 +146,7 @@ function ArcadePebble({ size = 20, color = "#9C27B0", style }: any) {
 }
 
 export default function SplashScreen({ onComplete }: SplashScreenProps) {
-  const { backgroundGradient } = useNightMode();
+  const { backgroundGradient, textColor, textSecondaryColor } = useNightMode();
   
   const logoOpacity = useSharedValue(0);
   const logoScale = useSharedValue(0.15);
@@ -256,8 +256,8 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
       </Animated.View>
 
       <Animated.View style={[styles.titleContainer, titleAnimatedStyle]}>
-        <Animated.Text style={styles.titleText}>FLIP ONE</Animated.Text>
-        <Animated.Text style={styles.subtitleText}>Flip the world. Stay alive.</Animated.Text>
+        <Animated.Text style={[styles.titleText, { color: textColor }]}>FLIP ONE</Animated.Text>
+        <Animated.Text style={[styles.subtitleText, { color: textSecondaryColor }]}>Flip the world. Stay alive.</Animated.Text>
       </Animated.View>
     </LinearGradient>
   );
