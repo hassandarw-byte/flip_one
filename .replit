@@ -69,3 +69,14 @@ task = "shell.exec"
 args = "npm run expo:dev"
 waitForPort = 8081
 ensurePreviewReachable = "/status"
+
+[userenv]
+
+[userenv.shared]
+EXPO_PUBLIC_REVENUECAT_TEST_API_KEY = "test_xjlyAogmQaPywPYJDvquzLJEOUd"
+EXPO_PUBLIC_REVENUECAT_IOS_API_KEY = "appl_agfKNovZovhQXHpWfkUgCJlpaOW"
+EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY = "goog_gqjjgJgxuJRLIogdnecGLwWCuQw"
+REVENUECAT_PROJECT_ID = "projd49934eb"
+REVENUECAT_TEST_STORE_APP_ID = "appc4fe514ad3"
+REVENUECAT_APPLE_APP_STORE_APP_ID = "app493f385d59"
+REVENUECAT_GOOGLE_PLAY_STORE_APP_ID = "app38ce0ca9ec"

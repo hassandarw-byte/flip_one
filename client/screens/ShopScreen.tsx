@@ -38,6 +38,7 @@ import {
   GameState,
 } from "@/lib/storage";
 import { useNightMode } from "@/contexts/NightModeContext";
+import { useSubscription, PACKAGE_REMOVE_ADS, PACKAGE_STARTER_PACK, PACKAGE_MEGA_PACK } from "@/lib/revenuecat";
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = (width - Spacing.xl * 2 - Spacing.md) / 2;
@@ -129,9 +130,22 @@ export default function ShopScreen() {
   const headerHeight = useHeaderHeight();
   const { backgroundGradient, textColor, textSecondaryColor, textMutedColor } = useNightMode();
   const [gameState, setGameState] = useState<GameState | null>(null);
-  const [activeTab, setActiveTab] = useState<"skins" | "premium" | "powers">("skins");
+  const [activeTab, setActiveTab] = useState<"skins" | "premium" | "powers" | "store">("skins");
   const [adModalVisible, setAdModalVisible] = useState(false);
   const [selectedPower, setSelectedPower] = useState<PowerItem | null>(null);
+  const [purchaseMessage, setPurchaseMessage] = useState<string | null>(null);
+
+  const {
+    isAdsRemoved,
+    removeAdsPackage,
+    starterPackPackage,
+    megaPackPackage,
+    purchase,
+    restore,
+    isPurchasing,
+    isRestoring,
+    isOfferingsLoading,
+  } = useSubscription();
 
   useEffect(() => {
     loadGameState();
@@ -235,6 +249,46 @@ export default function ShopScreen() {
     setSelectedPower(null);
   };
 
+  const handleBuyRemoveAds = async () => {
+    if (!removeAdsPackage) return;
+    try {
+      await purchase(removeAdsPackage);
+      setPurchaseMessage("Ads removed! Enjoy ad-free gameplay.");
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch (e: any) {
+      if (!e?.userCancelled) {
+        setPurchaseMessage("Purchase failed. Please try again.");
+      }
+    }
+  };
+
+  const handleBuyPointsPack = async (pkg: any, pointsAmount: number) => {
+    try {
+      await purchase(pkg);
+      if (gameState) {
+        const newPoints = (gameState.points || 0) + pointsAmount;
+        await savePoints(newPoints);
+        setGameState({ ...gameState, points: newPoints });
+      }
+      setPurchaseMessage(`${pointsAmount} points added!`);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch (e: any) {
+      if (!e?.userCancelled) {
+        setPurchaseMessage("Purchase failed. Please try again.");
+      }
+    }
+  };
+
+  const handleRestore = async () => {
+    try {
+      await restore();
+      setPurchaseMessage("Purchases restored!");
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch {
+      setPurchaseMessage("Restore failed. Please try again.");
+    }
+  };
+
   const renderSkinItem = ({ item, index }: { item: SkinItem; index: number }) => {
     const isOwned = gameState?.ownedSkins.includes(item.id);
     const isEquipped = gameState?.equippedSkin === item.id;
@@ -277,6 +331,21 @@ export default function ShopScreen() {
       colors={backgroundGradient}
       style={[styles.container, { paddingTop: headerHeight + Spacing.lg }]}
     >
+      {purchaseMessage ? (
+        <Pressable
+          style={styles.purchaseMessageBanner}
+          onPress={() => setPurchaseMessage(null)}
+        >
+          <LinearGradient
+            colors={[GameColors.success, GameColors.successGlow]}
+            style={styles.purchaseMessageGradient}
+          >
+            <Feather name="check-circle" size={16} color="#FFFFFF" />
+            <ThemedText style={styles.purchaseMessageText}>{purchaseMessage}</ThemedText>
+          </LinearGradient>
+        </Pressable>
+      ) : null}
+
       <View style={styles.tabs}>
         <TabButton
           label="Skins"
@@ -294,6 +363,12 @@ export default function ShopScreen() {
           label="Powers"
           isActive={activeTab === "powers"}
           onPress={() => setActiveTab("powers")}
+          textSecondaryColor={textSecondaryColor}
+        />
+        <TabButton
+          label="Store"
+          isActive={activeTab === "store"}
+          onPress={() => setActiveTab("store")}
           textSecondaryColor={textSecondaryColor}
         />
       </View>
@@ -332,7 +407,7 @@ export default function ShopScreen() {
             </View>
           }
         />
-      ) : (
+      ) : activeTab === "powers" ? (
         <ScrollView
           contentContainerStyle={[
             styles.powersContent,
@@ -357,6 +432,148 @@ export default function ShopScreen() {
               />
             </Animated.View>
           ))}
+        </ScrollView>
+      ) : (
+        <ScrollView
+          contentContainerStyle={[
+            styles.powersContent,
+            { paddingBottom: insets.bottom + Spacing.xl },
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.premiumHeader}>
+            <ThemedText style={[styles.premiumTitle, { color: textColor }]}>In-App Store</ThemedText>
+            <ThemedText style={[styles.premiumSubtitle, { color: textMutedColor }]}>
+              Support the game & unlock more
+            </ThemedText>
+          </View>
+
+          {/* Remove Ads */}
+          <Animated.View entering={FadeInDown.delay(0).springify()} style={styles.iapCard}>
+            <LinearGradient
+              colors={[GameColors.surfaceLight, GameColors.surface]}
+              style={styles.iapCardGradient}
+            >
+              <LinearGradient
+                colors={["#FF5722", "#FF8A65"]}
+                style={styles.iapIcon}
+              >
+                <Feather name="shield-off" size={28} color="#FFFFFF" />
+              </LinearGradient>
+              <View style={styles.iapInfo}>
+                <ThemedText style={[styles.iapTitle, { color: textColor }]}>Remove Ads</ThemedText>
+                <ThemedText style={[styles.iapDesc, { color: textMutedColor }]}>
+                  Play without any ads, forever
+                </ThemedText>
+              </View>
+              {isAdsRemoved ? (
+                <View style={styles.iapOwnedBadge}>
+                  <Feather name="check" size={14} color="#FFFFFF" />
+                  <ThemedText style={styles.iapOwnedText}>Active</ThemedText>
+                </View>
+              ) : (
+                <Pressable
+                  style={[styles.iapBuyButton, isPurchasing && { opacity: 0.6 }]}
+                  onPress={handleBuyRemoveAds}
+                  disabled={isPurchasing || isOfferingsLoading}
+                  testID="button-buy-remove-ads"
+                >
+                  <LinearGradient
+                    colors={["#FF5722", "#FF8A65"]}
+                    style={styles.iapBuyGradient}
+                  >
+                    <ThemedText style={styles.iapBuyText}>
+                      {isOfferingsLoading ? "..." : removeAdsPackage?.product.priceString ?? "$0.99"}
+                    </ThemedText>
+                  </LinearGradient>
+                </Pressable>
+              )}
+            </LinearGradient>
+          </Animated.View>
+
+          {/* Starter Pack */}
+          <Animated.View entering={FadeInDown.delay(80).springify()} style={styles.iapCard}>
+            <LinearGradient
+              colors={[GameColors.surfaceLight, GameColors.surface]}
+              style={styles.iapCardGradient}
+            >
+              <LinearGradient
+                colors={[GameColors.candy4, GameColors.primaryGlow]}
+                style={styles.iapIcon}
+              >
+                <Feather name="star" size={28} color="#FFFFFF" />
+              </LinearGradient>
+              <View style={styles.iapInfo}>
+                <ThemedText style={[styles.iapTitle, { color: textColor }]}>Starter Pack</ThemedText>
+                <ThemedText style={[styles.iapDesc, { color: textMutedColor }]}>
+                  Get 500 points instantly
+                </ThemedText>
+              </View>
+              <Pressable
+                style={[styles.iapBuyButton, isPurchasing && { opacity: 0.6 }]}
+                onPress={() => starterPackPackage && handleBuyPointsPack(starterPackPackage, 500)}
+                disabled={isPurchasing || isOfferingsLoading || !starterPackPackage}
+                testID="button-buy-starter-pack"
+              >
+                <LinearGradient
+                  colors={[GameColors.candy4, GameColors.primaryGlow]}
+                  style={styles.iapBuyGradient}
+                >
+                  <ThemedText style={styles.iapBuyText}>
+                    {isOfferingsLoading ? "..." : starterPackPackage?.product.priceString ?? "$0.99"}
+                  </ThemedText>
+                </LinearGradient>
+              </Pressable>
+            </LinearGradient>
+          </Animated.View>
+
+          {/* Mega Pack */}
+          <Animated.View entering={FadeInDown.delay(160).springify()} style={styles.iapCard}>
+            <LinearGradient
+              colors={[GameColors.surfaceLight, GameColors.surface]}
+              style={styles.iapCardGradient}
+            >
+              <LinearGradient
+                colors={[GameColors.gold, GameColors.goldGlow]}
+                style={styles.iapIcon}
+              >
+                <Feather name="zap" size={28} color="#FFFFFF" />
+              </LinearGradient>
+              <View style={styles.iapInfo}>
+                <ThemedText style={[styles.iapTitle, { color: textColor }]}>Mega Pack</ThemedText>
+                <ThemedText style={[styles.iapDesc, { color: textMutedColor }]}>
+                  Get 1500 points instantly
+                </ThemedText>
+              </View>
+              <Pressable
+                style={[styles.iapBuyButton, isPurchasing && { opacity: 0.6 }]}
+                onPress={() => megaPackPackage && handleBuyPointsPack(megaPackPackage, 1500)}
+                disabled={isPurchasing || isOfferingsLoading || !megaPackPackage}
+                testID="button-buy-mega-pack"
+              >
+                <LinearGradient
+                  colors={[GameColors.gold, GameColors.goldGlow]}
+                  style={styles.iapBuyGradient}
+                >
+                  <ThemedText style={styles.iapBuyText}>
+                    {isOfferingsLoading ? "..." : megaPackPackage?.product.priceString ?? "$2.99"}
+                  </ThemedText>
+                </LinearGradient>
+              </Pressable>
+            </LinearGradient>
+          </Animated.View>
+
+          {/* Restore Purchases */}
+          <Pressable
+            style={[styles.restoreButton, isRestoring && { opacity: 0.6 }]}
+            onPress={handleRestore}
+            disabled={isRestoring}
+            testID="button-restore-purchases"
+          >
+            <ThemedText style={[styles.restoreText, { color: textMutedColor }]}>
+              {isRestoring ? "Restoring..." : "Restore Purchases"}
+            </ThemedText>
+          </Pressable>
         </ScrollView>
       )}
 
@@ -908,5 +1125,89 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: GameColors.textMuted,
     textAlign: "center",
+  },
+  purchaseMessageBanner: {
+    marginHorizontal: Spacing.xl,
+    marginBottom: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+  },
+  purchaseMessageGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+  },
+  purchaseMessageText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#FFFFFF",
+  },
+  iapCard: {
+    marginBottom: Spacing.md,
+    borderRadius: BorderRadius.xl,
+    overflow: "hidden",
+  },
+  iapCardGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: Spacing.lg,
+    gap: Spacing.md,
+  },
+  iapIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: BorderRadius.lg,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  iapInfo: {
+    flex: 1,
+  },
+  iapTitle: {
+    fontSize: 16,
+    fontWeight: "800",
+    marginBottom: 2,
+  },
+  iapDesc: {
+    fontSize: 12,
+  },
+  iapBuyButton: {
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+  },
+  iapBuyGradient: {
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    alignItems: "center",
+    minWidth: 70,
+  },
+  iapBuyText: {
+    fontSize: 14,
+    fontWeight: "800",
+    color: "#FFFFFF",
+  },
+  iapOwnedBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+    backgroundColor: GameColors.success,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.lg,
+  },
+  iapOwnedText: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#FFFFFF",
+  },
+  restoreButton: {
+    alignItems: "center",
+    paddingVertical: Spacing.xl,
+  },
+  restoreText: {
+    fontSize: 13,
+    textDecorationLine: "underline",
   },
 });

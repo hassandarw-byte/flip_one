@@ -302,7 +302,6 @@ const styles = StyleSheet.create({
   rewardText: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#000000",
     lineHeight: 18,
     includeFontPadding: false,
   },

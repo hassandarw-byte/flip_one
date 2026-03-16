@@ -19,9 +19,12 @@ import { queryClient } from "@/lib/query-client";
 import RootStackNavigator from "@/navigation/RootStackNavigator";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { NightModeProvider } from "@/contexts/NightModeContext";
+import { initializeRevenueCat, SubscriptionProvider } from "@/lib/revenuecat";
 
 I18nManager.allowRTL(false);
 I18nManager.forceRTL(false);
+
+initializeRevenueCat();
 
 SplashScreen.preventAutoHideAsync();
 
@@ -50,16 +53,18 @@ export default function App() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <NightModeProvider>
-          <SafeAreaProvider>
-            <GestureHandlerRootView style={styles.root}>
-              <NavigationContainer>
-                <RootStackNavigator />
-              </NavigationContainer>
-              <StatusBar style="light" />
-            </GestureHandlerRootView>
-          </SafeAreaProvider>
-        </NightModeProvider>
+        <SubscriptionProvider>
+          <NightModeProvider>
+            <SafeAreaProvider>
+              <GestureHandlerRootView style={styles.root}>
+                <NavigationContainer>
+                  <RootStackNavigator />
+                </NavigationContainer>
+                <StatusBar style="light" />
+              </GestureHandlerRootView>
+            </SafeAreaProvider>
+          </NightModeProvider>
+        </SubscriptionProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );

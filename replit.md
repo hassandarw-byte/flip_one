@@ -13,9 +13,10 @@ Flip One is a minimalist mobile game built with React Native and Expo. The playe
 - **Increasing difficulty**: Speed increases every 5 points
 - **Score tracking**: Current score and best score saved locally
 - **Daily missions**: Complete tasks to earn points
-- **Shop**: Purchase different player skins with points
+- **Shop**: Purchase different player skins with points + in-app purchases
 - **Leaderboard**: Global rankings display
 - **Settings**: Toggle sound effects and haptic feedback
+- **In-App Purchases**: RevenueCat integration for Remove Ads, Starter Pack (500pts), Mega Pack (1500pts)
 
 ## Project Structure
 
