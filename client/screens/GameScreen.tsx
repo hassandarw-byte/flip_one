@@ -251,6 +251,8 @@ export default function GameScreen() {
   const lastObstaclePassTime = useRef(0);
   const isDyingRef = useRef(false);
   const trailIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const soundEnabledRef = useRef(false);
+  const hapticsEnabledRef = useRef(false);
   
   const playerRotation = useSharedValue(0);
   const encourageScale = useSharedValue(0);
@@ -300,6 +302,11 @@ export default function GameScreen() {
     };
   }, []);
   
+  useEffect(() => {
+    soundEnabledRef.current = gameState?.soundEnabled ?? false;
+    hapticsEnabledRef.current = gameState?.hapticsEnabled ?? false;
+  }, [gameState?.soundEnabled, gameState?.hapticsEnabled]);
+
   useEffect(() => {
     if (isReady && !isPlaying && !isGameOver) {
       setIsPlaying(true);
@@ -427,7 +434,7 @@ export default function GameScreen() {
     if (timeSinceLastPass < 2000) {
       setCombo(prev => {
         const newCombo = prev + 1;
-        if (gameState?.hapticsEnabled && newCombo >= 2) {
+        if (hapticsEnabledRef.current && newCombo >= 2) {
           triggerComboHaptic(true, newCombo);
         }
         return newCombo;
@@ -1004,10 +1011,10 @@ export default function GameScreen() {
                 return newStreak;
               });
               
-              if (gameState?.soundEnabled) {
+              if (soundEnabledRef.current) {
                 playCollectSound(true);
               }
-              if (gameState?.hapticsEnabled) {
+              if (hapticsEnabledRef.current) {
                 triggerVictoryHaptic(true);
               }
               return false;
