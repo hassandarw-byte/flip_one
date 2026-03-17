@@ -52,8 +52,9 @@
     "experiments": {},
     "extra": {
       "eas": {
-        "projectId": "your-project-id"
+        "projectId": "ad7951c1-6f73-4985-8a38-9392ee7dc51f"
       }
-    }
+    },
+    "owner": "hasandarwish"
   }
 }
