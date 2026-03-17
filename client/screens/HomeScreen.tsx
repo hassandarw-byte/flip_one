@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -22,7 +22,7 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 
 import Svg, { Path, Ellipse, Text as SvgText, Circle, Defs, LinearGradient as SvgLinearGradient, Stop, Rect } from "react-native-svg";
 import { ThemedText } from "@/components/ThemedText";
@@ -419,21 +419,23 @@ export default function HomeScreen() {
   const turtle1X = useSharedValue(-80);
   const turtle2X = useSharedValue(width + 80);
 
-  useFocusEffect(
-    useCallback(() => {
-      loadGameState();
-    }, [])
-  );
-
-  useEffect(() => {
-    animateEntrance();
-    startContinuousAnimations();
-  }, []);
-
   const loadGameState = async () => {
     const state = await getGameState();
     setGameState(state);
   };
+
+  useEffect(() => {
+    loadGameState();
+    animateEntrance();
+    startContinuousAnimations();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      loadGameState();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   const animateEntrance = () => {
     buttonsOpacity.value = withDelay(300, withTiming(1, { duration: 600 }));

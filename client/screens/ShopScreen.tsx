@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
-import { useFocusEffect } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
@@ -129,6 +129,7 @@ const SPECIAL_POWERS: PowerItem[] = [
 export default function ShopScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
+  const navigation = useNavigation();
   const { backgroundGradient, textColor, textSecondaryColor, textMutedColor } = useNightMode();
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [activeTab, setActiveTab] = useState<"skins" | "premium" | "powers" | "store">("skins");
@@ -148,16 +149,21 @@ export default function ShopScreen() {
     isOfferingsLoading,
   } = useSubscription();
 
-  useFocusEffect(
-    useCallback(() => {
-      loadGameState();
-    }, [])
-  );
-
   const loadGameState = async () => {
     const state = await getGameState();
     setGameState(state);
   };
+
+  useEffect(() => {
+    loadGameState();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      loadGameState();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   const handlePurchase = async (skin: SkinItem) => {
     if (!gameState) return;
