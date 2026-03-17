@@ -4,6 +4,8 @@ import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
 import { BorderRadius } from "@/constants/theme";
 import { getGameState } from "@/lib/storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
 interface PointsBadgeProps {
   points?: number;
@@ -11,12 +13,21 @@ interface PointsBadgeProps {
 
 export default function PointsBadge({ points: propPoints }: PointsBadgeProps) {
   const [localPoints, setLocalPoints] = useState(0);
+  const navigation = useNavigation();
+
+  const reload = () => {
+    AsyncStorage.getItem("flip_one_points").then((val) => {
+      setLocalPoints(val ? parseInt(val, 10) : 0);
+    });
+  };
 
   useEffect(() => {
     if (propPoints === undefined) {
-      getGameState().then((state) => setLocalPoints(state.points));
+      reload();
+      const unsubscribe = navigation.addListener("focus", reload);
+      return unsubscribe;
     }
-  }, [propPoints]);
+  }, [propPoints, navigation]);
 
   const displayPoints = propPoints !== undefined ? propPoints : localPoints;
 

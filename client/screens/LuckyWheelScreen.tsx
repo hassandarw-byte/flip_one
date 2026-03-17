@@ -28,6 +28,7 @@ import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useNightMode } from "@/contexts/NightModeContext";
 import { triggerFlipHaptic, playWheelSpinSound } from "@/lib/sounds";
 import AdModal from "@/components/AdModal";
+import PointsBadge from "@/components/PointsBadge";
 
 const { width, height } = Dimensions.get("window");
 
@@ -129,6 +130,7 @@ export default function LuckyWheelScreen() {
       
       const state = await getGameState();
       setPoints(state.points);
+      navigation.setOptions({ headerRight: () => <PointsBadge points={state.points} /> });
       
       rewardScale.value = withSpring(1, { damping: 8 });
       rewardOpacity.value = withTiming(1, { duration: 300 });
