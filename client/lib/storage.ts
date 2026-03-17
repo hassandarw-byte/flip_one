@@ -317,6 +317,15 @@ export async function savePoints(points: number): Promise<void> {
   }
 }
 
+export async function addPoints(amount: number): Promise<void> {
+  try {
+    const current = parseInt(await AsyncStorage.getItem(KEYS.POINTS) || "0", 10);
+    await AsyncStorage.setItem(KEYS.POINTS, (current + amount).toString());
+  } catch (error) {
+    console.error("Error adding points:", error);
+  }
+}
+
 export async function saveSoundEnabled(enabled: boolean): Promise<void> {
   try {
     await AsyncStorage.setItem(KEYS.SOUND_ENABLED, enabled.toString());

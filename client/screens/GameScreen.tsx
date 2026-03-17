@@ -28,7 +28,7 @@ import { GameColors, Spacing, BorderRadius, SkinColors } from "@/constants/theme
 import {
   getGameState,
   saveBestScore,
-  savePoints,
+  addPoints,
   incrementTotalFlips,
   incrementTotalGames,
   updateMissionProgress,
@@ -686,7 +686,7 @@ export default function GameScreen() {
         }
 
         const pointsEarned = Math.floor(currentScore / 2) + bonusPointsRef.current;
-        await savePoints(gameState.points + pointsEarned);
+        await addPoints(pointsEarned);
 
         const updatedState: GameState = {
           ...gameState,
