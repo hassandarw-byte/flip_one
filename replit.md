@@ -107,7 +107,17 @@ The app runs on Expo and can be tested via:
 
 ## Recent Changes
 
-### Latest (Tester Feedback Improvements)
+### Latest (Sea Creature Visual Luxury Overhaul)
+- **GameScreen Creatures Redesigned**: Crab, fish, and lobster sea creatures in water streams completely redrawn with SVG gradients, shine highlights, expressive eyes with sparkle, smiles, cheek blush, detailed anatomy
+- **Collectibles Upgraded**: Hearts and stars now have multi-stop gradients, glow rings, shine highlights, sparkle dots, and prominent +3/+5 badge indicators
+- **HomeScreen New Creatures**: Added animated jellyfish (gentle bob animation, glowing bell cap, cute eyes) and turtles (hex-pattern shell, flippers, swimming animation) as new background decorations
+- **HomeScreen ArcadeFish Upgraded**: Full gradient with color-matched dark/light tones, scales pattern, sparkly eye highlight, bubble trail, shine line
+- **HomeScreen ArcadeCrab Upgraded**: Gradient body, eye stalks with sparkle, rosy cheeks, cute smile, belly segments, claw detail
+- **SplashScreen Animated**: Added 3 swimming fish (moving left/right across screen) and 2 bobbing jellyfish during splash sequence
+- **Water Streams Vivid**: Deep blue gradient with foam/wave decorations on both water stream borders; full opacity
+- **Sea Creature Shadows**: Elevation and shadow depth added to in-game creature display
+
+### Previous (Tester Feedback Improvements)
 - **Interactive Tutorial**: 3-step walkthrough for first-time users showing gameplay mechanics, flip controls, and tips
 - **Ad Reward Verification**: Rewarded ads now require watching full 5-second ad before claiming reward; locked claim button during ad playback
 - **Ad Close Without Reward**: Users can close ad early but forfeit the reward

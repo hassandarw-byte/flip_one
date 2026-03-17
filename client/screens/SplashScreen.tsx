@@ -7,6 +7,7 @@ import Animated, {
   withTiming,
   withSequence,
   withDelay,
+  withRepeat,
   Easing,
   runOnJS,
   ReduceMotion,
@@ -145,6 +146,63 @@ function ArcadePebble({ size = 20, color = "#9C27B0", style }: any) {
   );
 }
 
+function SplashFish({ size = 38, color = "#29B6F6", style }: any) {
+  const darkC = "#0277BD";
+  const lightC = "#B3E5FC";
+  return (
+    <View style={[{ width: size, height: size }, style]}>
+      <Svg width={size} height={size} viewBox="0 0 100 100">
+        <Defs>
+          <SvgLinearGradient id={`splashFishG${color}`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <Stop offset="0%" stopColor={lightC} />
+            <Stop offset="60%" stopColor={color} />
+            <Stop offset="100%" stopColor={darkC} />
+          </SvgLinearGradient>
+        </Defs>
+        <Path d="M18 50 L2 28 L10 50 L2 72 Z" fill={darkC} />
+        <Path d="M82 50 Q65 20, 25 36 Q8 50, 25 64 Q65 80, 82 50 Z" fill={`url(#splashFishG${color})`} stroke={darkC} strokeWidth={1.5} />
+        <Path d="M75 50 Q58 65, 32 61 Q18 57, 25 64 Q65 80, 75 50 Z" fill="rgba(255,255,255,0.22)" />
+        <Path d="M46 32 Q56 14, 66 28" fill={color} stroke={darkC} strokeWidth={1.5} />
+        <Path d="M32 33 Q55 24, 74 34" stroke="rgba(255,255,255,0.6)" strokeWidth={2.5} fill="none" strokeLinecap="round" />
+        <Circle cx="68" cy="45" r="9" fill="#FFFFFF" />
+        <Circle cx="67" cy="45" r="6" fill="#1A237E" />
+        <Circle cx="65" cy="43" r="2.5" fill="#FFFFFF" />
+      </Svg>
+    </View>
+  );
+}
+
+function SplashJellyfish({ size = 36, color = "#CE93D8", style }: any) {
+  const darkC = "#7B1FA2";
+  return (
+    <View style={[{ width: size, height: size * 1.3 }, style]}>
+      <Svg width={size} height={size * 1.3} viewBox="0 0 100 130">
+        <Defs>
+          <SvgLinearGradient id={`sJellyG${color}`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <Stop offset="0%" stopColor="rgba(255,255,255,0.75)" />
+            <Stop offset="40%" stopColor={color} />
+            <Stop offset="100%" stopColor={darkC} />
+          </SvgLinearGradient>
+        </Defs>
+        <Path d="M28 62 Q20 80, 25 100 Q22 115, 28 128" stroke={color} strokeWidth={2.5} fill="none" strokeLinecap="round" opacity={0.7} />
+        <Path d="M42 65 Q40 85, 44 105 Q42 118, 46 128" stroke={color} strokeWidth={2.5} fill="none" strokeLinecap="round" opacity={0.7} />
+        <Path d="M58 65 Q60 85, 56 105 Q58 118, 54 128" stroke={color} strokeWidth={2.5} fill="none" strokeLinecap="round" opacity={0.7} />
+        <Path d="M72 62 Q80 80, 75 100 Q78 115, 72 128" stroke={color} strokeWidth={2.5} fill="none" strokeLinecap="round" opacity={0.7} />
+        <Path d="M18 48 Q18 15, 50 12 Q82 15, 82 48 Q82 65, 50 68 Q18 65, 18 48 Z" fill={`url(#sJellyG${color})`} stroke={darkC} strokeWidth={1.5} />
+        <Path d="M28 24 Q50 16, 72 24 Q60 16, 50 14 Q40 14, 28 24 Z" fill="rgba(255,255,255,0.35)" />
+        <Path d="M30 42 Q50 50, 70 42" stroke="rgba(255,255,255,0.3)" strokeWidth={2} fill="none" />
+        <Circle cx="38" cy="38" r="6" fill="#FFFFFF" />
+        <Circle cx="62" cy="38" r="6" fill="#FFFFFF" />
+        <Circle cx="37" cy="38" r="3.5" fill="#4A148C" />
+        <Circle cx="61" cy="38" r="3.5" fill="#4A148C" />
+        <Circle cx="36" cy="37" r="1.5" fill="#FFFFFF" />
+        <Circle cx="60" cy="37" r="1.5" fill="#FFFFFF" />
+        <Path d="M42 52 Q50 57, 58 52" stroke={darkC} strokeWidth={2} fill="none" strokeLinecap="round" />
+      </Svg>
+    </View>
+  );
+}
+
 export default function SplashScreen({ onComplete }: SplashScreenProps) {
   const { backgroundGradient, textColor, textSecondaryColor } = useNightMode();
   
@@ -152,6 +210,12 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
   const logoScale = useSharedValue(0.15);
   const titleOpacity = useSharedValue(0);
   const decorOpacity = useSharedValue(0);
+
+  const fish1X = useSharedValue(-60);
+  const fish2X = useSharedValue(width + 60);
+  const fish3X = useSharedValue(-60);
+  const jelly1Y = useSharedValue(0);
+  const jelly2Y = useSharedValue(0);
 
   useEffect(() => {
     // Decorations fade in slowly
@@ -168,6 +232,45 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
 
     // Title appears after logo is more visible
     titleOpacity.value = withDelay(1200, withTiming(1, { duration: 1500, easing: Easing.out(Easing.cubic), reduceMotion: ReduceMotion.Never }));
+
+    // Swimming fish animations
+    fish1X.value = withRepeat(
+      withSequence(
+        withTiming(width + 70, { duration: 3500, easing: Easing.linear }),
+        withTiming(-70, { duration: 1 })
+      ),
+      -1, false
+    );
+    fish2X.value = withDelay(800, withRepeat(
+      withSequence(
+        withTiming(-70, { duration: 3000, easing: Easing.linear }),
+        withTiming(width + 70, { duration: 1 })
+      ),
+      -1, false
+    ));
+    fish3X.value = withDelay(1800, withRepeat(
+      withSequence(
+        withTiming(width + 70, { duration: 4500, easing: Easing.linear }),
+        withTiming(-70, { duration: 1 })
+      ),
+      -1, false
+    ));
+
+    // Jellyfish bobbing
+    jelly1Y.value = withRepeat(
+      withSequence(
+        withTiming(-16, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
+        withTiming(16, { duration: 2000, easing: Easing.inOut(Easing.ease) })
+      ),
+      -1, true
+    );
+    jelly2Y.value = withDelay(1000, withRepeat(
+      withSequence(
+        withTiming(12, { duration: 2400, easing: Easing.inOut(Easing.ease) }),
+        withTiming(-12, { duration: 2400, easing: Easing.inOut(Easing.ease) })
+      ),
+      -1, true
+    ));
 
     // Transition to home after 4.5 seconds total
     const timer = setTimeout(() => {
@@ -193,6 +296,22 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
     opacity: decorOpacity.value,
   }));
 
+  const fish1Style = useAnimatedStyle(() => ({
+    transform: [{ translateX: fish1X.value }],
+  }));
+  const fish2Style = useAnimatedStyle(() => ({
+    transform: [{ translateX: fish2X.value }, { scaleX: -1 }],
+  }));
+  const fish3Style = useAnimatedStyle(() => ({
+    transform: [{ translateX: fish3X.value }],
+  }));
+  const jelly1Style = useAnimatedStyle(() => ({
+    transform: [{ translateY: jelly1Y.value }],
+  }));
+  const jelly2Style = useAnimatedStyle(() => ({
+    transform: [{ translateY: jelly2Y.value }],
+  }));
+
   // Sand beach gradient colors
   const sandGradient: readonly [string, string, ...string[]] = ["#F5DEB3", "#DEB887", "#D2B48C"];
 
@@ -201,6 +320,25 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
       colors={sandGradient}
       style={styles.container}
     >
+      {/* Swimming fish across screen */}
+      <Animated.View style={[{ position: 'absolute', top: 60, zIndex: 1 }, fish1Style]}>
+        <SplashFish size={40} color="#29B6F6" />
+      </Animated.View>
+      <Animated.View style={[{ position: 'absolute', top: 120, zIndex: 1 }, fish2Style]}>
+        <SplashFish size={34} color="#FF7043" />
+      </Animated.View>
+      <Animated.View style={[{ position: 'absolute', bottom: 100, zIndex: 1 }, fish3Style]}>
+        <SplashFish size={36} color="#4DD0E1" />
+      </Animated.View>
+
+      {/* Jellyfish bobbing at sides */}
+      <Animated.View style={[{ position: 'absolute', left: 8, top: 180, zIndex: 1 }, jelly1Style]}>
+        <SplashJellyfish size={40} color="#CE93D8" />
+      </Animated.View>
+      <Animated.View style={[{ position: 'absolute', right: 8, bottom: 160, zIndex: 1 }, jelly2Style]}>
+        <SplashJellyfish size={34} color="#80DEEA" />
+      </Animated.View>
+
       <Animated.View style={[styles.decorContainer, decorStyle]}>
         {/* Decorations scattered at edges - keeping center clear for logo */}
         

@@ -88,21 +88,54 @@ function ArcadeStarfish({ size = 35, color = "#FFD93D", rotation = 0, style }: a
   );
 }
 
-function ArcadeFish({ size = 40, color = "#64B5F6", style }: any) {
+function ArcadeFish({ size = 40, color = "#29B6F6", style }: any) {
+  const colorMap: Record<string, { dark: string; light: string }> = {
+    "#29B6F6": { dark: "#0277BD", light: "#B3E5FC" },
+    "#64B5F6": { dark: "#1565C0", light: "#BBDEFB" },
+    "#FF7043": { dark: "#BF360C", light: "#FFCCBC" },
+    "#4DD0E1": { dark: "#00838F", light: "#B2EBF2" },
+    "#FF6B9D": { dark: "#AD1457", light: "#FCE4EC" },
+  };
+  const darkColor = (colorMap[color] || { dark: "#0277BD", light: "#B3E5FC" }).dark;
+  const lightColor = (colorMap[color] || { dark: "#0277BD", light: "#B3E5FC" }).light;
   return (
     <View style={[{ width: size, height: size }, style]}>
       <Svg width={size} height={size} viewBox="0 0 100 100">
-        <Path
-          d="M80 50 Q60 25, 30 40 Q10 50, 30 60 Q60 75, 80 50 Z"
-          fill={color}
-          stroke="#1976D2"
-          strokeWidth={2}
-        />
-        <Path d="M15 50 L5 35 L5 65 Z" fill={color} stroke="#1976D2" strokeWidth={2} />
-        <Circle cx="65" cy="48" r="6" fill="#FFFFFF" />
-        <Circle cx="66" cy="48" r="3" fill="#000000" />
-        <Path d="M45 35 Q50 20, 55 35" fill="#42A5F5" stroke="#1976D2" strokeWidth={1} />
-        <Path d="M45 65 Q50 80, 55 65" fill="#42A5F5" stroke="#1976D2" strokeWidth={1} />
+        <Defs>
+          <SvgLinearGradient id={`fishG${color}`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <Stop offset="0%" stopColor={lightColor} />
+            <Stop offset="60%" stopColor={color} />
+            <Stop offset="100%" stopColor={darkColor} />
+          </SvgLinearGradient>
+          <SvgLinearGradient id={`fishT${color}`} x1="100%" y1="0%" x2="0%" y2="100%">
+            <Stop offset="0%" stopColor={color} />
+            <Stop offset="100%" stopColor={darkColor} />
+          </SvgLinearGradient>
+        </Defs>
+        {/* Tail fan */}
+        <Path d="M18 50 L2 28 L10 50 L2 72 Z" fill={`url(#fishT${color})`} stroke={darkColor} strokeWidth={1} />
+        {/* Body */}
+        <Path d="M82 50 Q65 20, 25 36 Q8 50, 25 64 Q65 80, 82 50 Z" fill={`url(#fishG${color})`} stroke={darkColor} strokeWidth={1.5} />
+        {/* Belly highlight */}
+        <Path d="M75 50 Q58 65, 32 61 Q18 57, 25 64 Q65 80, 75 50 Z" fill="rgba(255,255,255,0.25)" />
+        {/* Dorsal fin */}
+        <Path d="M46 32 Q56 14, 66 28" fill={color} stroke={darkColor} strokeWidth={1.5} />
+        {/* Scale pattern */}
+        <Path d="M52 36 Q58 40, 52 44" stroke="rgba(255,255,255,0.4)" strokeWidth={1.5} fill="none" />
+        <Path d="M63 38 Q69 42, 63 46" stroke="rgba(255,255,255,0.4)" strokeWidth={1.5} fill="none" />
+        <Path d="M48 46 Q54 50, 48 54" stroke="rgba(255,255,255,0.3)" strokeWidth={1.5} fill="none" />
+        {/* Top shine line */}
+        <Path d="M32 33 Q55 24, 74 34" stroke="rgba(255,255,255,0.6)" strokeWidth={2.5} fill="none" strokeLinecap="round" />
+        {/* Eye */}
+        <Circle cx="68" cy="45" r="9" fill="#FFFFFF" />
+        <Circle cx="67" cy="45" r="6" fill="#1A237E" />
+        <Circle cx="65" cy="43" r="2.5" fill="#FFFFFF" />
+        <Circle cx="70" cy="47" r="1" fill="rgba(255,255,255,0.5)" />
+        {/* Smile */}
+        <Path d="M80 50 Q83 52, 80 54" stroke={darkColor} strokeWidth={2} fill="none" strokeLinecap="round" />
+        {/* Bubble */}
+        <Circle cx="86" cy="42" r="3" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth={1.5} />
+        <Circle cx="92" cy="36" r="2" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth={1} />
       </Svg>
     </View>
   );
@@ -112,17 +145,47 @@ function ArcadeCrab({ size = 40, style }: any) {
   return (
     <View style={[{ width: size, height: size }, style]}>
       <Svg width={size} height={size} viewBox="0 0 100 100">
-        <Circle cx="50" cy="55" r="25" fill="#E57373" stroke="#C62828" strokeWidth={2} />
-        <Circle cx="40" cy="40" r="8" fill="#FFFFFF" />
-        <Circle cx="60" cy="40" r="8" fill="#FFFFFF" />
-        <Circle cx="40" cy="40" r="4" fill="#000000" />
-        <Circle cx="60" cy="40" r="4" fill="#000000" />
-        <Path d="M15 50 Q5 45, 10 35 Q15 25, 25 40" fill="#E57373" stroke="#C62828" strokeWidth={2} />
-        <Path d="M85 50 Q95 45, 90 35 Q85 25, 75 40" fill="#E57373" stroke="#C62828" strokeWidth={2} />
-        <Path d="M30 70 L20 85" stroke="#C62828" strokeWidth={3} />
-        <Path d="M40 75 L35 90" stroke="#C62828" strokeWidth={3} />
-        <Path d="M60 75 L65 90" stroke="#C62828" strokeWidth={3} />
-        <Path d="M70 70 L80 85" stroke="#C62828" strokeWidth={3} />
+        <Defs>
+          <SvgLinearGradient id="homeCrabBody" x1="10%" y1="0%" x2="90%" y2="100%">
+            <Stop offset="0%" stopColor="#FF8A65" />
+            <Stop offset="100%" stopColor="#D32F2F" />
+          </SvgLinearGradient>
+          <SvgLinearGradient id="homeCrabShine" x1="0%" y1="0%" x2="60%" y2="60%">
+            <Stop offset="0%" stopColor="rgba(255,255,255,0.55)" />
+            <Stop offset="100%" stopColor="rgba(255,255,255,0)" />
+          </SvgLinearGradient>
+        </Defs>
+        {/* Legs */}
+        <Path d="M28 68 Q20 78, 14 90" stroke="#C62828" strokeWidth={2.5} fill="none" strokeLinecap="round" />
+        <Path d="M37 73 Q30 86, 26 96" stroke="#C62828" strokeWidth={2.5} fill="none" strokeLinecap="round" />
+        <Path d="M63 73 Q70 86, 74 96" stroke="#C62828" strokeWidth={2.5} fill="none" strokeLinecap="round" />
+        <Path d="M72 68 Q80 78, 86 90" stroke="#C62828" strokeWidth={2.5} fill="none" strokeLinecap="round" />
+        {/* Left claw */}
+        <Path d="M14 54 Q2 44, 8 28 Q14 16, 28 36 Q20 44, 22 54" fill="url(#homeCrabBody)" stroke="#B71C1C" strokeWidth={1.5} />
+        <Circle cx="8" cy="24" r="6" fill="#FF7043" stroke="#B71C1C" strokeWidth={1} />
+        {/* Right claw */}
+        <Path d="M86 54 Q98 44, 92 28 Q86 16, 72 36 Q80 44, 78 54" fill="url(#homeCrabBody)" stroke="#B71C1C" strokeWidth={1.5} />
+        <Circle cx="92" cy="24" r="6" fill="#FF7043" stroke="#B71C1C" strokeWidth={1} />
+        {/* Main body */}
+        <Path d="M20 58 Q20 28, 50 26 Q80 28, 80 58 Q80 82, 50 84 Q20 82, 20 58 Z" fill="url(#homeCrabBody)" stroke="#B71C1C" strokeWidth={2} />
+        {/* Shine */}
+        <Path d="M28 34 Q50 26, 72 34 Q65 28, 50 26 Q35 26, 28 34 Z" fill="url(#homeCrabShine)" />
+        {/* Eyes on stalks */}
+        <Path d="M35 30 L28 16" stroke="#B71C1C" strokeWidth={3} strokeLinecap="round" />
+        <Path d="M65 30 L72 16" stroke="#B71C1C" strokeWidth={3} strokeLinecap="round" />
+        <Circle cx="27" cy="13" r="8" fill="#FFFFFF" stroke="#B71C1C" strokeWidth={1.5} />
+        <Circle cx="73" cy="13" r="8" fill="#FFFFFF" stroke="#B71C1C" strokeWidth={1.5} />
+        <Circle cx="26" cy="12" r="5" fill="#1A237E" />
+        <Circle cx="72" cy="12" r="5" fill="#1A237E" />
+        <Circle cx="24" cy="10" r="2" fill="#FFFFFF" />
+        <Circle cx="70" cy="10" r="2" fill="#FFFFFF" />
+        {/* Rosy cheeks */}
+        <Circle cx="34" cy="62" r="7" fill="rgba(255,100,100,0.25)" />
+        <Circle cx="66" cy="62" r="7" fill="rgba(255,100,100,0.25)" />
+        {/* Smile */}
+        <Path d="M36 68 Q50 76, 64 68" stroke="#B71C1C" strokeWidth={2.5} fill="none" strokeLinecap="round" />
+        {/* Belly segments */}
+        <Path d="M32 56 Q50 62, 68 56" stroke="#FF8A65" strokeWidth={1.5} fill="none" />
       </Svg>
     </View>
   );
@@ -132,18 +195,41 @@ function ArcadeLobster({ size = 40, style }: any) {
   return (
     <View style={[{ width: size, height: size }, style]}>
       <Svg width={size} height={size} viewBox="0 0 100 100">
-        <Rect x="35" y="35" width="30" height="45" rx="10" fill="#D32F2F" stroke="#B71C1C" strokeWidth={2} />
-        <Circle cx="50" cy="30" r="15" fill="#D32F2F" stroke="#B71C1C" strokeWidth={2} />
-        <Path d="M40 25 L35 15" stroke="#B71C1C" strokeWidth={3} />
-        <Path d="M60 25 L65 15" stroke="#B71C1C" strokeWidth={3} />
-        <Circle cx="35" cy="13" r="5" fill="#FFFFFF" />
-        <Circle cx="65" cy="13" r="5" fill="#FFFFFF" />
-        <Circle cx="35" cy="13" r="2" fill="#000000" />
-        <Circle cx="65" cy="13" r="2" fill="#000000" />
-        <Path d="M25 40 Q10 35, 15 25 Q20 15, 30 30" fill="#D32F2F" stroke="#B71C1C" strokeWidth={2} />
-        <Path d="M75 40 Q90 35, 85 25 Q80 15, 70 30" fill="#D32F2F" stroke="#B71C1C" strokeWidth={2} />
-        <Rect x="40" y="80" width="20" height="8" rx="3" fill="#D32F2F" stroke="#B71C1C" strokeWidth={1} />
-        <Path d="M45 88 L40 98 L50 95 L60 98 L55 88" fill="#D32F2F" stroke="#B71C1C" strokeWidth={1} />
+        <Defs>
+          <SvgLinearGradient id="homeLobsterG" x1="0%" y1="0%" x2="100%" y2="100%">
+            <Stop offset="0%" stopColor="#FF5252" />
+            <Stop offset="100%" stopColor="#C62828" />
+          </SvgLinearGradient>
+        </Defs>
+        {/* Antennae */}
+        <Path d="M38 18 Q25 5, 15 2" stroke="#C62828" strokeWidth={1.5} fill="none" strokeLinecap="round" />
+        <Path d="M62 18 Q75 5, 85 2" stroke="#C62828" strokeWidth={1.5} fill="none" strokeLinecap="round" />
+        {/* Claws */}
+        <Path d="M20 44 Q6 36, 10 22 Q14 10, 26 28 Q20 36, 22 44" fill="url(#homeLobsterG)" stroke="#B71C1C" strokeWidth={1.5} />
+        <Circle cx="10" cy="18" r="6" fill="#FF5252" stroke="#B71C1C" strokeWidth={1} />
+        <Path d="M80 44 Q94 36, 90 22 Q86 10, 74 28 Q80 36, 78 44" fill="url(#homeLobsterG)" stroke="#B71C1C" strokeWidth={1.5} />
+        <Circle cx="90" cy="18" r="6" fill="#FF5252" stroke="#B71C1C" strokeWidth={1} />
+        {/* Legs */}
+        <Path d="M30 68 Q22 78, 18 88" stroke="#C62828" strokeWidth={2} fill="none" strokeLinecap="round" />
+        <Path d="M38 72 Q32 84, 30 93" stroke="#C62828" strokeWidth={2} fill="none" strokeLinecap="round" />
+        <Path d="M62 72 Q68 84, 70 93" stroke="#C62828" strokeWidth={2} fill="none" strokeLinecap="round" />
+        <Path d="M70 68 Q78 78, 82 88" stroke="#C62828" strokeWidth={2} fill="none" strokeLinecap="round" />
+        {/* Body */}
+        <Path d="M25 48 Q25 28, 50 26 Q75 28, 75 48 Q75 60, 50 62 Q25 60, 25 48 Z" fill="url(#homeLobsterG)" stroke="#B71C1C" strokeWidth={2} />
+        <Path d="M28 60 Q28 72, 50 74 Q72 72, 72 60" fill="url(#homeLobsterG)" stroke="#B71C1C" strokeWidth={1.5} />
+        <Path d="M30 72 Q30 82, 50 84 Q70 82, 70 72" fill="url(#homeLobsterG)" stroke="#B71C1C" strokeWidth={1.5} />
+        <Path d="M36 84 L30 96 L50 90 L70 96 L64 84" fill="url(#homeLobsterG)" stroke="#B71C1C" strokeWidth={1.5} />
+        <Path d="M32 32 Q50 26, 68 32 Q62 28, 50 26 Q38 26, 32 32 Z" fill="rgba(255,255,255,0.3)" />
+        <Path d="M26 56 Q50 60, 74 56" stroke="#B71C1C" strokeWidth={1} fill="none" />
+        {/* Eyes */}
+        <Path d="M38 28 L32 16" stroke="#B71C1C" strokeWidth={2.5} strokeLinecap="round" />
+        <Path d="M62 28 L68 16" stroke="#B71C1C" strokeWidth={2.5} strokeLinecap="round" />
+        <Circle cx="32" cy="13" r="6" fill="#FFFFFF" stroke="#B71C1C" strokeWidth={1} />
+        <Circle cx="68" cy="13" r="6" fill="#FFFFFF" stroke="#B71C1C" strokeWidth={1} />
+        <Circle cx="31" cy="12" r="3.5" fill="#1A237E" />
+        <Circle cx="67" cy="12" r="3.5" fill="#1A237E" />
+        <Circle cx="30" cy="11" r="1.5" fill="#FFFFFF" />
+        <Circle cx="66" cy="11" r="1.5" fill="#FFFFFF" />
       </Svg>
     </View>
   );
@@ -204,6 +290,97 @@ function ArcadePebble({ size = 20, color = "#9C27B0", style }: any) {
   );
 }
 
+function ArcadeJellyfish({ size = 40, color = "#CE93D8", style }: any) {
+  const darkColor = "#7B1FA2";
+  return (
+    <View style={[{ width: size, height: size * 1.3 }, style]}>
+      <Svg width={size} height={size * 1.3} viewBox="0 0 100 130">
+        <Defs>
+          <SvgLinearGradient id={`jellyG${color}`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <Stop offset="0%" stopColor="rgba(255,255,255,0.8)" />
+            <Stop offset="40%" stopColor={color} />
+            <Stop offset="100%" stopColor={darkColor} />
+          </SvgLinearGradient>
+          <SvgLinearGradient id={`jellyCapG${color}`} x1="0%" y1="0%" x2="50%" y2="100%">
+            <Stop offset="0%" stopColor="rgba(255,255,255,0.5)" />
+            <Stop offset="100%" stopColor="rgba(255,255,255,0)" />
+          </SvgLinearGradient>
+        </Defs>
+        {/* Tentacles */}
+        <Path d="M28 62 Q20 80, 25 100 Q22 115, 28 128" stroke={color} strokeWidth={3} fill="none" strokeLinecap="round" opacity={0.7} />
+        <Path d="M40 65 Q38 85, 42 105 Q40 118, 44 128" stroke={color} strokeWidth={3} fill="none" strokeLinecap="round" opacity={0.7} />
+        <Path d="M60 65 Q62 85, 58 105 Q60 118, 56 128" stroke={color} strokeWidth={3} fill="none" strokeLinecap="round" opacity={0.7} />
+        <Path d="M72 62 Q80 80, 75 100 Q78 115, 72 128" stroke={color} strokeWidth={3} fill="none" strokeLinecap="round" opacity={0.7} />
+        {/* Inner frilly tentacles */}
+        <Path d="M48 64 Q44 80, 48 95" stroke="rgba(255,255,255,0.5)" strokeWidth={2} fill="none" strokeLinecap="round" />
+        <Path d="M52 64 Q56 80, 52 95" stroke="rgba(255,255,255,0.5)" strokeWidth={2} fill="none" strokeLinecap="round" />
+        {/* Bell cap */}
+        <Path d="M18 48 Q18 15, 50 12 Q82 15, 82 48 Q82 65, 50 68 Q18 65, 18 48 Z" fill={`url(#jellyG${color})`} stroke={darkColor} strokeWidth={1.5} />
+        {/* Inner shine highlight */}
+        <Path d="M28 24 Q50 16, 72 24 Q60 16, 50 14 Q40 14, 28 24 Z" fill={`url(#jellyCapG${color})`} />
+        {/* Inner pattern */}
+        <Path d="M30 42 Q50 50, 70 42" stroke="rgba(255,255,255,0.35)" strokeWidth={2} fill="none" />
+        <Path d="M34 52 Q50 60, 66 52" stroke="rgba(255,255,255,0.25)" strokeWidth={1.5} fill="none" />
+        {/* Eyes */}
+        <Circle cx="38" cy="38" r="6" fill="#FFFFFF" />
+        <Circle cx="62" cy="38" r="6" fill="#FFFFFF" />
+        <Circle cx="37" cy="38" r="3.5" fill="#4A148C" />
+        <Circle cx="61" cy="38" r="3.5" fill="#4A148C" />
+        <Circle cx="36" cy="37" r="1.5" fill="#FFFFFF" />
+        <Circle cx="60" cy="37" r="1.5" fill="#FFFFFF" />
+        {/* Little smile */}
+        <Path d="M42 52 Q50 57, 58 52" stroke={darkColor} strokeWidth={2} fill="none" strokeLinecap="round" />
+      </Svg>
+    </View>
+  );
+}
+
+function ArcadeTurtle({ size = 45, style }: any) {
+  return (
+    <View style={[{ width: size * 1.2, height: size }, style]}>
+      <Svg width={size * 1.2} height={size} viewBox="0 0 120 100">
+        <Defs>
+          <SvgLinearGradient id="turtleShell" x1="0%" y1="0%" x2="100%" y2="100%">
+            <Stop offset="0%" stopColor="#81C784" />
+            <Stop offset="100%" stopColor="#2E7D32" />
+          </SvgLinearGradient>
+          <SvgLinearGradient id="turtleSkin" x1="0%" y1="0%" x2="100%" y2="100%">
+            <Stop offset="0%" stopColor="#A5D6A7" />
+            <Stop offset="100%" stopColor="#388E3C" />
+          </SvgLinearGradient>
+        </Defs>
+        {/* Flippers */}
+        <Path d="M22 46 Q6 38, 2 26 Q8 22, 20 34" fill="url(#turtleSkin)" stroke="#2E7D32" strokeWidth={1.5} />
+        <Path d="M98 46 Q114 38, 118 26 Q112 22, 100 34" fill="url(#turtleSkin)" stroke="#2E7D32" strokeWidth={1.5} />
+        <Path d="M30 72 Q18 84, 14 95 Q22 96, 34 82" fill="url(#turtleSkin)" stroke="#2E7D32" strokeWidth={1.5} />
+        <Path d="M90 72 Q102 84, 106 95 Q98 96, 86 82" fill="url(#turtleSkin)" stroke="#2E7D32" strokeWidth={1.5} />
+        {/* Shell base */}
+        <Path d="M22 50 Q22 22, 60 18 Q98 22, 98 50 Q98 80, 60 84 Q22 80, 22 50 Z" fill="url(#turtleShell)" stroke="#1B5E20" strokeWidth={2} />
+        {/* Shell hexagon pattern */}
+        <Path d="M60 28 L72 36 L72 52 L60 60 L48 52 L48 36 Z" fill="rgba(255,255,255,0.15)" stroke="#1B5E20" strokeWidth={1} />
+        <Path d="M35 38 L44 44 L44 56 L35 62 L26 56 L26 44 Z" fill="rgba(255,255,255,0.1)" stroke="#1B5E20" strokeWidth={1} />
+        <Path d="M85 38 L94 44 L94 56 L85 62 L76 56 L76 44 Z" fill="rgba(255,255,255,0.1)" stroke="#1B5E20" strokeWidth={1} />
+        <Path d="M60 60 L69 66 L69 76 L60 80 L51 76 L51 66 Z" fill="rgba(255,255,255,0.1)" stroke="#1B5E20" strokeWidth={1} />
+        {/* Shell shine */}
+        <Path d="M36 24 Q60 18, 84 24 Q70 18, 60 18 Q50 18, 36 24 Z" fill="rgba(255,255,255,0.3)" />
+        {/* Head */}
+        <Ellipse cx="60" cy="14" rx="14" ry="10" fill="url(#turtleSkin)" stroke="#2E7D32" strokeWidth={1.5} />
+        {/* Eyes */}
+        <Circle cx="53" cy="11" r="5" fill="#FFFFFF" />
+        <Circle cx="67" cy="11" r="5" fill="#FFFFFF" />
+        <Circle cx="52" cy="10" r="3" fill="#1B5E20" />
+        <Circle cx="66" cy="10" r="3" fill="#1B5E20" />
+        <Circle cx="51" cy="9" r="1.2" fill="#FFFFFF" />
+        <Circle cx="65" cy="9" r="1.2" fill="#FFFFFF" />
+        {/* Smile */}
+        <Path d="M54 17 Q60 21, 66 17" stroke="#2E7D32" strokeWidth={1.5} fill="none" strokeLinecap="round" />
+        {/* Tail */}
+        <Path d="M60 84 Q63 92, 60 96 Q57 92, 60 84" fill="url(#turtleSkin)" stroke="#2E7D32" strokeWidth={1} />
+      </Svg>
+    </View>
+  );
+}
+
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -233,6 +410,14 @@ export default function HomeScreen() {
   // Moving shells (drifting)
   const shell1X = useSharedValue(-60);
   const shell2X = useSharedValue(width + 60);
+
+  // Jellyfish bobbing
+  const jelly1Y = useSharedValue(0);
+  const jelly2Y = useSharedValue(0);
+
+  // Turtle swimming
+  const turtle1X = useSharedValue(-80);
+  const turtle2X = useSharedValue(width + 80);
 
   useEffect(() => {
     loadGameState();
@@ -370,6 +555,42 @@ export default function HomeScreen() {
       -1,
       false
     ));
+
+    // Jellyfish gentle bob
+    jelly1Y.value = withRepeat(
+      withSequence(
+        withTiming(-18, { duration: 2200, easing: Easing.inOut(Easing.ease) }),
+        withTiming(18, { duration: 2200, easing: Easing.inOut(Easing.ease) })
+      ),
+      -1,
+      true
+    );
+    jelly2Y.value = withDelay(1100, withRepeat(
+      withSequence(
+        withTiming(14, { duration: 2500, easing: Easing.inOut(Easing.ease) }),
+        withTiming(-14, { duration: 2500, easing: Easing.inOut(Easing.ease) })
+      ),
+      -1,
+      true
+    ));
+
+    // Turtle swimming
+    turtle1X.value = withRepeat(
+      withSequence(
+        withTiming(width + 80, { duration: 9000, easing: Easing.linear }),
+        withTiming(-80, { duration: 1 })
+      ),
+      -1,
+      false
+    );
+    turtle2X.value = withDelay(4500, withRepeat(
+      withSequence(
+        withTiming(-80, { duration: 7500, easing: Easing.linear }),
+        withTiming(width + 80, { duration: 1 })
+      ),
+      -1,
+      false
+    ));
   };
 
   // Animated styles for moving crabs
@@ -418,6 +639,22 @@ export default function HomeScreen() {
   
   const shell2Style = useAnimatedStyle(() => ({
     transform: [{ translateX: shell2X.value }, { scaleX: -1 }],
+  }));
+
+  // Animated styles for jellyfish
+  const jelly1Style = useAnimatedStyle(() => ({
+    transform: [{ translateY: jelly1Y.value }],
+  }));
+  const jelly2Style = useAnimatedStyle(() => ({
+    transform: [{ translateY: jelly2Y.value }],
+  }));
+
+  // Animated styles for turtles
+  const turtle1Style = useAnimatedStyle(() => ({
+    transform: [{ translateX: turtle1X.value }],
+  }));
+  const turtle2Style = useAnimatedStyle(() => ({
+    transform: [{ translateX: turtle2X.value }, { scaleX: -1 }],
   }));
 
   const buttonsAnimatedStyle = useAnimatedStyle(() => ({
@@ -509,6 +746,22 @@ export default function HomeScreen() {
       </Animated.View>
       <Animated.View style={[styles.movingCrab, { top: 200 }, shell2Style]}>
         <ArcadeShell size={28} color="#9C27B0" rotation={-15} />
+      </Animated.View>
+
+      {/* Jellyfish bobbing at corners */}
+      <Animated.View style={[styles.floatingDecor, { top: 140, left: 8 }, jelly1Style]}>
+        <ArcadeJellyfish size={38} color="#CE93D8" />
+      </Animated.View>
+      <Animated.View style={[styles.floatingDecor, { top: 250, right: 8 }, jelly2Style]}>
+        <ArcadeJellyfish size={32} color="#80DEEA" />
+      </Animated.View>
+
+      {/* Turtles swimming */}
+      <Animated.View style={[styles.movingCrab, { top: 76 }, turtle1Style]}>
+        <ArcadeTurtle size={42} />
+      </Animated.View>
+      <Animated.View style={[styles.movingCrab, { bottom: 310 }, turtle2Style]}>
+        <ArcadeTurtle size={36} />
       </Animated.View>
 
       {/* Stats section without logo */}

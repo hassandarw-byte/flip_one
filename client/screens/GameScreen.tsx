@@ -1552,9 +1552,14 @@ export default function GameScreen() {
         {/* Top Water Stream */}
         <View style={[styles.waterStream, { top: trackTopY - 80, height: 80 }]}>
           <LinearGradient
-            colors={["#87CEEB", "#4FC3F7", "#29B6F6"]}
+            colors={["#0277BD", "#0288D1", "#29B6F6", "#81D4FA"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
             style={styles.waterGradient}
           />
+          {/* Foam/wave line at bottom */}
+          <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 4, backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: 2 }} />
+          <View style={{ position: 'absolute', bottom: 6, left: 20, right: 20, height: 2, backgroundColor: 'rgba(255,255,255,0.3)', borderRadius: 2 }} />
         </View>
         
         {/* Top Road/Track */}
@@ -1602,9 +1607,14 @@ export default function GameScreen() {
         {/* Bottom Water Stream */}
         <View style={[styles.waterStream, { top: trackBottomY + TRACK_HEIGHT, height: 80 }]}>
           <LinearGradient
-            colors={["#29B6F6", "#4FC3F7", "#87CEEB"]}
+            colors={["#81D4FA", "#29B6F6", "#0288D1", "#0277BD"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
             style={styles.waterGradient}
           />
+          {/* Foam/wave line at top */}
+          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: 2 }} />
+          <View style={{ position: 'absolute', top: 6, left: 20, right: 20, height: 2, backgroundColor: 'rgba(255,255,255,0.3)', borderRadius: 2 }} />
         </View>
 
         {/* Sea Creatures in water streams */}
@@ -1989,69 +1999,141 @@ const powerStyles = StyleSheet.create({
 });
 
 function SeaCreatureShape({ type }: { type: "crab" | "fish" | "lobster" }) {
-  const size = 35;
-  
+  const size = 38;
+
   switch (type) {
     case "crab":
       return (
         <Svg width={size} height={size} viewBox="0 0 100 100">
-          {/* Crab body */}
-          <Circle cx="50" cy="55" r="25" fill="#E57373" stroke="#C62828" strokeWidth={2} />
-          {/* Eyes */}
-          <Circle cx="40" cy="40" r="8" fill="#FFFFFF" />
-          <Circle cx="60" cy="40" r="8" fill="#FFFFFF" />
-          <Circle cx="40" cy="40" r="4" fill="#000000" />
-          <Circle cx="60" cy="40" r="4" fill="#000000" />
-          {/* Claws */}
-          <Path d="M15 50 Q5 45, 10 35 Q15 25, 25 40" fill="#E57373" stroke="#C62828" strokeWidth={2} />
-          <Path d="M85 50 Q95 45, 90 35 Q85 25, 75 40" fill="#E57373" stroke="#C62828" strokeWidth={2} />
+          <Defs>
+            <SvgLinearGradient id="crabBody" x1="0%" y1="0%" x2="100%" y2="100%">
+              <Stop offset="0%" stopColor="#FF7043" />
+              <Stop offset="100%" stopColor="#D32F2F" />
+            </SvgLinearGradient>
+            <SvgLinearGradient id="crabShine" x1="0%" y1="0%" x2="50%" y2="100%">
+              <Stop offset="0%" stopColor="rgba(255,255,255,0.5)" />
+              <Stop offset="100%" stopColor="rgba(255,255,255,0)" />
+            </SvgLinearGradient>
+          </Defs>
+          {/* Left big claw */}
+          <Path d="M12 52 Q2 42, 8 28 Q14 18, 26 36 Q18 44, 20 54" fill="url(#crabBody)" stroke="#B71C1C" strokeWidth={1.5} />
+          <Circle cx="10" cy="26" r="5" fill="#FF7043" stroke="#B71C1C" strokeWidth={1} />
+          {/* Right big claw */}
+          <Path d="M88 52 Q98 42, 92 28 Q86 18, 74 36 Q82 44, 80 54" fill="url(#crabBody)" stroke="#B71C1C" strokeWidth={1.5} />
+          <Circle cx="90" cy="26" r="5" fill="#FF7043" stroke="#B71C1C" strokeWidth={1} />
           {/* Legs */}
-          <Path d="M30 70 L20 85" stroke="#C62828" strokeWidth={3} />
-          <Path d="M40 75 L35 90" stroke="#C62828" strokeWidth={3} />
-          <Path d="M60 75 L65 90" stroke="#C62828" strokeWidth={3} />
-          <Path d="M70 70 L80 85" stroke="#C62828" strokeWidth={3} />
+          <Path d="M30 70 Q22 80, 16 90" stroke="#C62828" strokeWidth={2.5} fill="none" strokeLinecap="round" />
+          <Path d="M38 74 Q32 86, 28 95" stroke="#C62828" strokeWidth={2.5} fill="none" strokeLinecap="round" />
+          <Path d="M62 74 Q68 86, 72 95" stroke="#C62828" strokeWidth={2.5} fill="none" strokeLinecap="round" />
+          <Path d="M70 70 Q78 80, 84 90" stroke="#C62828" strokeWidth={2.5} fill="none" strokeLinecap="round" />
+          {/* Main body */}
+          <Path d="M22 58 Q22 30, 50 28 Q78 30, 78 58 Q78 80, 50 82 Q22 80, 22 58 Z" fill="url(#crabBody)" stroke="#B71C1C" strokeWidth={2} />
+          {/* Shine */}
+          <Path d="M30 35 Q50 28, 70 35 Q65 30, 50 28 Q35 28, 30 35 Z" fill="url(#crabShine)" />
+          {/* Eyes on stalks */}
+          <Path d="M36 32 L30 18" stroke="#B71C1C" strokeWidth={3} strokeLinecap="round" />
+          <Path d="M64 32 L70 18" stroke="#B71C1C" strokeWidth={3} strokeLinecap="round" />
+          <Circle cx="30" cy="15" r="7" fill="#FFFFFF" stroke="#B71C1C" strokeWidth={1.5} />
+          <Circle cx="70" cy="15" r="7" fill="#FFFFFF" stroke="#B71C1C" strokeWidth={1.5} />
+          <Circle cx="29" cy="14" r="4" fill="#1A237E" />
+          <Circle cx="69" cy="14" r="4" fill="#1A237E" />
+          <Circle cx="28" cy="13" r="1.5" fill="#FFFFFF" />
+          <Circle cx="68" cy="13" r="1.5" fill="#FFFFFF" />
+          {/* Smile */}
+          <Path d="M38 66 Q50 73, 62 66" stroke="#B71C1C" strokeWidth={2} fill="none" strokeLinecap="round" />
+          {/* Belly pattern */}
+          <Path d="M35 58 Q50 62, 65 58" stroke="#FF8A65" strokeWidth={1.5} fill="none" />
+          <Path d="M32 65 Q50 70, 68 65" stroke="#FF8A65" strokeWidth={1} fill="none" />
         </Svg>
       );
     case "fish":
       return (
         <Svg width={size} height={size} viewBox="0 0 100 100">
-          {/* Fish body */}
-          <Path
-            d="M80 50 Q60 25, 30 40 Q10 50, 30 60 Q60 75, 80 50 Z"
-            fill="#64B5F6"
-            stroke="#1976D2"
-            strokeWidth={2}
-          />
+          <Defs>
+            <SvgLinearGradient id="fishBody" x1="0%" y1="0%" x2="100%" y2="100%">
+              <Stop offset="0%" stopColor="#29B6F6" />
+              <Stop offset="100%" stopColor="#0277BD" />
+            </SvgLinearGradient>
+            <SvgLinearGradient id="fishBelly" x1="0%" y1="0%" x2="0%" y2="100%">
+              <Stop offset="0%" stopColor="#E1F5FE" />
+              <Stop offset="100%" stopColor="#81D4FA" />
+            </SvgLinearGradient>
+            <SvgLinearGradient id="fishTail" x1="0%" y1="0%" x2="100%" y2="0%">
+              <Stop offset="0%" stopColor="#0288D1" />
+              <Stop offset="100%" stopColor="#01579B" />
+            </SvgLinearGradient>
+          </Defs>
           {/* Tail */}
-          <Path d="M15 50 L5 35 L5 65 Z" fill="#64B5F6" stroke="#1976D2" strokeWidth={2} />
+          <Path d="M18 50 L2 30 L8 50 L2 70 Z" fill="url(#fishTail)" stroke="#01579B" strokeWidth={1.5} />
+          {/* Body */}
+          <Path d="M82 50 Q65 22, 28 38 Q10 50, 28 62 Q65 78, 82 50 Z" fill="url(#fishBody)" stroke="#01579B" strokeWidth={1.5} />
+          {/* Belly highlight */}
+          <Path d="M75 50 Q60 62, 35 58 Q22 54, 28 62 Q65 78, 75 50 Z" fill="url(#fishBelly)" opacity="0.6" />
+          {/* Dorsal fin */}
+          <Path d="M48 32 Q58 16, 66 30" fill="#0288D1" stroke="#01579B" strokeWidth={1.5} />
+          {/* Pectoral fin */}
+          <Path d="M52 50 Q60 62, 52 66" fill="#0288D1" stroke="#01579B" strokeWidth={1} />
+          {/* Scale lines */}
+          <Path d="M55 38 Q60 42, 55 46" stroke="rgba(255,255,255,0.4)" strokeWidth={1.5} fill="none" />
+          <Path d="M65 40 Q70 44, 65 48" stroke="rgba(255,255,255,0.4)" strokeWidth={1.5} fill="none" />
+          <Path d="M50 46 Q55 50, 50 54" stroke="rgba(255,255,255,0.3)" strokeWidth={1.5} fill="none" />
           {/* Eye */}
-          <Circle cx="65" cy="48" r="6" fill="#FFFFFF" />
-          <Circle cx="66" cy="48" r="3" fill="#000000" />
-          {/* Fins */}
-          <Path d="M45 35 Q50 20, 55 35" fill="#42A5F5" stroke="#1976D2" strokeWidth={1} />
-          <Path d="M45 65 Q50 80, 55 65" fill="#42A5F5" stroke="#1976D2" strokeWidth={1} />
+          <Circle cx="68" cy="46" r="8" fill="#FFFFFF" />
+          <Circle cx="67" cy="46" r="5" fill="#1A237E" />
+          <Circle cx="66" cy="44" r="2" fill="#FFFFFF" />
+          {/* Mouth */}
+          <Path d="M82 48 Q84 50, 82 52" stroke="#01579B" strokeWidth={2} fill="none" strokeLinecap="round" />
+          {/* Shine on top */}
+          <Path d="M35 36 Q55 28, 72 36" stroke="rgba(255,255,255,0.5)" strokeWidth={3} fill="none" strokeLinecap="round" />
         </Svg>
       );
     case "lobster":
       return (
         <Svg width={size} height={size} viewBox="0 0 100 100">
-          {/* Lobster body */}
-          <Rect x="35" y="35" width="30" height="45" rx="10" fill="#D32F2F" stroke="#B71C1C" strokeWidth={2} />
-          {/* Head */}
-          <Circle cx="50" cy="30" r="15" fill="#D32F2F" stroke="#B71C1C" strokeWidth={2} />
-          {/* Eyes on stalks */}
-          <Path d="M40 25 L35 15" stroke="#B71C1C" strokeWidth={3} />
-          <Path d="M60 25 L65 15" stroke="#B71C1C" strokeWidth={3} />
-          <Circle cx="35" cy="13" r="5" fill="#FFFFFF" />
-          <Circle cx="65" cy="13" r="5" fill="#FFFFFF" />
-          <Circle cx="35" cy="13" r="2" fill="#000000" />
-          <Circle cx="65" cy="13" r="2" fill="#000000" />
-          {/* Claws */}
-          <Path d="M25 40 Q10 35, 15 25 Q20 15, 30 30" fill="#D32F2F" stroke="#B71C1C" strokeWidth={2} />
-          <Path d="M75 40 Q90 35, 85 25 Q80 15, 70 30" fill="#D32F2F" stroke="#B71C1C" strokeWidth={2} />
-          {/* Tail segments */}
-          <Rect x="40" y="80" width="20" height="8" rx="3" fill="#D32F2F" stroke="#B71C1C" strokeWidth={1} />
-          <Path d="M45 88 L40 98 L50 95 L60 98 L55 88" fill="#D32F2F" stroke="#B71C1C" strokeWidth={1} />
+          <Defs>
+            <SvgLinearGradient id="lobsterBody" x1="0%" y1="0%" x2="100%" y2="100%">
+              <Stop offset="0%" stopColor="#FF5252" />
+              <Stop offset="100%" stopColor="#C62828" />
+            </SvgLinearGradient>
+            <SvgLinearGradient id="lobsterShine" x1="0%" y1="0%" x2="50%" y2="100%">
+              <Stop offset="0%" stopColor="rgba(255,255,255,0.4)" />
+              <Stop offset="100%" stopColor="rgba(255,255,255,0)" />
+            </SvgLinearGradient>
+          </Defs>
+          {/* Antennae */}
+          <Path d="M38 18 Q25 5, 15 2" stroke="#C62828" strokeWidth={1.5} fill="none" strokeLinecap="round" />
+          <Path d="M62 18 Q75 5, 85 2" stroke="#C62828" strokeWidth={1.5} fill="none" strokeLinecap="round" />
+          {/* Big claws */}
+          <Path d="M20 44 Q6 36, 10 22 Q14 10, 26 28 Q20 36, 22 44" fill="url(#lobsterBody)" stroke="#B71C1C" strokeWidth={1.5} />
+          <Circle cx="10" cy="18" r="6" fill="#FF5252" stroke="#B71C1C" strokeWidth={1} />
+          <Path d="M80 44 Q94 36, 90 22 Q86 10, 74 28 Q80 36, 78 44" fill="url(#lobsterBody)" stroke="#B71C1C" strokeWidth={1.5} />
+          <Circle cx="90" cy="18" r="6" fill="#FF5252" stroke="#B71C1C" strokeWidth={1} />
+          {/* Walking legs */}
+          <Path d="M30 68 Q22 78, 18 88" stroke="#C62828" strokeWidth={2} fill="none" strokeLinecap="round" />
+          <Path d="M38 72 Q32 84, 30 93" stroke="#C62828" strokeWidth={2} fill="none" strokeLinecap="round" />
+          <Path d="M62 72 Q68 84, 70 93" stroke="#C62828" strokeWidth={2} fill="none" strokeLinecap="round" />
+          <Path d="M70 68 Q78 78, 82 88" stroke="#C62828" strokeWidth={2} fill="none" strokeLinecap="round" />
+          {/* Body segments */}
+          <Path d="M25 48 Q25 28, 50 26 Q75 28, 75 48 Q75 60, 50 62 Q25 60, 25 48 Z" fill="url(#lobsterBody)" stroke="#B71C1C" strokeWidth={2} />
+          <Path d="M28 60 Q28 72, 50 74 Q72 72, 72 60" fill="url(#lobsterBody)" stroke="#B71C1C" strokeWidth={1.5} />
+          <Path d="M30 72 Q30 82, 50 84 Q70 82, 70 72" fill="url(#lobsterBody)" stroke="#B71C1C" strokeWidth={1.5} />
+          {/* Tail fan */}
+          <Path d="M36 84 L30 96 L50 90 L70 96 L64 84" fill="url(#lobsterBody)" stroke="#B71C1C" strokeWidth={1.5} />
+          {/* Shine on head */}
+          <Path d="url(#lobsterShine)" />
+          <Path d="M32 32 Q50 26, 68 32 Q62 28, 50 26 Q38 26, 32 32 Z" fill="rgba(255,255,255,0.3)" />
+          {/* Segment lines */}
+          <Path d="M26 56 Q50 60, 74 56" stroke="#B71C1C" strokeWidth={1} fill="none" />
+          <Path d="M28 68 Q50 72, 72 68" stroke="#B71C1C" strokeWidth={1} fill="none" />
+          {/* Eyes */}
+          <Path d="M38 28 L32 16" stroke="#B71C1C" strokeWidth={2.5} strokeLinecap="round" />
+          <Path d="M62 28 L68 16" stroke="#B71C1C" strokeWidth={2.5} strokeLinecap="round" />
+          <Circle cx="32" cy="13" r="6" fill="#FFFFFF" stroke="#B71C1C" strokeWidth={1} />
+          <Circle cx="68" cy="13" r="6" fill="#FFFFFF" stroke="#B71C1C" strokeWidth={1} />
+          <Circle cx="31" cy="12" r="3.5" fill="#1A237E" />
+          <Circle cx="67" cy="12" r="3.5" fill="#1A237E" />
+          <Circle cx="30" cy="11" r="1.5" fill="#FFFFFF" />
+          <Circle cx="66" cy="11" r="1.5" fill="#FFFFFF" />
         </Svg>
       );
     default:
@@ -2168,35 +2250,80 @@ function CollectibleShape({ type, size }: { type: Collectible["type"]; size: num
     return (
       <Svg width={size} height={size} viewBox="0 0 100 100">
         <Defs>
-          <SvgLinearGradient id="heartGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-            <Stop offset="0%" stopColor="#FF6B9D" />
-            <Stop offset="100%" stopColor="#FF1744" />
+          <SvgLinearGradient id="heartGrad" x1="20%" y1="0%" x2="80%" y2="100%">
+            <Stop offset="0%" stopColor="#FF80AB" />
+            <Stop offset="50%" stopColor="#FF1744" />
+            <Stop offset="100%" stopColor="#D50000" />
+          </SvgLinearGradient>
+          <SvgLinearGradient id="heartShine" x1="0%" y1="0%" x2="60%" y2="60%">
+            <Stop offset="0%" stopColor="rgba(255,255,255,0.7)" />
+            <Stop offset="100%" stopColor="rgba(255,255,255,0)" />
           </SvgLinearGradient>
         </Defs>
+        {/* Outer glow ring */}
         <Path
-          d="M50 88 C50 88 10 55 10 35 C10 15 30 10 50 30 C70 10 90 15 90 35 C90 55 50 88 50 88 Z"
-          fill="url(#heartGlow)"
-          stroke="#FFFFFF"
-          strokeWidth="3"
+          d="M50 92 C50 92 6 56 6 32 C6 10 28 6 50 28 C72 6 94 10 94 32 C94 56 50 92 50 92 Z"
+          fill="rgba(255,23,68,0.25)"
         />
+        {/* Main heart */}
+        <Path
+          d="M50 86 C50 86 11 54 11 34 C11 15 31 12 50 32 C69 12 89 15 89 34 C89 54 50 86 50 86 Z"
+          fill="url(#heartGrad)"
+          stroke="#FFFFFF"
+          strokeWidth="2.5"
+        />
+        {/* Shine highlight */}
+        <Path
+          d="M28 22 Q38 16, 46 24 Q40 17, 30 20 Z"
+          fill="url(#heartShine)"
+        />
+        {/* Small sparkle dots */}
+        <Circle cx="22" cy="28" r="2.5" fill="rgba(255,255,255,0.8)" />
+        <Circle cx="32" cy="18" r="1.5" fill="rgba(255,255,255,0.6)" />
+        <Circle cx="78" cy="28" r="2" fill="rgba(255,255,255,0.7)" />
+        {/* +3 indicator */}
+        <Circle cx="80" cy="20" r="12" fill="#FF1744" />
+        <SvgText x="80" y="25" fontSize="13" fontWeight="900" fill="#FFFFFF" textAnchor="middle">+3</SvgText>
       </Svg>
     );
   }
-  
+
   return (
     <Svg width={size} height={size} viewBox="0 0 100 100">
       <Defs>
-        <SvgLinearGradient id="starGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-          <Stop offset="0%" stopColor="#FFD700" />
-          <Stop offset="100%" stopColor="#FFA500" />
+        <SvgLinearGradient id="starGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <Stop offset="0%" stopColor="#FFE57F" />
+          <Stop offset="50%" stopColor="#FFD700" />
+          <Stop offset="100%" stopColor="#FF8F00" />
+        </SvgLinearGradient>
+        <SvgLinearGradient id="starShine" x1="0%" y1="0%" x2="50%" y2="60%">
+          <Stop offset="0%" stopColor="rgba(255,255,255,0.7)" />
+          <Stop offset="100%" stopColor="rgba(255,255,255,0)" />
         </SvgLinearGradient>
       </Defs>
+      {/* Outer glow */}
       <Path
-        d="M50 5 L61 35 L95 35 L68 55 L79 90 L50 70 L21 90 L32 55 L5 35 L39 35 Z"
-        fill="url(#starGlow)"
+        d="M50 2 L62 36 L98 36 L70 57 L82 92 L50 71 L18 92 L30 57 L2 36 L38 36 Z"
+        fill="rgba(255,215,0,0.3)"
+      />
+      {/* Main star */}
+      <Path
+        d="M50 8 L61 36 L93 36 L68 55 L78 88 L50 70 L22 88 L32 55 L7 36 L39 36 Z"
+        fill="url(#starGrad)"
         stroke="#FFFFFF"
         strokeWidth="2"
       />
+      {/* Center circle shine */}
+      <Circle cx="50" cy="54" r="10" fill="rgba(255,255,255,0.2)" />
+      {/* Top shine */}
+      <Path d="M42 20 Q50 14, 58 20 Q50 13, 42 20 Z" fill="url(#starShine)" />
+      {/* Sparkle dots */}
+      <Circle cx="20" cy="42" r="2.5" fill="rgba(255,255,255,0.8)" />
+      <Circle cx="80" cy="42" r="2" fill="rgba(255,255,255,0.7)" />
+      <Circle cx="50" cy="14" r="2" fill="rgba(255,255,255,0.9)" />
+      {/* +5 indicator */}
+      <Circle cx="80" cy="18" r="13" fill="#FF8F00" />
+      <SvgText x="80" y="23" fontSize="13" fontWeight="900" fill="#FFFFFF" textAnchor="middle">+5</SvgText>
     </Svg>
   );
 }
@@ -2314,12 +2441,17 @@ const styles = StyleSheet.create({
   },
   waterGradient: {
     flex: 1,
-    opacity: 0.7,
+    opacity: 1,
   },
   seaCreature: {
     position: "absolute",
-    width: 35,
-    height: 35,
+    width: 40,
+    height: 40,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
   },
   grassEdge: {
     position: "absolute",
