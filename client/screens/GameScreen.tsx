@@ -233,6 +233,7 @@ export default function GameScreen() {
   const isAdShowingRef = useRef(false);
   const collectibleIdRef = useRef(0);
   const bonusPointsRef = useRef(0);
+  const scoreRef = useRef(0);
   const scoreIntervalRef = useRef<NodeJS.Timeout | null>(null);
   
   const playerX = width * 0.2;
@@ -668,7 +669,7 @@ export default function GameScreen() {
       await incrementTotalGames();
       await incrementTotalFlips(flipCountRef.current);
       
-      const currentScore = score;
+      const currentScore = scoreRef.current;
       
       if (gameState) {
         await updateMissionProgress("play", (gameState.totalGames || 0) + 1);
@@ -701,7 +702,7 @@ export default function GameScreen() {
         isNewBest: currentScore > (gameState?.bestScore || 0),
       });
     }, 200);
-  }, [gameState, score, combo, navigation, cleanupGame]);
+  }, [gameState, combo, navigation, cleanupGame]);
 
   const startGame = useCallback(() => {
     const gameStartTime = Date.now();
@@ -717,6 +718,7 @@ export default function GameScreen() {
     setCollectibles([]);
     setDistance(0);
     bonusPointsRef.current = 0;
+    scoreRef.current = 0;
     
     // Initialize background stars
     const stars: BackgroundStar[] = Array.from({ length: 40 }).map((_, i) => ({
@@ -1125,6 +1127,7 @@ export default function GameScreen() {
         const baseIncrement = doublePointsRef.current ? 2 : 1;
         const increment = Math.floor(baseIncrement * comboMultiplier);
         const newScore = prev + increment;
+        scoreRef.current = newScore;
         
         if (newScore % LEVEL_INCREASE_INTERVAL === 0) {
           setLevel((prevLevel) => {
