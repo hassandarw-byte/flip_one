@@ -49,7 +49,7 @@ export default function LuckyWheelScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { backgroundGradient, textColor, textSecondaryColor, textMutedColor } = useNightMode();
+  const { isNightMode, backgroundGradient, textColor, textSecondaryColor, textMutedColor } = useNightMode();
   
   const [canSpin, setCanSpin] = useState(false);
   const [isSpinning, setIsSpinning] = useState(false);

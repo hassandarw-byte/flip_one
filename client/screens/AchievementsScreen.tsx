@@ -33,7 +33,7 @@ export default function AchievementsScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { backgroundGradient, textColor, textSecondaryColor, textMutedColor } = useNightMode();
+  const { isNightMode, backgroundGradient, textColor, textSecondaryColor, textMutedColor } = useNightMode();
   
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [points, setPoints] = useState(0);
