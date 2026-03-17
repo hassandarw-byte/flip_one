@@ -40,67 +40,13 @@ jobs:
           CI: 1
           EXPO_NO_TELEMETRY: 1
 
-      - name: Remove Windows-only cxx build path from gradle.properties
+      - name: Remove Windows-only path from gradle.properties
         run: sed -i '/android\.cxx\.buildRoot/d' android/gradle.properties
 
       - name: Decode and place keystore
         run: |
           echo "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" | base64 --decode > android/app/flipone-release.keystore
-          echo "Keystore size: $(wc -c < android/app/flipone-release.keystore) bytes"
-
-      - name: Apply release signing config to app/build.gradle
-        run: |
-          node - << 'EOF'
-          const fs = require('fs');
-          const path = 'android/app/build.gradle';
-          let src = fs.readFileSync(path, 'utf8');
-
-          const releaseSigningBlock = `
-              release {
-                  storeFile file('flipone-release.keystore')
-                  storePassword 'Hh@2020h_1985%'
-                  keyAlias 'flipone'
-                  keyPassword 'Hh@2020h_1985%'
-              }`;
-
-          // Add release signing config inside signingConfigs block
-          if (!src.includes("storeFile file('flipone-release.keystore')")) {
-              src = src.replace(
-                  /(signingConfigs\s*\{[\s\S]*?)(^\s*\})/m,
-                  (match, inner, closing) => inner + releaseSigningBlock + '\n    ' + closing
-              );
-          }
-
-          // Set signingConfig for release buildType
-          if (!src.includes('signingConfig signingConfigs.release')) {
-              src = src.replace(
-                  /(buildTypes\s*\{[\s\S]*?release\s*\{)/,
-                  '$1\n            signingConfig signingConfigs.release'
-              );
-          }
-
-          fs.writeFileSync(path, src);
-          console.log('Signing config applied successfully');
-          EOF
-
-      - name: Add ndkVersion and AdMob config to root build.gradle
-        run: |
-          node - << 'EOF'
-          const fs = require('fs');
-          const path = 'android/build.gradle';
-          let src = fs.readFileSync(path, 'utf8');
-
-          // Add ndkVersion to ext block if not present
-          if (!src.includes('ndkVersion')) {
-              src = src.replace(
-                  /^(apply plugin: "expo-root-project")/m,
-                  `ext {\n    ndkVersion = "26.1.10909125"\n    buildToolsVersion = rootProject.ext.buildToolsVersion ?: "35.0.0"\n}\n\n$1`
-              );
-          }
-
-          fs.writeFileSync(path, src);
-          console.log('Root build.gradle updated');
-          EOF
+          echo "Keystore placed: $(wc -c < android/app/flipone-release.keystore) bytes"
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
@@ -108,28 +54,24 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x android/gradlew
 
-      - name: Show Android tasks (diagnostic)
-        run: cd android && ./gradlew :app:tasks --no-daemon 2>&1 | grep -E "(bundle|assemble)" | head -20 || true
+      - name: Build Release AAB (signed via Gradle properties)
+        run: |
+          KEYSTORE="$(pwd)/android/app/flipone-release.keystore"
+          cd android
+          ./gradlew :app:bundleRelease --no-daemon \
+            "-Pandroid.injected.signing.store.file=${KEYSTORE}" \
+            "-Pandroid.injected.signing.store.password=Hh@2020h_1985%" \
+            "-Pandroid.injected.signing.key.alias=flipone" \
+            "-Pandroid.injected.signing.key.password=Hh@2020h_1985%"
         env:
           GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=512m"
-        continue-on-error: true
 
-      - name: Build Release AAB
-        run: cd android && ./gradlew :app:bundleRelease --no-daemon
-        env:
-          GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=512m"
-
-      - name: Verify AAB was created
+      - name: Verify AAB
         run: |
           AAB=android/app/build/outputs/bundle/release/app-release.aab
-          if [ -f "$AAB" ]; then
-            echo "SUCCESS: AAB created ($(du -h $AAB | cut -f1))"
-          else
-            echo "ERROR: AAB not found"
-            exit 1
-          fi
+          [ -f "$AAB" ] && echo "SUCCESS: $(du -h $AAB)" || (echo "FAILED: AAB not found" && exit 1)
 
-      - name: Upload AAB artifact
+      - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
           name: flip-one-release-aab
