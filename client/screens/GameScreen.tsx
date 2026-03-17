@@ -61,6 +61,7 @@ import {
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useNightMode } from "@/contexts/NightModeContext";
 import InterstitialAdModal from "@/components/InterstitialAdModal";
+import { useSubscription } from "@/lib/revenuecat";
 
 interface FlipParticle {
   id: number;
@@ -168,6 +169,7 @@ export default function GameScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { backgroundGradient, isNightMode } = useNightMode();
+  const { isAdsRemoved } = useSubscription();
   
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [score, setScore] = useState(0);
@@ -247,6 +249,7 @@ export default function GameScreen() {
   const motionBlur = useSharedValue(0);
   const deathFreezeOpacity = useSharedValue(0);
   
+  const levelUpFlash = useSharedValue(0);
   const comboTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastObstaclePassTime = useRef(0);
   const isDyingRef = useRef(false);
@@ -839,15 +842,15 @@ export default function GameScreen() {
       );
       
       setSkyHeroX(prev => {
-        if (prev > width + 100) {
+        if (prev > width + 120) {
           setShowSkyHero(false);
-          return -100;
+          return -120;
         }
-        return prev + 3;
+        return prev + 1.5;
       });
 
       if (showSwingHero) {
-        setSwingHeroSwing(prev => prev + 0.06);
+        setSwingHeroSwing(prev => prev + 0.03);
         setSwingHeroY(prev => {
           const target = height * 0.35;
           if (prev < target) return prev + 4;
@@ -868,11 +871,11 @@ export default function GameScreen() {
 
       if (showStarWarrior) {
         setStarWarriorX(prev => {
-          if (prev > width + 100) {
+          if (prev > width + 120) {
             setShowStarWarrior(false);
-            return -100;
+            return -120;
           }
-          return prev + 4;
+          return prev + 1.5;
         });
       }
 
@@ -883,10 +886,10 @@ export default function GameScreen() {
         });
         setShadowGliderX(prev => {
           if (shadowGliderRopeY >= height * 0.5) {
-            const newX = prev - 4;
-            if (newX < -100) {
+            const newX = prev - 1.8;
+            if (newX < -120) {
               setShowShadowGlider(false);
-              return width + 100;
+              return width + 120;
             }
             return newX;
           }
@@ -901,10 +904,10 @@ export default function GameScreen() {
       }
 
       if (showMightyJumper) {
-        setMightyJumperPhase(prev => prev + 0.08);
+        setMightyJumperPhase(prev => prev + 0.05);
         setMightyJumperX(prev => {
-          const newX = prev + 5;
-          if (newX > width + 100) {
+          const newX = prev + 2;
+          if (newX > width + 120) {
             setShowMightyJumper(false);
             return -80;
           }
@@ -1127,12 +1130,17 @@ export default function GameScreen() {
           setLevel((prevLevel) => {
             const newLevel = prevLevel + 1;
             if (newLevel % 5 === 0) {
-              gameSpeedRef.current = Math.min(gameSpeedRef.current + 0.5, 12);
+              gameSpeedRef.current = Math.min(gameSpeedRef.current + 1.0, 14);
+              levelUpFlash.value = withSequence(
+                withTiming(0.55, { duration: 120 }),
+                withTiming(0, { duration: 600 })
+              );
+              setTimeout(() => showEncouragement(`LEVEL ${newLevel}! SPEED UP!`), 0);
             }
             if (newLevel % 10 === 0) {
               setBackgroundLevel(bl => (bl + 1) % BACKGROUND_GRADIENTS.length);
             }
-            if (newLevel % 4 === 0 && newLevel > lastAdLevelRef.current) {
+            if (newLevel % 4 === 0 && newLevel > lastAdLevelRef.current && !isAdsRemoved) {
               lastAdLevelRef.current = newLevel;
               isAdShowingRef.current = true;
               setShowInterstitialAd(true);
@@ -1214,6 +1222,10 @@ export default function GameScreen() {
     }
     
     createFlipParticles();
+    playerGlow.value = withSequence(
+      withTiming(1.0, { duration: 80 }),
+      withTiming(0.5, { duration: 500 })
+    );
 
     const flipSpeed = score >= 70 ? 180 : 250;
     
@@ -1292,6 +1304,10 @@ export default function GameScreen() {
     opacity: motionBlur.value,
   }));
 
+  const levelUpFlashStyle = useAnimatedStyle(() => ({
+    opacity: levelUpFlash.value,
+  }));
+
   useEffect(() => {
     if (gameSpeedRef.current >= 8) {
       motionBlur.value = withTiming(0.15, { duration: 300 });
@@ -1357,6 +1373,7 @@ export default function GameScreen() {
             }
           ]}
         >
+          <View style={{ alignItems: "center" }}>
           <View style={{ width: 44, height: 22, position: "relative" }}>
             {/* Body */}
             <View style={{ position: "absolute", top: 4, left: 10, width: 24, height: 14, backgroundColor: "#FF6D00", borderRadius: 7, shadowColor: "#FF6D00", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.8, shadowRadius: 6 }} />
@@ -1381,6 +1398,10 @@ export default function GameScreen() {
             <View style={{ position: "absolute", bottom: 0, left: -4, width: 10, height: 5, backgroundColor: "#FF3D00", borderTopLeftRadius: 6, borderBottomLeftRadius: 3, transform: [{ rotate: "10deg" }] }} />
             <View style={{ position: "absolute", bottom: 4, left: -8, width: 8, height: 4, backgroundColor: "#FFD54F", borderTopLeftRadius: 4, borderBottomLeftRadius: 2, transform: [{ rotate: "5deg" }] }} />
             <View style={{ position: "absolute", bottom: -2, left: -2, width: 6, height: 3, backgroundColor: "#FFAB00", borderRadius: 2, transform: [{ rotate: "15deg" }] }} />
+          </View>
+          <View style={styles.heroNameBadge}>
+            <ThemedText style={styles.heroNameText}>FLAME PHOENIX</ThemedText>
+          </View>
           </View>
         </Animated.View>
       ) : null}
@@ -1841,6 +1862,11 @@ export default function GameScreen() {
         pointerEvents="none"
       />
     ) : null}
+
+    <Animated.View
+      style={[styles.levelUpFlashOverlay, levelUpFlashStyle]}
+      pointerEvents="none"
+    />
 
     <InterstitialAdModal
       visible={showInterstitialAd}
@@ -2558,6 +2584,28 @@ const styles = StyleSheet.create({
   heroContainer: {
     position: "absolute",
     zIndex: 100,
+    transform: [{ scale: 2.2 }],
+    shadowColor: "#FFD700",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius: 16,
+    elevation: 20,
+  },
+  heroNameBadge: {
+    marginTop: 4,
+    backgroundColor: "rgba(0,0,0,0.7)",
+    borderRadius: 4,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderWidth: 1,
+    borderColor: "#FFD700",
+  },
+  heroNameText: {
+    fontSize: 5,
+    fontWeight: "900",
+    color: "#FFD700",
+    textAlign: "center",
+    letterSpacing: 0.3,
   },
   collectParticle: {
     position: "absolute",
@@ -2612,6 +2660,15 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: "#FF0000",
     zIndex: 30,
+  },
+  levelUpFlashOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "#FFD700",
+    zIndex: 29,
   },
   backgroundStar: {
     position: "absolute",
