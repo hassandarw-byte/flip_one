@@ -5,6 +5,7 @@ import {
   Pressable,
   Dimensions,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -90,6 +91,22 @@ const { width, height } = Dimensions.get("window");
 
 const PLAYER_SIZE = 32;
 const TRACK_HEIGHT = 50;
+
+const PREMIUM_SKIN_IMAGES: Record<string, any> = {
+  shadow_ninja: require("@/assets/images/shadow-ninja.png"),
+  web_crawler: require("@/assets/images/web-crawler.png"),
+  forest_spirit: require("@/assets/images/forest-spirit.png"),
+  steel_bot: require("@/assets/images/steel-bot.png"),
+  speed_bird: require("@/assets/images/speed-bird.png"),
+  cozy_bunny: require("@/assets/images/cozy-bunny.png"),
+  golden_firefly: require("@/assets/images/golden-firefly.png"),
+  frost_fox: require("@/assets/images/frost-fox.png"),
+  sweet_kitty: require("@/assets/images/sweet-kitty.png"),
+  purple_imp: require("@/assets/images/purple-imp.png"),
+  sky_eagle: require("@/assets/images/sky-eagle.png"),
+  kawaii_cat: require("@/assets/images/kawaii-cat.png"),
+  star_hamster: require("@/assets/images/star-hamster.png"),
+};
 const GAME_SPEED_BASE = 3;
 const SPAWN_INTERVAL = 1500; // Balanced obstacle frequency
 const DIFFICULTY_INCREASE_INTERVAL = 5;
@@ -1713,25 +1730,33 @@ export default function GameScreen() {
                               "#2ECC71",
             }]} />
           ) : null}
-          {/* Car body */}
-          <LinearGradient
-            colors={getPlayerColors()}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.player}
-          >
-            {/* Sparkling Eyes */}
-            <View style={styles.eyesContainer}>
-              <Animated.View style={[styles.eye, eyeSparkleStyle]}>
-                <View style={styles.eyePupil} />
-                <View style={styles.eyeSparkle} />
-              </Animated.View>
-              <Animated.View style={[styles.eye, eyeSparkleStyle]}>
-                <View style={styles.eyePupil} />
-                <View style={styles.eyeSparkle} />
-              </Animated.View>
-            </View>
-          </LinearGradient>
+          {/* Car body / Character */}
+          {gameState?.equippedPremiumSkin && PREMIUM_SKIN_IMAGES[gameState.equippedPremiumSkin] ? (
+            <Image
+              source={PREMIUM_SKIN_IMAGES[gameState.equippedPremiumSkin]}
+              style={styles.characterImage}
+              resizeMode="contain"
+            />
+          ) : (
+            <LinearGradient
+              colors={getPlayerColors()}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.player}
+            >
+              {/* Sparkling Eyes */}
+              <View style={styles.eyesContainer}>
+                <Animated.View style={[styles.eye, eyeSparkleStyle]}>
+                  <View style={styles.eyePupil} />
+                  <View style={styles.eyeSparkle} />
+                </Animated.View>
+                <Animated.View style={[styles.eye, eyeSparkleStyle]}>
+                  <View style={styles.eyePupil} />
+                  <View style={styles.eyeSparkle} />
+                </Animated.View>
+              </View>
+            </LinearGradient>
+          )}
           {/* Spinning Wheels - counter-rotate to stay at bottom */}
           <Animated.View style={[styles.wheelsContainer, wheelsContainerAnimatedStyle]}>
             <Animated.View style={[styles.wheel, wheelAnimatedStyle]}>
@@ -2540,6 +2565,12 @@ const styles = StyleSheet.create({
     width: PLAYER_SIZE,
     height: PLAYER_SIZE,
     borderRadius: 6,
+  },
+  characterImage: {
+    width: PLAYER_SIZE + 14,
+    height: PLAYER_SIZE + 14,
+    marginLeft: -7,
+    marginTop: -7,
   },
   obstacle: {
     position: "absolute",
