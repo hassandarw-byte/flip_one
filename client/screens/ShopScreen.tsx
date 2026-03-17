@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   StyleSheet,
@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { useFocusEffect } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
@@ -147,9 +148,11 @@ export default function ShopScreen() {
     isOfferingsLoading,
   } = useSubscription();
 
-  useEffect(() => {
-    loadGameState();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadGameState();
+    }, [])
+  );
 
   const loadGameState = async () => {
     const state = await getGameState();
