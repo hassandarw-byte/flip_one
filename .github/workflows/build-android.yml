@@ -43,6 +43,13 @@ jobs:
       - name: Remove Windows-only path from gradle.properties
         run: sed -i '/android\.cxx\.buildRoot/d' android/gradle.properties
 
+      - name: Disable New Architecture (avoids C++ Fabric compilation)
+        run: |
+          sed -i 's/newArchEnabled=true/newArchEnabled=false/' android/gradle.properties
+          grep -q 'newArchEnabled' android/gradle.properties || echo 'newArchEnabled=false' >> android/gradle.properties
+          echo "gradle.properties newArchEnabled:"
+          grep 'newArchEnabled' android/gradle.properties
+
       - name: Add AdMob and NDK config to root build.gradle
         run: |
           echo "CmV4dCB7CiAgICBuZGtWZXJzaW9uID0gIjI2LjEuMTA5MDkxMjUiCiAgICBnb29nbGVNb2JpbGVBZHNKc29uID0gWwogICAgICAgIGdldFN0cmluZ1ZhbHVlOiB7IGtleSwgZGVmYXVsdFZhbHVlIC0+CiAgICAgICAgICAgIGlmIChrZXkgPT0gImFuZHJvaWRfYXBwX2lkIikgcmV0dXJuICJjYS1hcHAtcHViLTQ5ODg5NDQzNjgwMjE1ODJ+NDQ0MjY4NTQ5OCIKICAgICAgICAgICAgcmV0dXJuIGRlZmF1bHRWYWx1ZQogICAgICAgIH0sCiAgICAgICAgaXNGbGFnRW5hYmxlZDogeyBrZXksIGRlZmF1bHRWYWx1ZSAtPgogICAgICAgICAgICBpZiAoa2V5ID09ICJkZWxheV9hcHBfbWVhc3VyZW1lbnRfaW5pdCIpIHJldHVybiB0cnVlCiAgICAgICAgICAgIGlmIChrZXkgPT0gIm9wdGltaXplX2luaXRpYWxpemF0aW9uIikgcmV0dXJuIHRydWUKICAgICAgICAgICAgaWYgKGtleSA9PSAib3B0aW1pemVfYWRfbG9hZGluZyIpIHJldHVybiB0cnVlCiAgICAgICAgICAgIHJldHVybiBkZWZhdWx0VmFsdWUKICAgICAgICB9CiAgICBdCn0K" | base64 --decode >> android/build.gradle
