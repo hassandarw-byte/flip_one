@@ -27,6 +27,7 @@ import * as Haptics from "expo-haptics";
 
 import { ThemedText } from "@/components/ThemedText";
 import AdModal from "@/components/AdModal";
+import PointsBadge from "@/components/PointsBadge";
 import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import {
   getGameState,
@@ -191,7 +192,7 @@ export default function ShopScreen() {
         ownedSkins: newOwnedSkins,
         equippedSkin: skin.id,
       });
-      
+      navigation.setOptions({ headerRight: () => <PointsBadge points={newPoints} /> });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } else {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -225,7 +226,7 @@ export default function ShopScreen() {
         ownedPremiumSkins: newOwnedPremiumSkins,
         equippedPremiumSkin: skin.id,
       });
-      
+      navigation.setOptions({ headerRight: () => <PointsBadge points={newPoints} /> });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } else {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
