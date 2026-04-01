@@ -43,10 +43,9 @@ jobs:
       - name: Remove Windows-only path from gradle.properties
         run: sed -i '/android\.cxx\.buildRoot/d' android/gradle.properties
 
-      - name: Disable New Architecture (avoids C++ Fabric compilation)
+      - name: Enable New Architecture for Reanimated
         run: |
-          sed -i 's/newArchEnabled=true/newArchEnabled=false/' android/gradle.properties
-          grep -q 'newArchEnabled' android/gradle.properties || echo 'newArchEnabled=false' >> android/gradle.properties
+          sed -i 's/newArchEnabled=.*/newArchEnabled=true/' android/gradle.properties || echo 'newArchEnabled=true' >> android/gradle.properties
           echo "gradle.properties newArchEnabled:"
           grep 'newArchEnabled' android/gradle.properties
 
