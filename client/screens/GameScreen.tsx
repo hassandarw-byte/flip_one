@@ -1189,31 +1189,36 @@ export default function GameScreen() {
     
     setSuccessfulFlips(prev => {
       const newCount = prev + 1;
-      if (newCount === 15 && !showSkyHero) {
-        setShowSkyHero(true);
-        setSkyHeroX(-100);
-      }
-      if (newCount === 20 && !showSwingHero) {
-        setShowSwingHero(true);
-        setSwingHeroX(width * 0.6);
-        setSwingHeroY(-60);
-        setSwingHeroSwing(0);
-      }
-      if (newCount === 25 && !showStarWarrior) {
-        setShowStarWarrior(true);
-        setStarWarriorX(-100);
-      }
-      if (newCount === 30 && !showShadowGlider) {
-        setShowShadowGlider(true);
-        setShadowGliderX(width + 80);
-        setShadowGliderY(height * 0.15);
-        setShadowGliderRopeY(0);
-      }
-      if (newCount === 35 && !showMightyJumper) {
-        setShowMightyJumper(true);
-        setMightyJumperX(-80);
-        setMightyJumperY(height * 0.7);
-        setMightyJumperPhase(0);
+      if (newCount % 5 === 0) {
+        const creatureIndex = (Math.floor(newCount / 5) - 1) % 5;
+        switch (creatureIndex) {
+          case 0:
+            setShowSkyHero(true);
+            setSkyHeroX(-100);
+            break;
+          case 1:
+            setShowSwingHero(true);
+            setSwingHeroX(width * 0.6);
+            setSwingHeroY(-60);
+            setSwingHeroSwing(0);
+            break;
+          case 2:
+            setShowStarWarrior(true);
+            setStarWarriorX(-100);
+            break;
+          case 3:
+            setShowShadowGlider(true);
+            setShadowGliderX(width + 80);
+            setShadowGliderY(height * 0.15);
+            setShadowGliderRopeY(0);
+            break;
+          case 4:
+            setShowMightyJumper(true);
+            setMightyJumperX(-80);
+            setMightyJumperY(height * 0.7);
+            setMightyJumperPhase(0);
+            break;
+        }
       }
       return newCount;
     });
