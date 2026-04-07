@@ -31,6 +31,7 @@ import { getGameState, GameState, savePoints } from "@/lib/storage";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useNightMode } from "@/contexts/NightModeContext";
 import BannerAd from "@/components/BannerAd";
+import { useSubscription } from "@/lib/revenuecat";
 
 const { width, height } = Dimensions.get("window");
 
@@ -386,6 +387,7 @@ export default function HomeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { backgroundGradient, textColor } = useNightMode();
   const [gameState, setGameState] = useState<GameState | null>(null);
+  const { isAdsRemoved } = useSubscription();
 
   const playButtonScale = useSharedValue(1);
   const playButtonGlow = useSharedValue(0.6);
@@ -919,7 +921,7 @@ export default function HomeScreen() {
           </LinearGradient>
         </Pressable>
 
-        <BannerAd style={{ marginTop: Spacing.sm }} />
+        {!isAdsRemoved ? <BannerAd style={{ marginTop: Spacing.sm }} /> : null}
       </Animated.View>
     </LinearGradient>
   );

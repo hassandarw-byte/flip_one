@@ -23,10 +23,13 @@ import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 
 import { ThemedText } from "@/components/ThemedText";
 import AdModal from "@/components/AdModal";
+import InterstitialAdModal from "@/components/InterstitialAdModal";
+import BannerAd from "@/components/BannerAd";
 import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import { triggerSuccessHaptic } from "@/lib/sounds";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useNightMode } from "@/contexts/NightModeContext";
+import { useSubscription } from "@/lib/revenuecat";
 
 const { width, height } = Dimensions.get("window");
 
@@ -101,15 +104,24 @@ export default function GameOverScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const route = useRoute<RouteProp<RootStackParamList, "GameOver">>();
   const { backgroundGradient } = useNightMode();
+  const { isAdsRemoved } = useSubscription();
   
   const { score, bestScore, isNewBest } = route.params;
   
   const [adModalVisible, setAdModalVisible] = useState(false);
+  const [interstitialVisible, setInterstitialVisible] = useState(false);
   
   const scoreScale = useSharedValue(0);
   const newBestScale = useSharedValue(0);
   const starRotation = useSharedValue(0);
   const sparkleOpacity = useSharedValue(0.3);
+
+  useEffect(() => {
+    if (!isAdsRemoved) {
+      const timer = setTimeout(() => setInterstitialVisible(true), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   useEffect(() => {
     scoreScale.value = withDelay(
@@ -288,11 +300,20 @@ export default function GameOverScreen() {
         </LinearGradient>
       </Animated.View>
 
+      {!isAdsRemoved ? (
+        <BannerAd style={{ marginTop: Spacing.lg }} />
+      ) : null}
+
       <AdModal
         visible={adModalVisible}
         onClose={() => setAdModalVisible(false)}
         onComplete={handleAdComplete}
         rewardName="Extra Life"
+      />
+
+      <InterstitialAdModal
+        visible={interstitialVisible}
+        onClose={() => setInterstitialVisible(false)}
       />
     </View>
   );
