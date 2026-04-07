@@ -30,7 +30,7 @@ import {
   saveAdsRemoved,
   GameState,
 } from "@/lib/storage";
-import { purchaseProduct, PRODUCT_IDS } from "@/lib/purchases";
+import { useSubscription } from "@/lib/revenuecat";
 import { useNightMode } from "@/contexts/NightModeContext";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -40,6 +40,7 @@ export default function SettingsScreen() {
   const headerHeight = useHeaderHeight();
   const [gameState, setGameState] = useState<GameState | null>(null);
   const { isNightMode, themeMode, setThemeMode, toggleNightMode, backgroundGradient, textColor, textSecondaryColor, textMutedColor } = useNightMode();
+  const { isAdsRemoved, removeAdsPackage, purchase, isPurchasing } = useSubscription();
 
   useEffect(() => {
     loadGameState();
@@ -69,13 +70,14 @@ export default function SettingsScreen() {
   };
 
   const handleRemoveAdsPurchase = async () => {
-    if (gameState?.adsRemoved) return;
-    
-    const result = await purchaseProduct(PRODUCT_IDS.REMOVE_ADS);
-    if (result.success) {
+    if (isAdsRemoved || isPurchasing || !removeAdsPackage) return;
+    try {
+      await purchase(removeAdsPackage);
       await saveAdsRemoved(true);
       setGameState((prev) => (prev ? { ...prev, adsRemoved: true } : null));
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch (err) {
+      console.warn("Purchase failed:", err);
     }
   };
 
@@ -188,7 +190,7 @@ export default function SettingsScreen() {
               title="Remove Ads"
               description="No more interruptions"
               price="$0.99"
-              isPurchased={gameState?.adsRemoved}
+              isPurchased={isAdsRemoved || gameState?.adsRemoved}
               colors={[GameColors.candy5, GameColors.secondaryGlow]}
               onPress={handleRemoveAdsPurchase}
               textColor={textColor}
