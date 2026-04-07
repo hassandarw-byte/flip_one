@@ -49,13 +49,6 @@
       "expo-web-browser",
       "expo-font",
       [
-        "react-native-google-mobile-ads",
-        {
-          "androidAppId": "ca-app-pub-4988944368021582~4442685498",
-          "iosAppId": "ca-app-pub-4988944368021582~4442685498"
-        }
-      ],
-      [
         "./plugins/withAdMob",
         {
           "androidAppId": "ca-app-pub-4988944368021582~4442685498"
