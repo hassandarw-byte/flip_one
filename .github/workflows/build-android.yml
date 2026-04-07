@@ -49,6 +49,17 @@ jobs:
           echo "gradle.properties newArchEnabled:"
           grep 'newArchEnabled' android/gradle.properties
 
+      - name: Force C++20 standard for Fabric native code
+        run: |
+          for f in $(find node_modules/expo-modules-core/android node_modules/react-native/ReactCommon -name "CMakeLists.txt" 2>/dev/null); do
+            if grep -q 'CMAKE_CXX_STANDARD' "$f"; then
+              sed -i 's/set(CMAKE_CXX_STANDARD [0-9][0-9]*)/set(CMAKE_CXX_STANDARD 20)/g' "$f"
+            else
+              sed -i '1s/^/set(CMAKE_CXX_STANDARD 20)\nset(CMAKE_CXX_STANDARD_REQUIRED ON)\n/' "$f"
+            fi
+          done
+          echo "C++20 standard applied"
+
       - name: Add AdMob and NDK config to root build.gradle
         run: |
           echo "CmV4dCB7CiAgICBuZGtWZXJzaW9uID0gIjI2LjEuMTA5MDkxMjUiCiAgICBnb29nbGVNb2JpbGVBZHNKc29uID0gWwogICAgICAgIGdldFN0cmluZ1ZhbHVlOiB7IGtleSwgZGVmYXVsdFZhbHVlIC0+CiAgICAgICAgICAgIGlmIChrZXkgPT0gImFuZHJvaWRfYXBwX2lkIikgcmV0dXJuICJjYS1hcHAtcHViLTQ5ODg5NDQzNjgwMjE1ODJ+NDQ0MjY4NTQ5OCIKICAgICAgICAgICAgcmV0dXJuIGRlZmF1bHRWYWx1ZQogICAgICAgIH0sCiAgICAgICAgaXNGbGFnRW5hYmxlZDogeyBrZXksIGRlZmF1bHRWYWx1ZSAtPgogICAgICAgICAgICBpZiAoa2V5ID09ICJkZWxheV9hcHBfbWVhc3VyZW1lbnRfaW5pdCIpIHJldHVybiB0cnVlCiAgICAgICAgICAgIGlmIChrZXkgPT0gIm9wdGltaXplX2luaXRpYWxpemF0aW9uIikgcmV0dXJuIHRydWUKICAgICAgICAgICAgaWYgKGtleSA9PSAib3B0aW1pemVfYWRfbG9hZGluZyIpIHJldHVybiB0cnVlCiAgICAgICAgICAgIHJldHVybiBkZWZhdWx0VmFsdWUKICAgICAgICB9CiAgICBdCn0K" | base64 --decode >> android/build.gradle
