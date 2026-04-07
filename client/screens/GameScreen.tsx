@@ -216,22 +216,9 @@ export default function GameScreen() {
   const lastAdLevelRef = useRef(0);
   const [streak, setStreak] = useState(0);
   const [successfulFlips, setSuccessfulFlips] = useState(0);
-  const [showSkyHero, setShowSkyHero] = useState(false);
-  const [skyHeroX, setSkyHeroX] = useState(-100);
-  const [showSwingHero, setShowSwingHero] = useState(false);
-  const [swingHeroX, setSwingHeroX] = useState(width / 2);
-  const [swingHeroY, setSwingHeroY] = useState(-100);
-  const [swingHeroSwing, setSwingHeroSwing] = useState(0);
-  const [showStarWarrior, setShowStarWarrior] = useState(false);
-  const [starWarriorX, setStarWarriorX] = useState(-100);
-  const [showShadowGlider, setShowShadowGlider] = useState(false);
-  const [shadowGliderX, setShadowGliderX] = useState(width + 100);
-  const [shadowGliderY, setShadowGliderY] = useState(height * 0.2);
-  const [shadowGliderRopeY, setShadowGliderRopeY] = useState(0);
-  const [showMightyJumper, setShowMightyJumper] = useState(false);
-  const [mightyJumperX, setMightyJumperX] = useState(-80);
-  const [mightyJumperY, setMightyJumperY] = useState(height * 0.7);
-  const [mightyJumperPhase, setMightyJumperPhase] = useState(0);
+  const [showCreature, setShowCreature] = useState(false);
+  const [creatureX, setCreatureX] = useState(-150);
+  const [currentCreatureIndex, setCurrentCreatureIndex] = useState(0);
   const [seaCreatures, setSeaCreatures] = useState<SeaCreature[]>([]);
   
   const currentTrackRef = useRef<"top" | "bottom">("bottom");
@@ -612,22 +599,9 @@ export default function GameScreen() {
     }
     setTrailParticles([]);
     setSuccessfulFlips(0);
-    setShowSkyHero(false);
-    setSkyHeroX(-100);
-    setShowSwingHero(false);
-    setSwingHeroX(width / 2);
-    setSwingHeroY(-100);
-    setSwingHeroSwing(0);
-    setShowStarWarrior(false);
-    setStarWarriorX(-100);
-    setShowShadowGlider(false);
-    setShadowGliderX(width + 100);
-    setShadowGliderY(height * 0.2);
-    setShadowGliderRopeY(0);
-    setShowMightyJumper(false);
-    setMightyJumperX(-80);
-    setMightyJumperY(height * 0.7);
-    setMightyJumperPhase(0);
+    setShowCreature(false);
+    setCreatureX(-150);
+    setCurrentCreatureIndex(0);
   }, []);
 
   const handleGameOver = useCallback(async () => {
@@ -860,81 +834,14 @@ export default function GameScreen() {
         })
       );
       
-      setSkyHeroX(prev => {
-        if (prev > width + 120) {
-          setShowSkyHero(false);
-          return -120;
-        }
-        return prev + 1.5;
-      });
-
-      if (showSwingHero) {
-        setSwingHeroSwing(prev => prev + 0.03);
-        setSwingHeroY(prev => {
-          const target = height * 0.35;
-          if (prev < target) return prev + 4;
-          return target + Math.sin(swingHeroSwing * 3) * 40;
-        });
-        setSwingHeroX(prev => {
-          const swingAmount = Math.sin(swingHeroSwing) * 80;
-          const newX = width * 0.5 + swingAmount;
-          if (swingHeroSwing > Math.PI * 6) {
-            setSwingHeroY(p => p + 8);
-            if (swingHeroY > height + 100) {
-              setShowSwingHero(false);
-            }
+      if (showCreature) {
+        setCreatureX(prev => {
+          const newX = prev + 3;
+          if (newX > width + 150) {
+            setShowCreature(false);
+            return -150;
           }
           return newX;
-        });
-      }
-
-      if (showStarWarrior) {
-        setStarWarriorX(prev => {
-          if (prev > width + 120) {
-            setShowStarWarrior(false);
-            return -120;
-          }
-          return prev + 1.5;
-        });
-      }
-
-      if (showShadowGlider) {
-        setShadowGliderRopeY(prev => {
-          if (prev < height * 0.5) return prev + 5;
-          return prev;
-        });
-        setShadowGliderX(prev => {
-          if (shadowGliderRopeY >= height * 0.5) {
-            const newX = prev - 1.8;
-            if (newX < -120) {
-              setShowShadowGlider(false);
-              return width + 120;
-            }
-            return newX;
-          }
-          return prev;
-        });
-        setShadowGliderY(prev => {
-          if (shadowGliderRopeY < height * 0.5) {
-            return height * 0.15 + shadowGliderRopeY;
-          }
-          return prev;
-        });
-      }
-
-      if (showMightyJumper) {
-        setMightyJumperPhase(prev => prev + 0.05);
-        setMightyJumperX(prev => {
-          const newX = prev + 2;
-          if (newX > width + 120) {
-            setShowMightyJumper(false);
-            return -80;
-          }
-          return newX;
-        });
-        setMightyJumperY(prev => {
-          const jumpHeight = Math.abs(Math.sin(mightyJumperPhase)) * 200;
-          return height * 0.7 - jumpHeight;
         });
       }
 
@@ -1190,35 +1097,10 @@ export default function GameScreen() {
     setSuccessfulFlips(prev => {
       const newCount = prev + 1;
       if (newCount % 5 === 0) {
-        const creatureIndex = (Math.floor(newCount / 5) - 1) % 5;
-        switch (creatureIndex) {
-          case 0:
-            setShowSkyHero(true);
-            setSkyHeroX(-100);
-            break;
-          case 1:
-            setShowSwingHero(true);
-            setSwingHeroX(width * 0.6);
-            setSwingHeroY(-60);
-            setSwingHeroSwing(0);
-            break;
-          case 2:
-            setShowStarWarrior(true);
-            setStarWarriorX(-100);
-            break;
-          case 3:
-            setShowShadowGlider(true);
-            setShadowGliderX(width + 80);
-            setShadowGliderY(height * 0.15);
-            setShadowGliderRopeY(0);
-            break;
-          case 4:
-            setShowMightyJumper(true);
-            setMightyJumperX(-80);
-            setMightyJumperY(height * 0.7);
-            setMightyJumperPhase(0);
-            break;
-        }
+        const idx = (Math.floor(newCount / 5) - 1) % 5;
+        setCurrentCreatureIndex(idx);
+        setShowCreature(true);
+        setCreatureX(-150);
       }
       return newCount;
     });
@@ -1387,146 +1269,152 @@ export default function GameScreen() {
         />
       ))}
       
-      {/* Flame Phoenix flying after 15 successful flips */}
-      {showSkyHero ? (
-        <Animated.View 
-          style={[
-            styles.heroContainer,
-            {
-              left: skyHeroX,
-              top: height * 0.3,
-            }
-          ]}
+      {/* Easter Egg Creatures — appear every 5 flips, cycling through all 5 */}
+      {showCreature ? (
+        <View
+          style={{
+            position: "absolute",
+            left: creatureX,
+            top: height * 0.36,
+            zIndex: 55,
+            alignItems: "center",
+          }}
         >
-          <View style={{ alignItems: "center" }}>
-          <View style={{ width: 44, height: 22, position: "relative" }}>
-            {/* Body */}
-            <View style={{ position: "absolute", top: 4, left: 10, width: 24, height: 14, backgroundColor: "#FF6D00", borderRadius: 7, shadowColor: "#FF6D00", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.8, shadowRadius: 6 }} />
-            {/* Left wing (top) */}
-            <View style={{ position: "absolute", top: -4, left: 0, width: 18, height: 10, backgroundColor: "#FF8F00", borderTopLeftRadius: 12, borderTopRightRadius: 4, transform: [{ rotate: "-15deg" }] }} />
-            {/* Right wing (top) */}
-            <View style={{ position: "absolute", top: -4, right: 0, width: 18, height: 10, backgroundColor: "#FF8F00", borderTopRightRadius: 12, borderTopLeftRadius: 4, transform: [{ rotate: "15deg" }] }} />
-            {/* Left wing flame tip */}
-            <View style={{ position: "absolute", top: -8, left: -2, width: 8, height: 6, backgroundColor: "#FFD54F", borderTopLeftRadius: 6, borderTopRightRadius: 2, transform: [{ rotate: "-20deg" }] }} />
-            {/* Right wing flame tip */}
-            <View style={{ position: "absolute", top: -8, right: -2, width: 8, height: 6, backgroundColor: "#FFD54F", borderTopRightRadius: 6, borderTopLeftRadius: 2, transform: [{ rotate: "20deg" }] }} />
-            {/* Head */}
-            <View style={{ position: "absolute", top: 0, left: 16, width: 12, height: 12, borderRadius: 6, backgroundColor: "#FFB300" }}>
-              {/* Eye */}
-              <View style={{ position: "absolute", top: 3, left: 3, width: 4, height: 3, borderRadius: 2, backgroundColor: "#FFFFFF" }}>
-                <View style={{ position: "absolute", top: 0.5, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#1A1A1A" }} />
-              </View>
-              {/* Beak */}
-              <View style={{ position: "absolute", top: 5, right: -4, width: 6, height: 3, backgroundColor: "#FF3D00", borderTopRightRadius: 4, borderBottomRightRadius: 2 }} />
-            </View>
-            {/* Tail flames */}
-            <View style={{ position: "absolute", bottom: 0, left: -4, width: 10, height: 5, backgroundColor: "#FF3D00", borderTopLeftRadius: 6, borderBottomLeftRadius: 3, transform: [{ rotate: "10deg" }] }} />
-            <View style={{ position: "absolute", bottom: 4, left: -8, width: 8, height: 4, backgroundColor: "#FFD54F", borderTopLeftRadius: 4, borderBottomLeftRadius: 2, transform: [{ rotate: "5deg" }] }} />
-            <View style={{ position: "absolute", bottom: -2, left: -2, width: 6, height: 3, backgroundColor: "#FFAB00", borderRadius: 2, transform: [{ rotate: "15deg" }] }} />
-          </View>
-          <View style={styles.heroNameBadge}>
-            <ThemedText style={styles.heroNameText}>FLAME PHOENIX</ThemedText>
-          </View>
-          </View>
-        </Animated.View>
-      ) : null}
+          {/* Glow halo behind creature */}
+          <View
+            style={{
+              position: "absolute",
+              width: 130,
+              height: 130,
+              borderRadius: 65,
+              backgroundColor:
+                currentCreatureIndex === 0 ? "rgba(255,109,0,0.30)" :
+                currentCreatureIndex === 1 ? "rgba(123,31,162,0.30)" :
+                currentCreatureIndex === 2 ? "rgba(84,110,122,0.30)" :
+                currentCreatureIndex === 3 ? "rgba(62,39,35,0.30)" :
+                "rgba(120,144,156,0.30)",
+              top: -40,
+              left: -35,
+            }}
+          />
 
-      {/* Crystal Spider descending after 20 successful flips */}
-      {showSwingHero ? (
-        <View style={[styles.heroContainer, { left: swingHeroX - 18, top: swingHeroY }]}>
-          <View style={{ position: "absolute", top: -swingHeroY, left: 18, width: 2, backgroundColor: "#C0C0C0", height: swingHeroY, zIndex: 90 }} />
-          <View style={{ position: "absolute", top: -20, left: 8, width: 1, backgroundColor: "#C0C0C0", height: 25, transform: [{ rotate: "-30deg" }], zIndex: 90 }} />
-          <View style={{ position: "absolute", top: -20, left: 28, width: 1, backgroundColor: "#C0C0C0", height: 25, transform: [{ rotate: "30deg" }], zIndex: 90 }} />
-          <View style={{ width: 36, height: 22, backgroundColor: "#7B1FA2", borderRadius: 11, position: "relative" }}>
-            <View style={{ position: "absolute", right: -6, top: 1, width: 14, height: 14, borderRadius: 7, backgroundColor: "#9C27B0", borderWidth: 1, borderColor: "#6A1B9A" }}>
-              <View style={{ position: "absolute", top: 3, left: 1, width: 5, height: 4, borderRadius: 2, backgroundColor: "#E1BEE7" }}>
-                <View style={{ position: "absolute", top: 1, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#1A1A1A" }} />
+          {/* Creature body scaled 2.5x */}
+          <View style={{ transform: [{ scale: 2.5 }], marginBottom: 6 }}>
+            {currentCreatureIndex === 0 ? (
+              // Flame Phoenix
+              <View style={{ width: 44, height: 22, position: "relative" }}>
+                <View style={{ position: "absolute", top: 4, left: 10, width: 24, height: 14, backgroundColor: "#FF6D00", borderRadius: 7 }} />
+                <View style={{ position: "absolute", top: -4, left: 0, width: 18, height: 10, backgroundColor: "#FF8F00", borderTopLeftRadius: 12, borderTopRightRadius: 4, transform: [{ rotate: "-15deg" }] }} />
+                <View style={{ position: "absolute", top: -4, right: 0, width: 18, height: 10, backgroundColor: "#FF8F00", borderTopRightRadius: 12, borderTopLeftRadius: 4, transform: [{ rotate: "15deg" }] }} />
+                <View style={{ position: "absolute", top: -8, left: -2, width: 8, height: 6, backgroundColor: "#FFD54F", borderTopLeftRadius: 6, transform: [{ rotate: "-20deg" }] }} />
+                <View style={{ position: "absolute", top: -8, right: -2, width: 8, height: 6, backgroundColor: "#FFD54F", borderTopRightRadius: 6, transform: [{ rotate: "20deg" }] }} />
+                <View style={{ position: "absolute", top: 0, left: 16, width: 12, height: 12, borderRadius: 6, backgroundColor: "#FFB300" }}>
+                  <View style={{ position: "absolute", top: 3, left: 3, width: 4, height: 3, borderRadius: 2, backgroundColor: "#FFFFFF" }}>
+                    <View style={{ position: "absolute", top: 0.5, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#1A1A1A" }} />
+                  </View>
+                  <View style={{ position: "absolute", top: 5, right: -4, width: 6, height: 3, backgroundColor: "#FF3D00", borderTopRightRadius: 4, borderBottomRightRadius: 2 }} />
+                </View>
+                <View style={{ position: "absolute", bottom: 0, left: -4, width: 10, height: 5, backgroundColor: "#FF3D00", borderTopLeftRadius: 6, transform: [{ rotate: "10deg" }] }} />
+                <View style={{ position: "absolute", bottom: 4, left: -8, width: 8, height: 4, backgroundColor: "#FFD54F", borderTopLeftRadius: 4, transform: [{ rotate: "5deg" }] }} />
               </View>
-              <View style={{ position: "absolute", top: 3, right: 1, width: 5, height: 4, borderRadius: 2, backgroundColor: "#E1BEE7" }}>
-                <View style={{ position: "absolute", top: 1, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#1A1A1A" }} />
+            ) : currentCreatureIndex === 1 ? (
+              // Crystal Spider
+              <View style={{ width: 36, height: 22, backgroundColor: "#7B1FA2", borderRadius: 11, position: "relative" }}>
+                <View style={{ position: "absolute", right: -6, top: 1, width: 14, height: 14, borderRadius: 7, backgroundColor: "#9C27B0", borderWidth: 1, borderColor: "#6A1B9A" }}>
+                  <View style={{ position: "absolute", top: 3, left: 1, width: 5, height: 4, borderRadius: 2, backgroundColor: "#E1BEE7" }}>
+                    <View style={{ position: "absolute", top: 1, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#1A1A1A" }} />
+                  </View>
+                  <View style={{ position: "absolute", top: 3, right: 1, width: 5, height: 4, borderRadius: 2, backgroundColor: "#E1BEE7" }}>
+                    <View style={{ position: "absolute", top: 1, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#1A1A1A" }} />
+                  </View>
+                </View>
+                <View style={{ position: "absolute", top: 8, left: 2, width: 8, height: 3, backgroundColor: "#CE93D8", borderRadius: 1 }} />
+                <View style={{ position: "absolute", top: 12, left: 4, width: 6, height: 3, backgroundColor: "#CE93D8", borderRadius: 1 }} />
+                <View style={{ position: "absolute", left: -10, top: 6, width: 12, height: 4, backgroundColor: "#7B1FA2", borderRadius: 2, transform: [{ rotate: "-20deg" }] }} />
+                <View style={{ position: "absolute", left: -8, top: 12, width: 10, height: 4, backgroundColor: "#7B1FA2", borderRadius: 2, transform: [{ rotate: "15deg" }] }} />
+                <View style={{ position: "absolute", right: -14, top: 6, width: 12, height: 4, backgroundColor: "#7B1FA2", borderRadius: 2, transform: [{ rotate: "20deg" }] }} />
+                <View style={{ position: "absolute", right: -12, top: 12, width: 10, height: 4, backgroundColor: "#7B1FA2", borderRadius: 2, transform: [{ rotate: "-15deg" }] }} />
               </View>
-            </View>
-            <View style={{ position: "absolute", top: 8, left: 2, width: 8, height: 3, backgroundColor: "#CE93D8", borderRadius: 1 }} />
-            <View style={{ position: "absolute", top: 12, left: 4, width: 6, height: 3, backgroundColor: "#CE93D8", borderRadius: 1 }} />
-            <View style={{ position: "absolute", left: -10, top: 6, width: 12, height: 4, backgroundColor: "#7B1FA2", borderRadius: 2, transform: [{ rotate: "-20deg" }] }} />
-            <View style={{ position: "absolute", left: -8, top: 12, width: 10, height: 4, backgroundColor: "#7B1FA2", borderRadius: 2, transform: [{ rotate: "15deg" }] }} />
-            <View style={{ position: "absolute", right: -14, top: 6, width: 12, height: 4, backgroundColor: "#7B1FA2", borderRadius: 2, transform: [{ rotate: "20deg" }] }} />
-            <View style={{ position: "absolute", right: -12, top: 12, width: 10, height: 4, backgroundColor: "#7B1FA2", borderRadius: 2, transform: [{ rotate: "-15deg" }] }} />
+            ) : currentCreatureIndex === 2 ? (
+              // Storm Cloud
+              <View style={{ width: 44, height: 24, backgroundColor: "#546E7A", borderRadius: 12, position: "relative" }}>
+                <View style={{ position: "absolute", top: -8, left: 6, width: 16, height: 16, borderRadius: 8, backgroundColor: "#607D8B" }} />
+                <View style={{ position: "absolute", top: -12, left: 16, width: 20, height: 20, borderRadius: 10, backgroundColor: "#78909C" }} />
+                <View style={{ position: "absolute", top: -4, right: 2, width: 12, height: 12, borderRadius: 6, backgroundColor: "#607D8B" }} />
+                <View style={{ position: "absolute", top: 6, left: 10, width: 5, height: 5, borderRadius: 2.5, backgroundColor: "#FFFFFF" }}>
+                  <View style={{ position: "absolute", top: 1, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#263238" }} />
+                </View>
+                <View style={{ position: "absolute", top: 6, left: 22, width: 5, height: 5, borderRadius: 2.5, backgroundColor: "#FFFFFF" }}>
+                  <View style={{ position: "absolute", top: 1, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#263238" }} />
+                </View>
+                <View style={{ position: "absolute", bottom: -6, left: 10, width: 2, height: 8, backgroundColor: "#FFD54F", transform: [{ rotate: "-10deg" }] }} />
+                <View style={{ position: "absolute", bottom: -8, left: 16, width: 2, height: 10, backgroundColor: "#FFD54F" }} />
+                <View style={{ position: "absolute", bottom: -5, left: 22, width: 2, height: 7, backgroundColor: "#FFD54F", transform: [{ rotate: "10deg" }] }} />
+              </View>
+            ) : currentCreatureIndex === 3 ? (
+              // Moonlight Owl
+              <View style={{ width: 36, height: 24, backgroundColor: "#3E2723", borderRadius: 12, position: "relative" }}>
+                <View style={{ position: "absolute", left: -14, top: 4, width: 18, height: 12, backgroundColor: "#4E342E", borderTopLeftRadius: 10, borderBottomLeftRadius: 4, transform: [{ rotate: "-5deg" }] }} />
+                <View style={{ position: "absolute", right: -14, top: 4, width: 18, height: 12, backgroundColor: "#4E342E", borderTopRightRadius: 10, borderBottomRightRadius: 4, transform: [{ rotate: "5deg" }] }} />
+                <View style={{ position: "absolute", right: -4, top: -6, width: 16, height: 16, borderRadius: 8, backgroundColor: "#5D4037" }}>
+                  <View style={{ position: "absolute", top: -4, left: -1, width: 7, height: 7, backgroundColor: "#3E2723", borderTopLeftRadius: 4, transform: [{ rotate: "-15deg" }] }} />
+                  <View style={{ position: "absolute", top: -4, right: -1, width: 7, height: 7, backgroundColor: "#3E2723", borderTopRightRadius: 4, transform: [{ rotate: "15deg" }] }} />
+                  <View style={{ position: "absolute", top: 4, left: 1, width: 6, height: 5, borderRadius: 3, backgroundColor: "#FFD54F" }}>
+                    <View style={{ position: "absolute", top: 1, left: 2, width: 2, height: 3, borderRadius: 1, backgroundColor: "#1A1A1A" }} />
+                  </View>
+                  <View style={{ position: "absolute", top: 4, right: 1, width: 6, height: 5, borderRadius: 3, backgroundColor: "#FFD54F" }}>
+                    <View style={{ position: "absolute", top: 1, left: 2, width: 2, height: 3, borderRadius: 1, backgroundColor: "#1A1A1A" }} />
+                  </View>
+                  <View style={{ position: "absolute", bottom: 1, left: 6, width: 4, height: 3, backgroundColor: "#FF8F00", borderRadius: 2 }} />
+                </View>
+              </View>
+            ) : (
+              // Rock Golem
+              <View style={{ width: 40, height: 30, backgroundColor: "#78909C", borderRadius: 6, position: "relative" }}>
+                <View style={{ position: "absolute", top: -2, left: 4, right: 4, height: 6, backgroundColor: "#90A4AE", borderTopLeftRadius: 4, borderTopRightRadius: 4 }} />
+                <View style={{ position: "absolute", right: -4, top: -6, width: 16, height: 16, borderRadius: 8, backgroundColor: "#90A4AE" }}>
+                  <View style={{ position: "absolute", top: 4, left: 2, width: 5, height: 4, borderRadius: 2, backgroundColor: "#B0BEC5" }}>
+                    <View style={{ position: "absolute", top: 1, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#37474F" }} />
+                  </View>
+                  <View style={{ position: "absolute", top: 4, right: 2, width: 5, height: 4, borderRadius: 2, backgroundColor: "#B0BEC5" }}>
+                    <View style={{ position: "absolute", top: 1, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#37474F" }} />
+                  </View>
+                  <View style={{ position: "absolute", bottom: 2, left: 5, width: 6, height: 2, borderRadius: 1, backgroundColor: "#546E7A" }} />
+                </View>
+                <View style={{ position: "absolute", left: -10, top: 6, width: 14, height: 10, backgroundColor: "#78909C", borderRadius: 4 }} />
+                <View style={{ position: "absolute", right: -10, top: 10, width: 14, height: 10, backgroundColor: "#78909C", borderRadius: 4 }} />
+                <View style={{ position: "absolute", bottom: -8, left: 6, width: 10, height: 10, backgroundColor: "#607D8B", borderBottomLeftRadius: 3, borderBottomRightRadius: 3 }} />
+                <View style={{ position: "absolute", bottom: -8, right: 6, width: 10, height: 10, backgroundColor: "#607D8B", borderBottomLeftRadius: 3, borderBottomRightRadius: 3 }} />
+                <View style={{ position: "absolute", top: 10, left: 8, width: 6, height: 4, backgroundColor: "#FF6D00", borderRadius: 2 }} />
+              </View>
+            )}
           </View>
-        </View>
-      ) : null}
 
-      {/* Storm Cloud floating after 25 successful flips */}
-      {showStarWarrior ? (
-        <View style={[styles.heroContainer, { left: starWarriorX, top: height * 0.25 }]}>
-          <View style={{ width: 44, height: 24, backgroundColor: "#546E7A", borderRadius: 12, position: "relative" }}>
-            <View style={{ position: "absolute", top: -8, left: 6, width: 16, height: 16, borderRadius: 8, backgroundColor: "#607D8B" }} />
-            <View style={{ position: "absolute", top: -12, left: 16, width: 20, height: 20, borderRadius: 10, backgroundColor: "#78909C" }} />
-            <View style={{ position: "absolute", top: -4, right: 2, width: 12, height: 12, borderRadius: 6, backgroundColor: "#607D8B" }} />
-            <View style={{ position: "absolute", top: 6, left: 10, width: 5, height: 5, borderRadius: 2.5, backgroundColor: "#FFFFFF" }}>
-              <View style={{ position: "absolute", top: 1, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#263238" }} />
-            </View>
-            <View style={{ position: "absolute", top: 6, left: 22, width: 5, height: 5, borderRadius: 2.5, backgroundColor: "#FFFFFF" }}>
-              <View style={{ position: "absolute", top: 1, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#263238" }} />
-            </View>
-            <View style={{ position: "absolute", bottom: -6, left: 10, width: 2, height: 8, backgroundColor: "#FFD54F", transform: [{ rotate: "-10deg" }] }} />
-            <View style={{ position: "absolute", bottom: -8, left: 16, width: 2, height: 10, backgroundColor: "#FFD54F" }} />
-            <View style={{ position: "absolute", bottom: -5, left: 22, width: 2, height: 7, backgroundColor: "#FFD54F", transform: [{ rotate: "10deg" }] }} />
-          </View>
-        </View>
-      ) : null}
-
-      {/* Moonlight Owl gliding after 30 successful flips */}
-      {showShadowGlider ? (
-        <View style={[styles.heroContainer, { left: shadowGliderX, top: shadowGliderY }]}>
-          <View style={{ position: "absolute", top: -shadowGliderRopeY, left: 18, width: 0, height: 0, zIndex: 90 }} />
-          <View style={{ width: 36, height: 24, backgroundColor: "#3E2723", borderRadius: 12, position: "relative" }}>
-            <View style={{ position: "absolute", left: -14, top: 4, width: 18, height: 12, backgroundColor: "#4E342E", borderTopLeftRadius: 10, borderBottomLeftRadius: 4, transform: [{ rotate: "-5deg" }] }} />
-            <View style={{ position: "absolute", right: -14, top: 4, width: 18, height: 12, backgroundColor: "#4E342E", borderTopRightRadius: 10, borderBottomRightRadius: 4, transform: [{ rotate: "5deg" }] }} />
-            <View style={{ position: "absolute", right: -4, top: -6, width: 16, height: 16, borderRadius: 8, backgroundColor: "#5D4037" }}>
-              <View style={{ position: "absolute", top: -4, left: -1, width: 7, height: 7, backgroundColor: "#3E2723", borderTopLeftRadius: 4, transform: [{ rotate: "-15deg" }] }} />
-              <View style={{ position: "absolute", top: -4, right: -1, width: 7, height: 7, backgroundColor: "#3E2723", borderTopRightRadius: 4, transform: [{ rotate: "15deg" }] }} />
-              <View style={{ position: "absolute", top: 4, left: 1, width: 6, height: 5, borderRadius: 3, backgroundColor: "#FFD54F" }}>
-                <View style={{ position: "absolute", top: 1, left: 2, width: 2, height: 3, borderRadius: 1, backgroundColor: "#1A1A1A" }} />
-              </View>
-              <View style={{ position: "absolute", top: 4, right: 1, width: 6, height: 5, borderRadius: 3, backgroundColor: "#FFD54F" }}>
-                <View style={{ position: "absolute", top: 1, left: 2, width: 2, height: 3, borderRadius: 1, backgroundColor: "#1A1A1A" }} />
-              </View>
-              <View style={{ position: "absolute", bottom: 1, left: 6, width: 4, height: 3, backgroundColor: "#FF8F00", borderRadius: 2 }} />
-            </View>
-            <View style={{ position: "absolute", bottom: -4, left: 10, width: 6, height: 6, backgroundColor: "#5D4037", borderRadius: 2 }} />
-            <View style={{ position: "absolute", bottom: -4, right: 10, width: 6, height: 6, backgroundColor: "#5D4037", borderRadius: 2 }} />
-          </View>
-        </View>
-      ) : null}
-
-      {/* Rock Golem bouncing after 35 successful flips */}
-      {showMightyJumper ? (
-        <View style={[styles.heroContainer, { left: mightyJumperX, top: mightyJumperY }]}>
-          {mightyJumperY < height * 0.65 ? (
-            <View style={{ position: "absolute", bottom: -8, left: 10, width: 16, height: 8, backgroundColor: "rgba(0,0,0,0.2)", borderRadius: 8 }} />
-          ) : null}
-          <View style={{ width: 40, height: 30, backgroundColor: "#78909C", borderRadius: 6, position: "relative" }}>
-            <View style={{ position: "absolute", top: -2, left: 4, right: 4, height: 6, backgroundColor: "#90A4AE", borderTopLeftRadius: 4, borderTopRightRadius: 4 }} />
-            <View style={{ position: "absolute", right: -4, top: -6, width: 16, height: 16, borderRadius: 8, backgroundColor: "#90A4AE" }}>
-              <View style={{ position: "absolute", top: 4, left: 2, width: 5, height: 4, borderRadius: 2, backgroundColor: "#B0BEC5" }}>
-                <View style={{ position: "absolute", top: 1, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#37474F" }} />
-              </View>
-              <View style={{ position: "absolute", top: 4, right: 2, width: 5, height: 4, borderRadius: 2, backgroundColor: "#B0BEC5" }}>
-                <View style={{ position: "absolute", top: 1, left: 1.5, width: 2, height: 2, borderRadius: 1, backgroundColor: "#37474F" }} />
-              </View>
-              <View style={{ position: "absolute", bottom: 2, left: 5, width: 6, height: 2, borderRadius: 1, backgroundColor: "#546E7A" }} />
-            </View>
-            <View style={{ position: "absolute", left: -10, top: 6, width: 14, height: 10, backgroundColor: "#78909C", borderRadius: 4 }}>
-              <View style={{ position: "absolute", left: -3, bottom: 0, width: 6, height: 6, borderRadius: 3, backgroundColor: "#90A4AE" }} />
-            </View>
-            <View style={{ position: "absolute", right: -10, top: 10, width: 14, height: 10, backgroundColor: "#78909C", borderRadius: 4 }}>
-              <View style={{ position: "absolute", right: -3, bottom: 0, width: 6, height: 6, borderRadius: 3, backgroundColor: "#90A4AE" }} />
-            </View>
-            <View style={{ position: "absolute", bottom: -8, left: 6, width: 10, height: 10, backgroundColor: "#607D8B", borderBottomLeftRadius: 3, borderBottomRightRadius: 3 }} />
-            <View style={{ position: "absolute", bottom: -8, right: 6, width: 10, height: 10, backgroundColor: "#607D8B", borderBottomLeftRadius: 3, borderBottomRightRadius: 3 }} />
-            <View style={{ position: "absolute", top: 10, left: 8, width: 6, height: 4, backgroundColor: "#FF6D00", borderRadius: 2 }} />
-            <View style={{ position: "absolute", top: 16, left: 14, width: 4, height: 3, backgroundColor: "#FF6D00", borderRadius: 1 }} />
+          {/* Name badge */}
+          <View
+            style={{
+              marginTop: 40,
+              paddingHorizontal: 14,
+              paddingVertical: 6,
+              borderRadius: 12,
+              backgroundColor:
+                currentCreatureIndex === 0 ? "#FF6D00" :
+                currentCreatureIndex === 1 ? "#7B1FA2" :
+                currentCreatureIndex === 2 ? "#455A64" :
+                currentCreatureIndex === 3 ? "#4E342E" :
+                "#546E7A",
+              borderWidth: 2,
+              borderColor: "#FFFFFF",
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 3 },
+              shadowOpacity: 0.5,
+              shadowRadius: 6,
+              elevation: 8,
+            }}
+          >
+            <ThemedText style={{ fontSize: 12, fontWeight: "900", color: "#FFFFFF", letterSpacing: 1.5 }}>
+              {(["FLAME PHOENIX", "CRYSTAL SPIDER", "STORM CLOUD", "MOONLIGHT OWL", "ROCK GOLEM"] as const)[currentCreatureIndex]}
+            </ThemedText>
           </View>
         </View>
       ) : null}
