@@ -6,6 +6,7 @@ import {
   Pressable,
   ScrollView,
   Image,
+  Modal,
 } from "react-native";
 
 import appIcon from "../../assets/images/icon.png";
@@ -27,20 +28,94 @@ import {
   getGameState,
   saveSoundEnabled,
   saveHapticsEnabled,
-  saveAdsRemoved,
   GameState,
 } from "@/lib/storage";
-import { useSubscription } from "@/lib/revenuecat";
 import { useNightMode } from "@/contexts/NightModeContext";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+const PRIVACY_POLICY = `Privacy Policy
+
+Last updated: April 2026
+
+HHD Apps ("we", "our", or "us") built Flip One as a free game. This Privacy Policy explains how we handle information when you use our app.
+
+1. Information We Collect
+Flip One does not collect any personally identifiable information. We do not require registration or login.
+
+The app uses:
+• Advertising (Google AdMob): AdMob may collect device identifiers and usage data to serve relevant ads. See Google's Privacy Policy for details.
+• In-App Purchases (RevenueCat): Purchase transactions are handled securely. RevenueCat may collect transaction data.
+• Local Storage: Game progress, scores, and settings are stored locally on your device only.
+• Leaderboard: If you submit a score, a username and anonymous device ID are stored on our server.
+
+2. How We Use Information
+• To display relevant advertisements
+• To process in-app purchases
+• To maintain the global leaderboard
+
+3. Third-Party Services
+• Google AdMob: https://policies.google.com/privacy
+• RevenueCat: https://www.revenuecat.com/privacy
+
+4. Children's Privacy
+Flip One is not directed to children under 13. We do not knowingly collect data from children under 13.
+
+5. Data Security
+We take reasonable steps to protect any data stored on our servers. Local device data is managed by your device's security.
+
+6. Changes to This Policy
+We may update this policy. Changes will be posted within the app.
+
+7. Contact Us
+If you have questions about this Privacy Policy, please contact us at:
+hhdapps.team@gmail.com`;
+
+const TERMS_OF_USE = `Terms of Use
+
+Last updated: April 2026
+
+By downloading or using Flip One, you agree to the following terms.
+
+1. Use of the App
+Flip One is provided for personal, non-commercial entertainment. You agree not to:
+• Reverse engineer, decompile, or hack the app
+• Use cheats, bots, or automation tools
+• Attempt to manipulate the leaderboard fraudulently
+
+2. In-App Purchases
+• Purchases are processed through Google Play and RevenueCat
+• All purchases are final unless required by law
+• Purchased items (like Remove Ads) are tied to your Google account
+• Use "Restore Purchases" if you reinstall the app
+
+3. Advertisements
+The free version of Flip One displays advertisements provided by Google AdMob. Purchasing "Remove Ads" disables all ads permanently.
+
+4. Intellectual Property
+All game content, graphics, sounds, and code are the property of HHD Apps. You may not reproduce or distribute any part of the app without written permission.
+
+5. Leaderboard
+• The leaderboard is a global feature open to all players
+• We reserve the right to remove offensive usernames
+• We are not responsible for inaccurate scores caused by technical issues
+
+6. Disclaimer
+Flip One is provided "as is" without warranty of any kind. We are not liable for any damages arising from the use of the app.
+
+7. Changes to Terms
+We reserve the right to update these terms at any time. Continued use of the app after changes constitutes acceptance of the new terms.
+
+8. Contact Us
+For questions or concerns, contact us at:
+hhdapps.team@gmail.com`;
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const [gameState, setGameState] = useState<GameState | null>(null);
-  const { isNightMode, themeMode, setThemeMode, toggleNightMode, backgroundGradient, textColor, textSecondaryColor, textMutedColor } = useNightMode();
-  const { isAdsRemoved, removeAdsPackage, purchase, isPurchasing } = useSubscription();
+  const { isNightMode, themeMode, setThemeMode, backgroundGradient, textColor, textSecondaryColor, textMutedColor } = useNightMode();
+  const [legalModal, setLegalModal] = useState<null | "privacy" | "terms">(null);
 
   useEffect(() => {
     loadGameState();
@@ -67,18 +142,6 @@ export default function SettingsScreen() {
   const handleThemeModeChange = async (mode: "system" | "light" | "dark") => {
     await setThemeMode(mode);
     setGameState((prev) => (prev ? { ...prev, nightMode: mode === "dark" } : null));
-  };
-
-  const handleRemoveAdsPurchase = async () => {
-    if (isAdsRemoved || isPurchasing || !removeAdsPackage) return;
-    try {
-      await purchase(removeAdsPackage);
-      await saveAdsRemoved(true);
-      setGameState((prev) => (prev ? { ...prev, adsRemoved: true } : null));
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } catch (err) {
-      console.warn("Purchase failed:", err);
-    }
   };
 
   return (
@@ -183,18 +246,21 @@ export default function SettingsScreen() {
 
         <Animated.View entering={FadeInDown.delay(100).springify()}>
           <View style={styles.section}>
-            <ThemedText style={[styles.sectionTitle, { color: textMutedColor }]}>Premium</ThemedText>
+            <ThemedText style={[styles.sectionTitle, { color: textMutedColor }]}>Legal</ThemedText>
 
-            <PurchaseRow
-              icon="slash"
-              title="Remove Ads"
-              description="No more interruptions"
-              price="$0.99"
-              isPurchased={isAdsRemoved || gameState?.adsRemoved}
-              colors={[GameColors.candy5, GameColors.secondaryGlow]}
-              onPress={handleRemoveAdsPurchase}
+            <SettingButton
+              icon="shield"
+              title="Privacy Policy"
+              colors={[GameColors.candy4, GameColors.primaryGlow]}
+              onPress={() => setLegalModal("privacy")}
               textColor={textColor}
-              textMutedColor={textMutedColor}
+            />
+            <SettingButton
+              icon="file-text"
+              title="Terms of Use"
+              colors={[GameColors.candy5, GameColors.secondaryGlow]}
+              onPress={() => setLegalModal("terms")}
+              textColor={textColor}
             />
           </View>
         </Animated.View>
@@ -211,11 +277,59 @@ export default function SettingsScreen() {
               <ThemedText style={[styles.appName, { color: textColor }]}>Flip One</ThemedText>
               <ThemedText style={[styles.appVersion, { color: textMutedColor }]}>Version 1.0.9</ThemedText>
               <ThemedText style={[styles.developerText, { color: textSecondaryColor }]}>© 2026 HHD Apps</ThemedText>
+              <ThemedText style={[styles.contactText, { color: textMutedColor }]}>hhdapps.team@gmail.com</ThemedText>
             </LinearGradient>
           </View>
         </Animated.View>
       </ScrollView>
+
+      <LegalModal
+        visible={legalModal !== null}
+        title={legalModal === "privacy" ? "Privacy Policy" : "Terms of Use"}
+        content={legalModal === "privacy" ? PRIVACY_POLICY : TERMS_OF_USE}
+        onClose={() => setLegalModal(null)}
+        isNightMode={isNightMode}
+        textColor={textColor}
+        textMutedColor={textMutedColor}
+      />
     </LinearGradient>
+  );
+}
+
+interface LegalModalProps {
+  visible: boolean;
+  title: string;
+  content: string;
+  onClose: () => void;
+  isNightMode: boolean;
+  textColor: string;
+  textMutedColor: string;
+}
+
+function LegalModal({ visible, title, content, onClose, isNightMode, textColor, textMutedColor }: LegalModalProps) {
+  const insets = useSafeAreaInsets();
+  return (
+    <Modal
+      visible={visible}
+      animationType="slide"
+      presentationStyle="pageSheet"
+      onRequestClose={onClose}
+    >
+      <View style={[styles.modalContainer, { backgroundColor: isNightMode ? "#1A1A25" : "#F5F0E8" }]}>
+        <View style={[styles.modalHeader, { borderBottomColor: isNightMode ? "#2A2A35" : "#E0D8CC" }]}>
+          <ThemedText style={[styles.modalTitle, { color: textColor }]}>{title}</ThemedText>
+          <Pressable onPress={onClose} style={styles.modalCloseBtn} testID="button-close-legal">
+            <Feather name="x" size={22} color={textMutedColor} />
+          </Pressable>
+        </View>
+        <ScrollView
+          contentContainerStyle={[styles.modalContent, { paddingBottom: insets.bottom + Spacing.xl }]}
+          showsVerticalScrollIndicator={false}
+        >
+          <ThemedText style={[styles.modalText, { color: textColor }]}>{content}</ThemedText>
+        </ScrollView>
+      </View>
+    </Modal>
   );
 }
 
@@ -247,79 +361,6 @@ function SettingRow({ icon, title, description, colors, children, textColor, tex
       </View>
       {children}
     </LinearGradient>
-  );
-}
-
-interface PurchaseRowProps {
-  icon: keyof typeof Feather.glyphMap;
-  title: string;
-  description: string;
-  price: string;
-  isPurchased?: boolean;
-  colors: readonly [string, string, ...string[]];
-  onPress: () => void;
-  textColor: string;
-  textMutedColor: string;
-}
-
-function PurchaseRow({
-  icon,
-  title,
-  description,
-  price,
-  isPurchased,
-  colors,
-  onPress,
-  textColor,
-  textMutedColor,
-}: PurchaseRowProps) {
-  const scale = useSharedValue(1);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
-  return (
-    <AnimatedPressable
-      style={animatedStyle}
-      onPress={isPurchased ? undefined : onPress}
-      onPressIn={() => {
-        if (!isPurchased) {
-          scale.value = withSpring(0.98, { damping: 15 });
-        }
-      }}
-      onPressOut={() => {
-        scale.value = withSpring(1, { damping: 10 });
-      }}
-    >
-      <LinearGradient
-        colors={[GameColors.surfaceLight, GameColors.surface]}
-        style={styles.settingRow}
-      >
-        <LinearGradient
-          colors={colors}
-          style={styles.settingIcon}
-        >
-          <Feather name={icon} size={18} color="#FFFFFF" />
-        </LinearGradient>
-        <View style={styles.settingInfo}>
-          <ThemedText style={[styles.settingTitle, { color: textColor }]}>{title}</ThemedText>
-          <ThemedText style={[styles.settingDescription, { color: textMutedColor }]}>{description}</ThemedText>
-        </View>
-        {isPurchased ? (
-          <View style={styles.purchasedBadge}>
-            <Feather name="check" size={16} color={GameColors.success} />
-          </View>
-        ) : (
-          <LinearGradient
-            colors={["#1A1A1A", "#000000"]}
-            style={styles.priceButton}
-          >
-            <ThemedText style={styles.priceText}>{price}</ThemedText>
-          </LinearGradient>
-        )}
-      </LinearGradient>
-    </AnimatedPressable>
   );
 }
 
@@ -453,29 +494,6 @@ const styles = StyleSheet.create({
     color: GameColors.textMuted,
     marginTop: 2,
   },
-  purchasedBadge: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: GameColors.success + "25",
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: GameColors.success + "40",
-  },
-  priceButton: {
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.md,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  priceText: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: "#FFD700",
-    textAlign: "center",
-  },
   settingButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -483,6 +501,7 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
+    marginBottom: Spacing.sm,
   },
   settingButtonText: {
     flex: 1,
@@ -550,5 +569,36 @@ const styles = StyleSheet.create({
     color: GameColors.textSecondary,
     marginTop: 0,
     fontWeight: "600",
+  },
+  contactText: {
+    fontSize: 11,
+    marginTop: 4,
+  },
+  modalContainer: {
+    flex: 1,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.xl,
+    paddingBottom: Spacing.lg,
+    borderBottomWidth: 1,
+  },
+  modalTitle: {
+    flex: 1,
+    fontSize: 18,
+    fontWeight: "700",
+  },
+  modalCloseBtn: {
+    padding: Spacing.sm,
+  },
+  modalContent: {
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.xl,
+  },
+  modalText: {
+    fontSize: 14,
+    lineHeight: 22,
   },
 });
