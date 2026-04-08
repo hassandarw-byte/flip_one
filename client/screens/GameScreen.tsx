@@ -17,7 +17,6 @@ import Animated, {
   withRepeat,
   withSequence,
   Easing,
-  runOnJS,
 } from "react-native-reanimated";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
@@ -891,7 +890,7 @@ export default function GameScreen() {
         
         if (passedObstacles.length > 0) {
           passedObstacles.forEach(() => {
-            runOnJS(incrementCombo)();
+            incrementCombo();
           });
         }
 
