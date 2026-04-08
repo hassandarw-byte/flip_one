@@ -22,6 +22,28 @@ jobs:
       - name: Install JS dependencies
         run: npm install
 
+      - name: Patch graphicsConversions.h for C++17 compatibility
+        run: |
+          FILE="node_modules/react-native/ReactCommon/react/renderer/core/graphicsConversions.h"
+          if [ -f "$FILE" ]; then
+            python3 - <<'EOF'
+filepath = "node_modules/react-native/ReactCommon/react/renderer/core/graphicsConversions.h"
+with open(filepath, 'r') as f:
+    content = f.read()
+content = content.replace('#include <format>', '#include <cstdio>')
+content = content.replace(
+    'return std::format("{}%", dimension.value);',
+    'char _b[64]; snprintf(_b, 64, "%g%%", (double)dimension.value); return std::string(_b);'
+)
+with open(filepath, 'w') as f:
+    f.write(content)
+print("Patched graphicsConversions.h successfully")
+EOF
+            echo "Patch applied"
+          else
+            echo "File not found, skipping"
+          fi
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
