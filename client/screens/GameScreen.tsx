@@ -265,6 +265,7 @@ export default function GameScreen() {
   const encourageScale = useSharedValue(0);
   const encourageOpacity = useSharedValue(0);
   const powerGlowPulse = useSharedValue(1);
+  const hasPowersShared = useSharedValue(0);
   const wheelRotation = useSharedValue(0);
   const eyeSparkle = useSharedValue(1);
   
@@ -1162,7 +1163,7 @@ export default function GameScreen() {
   
   const powerGlowStyle = useAnimatedStyle(() => ({
     transform: [{ scale: powerGlowPulse.value }],
-    opacity: activePowerTypes.length > 0 ? 0.8 : 0,
+    opacity: hasPowersShared.value > 0 ? 0.8 : 0,
   }));
   
   const wheelAnimatedStyle = useAnimatedStyle(() => ({
@@ -1213,6 +1214,10 @@ export default function GameScreen() {
   const levelUpFlashStyle = useAnimatedStyle(() => ({
     opacity: levelUpFlash.value,
   }));
+
+  useEffect(() => {
+    hasPowersShared.value = activePowerTypes.length;
+  }, [activePowerTypes]);
 
   useEffect(() => {
     if (gameSpeedRef.current >= 8) {
