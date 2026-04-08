@@ -55,10 +55,9 @@ jobs:
       - name: Remove Windows-only path from gradle.properties
         run: sed -i '/android\.cxx\.buildRoot/d' android/gradle.properties
 
-      - name: Ensure Old Architecture (disable Fabric to avoid C++20 requirement)
+      - name: Enable New Architecture (required by Reanimated)
         run: |
-          sed -i 's/newArchEnabled=.*/newArchEnabled=false/' android/gradle.properties || echo 'newArchEnabled=false' >> android/gradle.properties
-          echo "gradle.properties newArchEnabled:"
+          sed -i 's/newArchEnabled=.*/newArchEnabled=true/' android/gradle.properties || echo 'newArchEnabled=true' >> android/gradle.properties
           grep 'newArchEnabled' android/gradle.properties
 
       - name: Add AdMob and NDK config to root build.gradle
