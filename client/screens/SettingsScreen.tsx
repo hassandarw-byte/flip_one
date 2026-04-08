@@ -277,7 +277,6 @@ export default function SettingsScreen() {
               <ThemedText style={[styles.appName, { color: textColor }]}>Flip One</ThemedText>
               <ThemedText style={[styles.appVersion, { color: textMutedColor }]}>Version 1.0.10</ThemedText>
               <ThemedText style={[styles.developerText, { color: textSecondaryColor }]}>© 2026 HHD Apps</ThemedText>
-              <ThemedText style={[styles.contactText, { color: textMutedColor }]}>hhdapps.team@gmail.com</ThemedText>
             </LinearGradient>
           </View>
         </Animated.View>
@@ -558,21 +557,18 @@ const styles = StyleSheet.create({
   appName: {
     fontSize: 22,
     fontWeight: "800",
+    marginTop: 6,
   },
   appVersion: {
     fontSize: 13,
     color: GameColors.textMuted,
-    marginTop: 0,
+    marginTop: 6,
   },
   developerText: {
     fontSize: 12,
     color: GameColors.textSecondary,
-    marginTop: 0,
+    marginTop: 6,
     fontWeight: "600",
-  },
-  contactText: {
-    fontSize: 11,
-    marginTop: 4,
   },
   modalContainer: {
     flex: 1,
