@@ -1,0 +1,32 @@
+  /usr/local/lib/android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --target=aarch64-none-linux-android24 --sysroot=/usr/local/lib/android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/linux-x86_64/sysroot  -I/home/runner/work/flip_one/flip_one/node_modules/react-native/ReactCommon -I/home/runner/work/flip_one/flip_one/node_modules/expo-modules-core/android/../common/cpp/fabric -I/home/runner/.gradle/caches/8.14.3/transforms/5ada105901623d3a4fdf3191bb54b6dc/transformed/jetified-react-android-0.81.5-release/prefab/modules/reactnative/include/react/fabric -isystem /home/runner/.gradle/caches/8.14.3/transforms/eb76738b245bb637f44daea1dfff301c/transformed/jetified-fbjni-0.7.0/prefab/modules/fbjni/include -isystem /home/runner/.gradle/caches/8.14.3/transforms/5ada105901623d3a4fdf3191bb54b6dc/transformed/jetified-react-android-0.81.5-release/prefab/modules/jsi/include -isystem /home/runner/.gradle/caches/8.14.3/transforms/5ada105901623d3a4fdf3191bb54b6dc/transformed/jetified-react-android-0.81.5-release/prefab/modules/reactnative/include -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -DREACT_NATIVE_TARGET_VERSION=81 -O2 -g -DNDEBUG -fPIC -std=c++20 -DFOLLY_NO_CONFIG=1 -DFOLLY_HAVE_CLOCK_GETTIME=1 -DFOLLY_USE_LIBCPP=1 -DFOLLY_CFG_NO_COROUTINES=1 -DFOLLY_MOBILE=1 -DFOLLY_HAVE_RECVMMSG=1 -DFOLLY_HAVE_PTHREAD=1 -DFOLLY_HAVE_XSI_STRERROR_R=1 -O2 -frtti -fexceptions -Wall -fstack-protector-all -DUSE_HERMES=0 -DUNIT_TEST=0 -DIS_NEW_ARCHITECTURE_ENABLED=1 -DRN_FABRIC_ENABLED=1 -DRN_SERIALIZABLE_STATE=1 -std=gnu++20 -Winvalid-pch -Xclang -include-pch -Xclang /home/runner/work/flip_one/flip_one/node_modules/expo-modules-core/android/.cxx/RelWithDebInfo/4f1l291v/arm64-v8a/src/fabric/CMakeFiles/fabric.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/runner/work/flip_one/flip_one/node_modules/expo-modules-core/android/.cxx/RelWithDebInfo/4f1l291v/arm64-v8a/src/fabric/CMakeFiles/fabric.dir/cmake_pch.hxx -MD -MT src/fabric/CMakeFiles/fabric.dir/home/runner/work/flip_one/flip_one/node_modules/expo-modules-core/common/cpp/fabric/ExpoViewProps.cpp.o -MF src/fabric/CMakeFiles/fabric.dir/home/runner/work/flip_one/flip_one/node_modules/expo-modules-core/common/cpp/fabric/ExpoViewProps.cpp.o.d -o src/fabric/CMakeFiles/fabric.dir/home/runner/work/flip_one/flip_one/node_modules/expo-modules-core/common/cpp/fabric/ExpoViewProps.cpp.o -c /home/runner/work/flip_one/flip_one/node_modules/expo-modules-core/common/cpp/fabric/ExpoViewProps.cpp
+  In file included from /home/runner/work/flip_one/flip_one/node_modules/expo-modules-core/common/cpp/fabric/ExpoViewProps.cpp:4:
+  In file included from /home/runner/work/flip_one/flip_one/node_modules/react-native/ReactCommon/react/renderer/core/propsConversions.h:15:
+  /home/runner/work/flip_one/flip_one/node_modules/react-native/ReactCommon/react/renderer/core/graphicsConversions.h:80:19: error: no member named 'format' in namespace 'std'
+        return std::format("{}%", dimension.value);
+               ~~~~~^
+  1 error generated.
+  [6/49] Building CXX object src/fabric/CMakeFiles/fabric.dir/home/runner/work/flip_one/flip_one/node_modules/expo-modules-core/common/cpp/fabric/ExpoViewShadowNode.cpp.o
+  [7/49] Building CXX object src/fabric/CMakeFiles/fabric.dir/FabricComponentsRegistry.cpp.o
+  [8/49] Building CXX object CMakeFiles/expo-modules-core.dir/home/runner/work/flip_one/flip_one/node_modules/expo-modules-core/common/cpp/JSIUtils.cpp.o
+  [9/49] Building CXX object CMakeFiles/expo-modules-core.dir/home/runner/work/flip_one/flip_one/node_modules/expo-modules-core/common/cpp/EventEmitter.cpp.o
+  [10/49] Building CXX object src/fabric/CMakeFiles/fabric.dir/home/runner/work/flip_one/flip_one/node_modules/expo-modules-core/common/cpp/fabric/ExpoViewComponentDescriptor.cpp.o
+  ninja: build stopped: subcommand failed.
+  
+  C++ build system [build] failed while executing:
+      /usr/local/lib/android/sdk/cmake/3.22.1/bin/ninja \
+        -C \
+        /home/runner/work/flip_one/flip_one/node_modules/expo-modules-core/android/.cxx/RelWithDebInfo/4f1l291v/arm64-v8a \
+        expo-modules-core
+    from /home/runner/work/flip_one/flip_one/node_modules/expo-modules-core/android
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 6m 7s
+
+[Incubating] Problems report is available at: file:///home/runner/work/flip_one/flip_one/android/build/reports/problems/problems-report.html
+340 actionable tasks: 280 executed, 60 from cache
+Error: Process completed with exit code 1.

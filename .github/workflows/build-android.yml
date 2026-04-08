@@ -43,22 +43,11 @@ jobs:
       - name: Remove Windows-only path from gradle.properties
         run: sed -i '/android\.cxx\.buildRoot/d' android/gradle.properties
 
-      - name: Enable New Architecture for Reanimated
+      - name: Ensure Old Architecture (disable Fabric to avoid C++20 requirement)
         run: |
-          sed -i 's/newArchEnabled=.*/newArchEnabled=true/' android/gradle.properties || echo 'newArchEnabled=true' >> android/gradle.properties
+          sed -i 's/newArchEnabled=.*/newArchEnabled=false/' android/gradle.properties || echo 'newArchEnabled=false' >> android/gradle.properties
           echo "gradle.properties newArchEnabled:"
           grep 'newArchEnabled' android/gradle.properties
-
-      - name: Force C++20 standard for Fabric native code
-        run: |
-          for f in $(find node_modules/expo-modules-core/android node_modules/react-native/ReactCommon -name "CMakeLists.txt" 2>/dev/null); do
-            if grep -q 'CMAKE_CXX_STANDARD' "$f"; then
-              sed -i 's/set(CMAKE_CXX_STANDARD [0-9][0-9]*)/set(CMAKE_CXX_STANDARD 20)/g' "$f"
-            else
-              sed -i '1s/^/set(CMAKE_CXX_STANDARD 20)\nset(CMAKE_CXX_STANDARD_REQUIRED ON)\n/' "$f"
-            fi
-          done
-          echo "C++20 standard applied"
 
       - name: Add AdMob and NDK config to root build.gradle
         run: |
