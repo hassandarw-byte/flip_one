@@ -1133,8 +1133,8 @@ const styles = StyleSheet.create({
   usedTodayText: {
     fontSize: 13,
     fontWeight: "600",
-    color: GameColors.textMuted,
     textAlign: "center",
+    opacity: 0.7,
   },
   purchaseMessageBanner: {
     marginHorizontal: Spacing.xl,

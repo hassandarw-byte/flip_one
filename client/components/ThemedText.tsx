@@ -1,6 +1,6 @@
 import { Text, type TextProps, StyleSheet } from "react-native";
 
-import { useTheme } from "@/hooks/useTheme";
+import { useNightMode } from "@/contexts/NightModeContext";
 import { Typography } from "@/constants/theme";
 
 const fontStyles = StyleSheet.create({
@@ -31,22 +31,12 @@ export function ThemedText({
   type = "body",
   ...rest
 }: ThemedTextProps) {
-  const { theme, isDark } = useTheme();
+  const { isNightMode, textColor } = useNightMode();
 
   const getColor = () => {
-    if (isDark && darkColor) {
-      return darkColor;
-    }
-
-    if (!isDark && lightColor) {
-      return lightColor;
-    }
-
-    if (type === "link") {
-      return theme.link;
-    }
-
-    return theme.text;
+    if (isNightMode && darkColor) return darkColor;
+    if (!isNightMode && lightColor) return lightColor;
+    return textColor;
   };
 
   const getTypeStyle = () => {

@@ -26,6 +26,7 @@ import Svg, { Rect, Line } from "react-native-svg";
 import { ThemedText } from "@/components/ThemedText";
 import { GameColors, Spacing, BorderRadius } from "@/constants/theme";
 import { saveHasSeenTutorial } from "@/lib/storage";
+import { useNightMode } from "@/contexts/NightModeContext";
 
 const { width } = Dimensions.get("window");
 
@@ -57,6 +58,7 @@ function MiniTrack({ y }: { y: number }) {
 
 export default function TutorialScreen({ onComplete }: TutorialScreenProps) {
   const insets = useSafeAreaInsets();
+  const { backgroundGradient, textColor, textSecondaryColor, isNightMode } = useNightMode();
   const [step, setStep] = useState(0);
   
   const playerY = useSharedValue(0);
@@ -139,7 +141,7 @@ export default function TutorialScreen({ onComplete }: TutorialScreenProps) {
 
   return (
     <LinearGradient
-      colors={[GameColors.backgroundGradientStart, GameColors.backgroundGradientEnd]}
+      colors={backgroundGradient}
       style={styles.container}
     >
       <View style={[styles.contentArea, { paddingTop: insets.top + Spacing.xl }]}>
@@ -150,6 +152,7 @@ export default function TutorialScreen({ onComplete }: TutorialScreenProps) {
                 key={i}
                 style={[
                   styles.dot,
+                  { backgroundColor: isNightMode ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.15)" },
                   i === step ? styles.dotActive : null,
                 ]}
               />
@@ -291,7 +294,6 @@ const styles = StyleSheet.create({
   },
   skipText: {
     fontSize: 16,
-    color: "rgba(0,0,0,0.5)",
     fontWeight: "600",
   },
   dotsContainer: {
@@ -386,21 +388,19 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     fontWeight: "600",
-    color: "#1A1A1A",
   },
   stepTitle: {
     fontSize: 28,
     fontWeight: "800",
-    color: "#1A1A1A",
     textAlign: "center",
     marginBottom: Spacing.sm,
   },
   stepDescription: {
     fontSize: 16,
-    color: "rgba(0,0,0,0.6)",
     textAlign: "center",
     lineHeight: 24,
     paddingHorizontal: Spacing.lg,
+    opacity: 0.75,
   },
   bottomSection: {
     paddingHorizontal: Spacing.sm,

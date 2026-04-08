@@ -2565,7 +2565,6 @@ const styles = StyleSheet.create({
   comboText: {
     fontSize: 24,
     fontWeight: "900",
-    color: "#1A1A1A",
   },
   collectExplosion: {
     position: "absolute",
@@ -2694,7 +2693,6 @@ const styles = StyleSheet.create({
   encourageText: {
     fontSize: 32,
     fontWeight: "900",
-    color: "#1A1A1A",
     letterSpacing: 2,
   },
   flipParticle: {

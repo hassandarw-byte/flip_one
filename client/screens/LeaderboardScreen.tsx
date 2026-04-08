@@ -344,8 +344,8 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: Spacing.lg,
-    color: GameColors.textSecondary,
     fontSize: 16,
+    opacity: 0.7,
   },
   headerCard: {
     marginBottom: Spacing.lg,

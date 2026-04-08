@@ -494,7 +494,6 @@ const styles = StyleSheet.create({
   rewardText: {
     fontSize: 28,
     fontWeight: "900",
-    color: "#1A1A1A",
   },
   spinButton: {
     marginHorizontal: Spacing.xl,

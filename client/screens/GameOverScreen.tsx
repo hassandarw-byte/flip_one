@@ -103,7 +103,7 @@ function ConfettiPiece({ delay, startX }: { delay: number; startX: number }) {
 export default function GameOverScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const route = useRoute<RouteProp<RootStackParamList, "GameOver">>();
-  const { backgroundGradient } = useNightMode();
+  const { backgroundGradient, isNightMode, textColor, textSecondaryColor } = useNightMode();
   const { isAdsRemoved } = useSubscription();
   
   const { score, bestScore, isNewBest } = route.params;
@@ -235,7 +235,7 @@ export default function GameOverScreen() {
         style={styles.modal}
       >
         <LinearGradient
-          colors={["#FFFFFF", "#FFFFFF"]}
+          colors={isNightMode ? ["#1A1A2E", "#16213E"] : ["#FFFFFF", "#F5F5FF"]}
           style={styles.modalGradient}
         >
           <View style={styles.gameOverHeader}>
@@ -436,10 +436,10 @@ const styles = StyleSheet.create({
   },
   scoreLabel: {
     fontSize: 16,
-    color: GameColors.textMuted,
     letterSpacing: 2,
     marginBottom: Spacing.sm,
     textAlign: "center",
+    opacity: 0.7,
   },
   scoreBadge: {
     paddingHorizontal: Spacing["3xl"],
@@ -489,9 +489,9 @@ const styles = StyleSheet.create({
   },
   bestScoreText: {
     fontSize: 18,
-    color: GameColors.textSecondary,
     fontWeight: "700",
     textAlign: "center",
+    opacity: 0.8,
   },
   buttonsContainer: {
     width: "100%",
