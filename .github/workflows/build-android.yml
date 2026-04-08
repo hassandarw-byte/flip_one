@@ -26,22 +26,12 @@ jobs:
         run: |
           FILE="node_modules/react-native/ReactCommon/react/renderer/core/graphicsConversions.h"
           if [ -f "$FILE" ]; then
-            python3 - <<'EOF'
-filepath = "node_modules/react-native/ReactCommon/react/renderer/core/graphicsConversions.h"
-with open(filepath, 'r') as f:
-    content = f.read()
-content = content.replace('#include <format>', '#include <cstdio>')
-content = content.replace(
-    'return std::format("{}%", dimension.value);',
-    'char _b[64]; snprintf(_b, 64, "%g%%", (double)dimension.value); return std::string(_b);'
-)
-with open(filepath, 'w') as f:
-    f.write(content)
-print("Patched graphicsConversions.h successfully")
-EOF
-            echo "Patch applied"
+            sed -i 's/#include <format>/\/\/ C++20 format removed for C++17 compat/g' "$FILE"
+            sed -i 's/return std::format("{}%", dimension\.value);/return std::to_string(dimension.value) + std::string("%");/g' "$FILE"
+            echo "Patched: $(grep -n 'to_string\|format' $FILE | head -5)"
           else
-            echo "File not found, skipping"
+            echo "File not found at $FILE"
+            find node_modules/react-native -name "graphicsConversions.h" 2>/dev/null
           fi
 
       - name: Setup Java
