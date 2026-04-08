@@ -20,7 +20,6 @@ let RewardedAd: any = null;
 let InterstitialAd: any = null;
 let AdEventType: any = null;
 let RewardedAdEventType: any = null;
-let TestIds: any = null;
 
 let adsInitialized = false;
 let adMobAvailable = false;
@@ -32,7 +31,6 @@ try {
   InterstitialAd = admob.InterstitialAd;
   AdEventType = admob.AdEventType;
   RewardedAdEventType = admob.RewardedAdEventType;
-  TestIds = admob.TestIds;
   adMobAvailable = true;
 } catch (e) {
   adMobAvailable = false;
