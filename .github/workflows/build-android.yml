@@ -52,6 +52,13 @@ jobs:
           CI: 1
           EXPO_NO_TELEMETRY: 1
 
+      - name: Force versionCode from app.json into build.gradle
+        run: |
+          VERSION_CODE=$(node -e "const a=require('./app.json');console.log(a.expo.android.versionCode)")
+          echo "=== versionCode from app.json: $VERSION_CODE ==="
+          sed -i "s/versionCode [0-9]*/versionCode $VERSION_CODE/" android/app/build.gradle
+          grep "versionCode" android/app/build.gradle
+
       - name: Remove Windows-only path from gradle.properties
         run: sed -i '/android\.cxx\.buildRoot/d' android/gradle.properties
 
@@ -100,14 +107,18 @@ jobs:
         env:
           GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=512m"
 
-      - name: Verify AAB
+      - name: Verify AAB and show versionCode
+        id: verify
         run: |
           AAB=android/app/build/outputs/bundle/release/app-release.aab
+          VERSION_CODE=$(node -e "const a=require('./app.json');console.log(a.expo.android.versionCode)")
+          echo "=== FINAL versionCode: $VERSION_CODE ==="
+          echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
           [ -f "$AAB" ] && echo "SUCCESS: $(du -h $AAB)" || (echo "FAILED: AAB not found" && exit 1)
 
       - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
-          name: flip-one-release-aab
+          name: flip-one-vc${{ steps.verify.outputs.version_code }}-aab
           path: android/app/build/outputs/bundle/release/app-release.aab
           retention-days: 30
