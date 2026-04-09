@@ -27,7 +27,7 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.flipone.app",
-      "versionCode": 14,
+      "versionCode": 20,
       "permissions": [
         "com.google.android.gms.permission.AD_ID"
       ]
