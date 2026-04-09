@@ -27,7 +27,7 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.flipone.app",
-      "versionCode": 11
+      "versionCode": 12
     },
     "web": {
       "output": "single",
