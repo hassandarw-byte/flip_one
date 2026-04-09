@@ -44,7 +44,7 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Install NDK
-        run: sdkmanager "ndk;26.1.10909125" "cmake;3.22.1"
+        run: sdkmanager "ndk;27.0.12077973" "cmake;3.22.1"
 
       - name: Run Expo Prebuild
         run: npx expo prebuild --platform android --no-install --clean
@@ -62,8 +62,20 @@ jobs:
 
       - name: Add AdMob and NDK config to root build.gradle
         run: |
-          echo "CmV4dCB7CiAgICBuZGtWZXJzaW9uID0gIjI2LjEuMTA5MDkxMjUiCiAgICBnb29nbGVNb2JpbGVBZHNKc29uID0gWwogICAgICAgIGdldFN0cmluZ1ZhbHVlOiB7IGtleSwgZGVmYXVsdFZhbHVlIC0+CiAgICAgICAgICAgIGlmIChrZXkgPT0gImFuZHJvaWRfYXBwX2lkIikgcmV0dXJuICJjYS1hcHAtcHViLTQ5ODg5NDQzNjgwMjE1ODJ+NDQ0MjY4NTQ5OCIKICAgICAgICAgICAgcmV0dXJuIGRlZmF1bHRWYWx1ZQogICAgICAgIH0sCiAgICAgICAgaXNGbGFnRW5hYmxlZDogeyBrZXksIGRlZmF1bHRWYWx1ZSAtPgogICAgICAgICAgICBpZiAoa2V5ID09ICJkZWxheV9hcHBfbWVhc3VyZW1lbnRfaW5pdCIpIHJldHVybiB0cnVlCiAgICAgICAgICAgIGlmIChrZXkgPT0gIm9wdGltaXplX2luaXRpYWxpemF0aW9uIikgcmV0dXJuIHRydWUKICAgICAgICAgICAgaWYgKGtleSA9PSAib3B0aW1pemVfYWRfbG9hZGluZyIpIHJldHVybiB0cnVlCiAgICAgICAgICAgIHJldHVybiBkZWZhdWx0VmFsdWUKICAgICAgICB9CiAgICBdCn0K" | base64 --decode >> android/build.gradle
+          echo "ZXh0IHsKICAgIG5ka1ZlcnNpb24gPSAiMjcuMC4xMjA3Nzk3MyIKICAgIGdvb2dsZU1vYmlsZUFkc0pzb24gPSBbCiAgICAgICAgZ2V0U3RyaW5nVmFsdWU6IHsga2V5LCBkZWZhdWx0VmFsdWUgLT4KICAgICAgICAgICAgaWYgKGtleSA9PSAiYW5kcm9pZF9hcHBfaWQiKSByZXR1cm4gImNhLWFwcC1wdWItNDk4ODk0NDM2ODAyMTU4Mn40NDQyNjg1NDk4IgogICAgICAgICAgICByZXR1cm4gZGVmYXVsdFZhbHVlCiAgICAgICAgfSwKICAgICAgICBpc0ZsYWdFbmFibGVkOiB7IGtleSwgZGVmYXVsdFZhbHVlIC0+CiAgICAgICAgICAgIGlmIChrZXkgPT0gImRlbGF5X2FwcF9tZWFzdXJlbWVudF9pbml0IikgcmV0dXJuIHRydWUKICAgICAgICAgICAgaWYgKGtleSA9PSAib3B0aW1pemVfaW5pdGlhbGl6YXRpb24iKSByZXR1cm4gdHJ1ZQogICAgICAgICAgICBpZiAoa2V5ID09ICJvcHRpbWl6ZV9hZF9sb2FkaW5nIikgcmV0dXJuIHRydWUKICAgICAgICAgICAgcmV0dXJuIGRlZmF1bHRWYWx1ZQogICAgICAgIH0KICAgIF0KfQo=" | base64 --decode >> android/build.gradle
           echo "AdMob config appended to build.gradle"
+
+      - name: Enable 16KB memory page size support
+        run: |
+          APP_BUILD="android/app/build.gradle"
+          if grep -q 'cmake {' "$APP_BUILD"; then
+            sed -i '/cmake {/a\                arguments "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON"' "$APP_BUILD"
+            echo "16KB: cmake argument added"
+          else
+            echo "android { defaultConfig { externalNativeBuild { cmake { arguments \"-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON\" } } } }" >> "$APP_BUILD"
+            echo "16KB: appended cmake block to build.gradle"
+          fi
+          grep -n "FLEXIBLE_PAGE\|cmake" "$APP_BUILD" | head -10
 
       - name: Decode and place keystore
         run: |
