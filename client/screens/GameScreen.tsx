@@ -231,6 +231,7 @@ export default function GameScreen() {
   const obstacleIdRef = useRef(0);
   
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
+  const visualLoopRef = useRef<NodeJS.Timeout | null>(null);
   const obstacleSpawnRef = useRef<NodeJS.Timeout | null>(null);
   const collectibleSpawnRef = useRef<NodeJS.Timeout | null>(null);
   const isAdShowingRef = useRef(false);
@@ -257,6 +258,7 @@ export default function GameScreen() {
   const comboTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastObstaclePassTime = useRef(0);
   const isDyingRef = useRef(false);
+  const showCreatureRef = useRef(false);
   const trailIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const soundEnabledRef = useRef(false);
   const hapticsEnabledRef = useRef(false);
@@ -581,6 +583,10 @@ export default function GameScreen() {
       clearInterval(gameLoopRef.current);
       gameLoopRef.current = null;
     }
+    if (visualLoopRef.current) {
+      clearInterval(visualLoopRef.current);
+      visualLoopRef.current = null;
+    }
     if (obstacleSpawnRef.current) {
       clearInterval(obstacleSpawnRef.current);
       obstacleSpawnRef.current = null;
@@ -599,6 +605,7 @@ export default function GameScreen() {
     }
     setTrailParticles([]);
     setSuccessfulFlips(0);
+    showCreatureRef.current = false;
     setShowCreature(false);
     setCreatureX(-150);
     setCurrentCreatureIndex(0);
@@ -801,14 +808,15 @@ export default function GameScreen() {
     }));
     setFloatingParticles(initialParticles);
     
-    gameLoopRef.current = setInterval(() => {
+    // Visual-only loop at 100ms (non-critical: stars, sea creatures, particles)
+    visualLoopRef.current = setInterval(() => {
       if (isGameOverRef.current || isAdShowingRef.current) return;
 
       // Update floating particles
       setFloatingParticles((prev) =>
         prev.map((particle) => ({
           ...particle,
-          x: particle.x - particle.speed > -20 ? particle.x - particle.speed : width + 20,
+          x: particle.x - particle.speed * 6 > -20 ? particle.x - particle.speed * 6 : width + 20,
         }))
       );
       
@@ -816,28 +824,34 @@ export default function GameScreen() {
       setBackgroundStars((prev) =>
         prev.map((star) => ({
           ...star,
-          x: star.x - star.speed > -10 ? star.x - star.speed : width + 10,
+          x: star.x - star.speed * 6 > -10 ? star.x - star.speed * 6 : width + 10,
         }))
       );
-      
-      // Update distance
-      setDistance(d => d + gameSpeedRef.current * 0.1);
       
       // Update sea creatures positions
       setSeaCreatures((prev) =>
         prev.map((creature) => {
-          let newX = creature.x + creature.speed * creature.direction;
-          // Wrap around screen
+          let newX = creature.x + creature.speed * creature.direction * 6;
           if (newX > width + 50) newX = -50;
           if (newX < -50) newX = width + 50;
           return { ...creature, x: newX };
         })
       );
+    }, 100);
+
+    // Critical game loop at 32ms (obstacles, collision, collectibles)
+    gameLoopRef.current = setInterval(() => {
+      if (isGameOverRef.current || isAdShowingRef.current) return;
+
+      // Update distance
+      setDistance(d => d + gameSpeedRef.current * 0.32);
       
-      if (showCreature) {
+      // Creature animation - only when visible (ref avoids stale closure)
+      if (showCreatureRef.current) {
         setCreatureX(prev => {
           const newX = prev + 3;
           if (newX > width + 150) {
+            showCreatureRef.current = false;
             setShowCreature(false);
             return -150;
           }
@@ -952,7 +966,7 @@ export default function GameScreen() {
             return true;
           });
       });
-    }, 16);
+    }, 32);
 
     setTimeout(() => {
       if (isGameOverRef.current) return;
@@ -1099,6 +1113,7 @@ export default function GameScreen() {
       if (newCount % 5 === 0) {
         const idx = (Math.floor(newCount / 5) - 1) % 5;
         setCurrentCreatureIndex(idx);
+        showCreatureRef.current = true;
         setShowCreature(true);
         setCreatureX(-150);
       }
