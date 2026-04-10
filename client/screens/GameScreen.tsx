@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import {
   View,
   StyleSheet,
@@ -272,6 +272,19 @@ export default function GameScreen() {
   const eyeSparkle = useSharedValue(1);
   
   const obstacleScale = useSharedValue(1);
+
+  // Pre-computed sparkle positions — computed ONCE, never recalculated on render
+  const staticSparkles = useMemo(() => {
+    const colors = [GameColors.candy1, GameColors.candy2, GameColors.candy3, GameColors.candy4];
+    return Array.from({ length: 25 }).map((_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      width: Math.random() * 3 + 1,
+      height: Math.random() * 3 + 1,
+      backgroundColor: colors[Math.floor(Math.random() * colors.length)],
+    }));
+  }, []);
   
   const DAY_GRADIENTS: [string, string][] = [
     ["#F5E6D3", "#E8D4C0"],  // Sandy beach
@@ -1254,18 +1267,18 @@ export default function GameScreen() {
         />
 
       <View style={styles.sparklesContainer} pointerEvents="none">
-        {Array.from({ length: 25 }).map((_, i) => (
+        {staticSparkles.map((sparkle) => (
           <Animated.View
-            key={i}
+            key={sparkle.id}
             style={[
               styles.sparkle,
               sparkleStyle,
               {
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                width: Math.random() * 3 + 1,
-                height: Math.random() * 3 + 1,
-                backgroundColor: [GameColors.candy1, GameColors.candy2, GameColors.candy3, GameColors.candy4][Math.floor(Math.random() * 4)],
+                left: `${sparkle.left}%`,
+                top: `${sparkle.top}%`,
+                width: sparkle.width,
+                height: sparkle.height,
+                backgroundColor: sparkle.backgroundColor,
               },
             ]}
           />
